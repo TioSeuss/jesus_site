@@ -127,9 +127,9 @@ function sydney_widgets_init() {
 		register_widget( 'Sydney_Social_Profile' );
 		register_widget( 'Sydney_Employees' );
 		register_widget( 'Sydney_Latest_News' );
-		register_widget( 'Sydney_Contact_Info' );
 		register_widget( 'Sydney_Portfolio' );
 	}
+	register_widget( 'Sydney_Contact_Info' );
 
 }
 add_action( 'widgets_init', 'sydney_widgets_init' );
@@ -151,7 +151,14 @@ if ( defined( 'SITEORIGIN_PANELS_VERSION' ) ) {
 	require get_template_directory() . "/widgets/fp-employees.php";
 	require get_template_directory() . "/widgets/fp-latest-news.php";
 	require get_template_directory() . "/widgets/fp-portfolio.php";
-	require get_template_directory() . "/widgets/contact-info.php";
+}
+require get_template_directory() . "/widgets/contact-info.php";
+
+/**
+ * Elementor ID
+ */
+if ( ! defined( 'ELEMENTOR_PARTNER_ID' ) ) {
+    define( 'ELEMENTOR_PARTNER_ID', 2128 );
 }
 
 /**
@@ -208,12 +215,30 @@ function sydney_google_fonts() {
 endif;
 
 /**
+ * Disable Elementor globals on theme activation
+ */
+function sydney_disable_elementor_globals () {
+	update_option( 'elementor_disable_color_schemes', 'yes' );
+	update_option( 'elementor_disable_typography_schemes', 'yes' );
+}
+add_action('after_switch_theme', 'sydney_disable_elementor_globals');
+
+/**
  * Enqueue Bootstrap
  */
 function sydney_enqueue_bootstrap() {
 	wp_enqueue_style( 'sydney-bootstrap', get_template_directory_uri() . '/css/bootstrap/bootstrap.min.css', array(), true );
 }
 add_action( 'wp_enqueue_scripts', 'sydney_enqueue_bootstrap', 9 );
+
+/**
+ * Elementor editor scripts
+ */
+function sydney_elementor_editor_scripts() {
+	wp_enqueue_script( 'sydney-elementor-editor', get_template_directory_uri() . '/js/elementor.js', array( 'jquery' ), '20181215', true );
+}
+add_action('elementor/frontend/after_register_scripts', 'sydney_elementor_editor_scripts');
+
 
 /**
  * Change the excerpt length
@@ -402,11 +427,13 @@ require_once dirname( __FILE__ ) . '/plugins/class-tgm-plugin-activation.php';
 add_action( 'tgmpa_register', 'sydney_recommend_plugin' );
 function sydney_recommend_plugin() {
 
-    $plugins[] = array(
-            'name'               => 'Page Builder by SiteOrigin',
-            'slug'               => 'siteorigin-panels',
-            'required'           => false,
-    );
+	if ( !defined( 'SITEORIGIN_PANELS_VERSION' ) ) {
+	    $plugins[] = array(
+	            'name'               => 'Elementor',
+	            'slug'               => 'elementor',
+	            'required'           => false,
+	    );
+	}
 
 	if ( !function_exists('wpcf_init') ) {
 	    $plugins[] = array(

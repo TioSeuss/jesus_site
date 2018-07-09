@@ -1230,6 +1230,7 @@
 .so-panels-dialog.so-panels-dialog-row-edit .so-content .row-set-form span {
   display: inline;
   margin: 1px 5px;
+  width: auto;
   outline: none;
   box-shadow: none;
 }
@@ -1587,7 +1588,7 @@
 }
 .so-panels-dialog .so-visual-styles {
   margin: -15px;
-  height: 100%;
+  height: auto;
   /* All the field types */
 }
 .so-panels-dialog .so-visual-styles h3 {
