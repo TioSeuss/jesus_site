@@ -16,10 +16,7 @@ $opennewtab = '';
 $backgoundimage = '';
 $valuedata1 = '';
 $valuedata2 = '';
-$status = get_option('image_hover_ultimate_license_status');
-if ($status != 'valid') {
-    die('You do not have sufficient permissions to access this page.');
-}
+
 if (!empty($_POST['submit']) && $_POST['submit'] == 'submit') {
     $nonce = $_REQUEST['_wpnonce'];
     if (!wp_verify_nonce($nonce, 'iheuitemdata')) {
@@ -159,7 +156,7 @@ $styledata = explode('|', $styledata);
                                 <div class="ctu-ulitate-style-3-tabs" id="ctu-ulitate-style-3-id-6">
                                     <div class="iheu-admin-style-settings-div-left">
                                         <div class="form-group row form-group-sm">
-                                            <label for="iheu-item" class="col-sm-6 col-form-label" data-toggle="tooltip" data-placement="top" title="Customize How many Item You want to Show in a single Row ">Item Per Row </label>
+                                            <label for="iheu-item" class="col-sm-6 oxi-control-label" data-toggle="tooltip" data-placement="top" title="Customize How mane Item You want to Show in a single Row ">Item Per Row </label>
                                             <div class="col-sm-6 nopadding">
                                                 <select class="form-control" id="iheu-item" name="iheu-item">
                                                     <?php iheu_item_admin_data($styledata[1]); ?>
@@ -167,7 +164,7 @@ $styledata = explode('|', $styledata);
                                             </div>
                                         </div>
                                         <div class="form-group row form-group-sm">
-                                            <label for="iheu-directions" class="col-sm-6 col-form-label" data-toggle="tooltip" data-placement="top" title="Customize How Which type of Effects You Want to Use ">Effects Directions </label>
+                                            <label for="iheu-directions" class="col-sm-6 oxi-control-label" data-toggle="tooltip" data-placement="top" title="Customize How Which type of Effects You Want to Use ">Effects Directions </label>
                                             <div class="col-sm-6 nopadding">
                                                 <select class="form-control" id="iheu-directions" name="iheu-directions">
                                                     <option <?php
@@ -195,37 +192,37 @@ $styledata = explode('|', $styledata);
                                             </div>
                                         </div>
                                         <div class="form-group row">
-                                            <label for="image-radius"  class="col-sm-6 control-label"  data-toggle="tooltip" data-placement="top" title="Radius Your Image, for example to make Circle make 50">Image Radius</label>
+                                            <label for="image-radius"  class="col-sm-6 oxi-control-label"  data-toggle="tooltip" data-placement="top" title="Radius Your Image, for example to make Circle make 50">Image Radius</label>
                                             <div class="col-sm-6 nopadding">
                                                 <input type="number" class="form-control" min="0"  max="50" step="1" id="image-radius" name="image-radius" value="<?php echo $styledata[3]; ?>">
                                             </div>
                                         </div>
                                         <div class="form-group row form-group-sm">
-                                            <label for="image-width" class="col-sm-6 control-label" data-toggle="tooltip" data-placement="top" title="Set Image Max width, It will work if max Width is available in div" >Image Width</label>
+                                            <label for="image-width" class="col-sm-6 oxi-control-label" data-toggle="tooltip" data-placement="top" title="Set Image Max width, It will work if max Width is available in div" >Image Width</label>
                                             <div class="col-sm-6 nopadding">
                                                 <input type="number" class="form-control" min="50" max="2400" step="1" id="image-width" name="image-width" value="<?php echo $styledata[5]; ?>">
                                             </div>
                                         </div>
                                         <div class="form-group row form-group-sm">
-                                            <label for="image-height" class="col-sm-6 control-label" data-toggle="tooltip" data-placement="top" title="Set Height, Our Auto Set make it on percentize with width for responsive" >Image Height</label>
+                                            <label for="image-height" class="col-sm-6 oxi-control-label" data-toggle="tooltip" data-placement="top" title="Set Height, Our Auto Set make it on percentize with width for responsive" >Image Height</label>
                                             <div class="col-sm-6 nopadding">
                                                 <input type="number" class="form-control" min="50" max="2400" step="1" id="image-height" name="image-height" value="<?php echo $styledata[7]; ?>">
                                             </div>
                                         </div>
                                         <div class="form-group row form-group-sm">
-                                            <label for="image-margin" class="col-sm-6 control-label" data-toggle="tooltip" data-placement="top" title="Set Image Margin make Distange from Image to Image" >Image Margin</label>
+                                            <label for="image-margin" class="col-sm-6 oxi-control-label" data-toggle="tooltip" data-placement="top" title="Set Image Margin make Distange from Image to Image" >Image Margin</label>
                                             <div class="col-sm-6 nopadding">
                                                 <input type="number" class="form-control" min="0" max="100" step="1" id="image-margin" name="image-margin" value="<?php echo $styledata[9]; ?>">
                                             </div>
                                         </div>
                                         <div class="form-group row form-group-sm">
-                                            <label for="image-padding" class="col-sm-6 control-label" data-toggle="tooltip" data-placement="top" title="Set Content Padding to make distance of Image Content" >Content Padding</label>
+                                            <label for="image-padding" class="col-sm-6 oxi-control-label" data-toggle="tooltip" data-placement="top" title="Set Content Padding to make distance of Image Content" >Content Padding</label>
                                             <div class="col-sm-6 nopadding">
                                                 <input type="number" class="form-control" min="0" max="100" step="1" id="image-padding" name="image-padding" value="<?php echo $styledata[11]; ?>">
                                             </div>
                                         </div>
                                         <div class="form-group row form-group-sm">
-                                            <label for="background-color" class="col-sm-6 control-label" data-toggle="tooltip" data-placement="top" title="Set Your image hover background Color, Based on Color">Background </label>
+                                            <label for="background-color" class="col-sm-6 oxi-control-label" data-toggle="tooltip" data-placement="top" title="Set Your image hover background Color, Based on Color">Background </label>
                                             <div class="col-sm-6 nopadding">
                                                 <input type="text" class="form-control iheu-vendor-color" data-format="rgb" data-opacity="true" id="background-color" name="background-color" value="<?php echo $styledata[13]; ?>">
                                             </div>
@@ -233,7 +230,7 @@ $styledata = explode('|', $styledata);
                                     </div>
                                     <div class="iheu-admin-style-settings-div-right">
                                         <div class="form-group row row form-group-sm">
-                                            <label class="col-sm-6 control-label"  data-toggle="tooltip" data-placement="top" title="Make sure that You want to Open your link in same Tab or new Tab">Open In New Tab?</label>
+                                            <label class="col-sm-6 oxi-control-label"  data-toggle="tooltip" data-placement="top" title="Make sure that You want to Open your link in same Tab or new Tab">Open In New Tab?</label>
                                             <div class="col-sm-6">
                                                 <div class="btn-group" data-toggle="buttons">
                                                     <label class="btn btn-info <?php
@@ -262,7 +259,7 @@ $styledata = explode('|', $styledata);
                                             </div>
                                         </div>
                                         <div class="form-group row form-group-sm">
-                                            <label for="image-animation" class="col-sm-6 col-form-label" data-toggle="tooltip" data-placement="top" title="Image Vewing Animaion">Image Animation</label>
+                                            <label for="image-animation" class="col-sm-6 oxi-control-label" data-toggle="tooltip" data-placement="top" title="Image Vewing Animaion">Image Animation</label>
                                             <div class="col-sm-6 nopadding">
                                                 <select class="form-control" id="image-animation" name="image-animation">                                           
                                                     <?php iheu_image_animation_admin_data($styledata[19]) ?>
@@ -270,19 +267,19 @@ $styledata = explode('|', $styledata);
                                             </div>
                                         </div>
                                         <div class="form-group row form-group-sm">
-                                            <label for="animation-durations" class="col-sm-6 control-label" data-toggle="tooltip" data-placement="top" title="Image Viewing Animation Duration" >Animation Duration</label>
+                                            <label for="animation-durations" class="col-sm-6 oxi-control-label" data-toggle="tooltip" data-placement="top" title="Image Viewing Animation Duration" >Animation Duration</label>
                                             <div class="col-sm-6 nopadding">
                                                 <input type="number" class="form-control" min="0" max="10" step=0.1 id="animation-durations" name="animation-durations" value="<?php echo $styledata[21]; ?>">
                                             </div>
                                         </div>
                                         <div class="form-group row form-group-sm">
-                                            <label for="inner-shadow" class="col-sm-6 control-label" data-toggle="tooltip" data-placement="top" title="Inner Shadow is showing on Image inner, Doesn't want make it 0" >Inner Shadow</label>
+                                            <label for="inner-shadow" class="col-sm-6 oxi-control-label" data-toggle="tooltip" data-placement="top" title="Inner Shadow is showing on Image inner, Doesn't want make it 0" >Inner Shadow</label>
                                             <div class="col-sm-6 nopadding">
                                                 <input type="number" class="form-control"  min="0" max="100" step="1" id="inner-shadow" name="inner-shadow" value="<?php echo $styledata[25]; ?>">
                                             </div>
                                         </div>
                                         <div class="form-group row form-group-sm">
-                                            <label for="inner-shadow-color" class="col-sm-6 control-label" data-toggle="tooltip" data-placement="top" title="Customize Your Inner Shadow Color">Inner Shadow Color </label>
+                                            <label for="inner-shadow-color" class="col-sm-6 oxi-control-label" data-toggle="tooltip" data-placement="top" title="Customize Your Inner Shadow Color">Inner Shadow Color </label>
                                             <div class="col-sm-6 nopadding">
                                                 <input type="text" class="form-control iheu-vendor-color" data-format="rgb" data-opacity="true"  id="inner-shadow-color" name="inner-shadow-color" value="<?php echo $styledata[27]; ?>">
                                             </div>
@@ -293,31 +290,31 @@ $styledata = explode('|', $styledata);
                                 <div class="ctu-ulitate-style-3-tabs" id="ctu-ulitate-style-3-id-5">
                                     <div class="iheu-admin-style-settings-div-left">
                                         <div class="form-group row form-group-sm">
-                                            <label for="button-font-size" class="col-sm-6 control-label" data-toggle="tooltip" data-placement="top" title="Set Icon Font Size as you want" >Font Size</label>
+                                            <label for="button-font-size" class="col-sm-6 oxi-control-label" data-toggle="tooltip" data-placement="top" title="Set Icon Font Size as you want" >Font Size</label>
                                             <div class="col-sm-6 nopadding">
                                                 <input type="number" class="form-control" min="0" max="100" step="1" id="button-font-size" name="button-font-size" value="<?php echo$styledata[85]; ?>">
                                             </div>
                                         </div>
                                         <div class="form-group row form-group-sm">
-                                            <label for="button-font-color" class="col-sm-6 control-label" data-toggle="tooltip" data-placement="top" title="Set Your Icon Color, Based on Color">Font Color </label>
+                                            <label for="button-font-color" class="col-sm-6 oxi-control-label" data-toggle="tooltip" data-placement="top" title="Set Your Icon Color, Based on Color">Font Color </label>
                                             <div class="col-sm-6 nopadding">
                                                 <input type="text" class="form-control iheu-vendor-color" id="button-font-color" name="button-font-color" value="<?php echo $styledata[87]; ?>">
                                             </div>
                                         </div>
                                         <div class="form-group row form-group-sm">
-                                            <label for="button-font-background" class="col-sm-6 control-label" data-toggle="tooltip" data-placement="top" title="Set Your Icon background Color, Based on Color">Background Color </label>
+                                            <label for="button-font-background" class="col-sm-6 oxi-control-label" data-toggle="tooltip" data-placement="top" title="Set Your Icon background Color, Based on Color">Background Color </label>
                                             <div class="col-sm-6 nopadding">
                                                 <input type="text" class="form-control iheu-vendor-color" data-format="rgb" data-opacity="true"  id="button-font-background" name="button-font-background" value="<?php echo $styledata[89]; ?>">
                                             </div>
                                         </div>          
                                         <div class="form-group row form-group-sm">
-                                            <label for="button-hover-color" class="col-sm-6 control-label" data-toggle="tooltip" data-placement="top" title="Set Your Icon Hover Color, Based on Color">Hover Color </label>
+                                            <label for="button-hover-color" class="col-sm-6 oxi-control-label" data-toggle="tooltip" data-placement="top" title="Set Your Icon Hover Color, Based on Color">Hover Color </label>
                                             <div class="col-sm-6 nopadding">
                                                 <input type="text" class="form-control iheu-vendor-color" id="button-hover-color" name="button-hover-color" value="<?php echo $styledata[91]; ?>">
                                             </div>
                                         </div>
                                         <div class="form-group row form-group-sm">
-                                            <label for="button-hover-background" class="col-sm-6 control-label" data-toggle="tooltip" data-placement="top" title="Set Your Icon Hover background Color, Based on Color">Hover Background </label>
+                                            <label for="button-hover-background" class="col-sm-6 oxi-control-label" data-toggle="tooltip" data-placement="top" title="Set Your Icon Hover background Color, Based on Color">Hover Background </label>
                                             <div class="col-sm-6 nopadding">
                                                 <input type="text" class="form-control iheu-vendor-color" data-format="rgb" data-opacity="true"  id="button-hover-background" name="button-hover-background" value="<?php echo $styledata[93]; ?>">
                                             </div>
@@ -325,19 +322,19 @@ $styledata = explode('|', $styledata);
                                     </div>
                                     <div class="iheu-admin-style-settings-div-right">
                                         <div class="form-group row form-group-sm">
-                                            <label for="button-border-radius" class="col-sm-6 control-label" data-toggle="tooltip" data-placement="top" title="Make Radius on Your Icon" >Button Radius</label>
+                                            <label for="button-border-radius" class="col-sm-6 oxi-control-label" data-toggle="tooltip" data-placement="top" title="Make Radius on Your Icon" >Button Radius</label>
                                             <div class="col-sm-6 nopadding">
                                                 <input type="number" class="form-control" min="0" max="100" step="1" id="button-border-radius" name="button-border-radius" value="<?php echo$styledata[95]; ?>">
                                             </div>
                                         </div>
                                         <div class="form-group row form-group-sm">
-                                            <label for="button-height-widht" class="col-sm-6 control-label" data-toggle="tooltip" data-placement="top" title="Change height Width to make bigger or smaller Icon" >Height width</label>
+                                            <label for="button-height-widht" class="col-sm-6 oxi-control-label" data-toggle="tooltip" data-placement="top" title="Change height Width to make bigger or smaller Icon" >Height width</label>
                                             <div class="col-sm-6 nopadding">
                                                 <input type="number" class="form-control" min="0" max="100" step="1" id="button-height-width" name="button-height-width" value="<?php echo$styledata[97]; ?>">
                                             </div>
                                         </div> 
                                         <div class="form-group row form-group-sm bottom-margin-right-js">
-                                            <label for="button-margin-right" class="col-sm-6 control-label" data-toggle="tooltip" data-placement="top" title="Make Distance from Right" >Margin Right</label>
+                                            <label for="button-margin-right" class="col-sm-6 oxi-control-label" data-toggle="tooltip" data-placement="top" title="Make Distance from Right" >Margin Right</label>
                                             <div class="col-sm-6 nopadding">
                                                 <input type="number" class="form-control" min="-20" max="100" step="1" id="button-margin-right" name="button-margin-right" value="<?php echo$styledata[99]; ?>">
                                             </div>
@@ -390,7 +387,7 @@ $styledata = explode('|', $styledata);
                         </div>
                     </div>
                     <div class="iheb-preview-data" id="iheb-preview-data">
-                        <?php
+                      <?php
                         iheu_ultimate_oxi_shortcode_function($styleid, 'admin')
                         ?>
                     </div>

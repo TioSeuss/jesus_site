@@ -6,7 +6,7 @@
 			<div class="ewd-ufaq-dashboard-new-upgrade-banner">
 				<div class="ewd-ufaq-dashboard-banner-icon"></div>
 				<div class="ewd-ufaq-dashboard-banner-buttons">
-					<a class="ewd-ufaq-dashboard-new-upgrade-button" href="http://www.etoilewebdesign.com/plugins/ultimate-faq/#buy" target="_blank">UPGRADE NOW</a>
+					<a class="ewd-ufaq-dashboard-new-upgrade-button" href="https://www.etoilewebdesign.com/license-payment/?Selected=UFAQ&Quantity=1" target="_blank">UPGRADE NOW</a>
 				</div>
 				<div class="ewd-ufaq-dashboard-banner-text">
 					<div class="ewd-ufaq-dashboard-banner-title">

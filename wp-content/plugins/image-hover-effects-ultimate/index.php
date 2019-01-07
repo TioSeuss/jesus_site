@@ -5,12 +5,12 @@
   Description: Image Hover Effects Ultimate is an impressive, lightweight, responsive Image hover effects. Use modern and elegant CSS hover effects and animations.
   Author: Biplob Adhikari
   Author URI: http://www.oxilab.org/
-  Version: 8.3
+  Version: 8.6
  */
 if (!defined('ABSPATH'))
     exit;
 
-$image_hover_ultimate_version = '8.3';
+$image_hover_ultimate_version = '8.6';
 define('image_hover_ultimate_plugin_url', plugin_dir_path(__FILE__));
 define('IMAGE_HOVER_EFFECTS_ULTIMATE_HOME', 'https://www.oxilab.org'); // you should use your own CONSTANT name, and be sure to replace it throughout this file
 // the name of your product. This should match the download name in EDD exactly
@@ -29,10 +29,17 @@ function iheu_ultimate_oxi_shortcode($atts) {
     return ob_get_clean();
 }
 
+if (!function_exists('is_plugin_active')) {
+    include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+}
 add_action('admin_menu', 'image_hover_ultimate_menu');
 
 function image_hover_ultimate_menu() {
-    $user_role = get_option('image_hover_ultimate_user_role_key');
+    if (is_plugin_active('shortcode-addons/index.php')) {
+        $user_role = get_option('oxi_addons_user');
+    } else {
+        $user_role = get_option('image_hover_ultimate_user_role_key');
+    }
     $role_object = get_role($user_role);
     $first_key = '';
     if (isset($role_object->capabilities) && is_array($role_object->capabilities)) {
@@ -41,16 +48,28 @@ function image_hover_ultimate_menu() {
     } else {
         $first_key = 'manage_options';
     }
-    add_menu_page('Image Hover', 'Image Hover', $first_key, 'image-hover-ultimate', 'image_hover_ultimate_home');
-    add_submenu_page('image-hover-ultimate', 'Image Hover Ultimate', 'Image Hover', $first_key, 'image-hover-ultimate', 'image_hover_ultimate_home');
-    add_submenu_page('image-hover-ultimate', 'General Effects', 'General Effects', $first_key, 'image-hover-ultimate-new', 'image_hover_ultimate_new');
-    add_submenu_page('image-hover-ultimate', 'Square Effects', 'Square Effects', $first_key, 'image-hover-ultimate-square', 'image_hover_ultimate_square');
-    add_submenu_page('image-hover-ultimate', 'Button Effects', 'Button Effects', $first_key, 'image-hover-ultimate-button', 'image_hover_ultimate_button');
-    add_submenu_page('image-hover-ultimate', 'Settings', 'Settings', 'manage_options', IMAGE_HOVER_EFFECTS_ULTIMATE_LICENSE_PAGE, 'image_hover_ultimate_license_page');
+    if (is_plugin_active('shortcode-addons/index.php')) {
+        add_submenu_page('oxi-addons-import', 'Image Hover Ultimate', 'Image Hover', $first_key, 'image-hover-ultimate', 'image_hover_ultimate_home');
+        add_submenu_page('oxi-addons-import', 'General Effects', 'General Effects', $first_key, 'image-hover-ultimate-new', 'image_hover_ultimate_new');
+        add_submenu_page('oxi-addons-import', 'Square Effects', 'Square Effects', $first_key, 'image-hover-ultimate-square', 'image_hover_ultimate_square');
+        add_submenu_page('oxi-addons-import', 'Button Effects', 'Button Effects', $first_key, 'image-hover-ultimate-button', 'image_hover_ultimate_button');
+    } else {
+        add_menu_page('Image Hover', 'Image Hover', $first_key, 'image-hover-ultimate', 'image_hover_ultimate_home');
+        add_submenu_page('image-hover-ultimate', 'Image Hover Ultimate', 'Image Hover', $first_key, 'image-hover-ultimate', 'image_hover_ultimate_home');
+        add_submenu_page('image-hover-ultimate', 'General Effects', 'General Effects', $first_key, 'image-hover-ultimate-new', 'image_hover_ultimate_new');
+        add_submenu_page('image-hover-ultimate', 'Square Effects', 'Square Effects', $first_key, 'image-hover-ultimate-square', 'image_hover_ultimate_square');
+        add_submenu_page('image-hover-ultimate', 'Button Effects', 'Button Effects', $first_key, 'image-hover-ultimate-button', 'image_hover_ultimate_button');
+        add_submenu_page('image-hover-ultimate', 'Settings', 'Settings', 'manage_options', IMAGE_HOVER_EFFECTS_ULTIMATE_LICENSE_PAGE, 'image_hover_ultimate_license_page');
+        add_submenu_page('image-hover-ultimate', 'Shortcode Addons', 'Shortcode Addons', $first_key, 'image-hover-ultimate-addons', 'image_hover_ultimate_license_addons');
+    }
 }
 
 function image_hover_ultimate_user_capabilities() {
-    $user_role = get_option('image_hover_ultimate_user_role_key');
+    if (is_plugin_active('shortcode-addons/index.php')) {
+        $user_role = get_option('oxi_addons_user');
+    } else {
+        $user_role = get_option('image_hover_ultimate_user_role_key');
+    }
     $role_object = get_role($user_role);
     $first_key = '';
     if (isset($role_object->capabilities) && is_array($role_object->capabilities)) {
@@ -66,24 +85,43 @@ function image_hover_ultimate_user_capabilities() {
 
 function image_hover_ultimate_home() {
     include image_hover_ultimate_plugin_url . 'home.php';
+    $jquery = 'jQuery(".oxilab-admin-menu li:eq(0) a").addClass("active");';
+    wp_add_inline_script('iheu-vendor-bootstrap-jss', $jquery);
 }
 
 function image_hover_ultimate_new() {
     include image_hover_ultimate_plugin_url . 'admin.php';
     iheu_hover_drag_drop_ajax();
     add_action('wp_print_scripts', 'iheu_hover_drag_drop_ajax');
+    $jquery = 'jQuery(".oxilab-admin-menu li:eq(1) a").addClass("active");';
+    wp_add_inline_script('iheu-vendor-bootstrap-jss', $jquery);
 }
 
 function image_hover_ultimate_square() {
     include image_hover_ultimate_plugin_url . 'square.php';
     iheu_hover_drag_drop_ajax();
     add_action('wp_print_scripts', 'iheu_hover_drag_drop_ajax');
+    $jquery = 'jQuery(".oxilab-admin-menu li:eq(2) a").addClass("active");';
+    wp_add_inline_script('iheu-vendor-bootstrap-jss', $jquery);
 }
 
 function image_hover_ultimate_button() {
     include image_hover_ultimate_plugin_url . 'button.php';
     iheu_hover_drag_drop_ajax();
     add_action('wp_print_scripts', 'iheu_hover_drag_drop_ajax');
+    $jquery = 'jQuery(".oxilab-admin-menu li:eq(3) a").addClass("active");';
+    wp_add_inline_script('iheu-vendor-bootstrap-jss', $jquery);
+}
+
+function image_hover_ultimate_license_addons() {
+    wp_enqueue_style('Open+Sans', 'https://fonts.googleapis.com/css?family=Open+Sans');
+    wp_enqueue_style('iheu-vendor-style', plugins_url('css-js/style.css', __FILE__));
+    wp_enqueue_script('iheu-vendor-bootstrap-jss', plugins_url('css-js/bootstrap.min.js', __FILE__));
+    wp_enqueue_style('iheu-vendor-bootstrap', plugins_url('css-js/bootstrap.min.css', __FILE__));
+    $faversion = get_option('oxi_addons_font_awesome_version');
+    $faversion = explode('||', $faversion);
+    wp_enqueue_style('font-awesome-' . $faversion[0], $faversion[1]);
+    include image_hover_ultimate_plugin_url . 'css-js/shortcode-addons.php';
 }
 
 function iheu_hover_drag_drop_ajax() {
@@ -131,7 +169,7 @@ register_activation_hook(__FILE__, 'image_hover_ultimate_install');
 function image_hover_ultimate_install() {
     global $wpdb;
     global $image_hover_ultimate_version;
-
+    $fawesome = '5.3.1||https://use.fontawesome.com/releases/v5.3.1/css/all.css';
     $table_name = $wpdb->prefix . 'image_hover_ultimate_style';
     $table_list = $wpdb->prefix . 'image_hover_ultimate_list';
 
@@ -148,9 +186,9 @@ function image_hover_ultimate_install() {
     $sql2 = "CREATE TABLE $table_list (
 		id mediumint(5) NOT NULL AUTO_INCREMENT,
                 styleid mediumint(6) NOT NULL,
-		title varchar(100),
-                files varchar(2000),
-                buttom_text varchar(100),
+		title text,
+                files text,
+                buttom_text varchar(800),
                 link varchar(800),
                 image varchar(800),
                 hoverimage varchar(800),
@@ -168,6 +206,7 @@ function image_hover_ultimate_install() {
     add_option('image_hover_ultimate_version', $image_hover_ultimate_version);
     $now = strtotime("now");
     add_option('image_hover_ultimate_activation_date', $now);
+    add_option('oxi_addons_font_awesome_version', $fawesome);
     set_transient('_Iheu_image_hover_welcome_activation_redirect', true, 30);
 }
 
@@ -262,7 +301,7 @@ function iheu_font_familly_special_charecter($data) {
     return $data;
 }
 
-
+if (is_plugin_active('js_composer/js_composer.php')) {
     add_action('vc_before_init', 'iheu_oxi_VC_extension');
     add_shortcode('iheu_oxi_VC', 'iheu_oxi_VC_shortcode');
 
@@ -301,6 +340,10 @@ function iheu_font_familly_special_charecter($data) {
         ));
     }
 
+}
+
+
+
 add_filter('widget_text', 'do_shortcode');
 include image_hover_ultimate_plugin_url . 'widget.php';
 
@@ -312,7 +355,7 @@ function image_hover_ultimate_plugin_updater() {
     // retrieve our license key from the DB
     // setup the updater
     $image_hover_ultimate_updater = new IMAGE_HOVER_EFFECTS_ULTIMATE_Plugin_Updater(IMAGE_HOVER_EFFECTS_ULTIMATE_HOME, __FILE__, array(
-        'version' => '8.3', // current version number
+        'version' => '8.6', // current version number
         'license' => $license_key, // license key (used get_option above to retrieve from DB)
         'item_name' => IMAGE_HOVER_EFFECTS_ULTIMATE, // name of this plugin
         'author' => 'Biplob Adhikari', // author of this plugin
@@ -339,19 +382,32 @@ function image_hover_ultimate_license_page() {
     $roles = $wp_roles->get_names();
     $saved_role = get_option('image_hover_ultimate_user_role_key');
     $saved_roe = get_option('image_hover_ultimate_mobile_device_key');
+    $fontawvr = get_option('oxi_addons_font_awesome_version');
+    $fontawesomevr = array(
+        array('name' => '5.5.0', 'url' => '5.5.0||https://use.fontawesome.com/releases/v5.3.1/css/all.css'),
+        array('name' => '5.4.1', 'url' => '5.4.1||https://use.fontawesome.com/releases/v5.3.1/css/all.css'),
+        array('name' => '5.3.1', 'url' => '5.3.1||https://use.fontawesome.com/releases/v5.3.1/css/all.css'),
+        array('name' => '5.2.0', 'url' => '5.2.0||https://use.fontawesome.com/releases/v5.2.0/css/all.css'),
+        array('name' => '5.1.1', 'url' => '5.1.1||https://use.fontawesome.com/releases/v5.1.1/css/all.css'),
+        array('name' => '5.1.0', 'url' => '5.1.0||https://use.fontawesome.com/releases/v5.1.0/css/all.css'),
+        array('name' => '5.0.13', 'url' => '5.0.13||https://use.fontawesome.com/releases/v5.0.13/css/all.css'),
+        array('name' => '5.0.12', 'url' => '5.0.12||https://use.fontawesome.com/releases/v5.0.12/css/all.css'),
+        array('name' => '5.0.10', 'url' => '5.0.10||https://use.fontawesome.com/releases/v5.0.10/css/all.css'),
+        array('name' => '5.0.9', 'url' => '5.0.9||https://use.fontawesome.com/releases/v5.0.9/css/all.css'),
+        array('name' => '5.0.8', 'url' => '5.0.8||https://use.fontawesome.com/releases/v5.0.8/css/all.css'),
+        array('name' => '5.0.6', 'url' => '5.0.6||https://use.fontawesome.com/releases/v5.0.6/css/all.css'),
+        array('name' => '5.0.4', 'url' => '5.0.4||https://use.fontawesome.com/releases/v5.0.4/css/all.css'),
+        array('name' => '4.7.0', 'url' => '4.7.0||https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css'),
+    );
     ?>
-    <div class="wrap">
-        <?php if ($status !== false && $status == 'valid') { ?>
-            <div class="updated">
-                <p>Thank you to Active our Plugins. Kindly wait 2-3 minute to get update notification if you using free or older version. Once you get notification please update.</p>
-            </div>
-        <?php }
-        ?>
-        <h2><?php _e('User Role'); ?></h2>
-        <p>Select User Role Who Can Save Edit and Delete Image Hover Effects Ultimate Data.</p>
+    <div class="wrap">  
         <form method="post" action="options.php">
+            <?php settings_fields('oxi-addons-iheu-settings-group'); ?>
+            <?php do_settings_sections('oxi-addons-iheu-settings-group'); ?>
+            <h2><?php _e('User Role'); ?></h2>
+            <p>Select User Role Who Can Save Edit and Delete Image Hover Effects Ultimate Data.</p>
+
             <table class="form-table">
-                <?php settings_fields('image_hover_ultimate_user_role'); ?>
                 <tbody>
                     <tr valign="top">
                         <th scope="row" valign="top">
@@ -372,15 +428,14 @@ function image_hover_ultimate_license_page() {
                 </tbody>
             </table>
             <?php submit_button(); ?>
-        </form>
-        <br>
-        <br>
-        <br>
-        <h2><?php _e('Mobile or Touch Device Behaviour'); ?></h2>
-        <p>Select Mobile or Touch Device behaviour at Image Hover Effects Ultimate Data.</p>
-        <form method="post" action="options.php">
+
+            <br>
+            <br>
+            <br>
+            <h2><?php _e('Mobile or Touch Device Behaviour'); ?></h2>
+            <p>Select Mobile or Touch Device behaviour at Image Hover Effects Ultimate Data.</p>
+
             <table class="form-table">
-                <?php settings_fields('image_hover_ultimate_mobile_device'); ?>
                 <tbody>
                     <tr valign="top">
                         <th scope="row" valign="top">
@@ -407,7 +462,46 @@ function image_hover_ultimate_license_page() {
                 </tbody>
             </table>
             <?php submit_button(); ?>
+
+            <br>
+            <br>
+            <br>
+            <h2><?php _e('Font Awesome Icons'); ?></h2>
+            <p>Set Your Font Awesome Icon Ad your Theme Settings.</p>
+
+            <table class="form-table">
+                <tbody>
+
+                    <tr valign="top">
+                        <td scope="row">Font Awesome Support</td>
+                        <td>
+                            <input type="radio" name="oxi_addons_font_awesome" value="yes" <?php checked('yes', get_option('oxi_addons_font_awesome'), true); ?>>YES
+                            <input type="radio" name="oxi_addons_font_awesome" value="" <?php checked('', get_option('oxi_addons_font_awesome'), true); ?>>No
+                        </td>
+                        <td>
+                            <label class="description" for="oxi_addons_font_awesome"><?php _e('Load Font Awesome CSS at shortcode loading, If your theme already loaded select No for faster loading'); ?></label>
+                        </td>
+                    </tr> 
+                    <tr valign="top">
+                        <td scope="row">Font Awesome Version?</td>
+                        <td>
+                            <select name="oxi_addons_font_awesome_version">
+                                <?php foreach ($fontawesomevr as $value) { ?>
+                                    <option value="<?php echo $value['url']; ?>" <?php selected($fontawvr, $value['url']); ?>><?php echo $value['name']; ?></option>
+                                <?php } ?>
+                            </select>
+                        </td>
+                        <td>
+                            <label class="description" for="oxi_addons_font_awesome_version"><?php _e('Select Your Font Awesome version, Which are using into your sites so Its will not conflict your Icons'); ?></label>
+                        </td>
+                    </tr>  
+
+                </tbody>
+            </table>
+            <?php submit_button(); ?>
         </form>
+
+
         <br>
         <br>
         <br>
@@ -455,19 +549,15 @@ function image_hover_ultimate_license_page() {
         <?php
     }
 
-    function image_hover_ultimate_mobile_device_option() {
-        // creates our settings in the options table
-        register_setting('image_hover_ultimate_mobile_device', 'image_hover_ultimate_mobile_device_key');
+    function oxi_addons_plugin_iheu_settings() {
+        //register our settings
+        register_setting('oxi-addons-iheu-settings-group', 'image_hover_ultimate_mobile_device_key');
+        register_setting('oxi-addons-iheu-settings-group', 'image_hover_ultimate_user_role_key');
+        register_setting('oxi-addons-iheu-settings-group', 'oxi_addons_font_awesome_version');
+        register_setting('oxi-addons-iheu-settings-group', 'oxi_addons_fixed_header_size');
     }
 
-    add_action('admin_init', 'image_hover_ultimate_mobile_device_option');
-
-    function image_hover_ultimate_user_role_option() {
-        // creates our settings in the options table
-        register_setting('image_hover_ultimate_user_role', 'image_hover_ultimate_user_role_key');
-    }
-
-    add_action('admin_init', 'image_hover_ultimate_user_role_option');
+    add_action('admin_init', 'oxi_addons_plugin_iheu_settings');
 
     function image_hover_ultimate_register_option() {
         // creates our settings in the options table
@@ -723,7 +813,7 @@ function image_hover_ultimate_license_page() {
                 <a href="https://www.oxilab.org/docs/image-hover-effects-ultimate/getting-started/installing-for-first-time/" target="_blank">
                     <div class="col-xs-support-ihewc">
                         <div class="ihewc-admin-support-icon">
-                            <i class="fas fa-ticket-alt" aria-hidden="true"></i>
+                            <i class="fas fa-file" aria-hidden="true"></i>
                         </div>  
                         <div class="ihewc-admin-support-heading">
                             Read Our Docs
@@ -736,7 +826,7 @@ function image_hover_ultimate_license_page() {
                 <a href="https://wordpress.org/support/plugin/image-hover-effects-ultimate" target="_blank">
                     <div class="col-xs-support-ihewc">
                         <div class="ihewc-admin-support-icon">
-                            <i class="fas fa-ticket-alt" aria-hidden="true"></i>
+                            <i class="fas fa-users" aria-hidden="true"></i>
                         </div>  
                         <div class="ihewc-admin-support-heading">
                             Support
@@ -765,83 +855,158 @@ function image_hover_ultimate_license_page() {
     }
 
     function iheu_promote_free() {
+        if (is_plugin_active('shortcode-addons/index.php')) {
+            echo '<div class="iheu-admin-wrapper">
+                <ul class="oxilab-admin-menu">  
+                    <li><a href="' . admin_url('admin.php?page=image-hover-ultimate') . '">Home</a></li>
+                    <li><a href="' . admin_url('admin.php?page=image-hover-ultimate-new') . '">General Effects</a></li>
+                    <li><a href="' . admin_url('admin.php?page=image-hover-ultimate-square') . '">Square Effects</a></li>
+                    <li><a href="' . admin_url('admin.php?page=image-hover-ultimate-button') . '">Button Effects</a></li>
+                    <li><a href="' . admin_url('admin.php?page=oxi-addons') . '">Shortcode Addons</a></li>
+                </ul>
+            </div> ';
+        } else {
+            echo '<div class="iheu-admin-wrapper">
+                <ul class="oxilab-admin-menu">  
+                    <li><a href="' . admin_url('admin.php?page=image-hover-ultimate') . '">Home</a></li>
+                    <li><a href="' . admin_url('admin.php?page=image-hover-ultimate-new') . '">General Effects</a></li>
+                    <li><a href="' . admin_url('admin.php?page=image-hover-ultimate-square') . '">Square Effects</a></li>
+                    <li><a href="' . admin_url('admin.php?page=image-hover-ultimate-button') . '">Button Effects</a></li>
+                    <li><a href="' . admin_url('admin.php?page=image-hover-ultimate-license') . '">Settings</a></li>
+                    <li><a href="' . admin_url('admin.php?page=image-hover-ultimate-addons') . '">Shortcode Addons</a></li>
+                </ul>
+            </div> ';
+        }
         $status = get_option('image_hover_ultimate_license_status');
-        ?>
-        <div class="oxilab-admin-notifications">
-            <h3>
-                <span class="dashicons dashicons-flag"></span> 
-                Notifications
-            </h3>
-            <p></p>
-            <div class="oxilab-admin-notifications-holder">
-                <div class="oxilab-admin-notifications-alert">
-                    <p>Thank you for using Image Hover Effects Ultimate – Captions Hover with Visual Composer. I Just wanted to see if you have any questions or concerns about my plugins. If you do, Please do not hesitate to <a href="https://wordpress.org/support/plugin/image-hover-effects-ultimate#new-post">file a bug report</a>.</p>
-                    <?php
-                    if ($status == 'valid') {
-                        echo '';
-                    } else {
-                        echo ' <p> By the way, did you know we also have a <a href="https://www.oxilab.org/downloads/image-hover-ultimate-pro/">Premium Version</a>? It offers lots of options with automatic update. It also comes with 16/5 personal support.</p>';
-                    }
-                    ?>
-                    <p>Thanks Again!</p>
+        if ($status != 'valid') {
+            $jquery = 'jQuery(".iheu-vendor-color").each(function (index, value) {                             
+                            jQuery(this).parent().siblings(".col-sm-6.oxi-control-label").append(" <span class=\"oxi-pro-only\">Pro</span>");
+                            var datavalue = jQuery(this).val();
+                            jQuery(this).attr("oxivalue", datavalue);
+                        });
+                        jQuery(".cau-admin-font").each(function (index, value) {
+                            jQuery(this).parent().siblings(".col-sm-6.oxi-control-label").append(" <span class=\"oxi-pro-only\">Pro</span>");
+                            var datavalue = jQuery(this).val();
+                            jQuery(this).attr("oxivalue", datavalue);
+                        });
+                         jQuery("#iheu-hover-image-upload-url").each(function (index, value) {
+                            var dataid = jQuery(this).attr("id");
+                            jQuery("." + dataid).append(" <span class=\"oxi-pro-only\">Pro Only</span>");
+                        });
+                        jQuery("#iheu-css").each(function (index, value) {
+                            var dataid = jQuery(this).attr("id");
+                            jQuery("." + dataid).append(" <span class=\"oxi-pro-only\">Pro Only</span>");
+                            var datavalue = jQuery(this).val();
+                            jQuery(this).attr("oxivalue", datavalue);
+                        });
+                        jQuery("#oxi-style-submit").submit(function () {
+                            jQuery(".iheu-vendor-color").each(function (index, value) {
+                                var datavalue = jQuery(this).attr("oxivalue");
+                                jQuery(this).val(datavalue);
+                            });
+                            jQuery(".cau-admin-font").each(function (index, value) {
+                                var datavalue = jQuery(this).attr("oxivalue");
+                                jQuery(this).val(datavalue);
+                            });
+                            jQuery("#iheu-css").each(function (index, value) {
+                                jQuery(this).val("");
+                            });
+                        });';
+            wp_add_inline_script('YouTubePopUps', $jquery);
+        }
+        echo '<div class="oxilab-admin-notifications">
+                <h3>
+                    <span class="dashicons dashicons-flag"></span> 
+                    Notifications
+                </h3>
+                <p></p>
+                <div class="oxilab-admin-notifications-holder">
+                    <div class="oxilab-admin-notifications-alert">
+                        <p>Thank you for using Image Hover Effects Ultimate – Captions Hover with Visual Composer. I Just wanted to see if you have any questions or concerns about my plugins. If you do, Please do not hesitate to <a href="https://wordpress.org/support/plugin/image-hover-effects-ultimate#new-post">file a bug report</a>.</p>
+                     ';
+        if ($status != 'valid') {
+            echo '<p>By the way, did you know we also have a <a href="https://www.oxilab.org/downloads/image-hover-ultimate-pro/">Premium Version</a>? It offers lots of options with automatic update. It also comes with 16/5 personal support.</p>';
+        }
+        echo ' <p>Thanks Again!</p>
                     <p></p>
                 </div>                        
             </div>
             <p></p>
         </div> 
-        <p></p>
+        <p></p>';
+        ?>
+
+
         <?php
     }
 
-    function image_hover_ultimate_set_no_bug() {
-        $nobug = "";
-        if (isset($_GET['image_hover_ultimate_nobug'])) {
-            $nobug = esc_attr($_GET['image_hover_ultimate_nobug']);
-        }
-        if ('already' == $nobug) {
-            add_option('image_hover_ultimate_no_bug', $nobug);
-        } elseif ('later' == $nobug) {
-            $now = strtotime("now");
-            update_option('image_hover_ultimate_activation_date', $now);
-        }
-    }
+    $oxi_addons_install = get_option('oxi_addons_install');
+    if (empty($oxi_addons_install)) {
 
-    add_action('admin_init', 'image_hover_ultimate_set_no_bug');
-
-    function image_hover_ultimate_check_installation_date() {
-        $nobug = "";
-        $nobug = get_option('image_hover_ultimate_no_bug');
-        $past_date = strtotime('-7 days');
-        if ($nobug != 'already') {
-            $install_date = get_option('image_hover_ultimate_activation_date');
-            if (empty($install_date)) {
+        function image_hover_ultimate_set_no_bug() {
+            $nobug = "";
+            if (isset($_GET['image_hover_ultimate_nobug'])) {
+                $nobug = esc_attr($_GET['image_hover_ultimate_nobug']);
+            }
+            if ('already' == $nobug) {
+                add_option('image_hover_ultimate_no_bug', $nobug);
+            } elseif ('later' == $nobug) {
                 $now = strtotime("now");
-                add_option('image_hover_ultimate_activation_date', $now);
-            } elseif ($past_date >= $install_date) {
-                add_action('admin_notices', 'image_hover_ultimate_display_admin_notice');
+                update_option('image_hover_ultimate_activation_date', $now);
             }
         }
-    }
 
-    add_action('admin_init', 'image_hover_ultimate_check_installation_date');
+        add_action('admin_init', 'image_hover_ultimate_set_no_bug');
 
-    function image_hover_ultimate_display_admin_notice() {
+        function image_hover_ultimate_check_installation_date() {
+            $nobug = "";
+            $nobug = get_option('image_hover_ultimate_no_bug');
+            $past_date = strtotime('-7 days');
+            if ($nobug != 'already') {
+                $install_date = get_option('image_hover_ultimate_activation_date');
+                if (empty($install_date)) {
+                    $now = strtotime("now");
+                    add_option('image_hover_ultimate_activation_date', $now);
+                } elseif ($past_date >= $install_date) {
+                    add_action('admin_notices', 'image_hover_ultimate_display_admin_notice');
+                }
+            }
+        }
 
-        // Review URL - Change to the URL of your plugin on WordPress.org
-        $reviewurl = 'https://wordpress.org/plugins/image-hover-effects-ultimate/';
+        add_action('admin_init', 'image_hover_ultimate_check_installation_date');
 
-        $nobugurl = get_admin_url() . '?image_hover_ultimate_nobug=later';
-        $nobugurl2 = get_admin_url() . '?image_hover_ultimate_nobug=already';
+        function image_hover_ultimate_display_admin_notice() {
 
-        echo '<div class="updated">';
-        echo '<p></p>';
+            // Review URL - Change to the URL of your plugin on WordPress.org
+            $reviewurl = 'https://wordpress.org/plugins/image-hover-effects-ultimate/';
 
-        printf(__('<p>Hey, You’ve using <strong>Image Hover Effects Ultimate – Captions Hover with Visual Composer </strong> more than 1 week – that’s awesome! Could you please do me a BIG favor and give it a 5-star rating on WordPress? Just to help us spread the word and boost our motivation.!
+            $nobugurl = get_admin_url() . '?image_hover_ultimate_nobug=later';
+            $nobugurl2 = get_admin_url() . '?image_hover_ultimate_nobug=already';
+
+            echo '<div class="updated">';
+            echo '<p></p>';
+
+            printf(__('<p>Hey, You’ve using <strong>Image Hover Effects Ultimate – Captions Hover with Visual Composer </strong> more than 1 week – that’s awesome! Could you please do me a BIG favor and give it a 5-star rating on WordPress? Just to help us spread the word and boost our motivation.!
                      </p>
                     <p><a href=%s target="_blank"><strong>Ok, you deserve it</strong></a></p>
                     <p><a href=%s><strong>Nope, maybe later</strong></a> </p>
                     <p><a href=%s><strong>I already did</strong></a> </p>'), $reviewurl, $nobugurl, $nobugurl2);
-        echo '<p></p>';
-        echo "</div>";
+            echo '<p></p>';
+            echo "</div>";
+        }
+
+    }
+
+    function iheudatainputid($style, $id) {
+        $status = get_option('image_hover_ultimate_license_status');
+        if ($status == 'valid') {
+            echo '<button type="button" class="btn btn-success orphita-style-select" dataid="' . $style . '-' . $id . '">Select</button>';
+        } else {
+            if (($style == 'general' && $id < 16) OR ( $style == 'square' && $id < 16) OR ( $style == 'button' && $id < 6)) {
+                echo '<button type="button" class="btn btn-success orphita-style-select" dataid="' . $style . '-' . $id . '">Select</button>';
+            } else {
+                echo '<button type="button" class="btn btn-danger">Pro Only</button>';
+            }
+        }
     }
     

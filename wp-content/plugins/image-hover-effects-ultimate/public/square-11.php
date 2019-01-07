@@ -6,7 +6,6 @@ $styleid = (int) $_GET['styleid'];
 global $wpdb;
 $table_list = $wpdb->prefix . 'image_hover_ultimate_list';
 $table_name = $wpdb->prefix . 'image_hover_ultimate_style';
-$status = get_option('image_hover_ultimate_license_status');
 $title = '';
 $files = '';
 $link = '';
@@ -25,12 +24,12 @@ if (!empty($_POST['submit']) && $_POST['submit'] == 'submit') {
     if (!wp_verify_nonce($nonce, 'iheuitemdata')) {
         die('You do not have sufficient permissions to access this page.');
     } else {
-        $ihtitle = sanitize_text_field($_POST['iheu-title']);
-        $ihfiles = sanitize_text_field($_POST['iheu-desc']);
-        $ihbotton = sanitize_text_field($_POST['iheu-bottom']);
+        $ihtitle = sanitize_text_field(htmlentities($_POST['iheu-title']));
+        $ihfiles = sanitize_text_field(htmlentities($_POST['iheu-desc']));
+        $ihbotton = sanitize_text_field(htmlentities($_POST['iheu-bottom']));
         $ihlink = sanitize_text_field($_POST['iheu-link']);
         $ihimage = sanitize_text_field($_POST['iheu-image-upload-url']);
-        $ihhoverimage = $status == 'valid' ? sanitize_text_field($_POST['iheu-hover-image-upload-url']) : '';
+        $ihhoverimage = sanitize_text_field($_POST['iheu-hover-image-upload-url']);
         if ($_POST['item-id'] == '') {
             $wpdb->query($wpdb->prepare("INSERT INTO $table_list (title, files, buttom_text, link, image, hoverimage, styleid) VALUES ( %s, %s, %s, %s, %s, %s, %d)", array($ihtitle, $ihfiles, $ihbotton, $ihlink, $ihimage, $ihhoverimage, $styleid)));
         }
@@ -71,65 +70,49 @@ if (!empty($_POST['data-submit']) && $_POST['data-submit'] == 'Save') {
     if (!wp_verify_nonce($nonce, 'iheueffectsstyle')) {
         die('You do not have sufficient permissions to access this page.');
     } else {
-        $bgcolor = $status == 'valid' ? sanitize_text_field($_POST['background-color']) : 'rgba(0, 146, 194, 1)';
-        $imageanimation = $status == 'valid' ? sanitize_text_field($_POST['image-animation']) : '';
-        $contentanimation = $status == 'valid' ? sanitize_text_field($_POST['content-animation']) : '';
-        $innershadow = $status == 'valid' ? sanitize_text_field($_POST['inner-shadow']) : '0';
-        $headingfontcolor = $status == 'valid' ? sanitize_hex_color($_POST['heading-font-color']) : '#FFF';
-        $headingbackgroundcolor = $status == 'valid' ? sanitize_text_field($_POST['heading-background-color']) : 'rgba(176, 0, 199, 1)';
-        $headingfontfamilly = $status == 'valid' ? sanitize_text_field($_POST['heading-font-familly']) : 'Open+Sans';
-        $descfontcolor = $status == 'valid' ? sanitize_hex_color($_POST['desc-font-color']) : '#FFF';
-        $descfontfamilly = $status == 'valid' ? sanitize_text_field($_POST['desc-font-familly']) : 'Open+Sans';
-        $buttonfontcolor = $status == 'valid' ? sanitize_hex_color($_POST['bottom-font-color']) : '#FFF';
-        $buttonfontbackground = $status == 'valid' ? sanitize_text_field($_POST['bottom-font-background']) : 'rgba(126, 0, 158, 1)';
-        $buttonhovercolor = $status == 'valid' ? sanitize_hex_color($_POST['bottom-hover-color']) : '#7e009e';
-        $buttonfontfamily = $status == 'valid' ? sanitize_text_field($_POST['bottom-font-familly']) : 'Open+Sans';
-        $buttonhoverbackground = $status == 'valid' ? sanitize_text_field($_POST['bottom-hover-background']) : 'rgba(255, 255, 255, 1)';
-        $iheucss = $status == 'valid' ? sanitize_text_field($_POST['iheu-css']) : '';
-        
         $data = 'iheu-item |' . sanitize_text_field($_POST['iheu-item']) . '|'
                 . 'image-radius ||'
                 . 'image-width |' . sanitize_text_field($_POST['image-width']) . '|'
                 . 'image-height |' . sanitize_text_field($_POST['image-height']) . '|'
                 . 'image-margin |' . sanitize_text_field($_POST['image-margin']) . '|'
                 . 'image-padding |' . sanitize_text_field($_POST['image-padding']) . '|'
-                . 'background-color |'.$bgcolor.'|'
+                . 'background-color |' . sanitize_text_field($_POST['background-color']) . '|'
                 . 'content-alignment |' . sanitize_text_field($_POST['content-alignment']) . '|'
                 . 'open-in-new-tab |' . sanitize_text_field($_POST['open-in-new-tab']) . '|'
-                . 'image-animation |'.$imageanimation.'|'
+                . 'image-animation |' . sanitize_text_field($_POST['image-animation']) . '|'
                 . 'animation-durations |' . sanitize_text_field($_POST['animation-durations']) . '|'
-                . 'content-animation |'.$contentanimation.'|'
-                . 'inner-shadow |'.$innershadow.'|'
+                . 'content-animation |' . sanitize_text_field($_POST['content-animation']) . '|'
+                . 'inner-shadow |' . sanitize_text_field($_POST['inner-shadow']) . '|'
                 . 'inner-shadow-color |' . sanitize_text_field($_POST['inner-shadow-color']) . '|'
                 . 'box-shadow ||'
                 . 'box-shadow-color ||'
                 . 'heading-font-size |' . sanitize_text_field($_POST['heading-font-size']) . '|'
-                . 'heading-font-color |'.$headingfontcolor.'|'
-                . 'heading-font-familly |'.$headingfontfamilly.'|'
+                . 'heading-font-color |' . sanitize_text_field($_POST['heading-font-color']) . '|'
+                . 'heading-font-familly |' . sanitize_text_field($_POST['heading-font-familly']) . '|'
                 . 'heading-font-weight |' . sanitize_text_field($_POST['heading-font-weight']) . '|'
                 . 'heading-underline ||'
                 . 'heading-padding-bottom ||'
                 . 'heading-margin-bottom |' . sanitize_text_field($_POST['heading-margin-bottom']) . '|'
                 . 'desc-font-size |' . sanitize_text_field($_POST['desc-font-size']) . '|'
-                . 'desc-font-color |'.$descfontcolor.'|'
-                . 'desc-font-familly |'.$descfontfamilly.'|'
+                . 'desc-font-color |' . sanitize_text_field($_POST['desc-font-color']) . '|'
+                . 'desc-font-familly |' . sanitize_text_field($_POST['desc-font-familly']) . '|'
                 . 'desc-font-weight |' . sanitize_text_field($_POST['desc-font-weight']) . '|'
                 . 'desc-padding-bottom |' . sanitize_text_field($_POST['desc-padding-bottom']) . '|'
                 . 'bottom-font-size |' . sanitize_text_field($_POST['bottom-font-size']) . '|'
-                . 'bottom-font-color |'.$buttonfontcolor.'|'
-                . 'bottom-font-background |'.$buttonfontbackground.'|'
-                . 'bottom-font-familly |'.$buttonfontfamily.'|'
+                . 'bottom-font-color |' . sanitize_text_field($_POST['bottom-font-color']) . '|'
+                . 'bottom-font-background |' . sanitize_text_field($_POST['bottom-font-background']) . '|'
+                . 'bottom-font-familly |' . sanitize_text_field($_POST['bottom-font-familly']) . '|'
                 . 'bottom-font-weight |' . sanitize_text_field($_POST['bottom-font-weight']) . '|'
-                . 'bottom-hover-color |'.$buttonhovercolor.'|'
-                . 'bottom-hover-background |'.$buttonhoverbackground.'|'
+                . 'bottom-hover-color |' . sanitize_text_field($_POST['bottom-hover-color']) . '|'
+                . 'bottom-hover-background |' . sanitize_text_field($_POST['bottom-hover-background']) . '|'
                 . 'bottom-border-radius |' . sanitize_text_field($_POST['bottom-border-radius']) . '|'
                 . 'bottom-padding-top-bottom |' . sanitize_text_field($_POST['bottom-padding-top-bottom']) . '|'
                 . 'bottom-padding-left-right |' . sanitize_text_field($_POST['bottom-padding-left-right']) . '|'
                 . 'bottom-align |' . sanitize_text_field($_POST['bottom-align']) . '|'
                 . 'bottom-margin-left |' . sanitize_text_field($_POST['bottom-margin-left']) . '|'
                 . 'bottom-margin-right |' . sanitize_text_field($_POST['bottom-margin-right']) . '|'
-                . 'iheu-css |'.$iheucss.'|'
-                . 'heading-background-color |'.$headingbackgroundcolor.'|'
+                . 'iheu-css |' . sanitize_text_field($_POST['iheu-css']) . '|'
+                . 'heading-background-color |' . sanitize_text_field($_POST['heading-background-color']) . '|'
                 . 'heading-padding |' . sanitize_text_field($_POST['heading-padding']) . '|'
                 . 'heading-margin-top |' . sanitize_text_field($_POST['heading-margin-top']) . '|'
                 . 'iheu-directions |' . sanitize_text_field($_POST['iheu-directions']) . '|';
@@ -144,11 +127,12 @@ $styledata = $styledata['css'];
 $styledata = explode('|', $styledata);
 ?>
 <div class="wrap">
+    <?php echo iheu_promote_free(); ?>
     <div class="iheu-admin-wrapper">
         <div class="iheu-admin-row">
             <div class="iheu-style-panel-left">
                 <div class="iheu-style-setting-panel">
-                    <form method="post">
+                    <form method="post" id="oxi-style-submit">
 
                         <div class="ctu-ultimate-wrapper-3"> 
                             <ul class="ctu-ulimate-style-3">  
@@ -176,7 +160,7 @@ $styledata = explode('|', $styledata);
                                 <div class="ctu-ulitate-style-3-tabs" id="ctu-ulitate-style-3-id-6">
                                     <div class="iheu-admin-style-settings-div-left">
                                         <div class="form-group row form-group-sm">
-                                            <label for="iheu-item" class="col-sm-6 col-form-label" data-toggle="tooltip" data-placement="top" title="Customize How many Item You want to Show in a single Row ">Item Per Row </label>
+                                            <label for="iheu-item" class="col-sm-6 oxi-control-label" data-toggle="tooltip" data-placement="top" title="Customize How mane Item You want to Show in a single Row ">Item Per Row </label>
                                             <div class="col-sm-6 nopadding">
                                                 <select class="form-control" id="iheu-item" name="iheu-item">
                                                     <?php iheu_item_admin_data($styledata[1]); ?>
@@ -184,7 +168,7 @@ $styledata = explode('|', $styledata);
                                             </div>
                                         </div>
                                         <div class="form-group row form-group-sm">
-                                            <label for="iheu-directions" class="col-sm-6 col-form-label" data-toggle="tooltip" data-placement="top" title="Customize How Which type of Effects You Want to Use ">Effects Directions </label>
+                                            <label for="iheu-directions" class="col-sm-6 oxi-control-label" data-toggle="tooltip" data-placement="top" title="Customize How Which type of Effects You Want to Use ">Effects Directions </label>
                                             <div class="col-sm-6 nopadding">
                                                 <select class="form-control" id="iheu-directions" name="iheu-directions">
                                                     <option <?php
@@ -211,43 +195,43 @@ $styledata = explode('|', $styledata);
                                             </div>
                                         </div>
                                         <div class="form-group row form-group-sm">
-                                            <label for="image-width" class="col-sm-6 control-label" data-toggle="tooltip" data-placement="top" title="Set Image Max width, It will work if max Width is available in div" >Image Width</label>
+                                            <label for="image-width" class="col-sm-6 oxi-control-label" data-toggle="tooltip" data-placement="top" title="Set Image Max width, It will work if max Width is available in div" >Image Width</label>
                                             <div class="col-sm-6 nopadding">
-                                                <input type="number" class="form-control" min="50" max="1200" step="1" id="image-width" name="image-width" value="<?php echo $styledata[5]; ?>">
+                                                <input type="number" class="form-control" min="50" max="2400" step="1" id="image-width" name="image-width" value="<?php echo $styledata[5]; ?>">
                                             </div>
                                         </div>
                                         <div class="form-group row form-group-sm">
-                                            <label for="image-height" class="col-sm-6 control-label" data-toggle="tooltip" data-placement="top" title="Set Height, Our Auto Set make it on percentize with width for responsive" >Image Height</label>
+                                            <label for="image-height" class="col-sm-6 oxi-control-label" data-toggle="tooltip" data-placement="top" title="Set Height, Our Auto Set make it on percentize with width for responsive" >Image Height</label>
                                             <div class="col-sm-6 nopadding">
-                                                <input type="number" class="form-control" min="50" max="1200" step="1" id="image-height" name="image-height" value="<?php echo $styledata[7]; ?>">
+                                                <input type="number" class="form-control" min="50" max="2400" step="1" id="image-height" name="image-height" value="<?php echo $styledata[7]; ?>">
                                             </div>
                                         </div>
                                         <div class="form-group row form-group-sm">
-                                            <label for="image-margin" class="col-sm-6 control-label" data-toggle="tooltip" data-placement="top" title="Set Image Margin make Distange from Image to Image" >Image Margin</label>
+                                            <label for="image-margin" class="col-sm-6 oxi-control-label" data-toggle="tooltip" data-placement="top" title="Set Image Margin make Distange from Image to Image" >Image Margin</label>
                                             <div class="col-sm-6 nopadding">
                                                 <input type="number" class="form-control" min="0" max="100" step="1" id="image-margin" name="image-margin" value="<?php echo $styledata[9]; ?>">
                                             </div>
                                         </div>
                                         <div class="form-group row form-group-sm">
-                                            <label for="image-padding" class="col-sm-6 control-label" data-toggle="tooltip" data-placement="top" title="Set Content Padding to make distance of Image Content" >Content Padding</label>
+                                            <label for="image-padding" class="col-sm-6 oxi-control-label" data-toggle="tooltip" data-placement="top" title="Set Content Padding to make distance of Image Content" >Content Padding</label>
                                             <div class="col-sm-6 nopadding">
                                                 <input type="number" class="form-control" min="0" max="100" step="1" id="image-square-padding" name="image-padding" value="<?php echo $styledata[11]; ?>">
                                             </div>
                                         </div>
                                         <div class="form-group row form-group-sm">
-                                            <label for="background-color" class="col-sm-6 control-label" data-toggle="tooltip" data-placement="top" title="Set Your image hover background Color, Based on Color">Background <?php if ($status != 'valid') {   echo '<span class="ctu-pro-only">Pro Only</span>';  } ?> </label>
+                                            <label for="background-color" class="col-sm-6 oxi-control-label" data-toggle="tooltip" data-placement="top" title="Set Your image hover background Color, Based on Color">Background </label>
                                             <div class="col-sm-6 nopadding">
-                                                <input type="text" class="form-control iheu-vendor-color" data-format="rgb" data-opacity="true"   id="background-color" name="background-color" value="<?php echo $styledata[13]; ?>">
+                                                <input type="text" class="form-control iheu-vendor-color" data-format="rgb" data-opacity="true" id="background-color" name="background-color" value="<?php echo $styledata[13]; ?>">
                                             </div>
                                         </div>
                                         <div class="form-group row form-group-sm">
-                                            <label for="content-alignment" class="col-sm-6 col-form-label" data-toggle="tooltip" data-placement="top" title="Customize Your content Alignments ">Content Alignments </label>
+                                            <label for="content-alignment" class="col-sm-6 oxi-control-label" data-toggle="tooltip" data-placement="top" title="Customize Your content Alignments ">Content Alignments </label>
                                             <?php iheu_content_alignment_admin_data($styledata[15]); ?>
                                         </div>
                                     </div>
                                     <div class="iheu-admin-style-settings-div-right">
                                         <div class="form-group row row form-group-sm">
-                                            <label class="col-sm-6 control-label"  data-toggle="tooltip" data-placement="top" title="Make sure that You want to Open your link in same Tab or new Tab">Open In New Tab?</label>
+                                            <label class="col-sm-6 oxi-control-label"  data-toggle="tooltip" data-placement="top" title="Make sure that You want to Open your link in same Tab or new Tab">Open In New Tab?</label>
                                             <div class="col-sm-6">
                                                 <div class="btn-group" data-toggle="buttons">
                                                     <label class="btn btn-info <?php
@@ -276,7 +260,7 @@ $styledata = explode('|', $styledata);
                                             </div>
                                         </div>
                                         <div class="form-group row form-group-sm">
-                                            <label for="image-animation" class="col-sm-6 col-form-label" data-toggle="tooltip" data-placement="top" title="Image Vewing Animaion">Image Animation <?php if ($status != 'valid') {   echo '<span class="ctu-pro-only">Pro Only</span>';  } ?></label>
+                                            <label for="image-animation" class="col-sm-6 oxi-control-label" data-toggle="tooltip" data-placement="top" title="Image Vewing Animaion">Image Animation</label>
                                             <div class="col-sm-6 nopadding">
                                                 <select class="form-control" id="image-animation" name="image-animation">                                           
                                                     <?php iheu_image_animation_admin_data($styledata[19]) ?>
@@ -284,13 +268,13 @@ $styledata = explode('|', $styledata);
                                             </div>
                                         </div>
                                         <div class="form-group row form-group-sm">
-                                            <label for="animation-durations" class="col-sm-6 control-label" data-toggle="tooltip" data-placement="top" title="Image Viewing Animation Duration" >Animation Duration</label>
+                                            <label for="animation-durations" class="col-sm-6 oxi-control-label" data-toggle="tooltip" data-placement="top" title="Image Viewing Animation Duration" >Animation Duration</label>
                                             <div class="col-sm-6 nopadding">
                                                 <input type="number" class="form-control" min="0" max="10" step=0.1 id="animation-durations" name="animation-durations" value="<?php echo $styledata[21]; ?>">
                                             </div>
                                         </div>
                                         <div class="form-group row form-group-sm">
-                                            <label for="content-animation" class="col-sm-6 col-form-label" data-toggle="tooltip" data-placement="top" title="Choose Your Text Animation">Content Animation  <?php if ($status != 'valid') {   echo '<span class="ctu-pro-only">Pro Only</span>';  } ?></label>
+                                            <label for="content-animation" class="col-sm-6 oxi-control-label" data-toggle="tooltip" data-placement="top" title="Choose Your Text Animation">Content Animation  </label>
                                             <div class="col-sm-6 nopadding">
                                                 <select class="form-control" id="content-animation" name="content-animation">
                                                     <?php iheu_content_animation_admin_panel($styledata[23]) ?>
@@ -298,15 +282,15 @@ $styledata = explode('|', $styledata);
                                             </div>
                                         </div>
                                         <div class="form-group row form-group-sm">
-                                            <label for="inner-shadow" class="col-sm-6 control-label" data-toggle="tooltip" data-placement="top" title="Inner Shadow is showing on Image inner, Doesn't want make it 0" >Inner Shadow <?php if ($status != 'valid') {   echo '<span class="ctu-pro-only">Pro Only</span>';  } ?></label>
+                                            <label for="inner-shadow" class="col-sm-6 oxi-control-label" data-toggle="tooltip" data-placement="top" title="Inner Shadow is showing on Image inner, Doesn't want make it 0" >Inner Shadow</label>
                                             <div class="col-sm-6 nopadding">
                                                 <input type="number" class="form-control"  min="0" max="100" step="1" id="inner-shadow" name="inner-shadow" value="<?php echo $styledata[25]; ?>">
                                             </div>
                                         </div>
                                         <div class="form-group row form-group-sm">
-                                            <label for="inner-shadow-color" class="col-sm-6 control-label" data-toggle="tooltip" data-placement="top" title="Customize Your Inner Shadow Color">Inner Shadow Color </label>
+                                            <label for="inner-shadow-color" class="col-sm-6 oxi-control-label" data-toggle="tooltip" data-placement="top" title="Customize Your Inner Shadow Color">Inner Shadow Color </label>
                                             <div class="col-sm-6 nopadding">
-                                                <input type="text" class="form-control iheu-vendor-color"  data-format="rgb" data-opacity="true"   id="inner-shadow-color" name="inner-shadow-color" value="<?php echo $styledata[27]; ?>">
+                                                <input type="text" class="form-control iheu-vendor-color" data-format="rgb" data-opacity="true"  id="inner-shadow-color" name="inner-shadow-color" value="<?php echo $styledata[27]; ?>">
                                             </div>
                                         </div>
                                     </div>
@@ -314,32 +298,32 @@ $styledata = explode('|', $styledata);
                                 <div class="ctu-ulitate-style-3-tabs" id="ctu-ulitate-style-3-id-5">
                                     <div class="iheu-admin-style-settings-div-left">
                                         <div class="form-group row form-group-sm">
-                                            <label for="heading-font-size" class="col-sm-6 control-label" data-toggle="tooltip" data-placement="top" title="Set Your Heanding or Title font size" >Font Size</label>
+                                            <label for="heading-font-size" class="col-sm-6 oxi-control-label" data-toggle="tooltip" data-placement="top" title="Set Your Heanding or Title font size" >Heading font Size</label>
                                             <div class="col-sm-6 nopadding">
                                                 <input type="number" class="form-control" min="0" max="100" step="1" id="heading-font-size" name="heading-font-size" value="<?php echo $styledata[33]; ?>">
                                             </div>
                                         </div>
                                         <div class="form-group row form-group-sm">
-                                            <label for="heading-font-color" class="col-sm-6 control-label" data-toggle="tooltip" data-placement="top" title="Change The Title font Color">Font Color <?php if ($status != 'valid') {   echo '<span class="ctu-pro-only">Pro Only</span>';  } ?></label>
+                                            <label for="heading-font-color" class="col-sm-6 oxi-control-label" data-toggle="tooltip" data-placement="top" title="Change The Title font Color">Font Color </label>
                                             <div class="col-sm-6 nopadding">
                                                 <input type="text" class="form-control iheu-vendor-color" id="heading-font-color" name="heading-font-color" value="<?php echo $styledata[35]; ?>">
                                             </div>
                                         </div>
                                         <div class="form-group row form-group-sm">
-                                            <label for="heading-background-color" class="col-sm-6 control-label" data-toggle="tooltip" data-placement="top" title="Set Your Heading background Color, Based on Color">Heading Background <?php if ($status != 'valid') {   echo '<span class="ctu-pro-only">Pro Only</span>';  } ?></label>
+                                            <label for="heading-background-color" class="col-sm-6 oxi-control-label" data-toggle="tooltip" data-placement="top" title="Set Your Heading background Color, Based on Color">Heading Background </label>
                                             <div class="col-sm-6 nopadding">
-                                                <input type="text" class="form-control iheu-vendor-color"  data-format="rgb" data-opacity="true"  id="heading-background-color" name="heading-background-color" value="<?php echo $styledata[85]; ?>">
+                                                <input type="text" class="form-control iheu-vendor-color" data-format="rgb" data-opacity="true" id="heading-background-color" name="heading-background-color" value="<?php echo $styledata[85]; ?>">
                                             </div>
                                         </div>
                                         <div class="form-group row form-group-sm">
-                                            <label for="heading-font-familly" class="col-sm-6 col-form-label"  data-toggle="tooltip" data-placement="top" title="Choose Your Title Preferred font, Based on Google Font"> Font Family <?php if ($status != 'valid') {   echo '<span class="ctu-pro-only">Pro Only</span>';  } ?></label>
+                                            <label for="heading-font-familly" class="col-sm-6 oxi-control-label"  data-toggle="tooltip" data-placement="top" title="Choose Your Title Preferred font, Based on Google Font"> Font Family </label>
                                             <div class="col-sm-6 nopadding">
                                                 <input class="cau-admin-font" type="text" name="heading-font-familly" id="heading-font-familly" value="<?php echo $styledata[37]; ?>">
                                             </div>
                                         </div>
 
                                         <div class="form-group row form-group-sm">
-                                            <label for="heading-font-weight" class="col-sm-6 col-form-label" data-toggle="tooltip" data-placement="top" title="Customize Title Font Style">Font Weight</label>
+                                            <label for="heading-font-weight" class="col-sm-6 oxi-control-label" data-toggle="tooltip" data-placement="top" title="Customize Title Font Style">Font Weight</label>
                                             <div class="col-sm-6 nopadding">
                                                 <select class="form-control" id="heading-font-weight" name="heading-font-weight">
                                                     <?php iheu_font_weight_admin_panel($styledata[39]) ?>
@@ -350,19 +334,19 @@ $styledata = explode('|', $styledata);
                                     </div>
                                     <div class="iheu-admin-style-settings-div-right">
                                         <div class="form-group row form-group-sm">
-                                            <label for="heading-padding" class="col-sm-6 control-label" data-toggle="tooltip" data-placement="top" title="Make Bigger or Smaller of Heading Position" >Heading Padding</label>
+                                            <label for="heading-padding" class="col-sm-6 oxi-control-label" data-toggle="tooltip" data-placement="top" title="Make Bigger or Smaller of Heading Position" >Heading Padding</label>
                                             <div class="col-sm-6 nopadding">
                                                 <input type="number" class="form-control" min="0" max="100" step="1" id="heading-padding" name="heading-padding" value="<?php echo$styledata[87]; ?>">
                                             </div>
                                         </div>
                                         <div class="form-group row form-group-sm">
-                                            <label for="heading-margin-top" class="col-sm-6 control-label" data-toggle="tooltip" data-placement="top" title="Make Distance From Up" >Margin Top</label>
+                                            <label for="heading-margin-top" class="col-sm-6 oxi-control-label" data-toggle="tooltip" data-placement="top" title="Make Distance From Up" >Margin Top</label>
                                             <div class="col-sm-6 nopadding">
                                                 <input type="number" class="form-control" min="0" max="100" step="1" id="heading-margin-top" name="heading-margin-top" value="<?php echo$styledata[89]; ?>">
                                             </div>
                                         </div>
                                         <div class="form-group row form-group-sm">
-                                            <label for="heading-margin-bottom" class="col-sm-6 control-label" data-toggle="tooltip" data-placement="top" title="Make Distance From Descriptions" >Margin Bottom</label>
+                                            <label for="heading-margin-bottom" class="col-sm-6 oxi-control-label" data-toggle="tooltip" data-placement="top" title="Make Distance From Descriptions" >Margin Bottom</label>
                                             <div class="col-sm-6 nopadding">
                                                 <input type="number" class="form-control" min="0" max="100" step="1" id="heading-margin-bottom" name="heading-margin-bottom" value="<?php echo$styledata[45]; ?>">
                                             </div>
@@ -373,26 +357,26 @@ $styledata = explode('|', $styledata);
                                 <div class="ctu-ulitate-style-3-tabs " id="ctu-ulitate-style-3-id-4">
                                     <div class="iheu-admin-style-settings-div-left">
                                         <div class="form-group row form-group-sm">
-                                            <label for="desc-font-size" class="col-sm-6 control-label" data-toggle="tooltip" data-placement="top" title="Set Your Description Font Size" >Font Size</label>
+                                            <label for="desc-font-size" class="col-sm-6 oxi-control-label" data-toggle="tooltip" data-placement="top" title="Set Your Description Font Size" >font Size</label>
                                             <div class="col-sm-6 nopadding">
                                                 <input type="number" class="form-control" min="0" max="100" step="1" id="desc-font-size" name="desc-font-size" value="<?php echo$styledata[47]; ?>">
                                             </div>
                                         </div>
                                         <div class="form-group row form-group-sm">
-                                            <label for="desc-font-color" class="col-sm-6 control-label" data-toggle="tooltip" data-placement="top" title="Set Your Description Color, Based on Color">Font Color <?php if ($status != 'valid') {   echo '<span class="ctu-pro-only">Pro Only</span>';  } ?></label>
+                                            <label for="desc-font-color" class="col-sm-6 oxi-control-label" data-toggle="tooltip" data-placement="top" title="Set Your Description Color, Based on Color">Font Color </label>
                                             <div class="col-sm-6 nopadding">
                                                 <input type="text" class="form-control iheu-vendor-color" id="desc-font-color" name="desc-font-color" value="<?php echo $styledata[49]; ?>">
                                             </div>
                                         </div>
                                         <div class="form-group row form-group-sm">
-                                            <label for="desc-font-familly" class="col-sm-6 col-form-label"  data-toggle="tooltip" data-placement="top" title="Choose Your Description Preferred font, Based on Google Font"> Font Family <?php if ($status != 'valid') {   echo '<span class="ctu-pro-only">Pro Only</span>';  } ?></label>
+                                            <label for="desc-font-familly" class="col-sm-6 oxi-control-label"  data-toggle="tooltip" data-placement="top" title="Choose Your Description Preferred font, Based on Google Font"> Font Family </label>
                                             <div class="col-sm-6 nopadding">
                                                 <input class="cau-admin-font" type="text" name="desc-font-familly" id="desc-font-familly" value="<?php echo $styledata[51]; ?>">
                                             </div>
                                         </div>
 
                                         <div class="form-group row form-group-sm">
-                                            <label for="desc-font-weight" class="col-sm-6 col-form-label" data-toggle="tooltip" data-placement="top" title="Customize Description Font Style ">Font Weight </label>
+                                            <label for="desc-font-weight" class="col-sm-6 oxi-control-label" data-toggle="tooltip" data-placement="top" title="Customize Description Font Style ">Font Weight </label>
                                             <div class="col-sm-6 nopadding">
                                                 <select class="form-control" id="desc-font-weight" name="desc-font-weight">
                                                     <?php iheu_font_weight_admin_panel($styledata[53]); ?>
@@ -403,7 +387,7 @@ $styledata = explode('|', $styledata);
                                     </div>
                                     <div class="iheu-admin-style-settings-div-right">
                                         <div class="form-group row form-group-sm">
-                                            <label for="desc-padding-bottom" class="col-sm-6 control-label" data-toggle="tooltip" data-placement="top" title="Make distance from Button, work as percentage of Div" >Padding Bottom</label>
+                                            <label for="desc-padding-bottom" class="col-sm-6 oxi-control-label" data-toggle="tooltip" data-placement="top" title="Make distance from Button, work as percentage of Div" >Padding Bottom</label>
                                             <div class="col-sm-6 nopadding">
                                                 <input type="number" class="form-control" min="0" max="100" step="1" id="desc-padding-bottom" name="desc-padding-bottom" value="<?php echo$styledata[55]; ?>">
                                             </div>
@@ -413,32 +397,32 @@ $styledata = explode('|', $styledata);
                                 <div class="ctu-ulitate-style-3-tabs" id="ctu-ulitate-style-3-id-3">
                                     <div class="iheu-admin-style-settings-div-left">
                                         <div class="form-group row form-group-sm">
-                                            <label for="bottom-font-size" class="col-sm-6 control-label" data-toggle="tooltip" data-placement="top" title="Set Button Font Size as you want" >Font Size</label>
+                                            <label for="bottom-font-size" class="col-sm-6 oxi-control-label" data-toggle="tooltip" data-placement="top" title="Set Button Font Size as you want" >Font Size</label>
                                             <div class="col-sm-6 nopadding">
                                                 <input type="number" class="form-control" min="0" max="100" step="1" id="bottom-font-size" name="bottom-font-size" value="<?php echo$styledata[57]; ?>">
                                             </div>
                                         </div>
                                         <div class="form-group row form-group-sm">
-                                            <label for="bottom-font-color" class="col-sm-6 control-label" data-toggle="tooltip" data-placement="top" title="Set Your Button Color, Based on Color">Font Color <?php if ($status != 'valid') {   echo '<span class="ctu-pro-only">Pro Only</span>';  } ?> </label>
+                                            <label for="bottom-font-color" class="col-sm-6 oxi-control-label" data-toggle="tooltip" data-placement="top" title="Set Your Button Color, Based on Color">Font Color </label>
                                             <div class="col-sm-6 nopadding">
                                                 <input type="text" class="form-control iheu-vendor-color" id="bottom-font-color" name="bottom-font-color" value="<?php echo $styledata[59]; ?>">
                                             </div>
                                         </div>
                                         <div class="form-group row form-group-sm">
-                                            <label for="bottom-font-background" class="col-sm-6 control-label" data-toggle="tooltip" data-placement="top" title="Set Your Button background Color, Based on Color">Background Color <?php if ($status != 'valid') {   echo '<span class="ctu-pro-only">Pro Only</span>';  } ?> </label>
+                                            <label for="bottom-font-background" class="col-sm-6 oxi-control-label" data-toggle="tooltip" data-placement="top" title="Set Your Button background Color, Based on Color">Background Color </label>
                                             <div class="col-sm-6 nopadding">
-                                                <input type="text" class="form-control iheu-vendor-color"  data-format="rgb" data-opacity="true"   id="bottom-font-background" name="bottom-font-background" value="<?php echo $styledata[61]; ?>">
+                                                <input type="text" class="form-control iheu-vendor-color" data-format="rgb" data-opacity="true"  id="bottom-font-background" name="bottom-font-background" value="<?php echo $styledata[61]; ?>">
                                             </div>
                                         </div>
                                         <div class="form-group row form-group-sm">
-                                            <label for="bottom-font-familly" class="col-sm-6 col-form-label"  data-toggle="tooltip" data-placement="top" title="Choose Your Button Preferred font, Based on Google Font"> Font Family <?php if ($status != 'valid') {   echo '<span class="ctu-pro-only">Pro Only</span>';  } ?> </label>
+                                            <label for="bottom-font-familly" class="col-sm-6 oxi-control-label"  data-toggle="tooltip" data-placement="top" title="Choose Your Button Preferred font, Based on Google Font"> Font Family </label>
                                             <div class="col-sm-6 nopadding">
                                                 <input class="cau-admin-font" type="text" name="bottom-font-familly" id="bottom-font-familly" value="<?php echo $styledata[63]; ?>">
                                             </div>
                                         </div>
 
                                         <div class="form-group row form-group-sm">
-                                            <label for="bottom-font-weight" class="col-sm-6 col-form-label" data-toggle="tooltip" data-placement="top" title="Customize Button Font Style ">Font Weight</label>
+                                            <label for="bottom-font-weight" class="col-sm-6 oxi-control-label" data-toggle="tooltip" data-placement="top" title="Customize Button Font Style ">Font Weight</label>
                                             <div class="col-sm-6 nopadding">
                                                 <select class="form-control" id="bottom-font-weight" name="bottom-font-weight">
                                                     <?php iheu_font_weight_admin_panel($styledata[65]); ?>
@@ -446,49 +430,49 @@ $styledata = explode('|', $styledata);
                                             </div>
                                         </div>
                                         <div class="form-group row form-group-sm">
-                                            <label for="bottom-hover-color" class="col-sm-6 control-label" data-toggle="tooltip" data-placement="top" title="Set Your Button Hover Color, Based on Color">Hover Color <?php if ($status != 'valid') {   echo '<span class="ctu-pro-only">Pro Only</span>';  } ?> </label>
+                                            <label for="bottom-hover-color" class="col-sm-6 oxi-control-label" data-toggle="tooltip" data-placement="top" title="Set Your Button Hover Color, Based on Color">Hover Color </label>
                                             <div class="col-sm-6 nopadding">
                                                 <input type="text" class="form-control iheu-vendor-color" id="bottom-hover-color" name="bottom-hover-color" value="<?php echo $styledata[67]; ?>">
                                             </div>
                                         </div>
                                         <div class="form-group row form-group-sm">
-                                            <label for="bottom-hover-background" class="col-sm-6 control-label" data-toggle="tooltip" data-placement="top" title="Set Your Button Hover Background Color, Based on Color">Hover Background <?php if ($status != 'valid') {   echo '<span class="ctu-pro-only">Pro Only</span>';  } ?> </label>
+                                            <label for="bottom-hover-background" class="col-sm-6 oxi-control-label" data-toggle="tooltip" data-placement="top" title="Set Your Button Hover Background Color, Based on Color">Hover Background </label>
                                             <div class="col-sm-6 nopadding">
-                                                <input type="text" class="form-control iheu-vendor-color"   data-format="rgb" data-opacity="true"  id="bottom-hover-background" name="bottom-hover-background" value="<?php echo $styledata[69]; ?>">
+                                                <input type="text" class="form-control iheu-vendor-color" data-format="rgb" data-opacity="true"  id="bottom-hover-background" name="bottom-hover-background" value="<?php echo $styledata[69]; ?>">
                                             </div>
                                         </div>
                                     </div>
                                     <div class="iheu-admin-style-settings-div-right">
                                         <div class="form-group row form-group-sm">
-                                            <label for="bottom-border-radius" class="col-sm-6 control-label" data-toggle="tooltip" data-placement="top" title="Make Radius on Your Button" >Button Radius</label>
+                                            <label for="bottom-border-radius" class="col-sm-6 oxi-control-label" data-toggle="tooltip" data-placement="top" title="Make Radius on Your Button" >Button Radius</label>
                                             <div class="col-sm-6 nopadding">
                                                 <input type="number" class="form-control" min="0" max="100" step="1" id="bottom-border-radius" name="bottom-border-radius" value="<?php echo$styledata[71]; ?>">
                                             </div>
                                         </div>
                                         <div class="form-group row form-group-sm">
-                                            <label for="bottom-padding-top-bottom" class="col-sm-6 control-label" data-toggle="tooltip" data-placement="top" title="Change Padding top Bottom to make bigger or smaller Button" >Padding Top Bottom</label>
+                                            <label for="bottom-padding-top-bottom" class="col-sm-6 oxi-control-label" data-toggle="tooltip" data-placement="top" title="Change Padding top Bottom to make bigger or smaller Button" >Padding Top Bottom</label>
                                             <div class="col-sm-6 nopadding">
                                                 <input type="number" class="form-control" min="0" max="100" step="1" id="bottom-padding-top-bottom" name="bottom-padding-top-bottom" value="<?php echo$styledata[73]; ?>">
                                             </div>
                                         </div>
                                         <div class="form-group row form-group-sm">
-                                            <label for="bottom-padding-left-right" class="col-sm-6 control-label" data-toggle="tooltip" data-placement="top" title="Change Padding left right to make bigger or smaller Button" >Padding Left Right</label>
+                                            <label for="bottom-padding-left-right" class="col-sm-6 oxi-control-label" data-toggle="tooltip" data-placement="top" title="Change Padding left right to make bigger or smaller Button" >Padding Left Right</label>
                                             <div class="col-sm-6 nopadding">
                                                 <input type="number" class="form-control" min="0" max="100" step="1" id="bottom-padding-left-right" name="bottom-padding-left-right" value="<?php echo$styledata[75]; ?>">
                                             </div>
                                         </div> 
                                         <div class="form-group row form-group-sm">
-                                            <label for="bottom-align" class="col-sm-6 col-form-label" data-toggle="tooltip" data-placement="top" title="Change Button Align to make Accurate Position">Button Align</label>
+                                            <label for="bottom-align" class="col-sm-6 oxi-control-label" data-toggle="tooltip" data-placement="top" title="Change Button Align to make Accurate Position">Button Align</label>
                                             <?php iheu_button_left_admin_panel($styledata); ?>
                                         </div>
                                         <div class="form-group row form-group-sm bottom-margin-left-js">
-                                            <label for="bottom-margin-left" class="col-sm-6 control-label" data-toggle="tooltip" data-placement="top" title="Make Distance from left" >Margin Left</label>
+                                            <label for="bottom-margin-left" class="col-sm-6 oxi-control-label" data-toggle="tooltip" data-placement="top" title="Make Distance from left" >Margin Left</label>
                                             <div class="col-sm-6 nopadding">
                                                 <input type="number" class="form-control" min="-20" max="100" step="1" id="bottom-margin-left" name="bottom-margin-left" value="<?php echo$styledata[79]; ?>">
                                             </div>
                                         </div>
                                         <div class="form-group row form-group-sm bottom-margin-right-js">
-                                            <label for="bottom-margin-right" class="col-sm-6 control-label" data-toggle="tooltip" data-placement="top" title="Make Distance from Right" >Margin Right</label>
+                                            <label for="bottom-margin-right" class="col-sm-6 oxi-control-label" data-toggle="tooltip" data-placement="top" title="Make Distance from Right" >Margin Right</label>
                                             <div class="col-sm-6 nopadding">
                                                 <input type="number" class="form-control" min="-20" max="100" step="1" id="bottom-margin-right" name="bottom-margin-right" value="<?php echo$styledata[81]; ?>">
                                             </div>
@@ -499,7 +483,7 @@ $styledata = explode('|', $styledata);
                                 <div class="ctu-ulitate-style-3-tabs" id="ctu-ulitate-style-3-id-2">
                                     <div class="iheu-admin-style-settings-div-css">
                                         <div class="form-group">
-                                            <label for="iheu-css">Add Your Custom CSS Code Here <?php if ($status != 'valid') {   echo '<span class="ctu-pro-only">Pro Only</span>';  } ?></label>
+                                            <label for="iheu-css" class="iheu-css">Add Your Custom CSS Code Here</label>
                                             <textarea class="form-control" rows="4" id="iheu-css" name="iheu-css"><?php echo$styledata[83]; ?></textarea>
                                         </div>
                                     </div>
@@ -537,18 +521,22 @@ $styledata = explode('|', $styledata);
                             Preview
                         </div>
                         <div class="iheb-style-settings-preview-heading-right">
-                            <input type="text" class="form-control iheu-vendor-color" data-format="rgb" data-opacity="true"   id="iheb-preview-data-background" name="iheb-preview-data-background" value="rgba(255, 255, 255, 1)">
+                            <input type="text" class="form-control iheu-vendor-color"  data-format="rgb" data-opacity="true"  id="iheb-preview-data-background" name="iheb-preview-data-background" value="rgba(255, 255, 255, 1)">
                         </div>
                     </div>
                     <div class="iheb-preview-data" id="iheb-preview-data">
-                     <?php
+                        <?php
                         iheu_ultimate_oxi_shortcode_function($styleid, 'admin')
                         ?>
                     </div>
+
                 </div>
                 <?php iheu_jquery_file_pass($styleid); ?>
             </div>
+
             <?php iheu_admin_style_panel_tab2($styleid, $listdata); ?>
+
+
         </div>
     </div>
     <div id="iheb-add-new-item-data" class="modal fade" role="dialog">
@@ -593,7 +581,7 @@ $styledata = explode('|', $styledata);
                             <small class="form-text text-muted">Add or Modify Your Image link.</small>
                         </div>
                         <div class="form-group">
-                            <label for="ctu-title">Hover Background Image <?php if ($status != 'valid') {   echo '<span class="ctu-pro-only">Pro Only</span>';  } ?></label>
+                            <label for="ctu-title">Hover Background Image</label>
                             <div class="col-xs-12-div">
                                 <div class="col-xs-8-div">
                                     <input type="text "class="form-control" id="iheu-hover-image-upload-url" name="iheu-hover-image-upload-url" value="<?php echo $hoverimage; ?>">

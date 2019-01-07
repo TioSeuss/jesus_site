@@ -11,15 +11,6 @@
 			<div class='ewd-ufaq-upgrade notice'>Upgrade to the premium version to use some of these features</div>
 		<?php } ?>
 
-		<h4>Import FAQs from Plugin</h4>
-		<p>Import all of your FAQ posts and categories from the plugin "Q and A FAQ and Knowledge Base for WordPress"</p>
-		<form method="post" action="admin.php?page=EWD-UFAQ-Options&DisplayPage=ImportPosts&Action=EWD_UFAQ_ImportFaqs">
-		<table class="form-table">
-		</table>
-
-
-		<p class="submit"><input type="submit" name="Export_Submit" id="submit" class="button button-primary" value="Import Plugin FAQs"  /></p></form>
-
 		<h4>Import FAQs from a spreadsheet</h4>
 		<form method="post" action="admin.php?page=EWD-UFAQ-Options&DisplayPage=ImportPosts&Action=EWD_UFAQ_ImportFaqsFromSpreadsheet" enctype="multipart/form-data">
 		<div class="form-field form-required">

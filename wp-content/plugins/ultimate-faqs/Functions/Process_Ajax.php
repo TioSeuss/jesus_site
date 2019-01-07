@@ -4,7 +4,7 @@
 
 // Returns the FAQs that are found for a specific search
 function UFAQ_Search() {
-    $response = do_shortcode("[ultimate-faqs search_string='" . strtolower(sanitize_text_field($_POST['Q'])) . "' include_category='" . sanitize_text_field($_POST['include_category']) . "' exclude_category='" . sanitize_text_field($_POST['exclude_category']) . "' orderby='" . sanitize_text_field($_POST['orderby']) . "' order='" . sanitize_text_field($_POST['order']) . "' post_count='" . sanitize_text_field($_POST['post_count']) . "' current_url='" . sanitize_text_field($_POST['current_url']) . "' ajax='Yes']");
+    $response = do_shortcode("[ultimate-faqs search_string='" . strtolower(sanitize_text_field($_POST['Q'])) . "' include_category='" . sanitize_text_field($_POST['include_category']) . "' exclude_category='" . sanitize_text_field($_POST['exclude_category']) . "' orderby='" . sanitize_text_field($_POST['orderby']) . "' order='" . sanitize_text_field($_POST['order']) . "' post_count='" . sanitize_text_field($_POST['post_count']) . "' current_url='" . sanitize_text_field($_POST['current_url']) . "' faqs_only='" . sanitize_text_field($_POST['faqs_only']) . "' faq_page='" . sanitize_text_field($_POST['faq_page']) . "' ajax='Yes']");
 
     $ReturnArray['request_count'] =  sanitize_text_field($_POST['request_count']);
     $ReturnArray['message'] = $response;
@@ -55,13 +55,15 @@ function UFAQ_Record_View() {
 add_action('wp_ajax_ufaq_record_view', 'UFAQ_Record_View');
 add_action( 'wp_ajax_nopriv_ufaq_record_view', 'UFAQ_Record_View');
 
-function EWD_UFAQ_Save_Order(){   
-    if (!is_array($_POST['ewd-ufaq-item'])) {return;}
+function EWD_UFAQ_Save_Order(){
+    global $UFAQ_Full_Version;
+
+    if (!is_array($_POST['ewd-ufaq-item']) or $UFAQ_Full_Version != "Yes") {return;}
 
     foreach ($_POST['ewd-ufaq-item'] as $Key=>$ID) {
         update_post_meta($ID, 'ufaq_order', $Key);
     }
-    
+
     die();
 }
 add_action('wp_ajax_UFAQ_update_order','EWD_UFAQ_Save_Order');
@@ -143,7 +145,7 @@ function EWD_UFAQ_WC_FAQ_Category() {
 }
 add_action('wp_ajax_ewd_ufaq_wc_faq_category','EWD_UFAQ_WC_FAQ_Category');
 
-function EWD_UFAQ_Hide_Review_Ask(){   
+function EWD_UFAQ_Hide_Review_Ask() {   
     $Ask_Review_Date = sanitize_text_field($_POST['Ask_Review_Date']);
 
     update_option('EWD_UFAQ_Ask_Review_Date', time()+3600*24*$Ask_Review_Date);
@@ -151,3 +153,12 @@ function EWD_UFAQ_Hide_Review_Ask(){
     die();
 }
 add_action('wp_ajax_ewd_ufaq_hide_review_ask','EWD_UFAQ_Hide_Review_Ask');
+
+function EWD_UFAQ_Send_Feedback() {   
+    $Feedback = sanitize_text_field($_POST['Feedback']);
+
+    wp_mail('contact@etoilewebdesign.com', 'UFAQ Feedback - Dashboard Form', $Feedback);
+
+    die();
+}
+add_action('wp_ajax_ewd_ufaq_send_feedback','EWD_UFAQ_Send_Feedback');

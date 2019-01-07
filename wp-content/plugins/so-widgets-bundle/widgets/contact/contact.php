@@ -5,6 +5,7 @@ Widget Name: Contact Form
 Description: A light weight contact form builder.
 Author: SiteOrigin
 Author URI: https://siteorigin.com
+Documentation: https://siteorigin.com/widgets-bundle/contact-form-widget/
 */
 
 class SiteOrigin_Widgets_ContactForm_Widget extends SiteOrigin_Widget {
@@ -416,6 +417,10 @@ class SiteOrigin_Widgets_ContactForm_Widget extends SiteOrigin_Widget {
 								'type'  => 'measurement',
 								'label' => __( 'Height', 'so-widgets-bundle' )
 							),
+							'height_textarea' => array(
+								'type'  => 'measurement',
+								'label' => __( 'Text Area Height', 'so-widgets-bundle' )
+							),
 							'background'    => array(
 								'type'  => 'color',
 								'label' => __( 'Background', 'so-widgets-bundle' ),
@@ -785,6 +790,7 @@ class SiteOrigin_Widgets_ContactForm_Widget extends SiteOrigin_Widget {
 			'field_margin'               => $instance['design']['fields']['margin'],
 			'field_padding'              => $instance['design']['fields']['padding'],
 			'field_height'               => $instance['design']['fields']['height'],
+			'field_height_textarea'      => ! empty( $instance['design']['fields']['height_textarea'] ) ? $instance['design']['fields']['height_textarea'] : '',
 			'field_background'           => $instance['design']['fields']['background'],
 			'field_border_color'         => $instance['design']['fields']['border_color'],
 			'field_border_width'         => $instance['design']['fields']['border_width'],
@@ -960,11 +966,10 @@ class SiteOrigin_Widgets_ContactForm_Widget extends SiteOrigin_Widget {
 	 * Ajax action handler to send the form
 	 */
 	function contact_form_action( $instance, $storage_hash ) {
-		if ( ! wp_verify_nonce( $_POST['_wpnonce'], '_contact_form_submit' ) ) {
+		if ( empty( $_POST['_wpnonce'] ) || ! wp_verify_nonce( $_POST['_wpnonce'], '_contact_form_submit' ) ) {
 			// Using `return false;` instead of `wp_die` because this function may sometimes be called as a side effect
-			// of trying to enqueue scripts required for the front end. In those cases `$_POST['_wpnonce']` doesn't exist
-			// and calling `wp_die` will halt script execution and break things. Ideally it should be possible to enqueue
-			// front end scripts without calling widgets' render functions, but that will mean a fairly large refactor.
+			// of trying to enqueue scripts required for the front end or when previewing widgets e.g. in the block editor.
+			// In those cases `$_POST['_wpnonce']` doesn't exist and calling `wp_die` will halt script execution and break things.
 			return false;
 		}
 		if ( empty( $_POST['instance_hash'] ) || $_POST['instance_hash'] != $storage_hash ) {
@@ -993,9 +998,10 @@ class SiteOrigin_Widgets_ContactForm_Widget extends SiteOrigin_Widget {
 				continue;
 			}
 			$field_name = $this->name_from_label( ! empty( $field['label'] ) ? $field['label'] : $i, $field_ids ) . '-' . $instance['_sow_form_id'];
-			$value      = ! empty( $post_vars[ $field_name ] ) ? $post_vars[ $field_name ] : '';
-
-			if ( empty( $value ) ) {
+			$value      = isset( $post_vars[ $field_name ] ) ? $post_vars[ $field_name ] : '';
+			
+			// Can't just use `strlen` here as $value could be an array. E.g. for checkboxes field.
+			if ( empty( $value ) && $value !== '0' ) {
 				if ( $field['required']['required'] ) {
 					// Add in the default subject
 					if ( $field['type'] == 'subject' && ! empty( $instance['settings']['default_subject'] ) ) {
@@ -1041,7 +1047,12 @@ class SiteOrigin_Widgets_ContactForm_Widget extends SiteOrigin_Widget {
 			}
 		}
 
-		// Add in the default subject if no subject field is defined in the form at all
+		// Add in a default email address if no email field is defined in the form at all.
+		if ( ! isset( $email_fields['email'] ) && ! empty( $instance['settings']['from'] ) ) {
+			$email_fields['email'] = $instance['settings']['from'];
+		}
+
+		// Add in the default subject if no subject field is defined in the form at all.
 		if ( ! isset( $email_fields['subject'] ) && ! empty( $instance['settings']['default_subject'] ) ) {
 			$email_fields['subject'] = $instance['settings']['default_subject'];
 		}
@@ -1118,7 +1129,7 @@ class SiteOrigin_Widgets_ContactForm_Widget extends SiteOrigin_Widget {
 			$errors['email'] = __( 'The email address is invalid', 'so-widgets-bundle' );
 		}
 
-		if ( empty( $email_fields['subject'] ) ) {
+		if ( ! isset( $email_fields['subject'] ) ) {
 			$errors['subject'] = __( 'Missing subject', 'so-widgets-bundle' );
 		}
 

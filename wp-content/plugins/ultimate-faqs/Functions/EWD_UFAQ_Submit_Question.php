@@ -3,6 +3,7 @@ function EWD_UFAQ_Submit_Question($success_message) {
 	$Submit_Question_Captcha = get_option("EWD_UFAQ_Submit_Question_Captcha");
 	$Admin_Question_Notification = get_option("EWD_UFAQ_Admin_Question_Notification");
 	$Submit_FAQ_Email = get_option("EWD_UFAQ_Submit_FAQ_Email");
+	$Submitted_Default_Category = get_option("EWD_UFAQ_Submitted_Default_Category");
 
 	$FAQ_Fields_Array = get_option("EWD_UFAQ_FAQ_Fields");
 	if (!is_array($FAQ_Fields_Array)) {$FAQ_Fields_Array = array();}
@@ -26,6 +27,12 @@ function EWD_UFAQ_Submit_Question($success_message) {
 	if ($post_id == 0) {$user_message = __("FAQ was not created succesfully.", 'ultimate-faqs'); return $user_message;}
 
 	update_post_meta($post_id, "EWD_UFAQ_Post_Author", $Post_Author);
+
+	if ($Submitted_Default_Category != '' and $Submitted_Default_Category != 'none') {
+		$FAQ_Category = get_term_by('slug', $Submitted_Default_Category, 'ufaq-category');
+		$term_id = (int) $FAQ_Category->term_id;
+		wp_set_post_terms($post_id, array($term_id), 'ufaq-category');
+	}
 
 	foreach ($FAQ_Fields_Array as $FAQ_Field_Item) {
 		if ($FAQ_Field_Item['FieldType'] == "checkbox") {$FieldName = "Custom_Field_" . $FAQ_Field_Item['FieldID'];}

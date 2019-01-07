@@ -42,6 +42,18 @@ function EWD_UFAQ_Version_Update() {
 		update_option("EWD_UFAQ_FAQ_Elements", $FAQ_Elements);
 	}
 
+	if (get_option("EWD_UFAQ_Display_Style") == "Color_Block") {
+		update_option("EWD_UFAQ_Display_Style", "Default");
+
+		if (get_option("EWD_UFAQ_Color_Block_Shape") != 'Square') {
+			if (get_option("EWD_UFAQ_Styling_Default_Border_Radius") == '') {update_option("EWD_UFAQ_Styling_Default_Border_Radius", "100px");}
+		}
+
+		if (get_option("UFAQ_Styling_Default_Bg_Color") == "") {update_option("UFAQ_Styling_Default_Bg_Color", "#1188cc");}
+		if (get_option("UFAQ_Styling_Default_Font_Color") == "") {update_option("UFAQ_Styling_Default_Font_Color", "#ffffff");}
+		if (get_option("UFAQ_Styling_Default_Border_Color") == "") {update_option("UFAQ_Styling_Default_Border_Color", "#1188cc");}
+	}
+
 	if (get_option("EWD_UFAQ_Toggle") == "") {update_option("EWD_UFAQ_Toggle", "Yes");}
 	if (get_option("EWD_UFAQ_Display_Back_To_Top") == "") {update_option("EWD_UFAQ_Display_Back_To_Top", "No");}
 	if (get_option("EWD_UFAQ_Comments_On") == "") {update_option("EWD_UFAQ_Comments_On", "No");}

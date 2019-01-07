@@ -23,7 +23,7 @@ jQuery(document).ready(function () {
         });
 
     });
-    jQuery('#iheb-add-new-item').on('click', function () {        
+    jQuery('#iheb-add-new-item').on('click', function () {
         jQuery("#iheb-add-new-item-data").modal("show");
         jQuery("#iheu-image-upload-url").val(null);
         jQuery("#iheu-hover-image-upload-url").val(null);
@@ -40,8 +40,8 @@ jQuery(document).ready(function () {
     jQuery('[data-toggle="tooltip"]').tooltip();
 
 });
-jQuery('#image-hover-ultimate-drag-id').on('click', function () {    
-    jQuery("#image-hover-ultimate-drag-and-drop-data").modal("show");     
+jQuery('#image-hover-ultimate-drag-id').on('click', function () {
+    jQuery("#image-hover-ultimate-drag-and-drop-data").modal("show");
 });
 jQuery('#orphita-drag-and-drop').on('click', function () {
     jQuery("#orphita-drag-and-drop-data").modal("show");
@@ -51,7 +51,10 @@ jQuery('#orphita-drag-and-drop').on('click', function () {
     jQuery('#orphita-drag-and-drop-data-submit').val('Submit');
 
 });
-jQuery('#orphita-drag-drop').sortable({
-    axis: 'y',
-    opacity: 0.7
-});
+
+setTimeout(function () {
+    jQuery('#orphita-drag-drop').sortable({
+        axis: 'y',
+        opacity: 0.7
+    });
+}, 500);

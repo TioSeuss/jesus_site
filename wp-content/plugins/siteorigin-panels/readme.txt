@@ -1,9 +1,9 @@
 === Page Builder by SiteOrigin ===
 Tags: page builder, responsive, widget, widgets, builder, page, admin, gallery, content, cms, pages, post, css, layout, grid
 Requires at least: 4.4
-Tested up to: 4.9
-Stable tag: 2.7.2
-Build time: 2018-06-29T09:54:52+02:00
+Tested up to: 5.0
+Stable tag: 2.9.7
+Build time: 2018-12-14T11:15:17-08:00
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl.html
 Donate link: https://siteorigin.com/downloads/contribution/
@@ -95,6 +95,71 @@ Page Builder is actively developed and updated, so generally I'd recommend that 
 We've tried to ensure that Page Builder is compatible with most plugin widgets. It's best to just download Page Builder and test for yourself.
 
 == Changelog ==
+
+= 2.9.7 - 14 December 2018 =
+* Add setting to use Classic Editor for new posts of types selected in Page Builder settings.
+* Prevent showing the 'Add New' dropdown for SO custom post types.
+* Display notice indicating how to disable Classic Editor for new Page Builder post types.
+
+= 2.9.6 - 10 December 2018 =
+* Default to Page Builder interface for post types set to use Page Builder in Settings.
+* Add check for WooCommerce 'product' type to prevent output of 'Add New' dropdown.
+
+= 2.9.5 - 6 December 2018 =
+* Layout block: Default to preview state if block has panels data.
+* Dropdown for 'Add New' with SiteOrigin Page Builder as an option.
+* Added a label to posts list to indicate which have a Page Builder layout.
+
+= 2.9.4 - 5 December 2018 =
+* Layout block: Set default state to edit mode.
+
+= 2.9.3 - 5 December 2018 =
+* Use front end i18n for block editor.
+* Ensure contextual menu works in dialogs.
+* Yoast compat: Check for panels style wrappers before doing widget content modifications.
+* Clone Layouts: Fix to allow for private posts and pages.
+* Block editor: Show preview initially when page is loaded.
+* Block editor: Show classic editor for existing pages containing Page Builder layout data.
+
+= 2.9.2 - 9 November 2018 =
+* Block editor: Call `enqueue_registered_widgets_scripts` which will reset global `$post`.
+* Block editor: Only enqueue layout block scripts when using the block editor.
+* WP 5: Fixed styles in the block editor.
+* WP 5: Ensure the block editor scripts are enqueued.
+* WP 5: Fix WP Text Widget for layout block.
+
+= 2.9.1 - 23 October 2018 =
+* Fix auto-excerpt output.
+* Layout builder: Fix 'undefined index' when saving before having added any widgets.
+* Layout builder: Prevent initializing multiple instances of widget dialog.
+* Prevent notices when style field is using 'label' instead of 'name' e.g. for checkbox field.
+
+= 2.9.0 - 9 October 2018 =
+* Automatically extract excerpts from text type widgets found in the first two Page Builder layout rows.
+* Allow media queries with only `min-width`.
+* Only allow moving widgets and rows between Page Builder instances when in Gutenberg editor.
+* Fallback to checking for global `$post` when attempting to disable Gutenberg for existing posts with Page Builder layout data.
+* Yoast compat: Custom widget content handler for WB Accordion and Tabs widgets.
+* Jetpack compat: Fix for Jetpack widgets using the `is_active_widget` check.
+
+= 2.8.2 - 10 August 2018 =
+* Use post ID in content, not revision ID, when saving revisions.
+* Prevent adding duplicate `panels_data` metadata to posts for revisions.
+* Include row labels and colors when copy/pasting rows.
+* Process raw widgets when importing a layout file.
+* Fix after breaking change in gutenberg API.
+
+= 2.8.1 - 07 August 2018 =
+* Fix for PHP5.2 :(
+
+= 2.8.0 - 06 August 2018 =
+* SiteOrigin Layouts Gutenberg block!
+
+= 2.7.3 - 20 July 2018 =
+* Post Loop: Add filter to allow for custom template directories.
+* Dashboard Assets: Check if $screen exists.
+* Remove Page Builder button from widgets when not in admin context.
+* Fix Yoast compat: Properly create rather than select an image.
 
 = 2.7.2 - 29 June 2018 =
 * Skip Yoast compat for non PB content.

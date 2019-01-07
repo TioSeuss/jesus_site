@@ -3,7 +3,7 @@
 Plugin Name: Ninja Forms
 Plugin URI: http://ninjaforms.com/
 Description: Ninja Forms is a webform builder with unparalleled ease of use and features.
-Version: 3.3.9
+Version: 3.3.21.2
 Author: The WP Ninjas
 Author URI: http://ninjaforms.com
 Text Domain: ninja-forms
@@ -17,7 +17,6 @@ require_once dirname( __FILE__ ) . '/lib/NF_Tracking.php';
 require_once dirname( __FILE__ ) . '/lib/NF_Conversion.php';
 require_once dirname( __FILE__ ) . '/lib/NF_ExceptionHandlerJS.php';
 require_once dirname( __FILE__ ) . '/lib/Conversion/Calculations.php';
-require_once dirname( __FILE__ ) . '/lib/NF_UpgradeThrottle.php';
 
 // Services require PHP v5.6+
 if( version_compare( PHP_VERSION, '5.6', '>=' ) ) {
@@ -58,9 +57,9 @@ if( get_option( 'ninja_forms_load_deprecated', FALSE ) && ! ( isset( $_POST[ 'nf
         /**
          * @since 3.0
          */
-        const VERSION = '3.3.9';
+        const VERSION = '3.3.21.2';
 
-        const WP_MIN_VERSION = '4.7';
+        const WP_MIN_VERSION = '4.8';
 
         /**
          * @var Ninja_Forms
@@ -226,8 +225,16 @@ if( get_option( 'ninja_forms_load_deprecated', FALSE ) && ! ( isset( $_POST[ 'nf
                 update_option( 'ninja_forms_version', self::VERSION );
                 // If we've not recorded our db version...
                 if ( ! get_option( 'ninja_forms_db_version' ) ) {
-                    // Set it to the baseline (1.0).
-                    add_option( 'ninja_forms_db_version', '1.0', '', 'no' );
+					// If this isn't a fresh install...
+					// AND If we're upgrading from a version before 3.3.0...
+					if ( $saved_version && version_compare( $saved_version, '3.3.0', '<' ) ) {
+                    	// Set it to the baseline (1.0) so that our upgrade process will run properly.
+						add_option( 'ninja_forms_db_version', '1.0', '', 'no' );
+					}
+					else {
+						// Set it to 1.1.
+						add_option( 'ninja_forms_db_version', '1.1', '', 'no' );
+					}
                 }
 
                 /*
@@ -387,6 +394,13 @@ if( get_option( 'ninja_forms_load_deprecated', FALSE ) && ! ( isset( $_POST[ 'nf
                 self::$instance->metaboxes[ 'append-form' ] = new NF_Admin_Metaboxes_AppendAForm();
 
                 /*
+                 * Email Telemetry
+                 */
+
+                $email_telemetry = new NF_EmailTelemetry( get_option( 'ninja_forms_optin_reported' ) );
+                $email_telemetry->setup();
+
+                /*
                  * Require EDD auto-update file
                  */
                 if( ! class_exists( 'EDD_SL_Plugin_Updater' ) ) {
@@ -400,6 +414,27 @@ if( get_option( 'ninja_forms_load_deprecated', FALSE ) && ! ( isset( $_POST[ 'nf
                     // Ensure all of our tables have been defined.
                     $migrations = new NF_Database_Migrations();
                     $migrations->migrate();
+                    // If our db version is below 1.1...
+                    if ( version_compare( get_option( 'ninja_forms_db_version' ), '1.1', '<' ) ) {
+                        // Do our stage 1 updates.
+                        $migrations->do_stage_one();
+                        // Update our db version.
+                        update_option( 'ninja_forms_db_version', '1.1' );
+                    }
+					// Fix for legacy versions that upgraded without a set DB version.
+					// If our version is exactly 1.1...
+					if ( version_compare( get_option( 'ninja_forms_db_version' ), '1.1', '==' ) ) {
+						global $wpdb;
+						// Fetch the form_title column from the fields table.
+						$sql = "SHOW FULL COLUMNS FROM `{$wpdb->prefix}nf3_forms` WHERE Field = 'form_title'";
+						$result = $wpdb->get_results( $sql, 'ARRAY_A' );
+						// If we didn't get a result...
+						if ( empty( $result ) ) {
+							// Do our stage 1 updates, even though they should have already run.
+							$migrations->do_stage_one();
+						}
+					}
+					
                 }
             }
 
@@ -946,11 +981,23 @@ if( get_option( 'ninja_forms_load_deprecated', FALSE ) && ! ( isset( $_POST[ 'nf
     }
     add_action( 'nf_optin_cron', 'nf_optin_update_environment_vars' );
 
-    // Custom Cron Recurrences
+    /**
+     * Function to register our Custom Cron Recurrences.
+     * 
+     * @param $schedules (Array) The available cron recurrences.
+     * @return (Array) The filtered cron recurrences.
+     * 
+     * @since 
+     * @updated 3.3.17
+     */
     function nf_custom_cron_job_recurrence( $schedules ) {
         $schedules[ 'nf-monthly' ] = array(
             'display' => __( 'Once per month', 'ninja-forms' ),
             'interval' => 2678400,
+        );
+        $schedules[ 'nf-weekly' ] = array(
+            'display' => __( 'Once per week', 'ninja-forms' ),
+            'interval' => 604800,
         );
         return $schedules;
     }
@@ -962,6 +1009,42 @@ if( get_option( 'ninja_forms_load_deprecated', FALSE ) && ! ( isset( $_POST[ 'nf
             wp_schedule_event( current_time( 'timestamp' ), 'nf-monthly', 'nf_optin_cron' );
         }
     }
-
     add_action( 'wp', 'nf_optin_send_admin_email_cron_job' );
+    
+    /**
+     * Function called via weekly wp_cron to update our marketing feeds.
+     * 
+     * @since 3.3.17
+     */
+    function nf_update_marketing_feed() {
+        // Fetch our membership data.
+        $data = wp_remote_get( 'http://api.ninjaforms.com/feeds/?fetch=memberships' );
+        // If we got a valid response...
+        if ( 200 == $data[ 'response' ][ 'code' ] ) {
+            // Save the data to our option.
+            $data = wp_remote_retrieve_body( $data );
+            update_option( 'ninja_forms_memberships_feed', $data, false );
+        }
+        // Fetch our addon data.
+        $data = wp_remote_get( 'http://api.ninjaforms.com/feeds/?fetch=addons' );
+        // If we got a valid response...
+        if ( 200 == $data[ 'response' ][ 'code' ] ) {
+            // Save the data to our option.
+            $data = wp_remote_retrieve_body( $data );
+            update_option( 'ninja_forms_addons_feed', $data, false );
+        }
+    }
+    add_action( 'nf_marketing_feed_cron', 'nf_update_marketing_feed' );
+
+    /**
+     * Function called by our marketing feed cron.
+     * 
+     * @since 3.3.17
+     */
+    function nf_marketing_feed_cron_job() {
+        if ( ! wp_next_scheduled( 'nf_marketing_feed_cron' ) ) {
+            wp_schedule_event( current_time( 'timestamp' ), 'nf-weekly', 'nf_marketing_feed_cron' );
+        }
+    }
+    add_action( 'wp', 'nf_marketing_feed_cron_job' );
 }

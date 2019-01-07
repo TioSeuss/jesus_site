@@ -3,12 +3,16 @@ if (!defined('ABSPATH'))
     exit;
 
 image_hover_ultimate_user_capabilities();
-$status = get_option('image_hover_ultimate_license_status');
 if (isset($_POST['submit']) && isset($_POST['submit']) == 'Save' && isset($_POST['style'])) {
     if ($_POST['style'] == 'general-1') {
         $name = sanitize_text_field($_POST['style-name']);
         $style_name = sanitize_text_field($_POST['style']);
         $css = 'iheu-item |image-ultimate-responsive-1|image-radius |50|image-width |250|image-height |250|image-margin |20|image-padding |15|background-color |rgba(0, 146, 194, 1)|content-alignment |vertical-align: middle;text-align: center;|open-in-new-tab ||image-animation |zoomIn|animation-durations |1|content-animation |iheu-fade-up|inner-shadow |0|inner-shadow-color |rgba(0, 146, 194, 0.3)|box-shadow ||box-shadow-color ||heading-font-size |20|heading-font-color |#ffffff|heading-font-familly |Open+Sans|heading-font-weight |600|heading-underline |no|heading-padding-bottom |0|heading-margin-bottom |10|desc-font-size |16|desc-font-color |#ffffff|desc-font-familly |Open+Sans|desc-font-weight |300|desc-padding-bottom |20|bottom-font-size |14|bottom-font-color |#ffffff|bottom-font-background |rgba(126, 0, 158, 1)|bottom-font-familly |Open+Sans|bottom-font-weight |300|bottom-hover-color |#7e009e|bottom-hover-background |rgba(255, 255, 255, 1)|bottom-border-radius |5|bottom-padding-top-bottom |10|bottom-padding-left-right |10|bottom-align |margin: 0 auto;|bottom-margin-left |10|bottom-margin-right |10|iheu-css ||';
+    }
+    if ($_POST['style'] == 'general-30') {
+        $name = sanitize_text_field($_POST['style-name']);
+        $style_name = sanitize_text_field($_POST['style']);
+        $css = 'iheu-item |image-ultimate-responsive-1|image-radius |50|image-width |250|image-height |250|image-margin |20|image-padding |15|iheu-background-color |rgba(6, 109, 143, 0.83)|content-alignment |vertical-align: middle;text-align: center;|open-in-new-tab ||image-animation |zoomIn|animation-durations |1|content-animation |iheu-zoom-in|inner-shadow |0|inner-shadow-color |rgba(0, 146, 194, 0.3)|box-shadow ||box-shadow-color ||heading-font-size |20|heading-font-color |#ffffff|heading-font-familly |Open+Sans|heading-font-weight |600|heading-underline |yes|heading-padding-bottom |4|heading-margin-bottom |10|desc-font-size |16|desc-font-color |#ffffff|desc-font-familly |Open+Sans|desc-font-weight |300|desc-padding-bottom |0|bottom-font-size |14|bottom-font-color |#ffffff|bottom-font-background |rgba(126, 0, 158, 1)|bottom-font-familly |Open+Sans|bottom-font-weight |300|bottom-hover-color |#7e009e|bottom-hover-background |rgba(255, 255, 255, 1)|bottom-border-radius |5|bottom-padding-top-bottom |10|bottom-padding-left-right |10|bottom-align |margin: 0 auto;|bottom-margin-left |10|bottom-margin-right |10|heading-font-hover-color |#ffffff|iheu-css ||';
     }
     if ($_POST['style'] == 'general-2') {
         $name = sanitize_text_field($_POST['style-name']);
@@ -80,7 +84,6 @@ if (isset($_POST['submit']) && isset($_POST['submit']) == 'Save' && isset($_POST
         $style_name = sanitize_text_field($_POST['style']);
         $css = 'iheu-item |image-ultimate-responsive-1|image-radius |50|image-width |250|image-height |250|image-margin |20|image-padding |15|background-color |rgba(0, 146, 194, 1)|content-alignment |vertical-align: middle;text-align: center;|open-in-new-tab ||image-animation |zoomIn|animation-durations |1|content-animation |iheu-fade-up|inner-shadow |0|inner-shadow-color |rgba(0, 146, 194, 0.3)|box-shadow ||box-shadow-color ||heading-font-size |20|heading-font-color |#ffffff|heading-font-familly |Open+Sans|heading-font-weight |600|heading-underline |no|heading-padding-bottom |0|heading-margin-bottom |10|desc-font-size |16|desc-font-color |#ffffff|desc-font-familly |Open+Sans|desc-font-weight |300|desc-padding-bottom |20|bottom-font-size |14|bottom-font-color |#ffffff|bottom-font-background |rgba(126, 0, 158, 1)|bottom-font-familly |Open+Sans|bottom-font-weight |300|bottom-hover-color |#7e009e|bottom-hover-background |rgba(255, 255, 255, 1)|bottom-border-radius |5|bottom-padding-top-bottom |10|bottom-padding-left-right |10|bottom-align |margin: 0 auto;|bottom-margin-left |10|bottom-margin-right |10|iheu-css ||';
     }
-
     if ($_POST['style'] == 'general-16') {
         $name = sanitize_text_field($_POST['style-name']);
         $style_name = sanitize_text_field($_POST['style']);
@@ -151,11 +154,6 @@ if (isset($_POST['submit']) && isset($_POST['submit']) == 'Save' && isset($_POST
         $style_name = sanitize_text_field($_POST['style']);
         $css = 'iheu-item |image-ultimate-responsive-1|image-radius |50|image-width |250|image-height |250|image-margin |20|image-padding |15|background-color |rgba(0, 146, 194, 1)|content-alignment |vertical-align: middle;text-align: center;|open-in-new-tab ||image-animation |zoomIn|animation-durations |1|content-animation |iheu-fade-up|inner-shadow |0|inner-shadow-color |rgba(0, 146, 194, 0.3)|box-shadow ||box-shadow-color ||heading-font-size |20|heading-font-color |#ffffff|heading-font-familly |Open+Sans|heading-font-weight |600|heading-underline |no|heading-padding-bottom |0|heading-margin-bottom |10|desc-font-size |16|desc-font-color |#ffffff|desc-font-familly |Open+Sans|desc-font-weight |300|desc-padding-bottom |20|bottom-font-size |14|bottom-font-color |#ffffff|bottom-font-background |rgba(126, 0, 158, 1)|bottom-font-familly |Open+Sans|bottom-font-weight |300|bottom-hover-color |#7e009e|bottom-hover-background |rgba(255, 255, 255, 1)|bottom-border-radius |5|bottom-padding-top-bottom |10|bottom-padding-left-right |10|bottom-align |margin: 0 auto;|bottom-margin-left |10|bottom-margin-right |10|iheu-css ||iheu-directions |left_to_right|';
     }
-    if ($_POST['style'] == 'general-30') {
-        $name = sanitize_text_field($_POST['style-name']);
-        $style_name = sanitize_text_field($_POST['style']);
-        $css = 'iheu-item |image-ultimate-responsive-1|image-radius |50|image-width |250|image-height |250|image-margin |20|image-padding |15|iheu-background-color |rgba(6, 109, 143, 0.83)|content-alignment |vertical-align: middle;text-align: center;|open-in-new-tab ||image-animation |zoomIn|animation-durations |1|content-animation |iheu-zoom-in|inner-shadow |0|inner-shadow-color |rgba(0, 146, 194, 0.3)|box-shadow ||box-shadow-color ||heading-font-size |20|heading-font-color |#ffffff|heading-font-familly |Open+Sans|heading-font-weight |600|heading-underline |yes|heading-padding-bottom |4|heading-margin-bottom |10|desc-font-size |16|desc-font-color |#ffffff|desc-font-familly |Open+Sans|desc-font-weight |300|desc-padding-bottom |0|bottom-font-size |14|bottom-font-color |#ffffff|bottom-font-background |rgba(126, 0, 158, 1)|bottom-font-familly |Open+Sans|bottom-font-weight |300|bottom-hover-color |#7e009e|bottom-hover-background |rgba(255, 255, 255, 1)|bottom-border-radius |5|bottom-padding-top-bottom |10|bottom-padding-left-right |10|bottom-align |margin: 0 auto;|bottom-margin-left |10|bottom-margin-right |10|heading-font-hover-color |#ffffff|iheu-css ||';
-    }
     if ($_POST['style'] == 'general-31') {
         $name = sanitize_text_field($_POST['style-name']);
         $style_name = sanitize_text_field($_POST['style']);
@@ -191,13 +189,15 @@ $iheuimage4 = WP_PLUGIN_URL . '/image-hover-effects-ultimate/public/image/4.jpg'
 $iheuimage5 = WP_PLUGIN_URL . '/image-hover-effects-ultimate/public/image/5.jpg';
 $iheuimage6 = WP_PLUGIN_URL . '/image-hover-effects-ultimate/public/image/6.jpg';
 ?>
+
+
 <div class="wrap">
     <?php echo iheu_promote_free(); ?>
     <div class="iheu-admin-wrapper">
-        <h1>Select Style</h1>
-        <p>Select Style from our Template list</p>
-        <div class="iheu-admin-new-row">
-            <div class="iheu-admin-row">
+        <div class="iheu-admin-row">
+            <h1>Select Style</h1>
+            <p>Select Style from our Template list</p>
+            <div class="iheu-admin-new-row">
                 <div class="iheb-admin-style-select-panel margin">
                     <div class="iheb-admin-style-select-panel-upper">
                         <div class="image-ultimate-container"> 
@@ -243,8 +243,8 @@ $iheuimage6 = WP_PLUGIN_URL . '/image-hover-effects-ultimate/public/image/6.jpg'
                         <div class="iheb-admin-style-select-panel-bottom-left">
                             Style 1 <span> Single Effects</span>
                         </div>
-                        <div class="iheb-admin-style-select-panel-bottom-right">
-                            <button type="button" class="btn btn-success orphita-style-select" dataid="general-1">Select</button>
+                        <div class="iheb-admin-style-select-panel-bottom-right">                            
+                            <?php echo iheudatainputid('general', 1);?>
                         </div>
                     </div>
                 </div>
@@ -294,7 +294,7 @@ $iheuimage6 = WP_PLUGIN_URL . '/image-hover-effects-ultimate/public/image/6.jpg'
                             Style 2 <span>4 Effects</span>
                         </div>
                         <div class="iheb-admin-style-select-panel-bottom-right">
-                            <button type="button" class="btn btn-success orphita-style-select" dataid="general-2">Select</button>
+                            <?php echo iheudatainputid('general', 2);?>
                         </div>
                     </div>
                 </div>
@@ -349,7 +349,7 @@ $iheuimage6 = WP_PLUGIN_URL . '/image-hover-effects-ultimate/public/image/6.jpg'
                             Style 3 <span>4 Effects</span>
                         </div>
                         <div class="iheb-admin-style-select-panel-bottom-right">
-                            <button type="button" class="btn btn-success orphita-style-select" dataid="general-3">Select</button>
+                            <?php echo iheudatainputid('general', 3);?>
                         </div>
                     </div>
                 </div>
@@ -403,7 +403,7 @@ $iheuimage6 = WP_PLUGIN_URL . '/image-hover-effects-ultimate/public/image/6.jpg'
                             Style 4 <span>4 Effects</span>
                         </div>
                         <div class="iheb-admin-style-select-panel-bottom-right">
-                            <button type="button" class="btn btn-success orphita-style-select" dataid="general-4">Select</button>
+                            <?php echo iheudatainputid('general', 4);?>
                         </div>
                     </div>
                 </div>
@@ -461,7 +461,7 @@ $iheuimage6 = WP_PLUGIN_URL . '/image-hover-effects-ultimate/public/image/6.jpg'
                             Style 5 <span>4 Effects</span>
                         </div>
                         <div class="iheb-admin-style-select-panel-bottom-right">
-                            <button type="button" class="btn btn-success orphita-style-select" dataid="general-5">Select</button>
+                            <?php echo iheudatainputid('general', 5);?>
                         </div>
                     </div>
                 </div>
@@ -517,7 +517,7 @@ $iheuimage6 = WP_PLUGIN_URL . '/image-hover-effects-ultimate/public/image/6.jpg'
                             Style 6 <span>3 Effects</span>
                         </div>
                         <div class="iheb-admin-style-select-panel-bottom-right">
-                            <button type="button" class="btn btn-success orphita-style-select" dataid="general-6">Select</button>
+                            <?php echo iheudatainputid('general', 6);?>
                         </div>
                     </div>
                 </div>
@@ -572,7 +572,7 @@ $iheuimage6 = WP_PLUGIN_URL . '/image-hover-effects-ultimate/public/image/6.jpg'
                             Style 7 <span>4 Effects</span>
                         </div>
                         <div class="iheb-admin-style-select-panel-bottom-right">
-                            <button type="button" class="btn btn-success orphita-style-select" dataid="general-7">Select</button>
+                            <?php echo iheudatainputid('general', 7);?>
                         </div>
                     </div>
                 </div>
@@ -634,7 +634,7 @@ $iheuimage6 = WP_PLUGIN_URL . '/image-hover-effects-ultimate/public/image/6.jpg'
                             Style 8 <span>4 Effects</span>
                         </div>
                         <div class="iheb-admin-style-select-panel-bottom-right">
-                            <button type="button" class="btn btn-success orphita-style-select" dataid="general-8">Select</button>
+                            <?php echo iheudatainputid('general', 8);?>
                         </div>
                     </div>
                 </div>
@@ -688,7 +688,7 @@ $iheuimage6 = WP_PLUGIN_URL . '/image-hover-effects-ultimate/public/image/6.jpg'
                             Style 9 <span>4 Effects</span>
                         </div>
                         <div class="iheb-admin-style-select-panel-bottom-right">
-                            <button type="button" class="btn btn-success orphita-style-select" dataid="general-9">Select</button>
+                            <?php echo iheudatainputid('general', 9);?>
                         </div>
                     </div>
                 </div>
@@ -742,7 +742,7 @@ $iheuimage6 = WP_PLUGIN_URL . '/image-hover-effects-ultimate/public/image/6.jpg'
                             Style 10 <span>2 Effects</span>
                         </div>
                         <div class="iheb-admin-style-select-panel-bottom-right">
-                            <button type="button" class="btn btn-success orphita-style-select" dataid="general-10">Select</button>
+                            <?php echo iheudatainputid('general', 10);?>
                         </div>
                     </div>
                 </div>
@@ -798,7 +798,7 @@ $iheuimage6 = WP_PLUGIN_URL . '/image-hover-effects-ultimate/public/image/6.jpg'
                             Style 11 <span>4 Layout</span>
                         </div>
                         <div class="iheb-admin-style-select-panel-bottom-right">
-                            <button type="button" class="btn btn-success orphita-style-select" dataid="general-11">Select</button>
+                            <?php echo iheudatainputid('general', 11);?>
                         </div>
                     </div>
                 </div>
@@ -852,7 +852,7 @@ $iheuimage6 = WP_PLUGIN_URL . '/image-hover-effects-ultimate/public/image/6.jpg'
                             Style 12 <span>4 Effects</span>
                         </div>
                         <div class="iheb-admin-style-select-panel-bottom-right">
-                            <button type="button" class="btn btn-success orphita-style-select" dataid="general-12">Select</button>
+                            <?php echo iheudatainputid('general', 12);?>
                         </div>
                     </div>
                 </div>
@@ -906,7 +906,7 @@ $iheuimage6 = WP_PLUGIN_URL . '/image-hover-effects-ultimate/public/image/6.jpg'
                             Style 13 <span>Single Effect</span>
                         </div>
                         <div class="iheb-admin-style-select-panel-bottom-right">
-                            <button type="button" class="btn btn-success orphita-style-select"  dataid="general-13">Select</button>
+                            <?php echo iheudatainputid('general', 13);?>
                         </div>
                     </div>
                 </div>
@@ -961,7 +961,7 @@ $iheuimage6 = WP_PLUGIN_URL . '/image-hover-effects-ultimate/public/image/6.jpg'
                             Style 14 <span>4 Effects</span>
                         </div>
                         <div class="iheb-admin-style-select-panel-bottom-right">
-                            <button type="button" class="btn btn-success orphita-style-select"  dataid="general-14">Select</button>
+                            <?php echo iheudatainputid('general', 14);?>
                         </div>
                     </div>
                 </div>
@@ -1016,7 +1016,7 @@ $iheuimage6 = WP_PLUGIN_URL . '/image-hover-effects-ultimate/public/image/6.jpg'
                             Style 15 <span>Single Effect</span>
                         </div>
                         <div class="iheb-admin-style-select-panel-bottom-right">
-                            <button type="button" class="btn btn-success orphita-style-select"  dataid="general-15">Select</button>
+                            <?php echo iheudatainputid('general', 15);?>
                         </div>
                     </div>
                 </div>
@@ -1024,6 +1024,7 @@ $iheuimage6 = WP_PLUGIN_URL . '/image-hover-effects-ultimate/public/image/6.jpg'
                     <div class="iheb-admin-style-select-panel-upper">
                         <div class="image-ultimate-container"> 
                             <div class="image-ultimate-row">
+
                                 <div class="image-ultimate-responsive-2  image-ultimate-animation-js image-ultimate-hover-padding-95  image-ultimate-hover-animation-95" data-av-animation="slideInUp">
                                     <div class="image-ultimate-map-95">
                                         <div class="image-ultimate-map-absulate">
@@ -1070,13 +1071,7 @@ $iheuimage6 = WP_PLUGIN_URL . '/image-hover-effects-ultimate/public/image/6.jpg'
                             Style 16 <span>2 Effects</span>
                         </div>
                         <div class="iheb-admin-style-select-panel-bottom-right">
-                            <?php
-                            if ($status == 'valid') {
-                                echo '<button type="button" class="btn btn-success orphita-style-select" dataid="general-16">Select</button>';
-                            } else {
-                                echo '<button type="button" class="btn ctu-pro-only">Pro Only</button>';
-                            }
-                            ?>
+                            <?php echo iheudatainputid('general', 16);?>
                         </div>
                     </div>
                 </div>
@@ -1131,13 +1126,7 @@ $iheuimage6 = WP_PLUGIN_URL . '/image-hover-effects-ultimate/public/image/6.jpg'
                             Style 17 <span>Single Effects</span>
                         </div>
                         <div class="iheb-admin-style-select-panel-bottom-right">
-                            <?php
-                            if ($status == 'valid') {
-                                echo '<button type="button" class="btn btn-success orphita-style-select" dataid="general-17">Select</button>';
-                            } else {
-                                echo '<button type="button" class="btn ctu-pro-only">Pro Only</button>';
-                            }
-                            ?>
+                            <?php echo iheudatainputid('general', 17);?>
                         </div>
                     </div>
                 </div>
@@ -1193,13 +1182,7 @@ $iheuimage6 = WP_PLUGIN_URL . '/image-hover-effects-ultimate/public/image/6.jpg'
                             Style 18 <span>4 Effects</span>
                         </div>
                         <div class="iheb-admin-style-select-panel-bottom-right">
-                            <?php
-                            if ($status == 'valid') {
-                                echo '<button type="button" class="btn btn-success orphita-style-select" dataid="general-18">Select</button>';
-                            } else {
-                                echo '<button type="button" class="btn ctu-pro-only">Pro Only</button>';
-                            }
-                            ?>
+                            <?php echo iheudatainputid('general', 18);?>
                         </div>
                     </div>
                 </div>
@@ -1255,13 +1238,7 @@ $iheuimage6 = WP_PLUGIN_URL . '/image-hover-effects-ultimate/public/image/6.jpg'
                             Style 19 <span>4 Effects</span>
                         </div>
                         <div class="iheb-admin-style-select-panel-bottom-right">
-                            <?php
-                            if ($status == 'valid') {
-                                echo '<button type="button" class="btn btn-success orphita-style-select" dataid="general-19">Select</button>';
-                            } else {
-                                echo '<button type="button" class="btn ctu-pro-only">Pro Only</button>';
-                            }
-                            ?>
+                           <?php echo iheudatainputid('general', 19);?>
                         </div>
                     </div>
                 </div>
@@ -1316,13 +1293,7 @@ $iheuimage6 = WP_PLUGIN_URL . '/image-hover-effects-ultimate/public/image/6.jpg'
                             Style 20 <span>4 Effects</span>
                         </div>
                         <div class="iheb-admin-style-select-panel-bottom-right">
-                            <?php
-                            if ($status == 'valid') {
-                                echo '<button type="button" class="btn btn-success orphita-style-select" dataid="general-20">Select</button>';
-                            } else {
-                                echo '<button type="button" class="btn ctu-pro-only">Pro Only</button>';
-                            }
-                            ?>
+                            <?php echo iheudatainputid('general', 20);?>
                         </div>
                     </div>
                 </div>
@@ -1383,13 +1354,7 @@ $iheuimage6 = WP_PLUGIN_URL . '/image-hover-effects-ultimate/public/image/6.jpg'
                             Style 21 <span>4 Effects</span>
                         </div>
                         <div class="iheb-admin-style-select-panel-bottom-right">
-                            <?php
-                            if ($status == 'valid') {
-                                echo '<button type="button" class="btn btn-success orphita-style-select" dataid="general-21">Select</button>';
-                            } else {
-                                echo '<button type="button" class="btn ctu-pro-only">Pro Only</button>';
-                            }
-                            ?>
+                            <?php echo iheudatainputid('general', 21);?>
                         </div>
                     </div>
                 </div>
@@ -1444,13 +1409,7 @@ $iheuimage6 = WP_PLUGIN_URL . '/image-hover-effects-ultimate/public/image/6.jpg'
                             Style 22 <span>4 Effects</span>
                         </div>
                         <div class="iheb-admin-style-select-panel-bottom-right">
-                            <?php
-                            if ($status == 'valid') {
-                                echo '<button type="button" class="btn btn-success orphita-style-select" dataid="general-22">Select</button>';
-                            } else {
-                                echo '<button type="button" class="btn ctu-pro-only">Pro Only</button>';
-                            }
-                            ?>
+                            <?php echo iheudatainputid('general', 22);?>
                         </div>
                     </div>
                 </div>
@@ -1505,13 +1464,7 @@ $iheuimage6 = WP_PLUGIN_URL . '/image-hover-effects-ultimate/public/image/6.jpg'
                             Style 23 <span>4 Effects</span>
                         </div>
                         <div class="iheb-admin-style-select-panel-bottom-right">
-                            <?php
-                            if ($status == 'valid') {
-                                echo '<button type="button" class="btn btn-success orphita-style-select" dataid="general-23">Select</button>';
-                            } else {
-                                echo '<button type="button" class="btn ctu-pro-only">Pro Only</button>';
-                            }
-                            ?>
+                            <?php echo iheudatainputid('general', 23);?>
                         </div>
                     </div>
                 </div>
@@ -1519,8 +1472,6 @@ $iheuimage6 = WP_PLUGIN_URL . '/image-hover-effects-ultimate/public/image/6.jpg'
                     <div class="iheb-admin-style-select-panel-upper">
                         <div class="image-ultimate-container"> 
                             <div class="image-ultimate-row">
-
-
                                 <div class="image-ultimate-responsive-2  image-ultimate-animation-js image-ultimate-hover-padding-145  image-ultimate-hover-animation-145" data-av-animation="slideInUp">
                                     <div class="image-ultimate-map-145">
                                         <div class="image-ultimate-map-absulate">
@@ -1567,13 +1518,7 @@ $iheuimage6 = WP_PLUGIN_URL . '/image-hover-effects-ultimate/public/image/6.jpg'
                             Style 24 <span>4 Effects</span>
                         </div>
                         <div class="iheb-admin-style-select-panel-bottom-right">
-                            <?php
-                            if ($status == 'valid') {
-                                echo '<button type="button" class="btn btn-success orphita-style-select" dataid="general-24">Select</button>';
-                            } else {
-                                echo '<button type="button" class="btn ctu-pro-only">Pro Only</button>';
-                            }
-                            ?>
+                            <?php echo iheudatainputid('general', 24);?>
                         </div>
                     </div>
                 </div>
@@ -1628,13 +1573,7 @@ $iheuimage6 = WP_PLUGIN_URL . '/image-hover-effects-ultimate/public/image/6.jpg'
                             Style 25 <span>Single Effect</span>
                         </div>
                         <div class="iheb-admin-style-select-panel-bottom-right">
-                            <?php
-                            if ($status == 'valid') {
-                                echo '<button type="button" class="btn btn-success orphita-style-select" dataid="general-25">Select</button>';
-                            } else {
-                                echo '<button type="button" class="btn ctu-pro-only">Pro Only</button>';
-                            }
-                            ?>
+                            <?php echo iheudatainputid('general', 25);?>
                         </div>
                     </div>
                 </div>
@@ -1690,13 +1629,7 @@ $iheuimage6 = WP_PLUGIN_URL . '/image-hover-effects-ultimate/public/image/6.jpg'
                             Style 26 <span>Single Effects</span>
                         </div>
                         <div class="iheb-admin-style-select-panel-bottom-right">
-                            <?php
-                            if ($status == 'valid') {
-                                echo '<button type="button" class="btn btn-success orphita-style-select" dataid="general-26">Select</button>';
-                            } else {
-                                echo '<button type="button" class="btn ctu-pro-only">Pro Only</button>';
-                            }
-                            ?>
+                            <?php echo iheudatainputid('general', 26);?>
                         </div>
                     </div>
                 </div>
@@ -1751,13 +1684,7 @@ $iheuimage6 = WP_PLUGIN_URL . '/image-hover-effects-ultimate/public/image/6.jpg'
                             Style 27 <span>4 Effects</span>
                         </div>
                         <div class="iheb-admin-style-select-panel-bottom-right">
-                            <?php
-                            if ($status == 'valid') {
-                                echo '<button type="button" class="btn btn-success orphita-style-select" dataid="general-27">Select</button>';
-                            } else {
-                                echo '<button type="button" class="btn ctu-pro-only">Pro Only</button>';
-                            }
-                            ?>
+                            <?php echo iheudatainputid('general', 27);?>
                         </div>
                     </div>
                 </div>
@@ -1811,13 +1738,7 @@ $iheuimage6 = WP_PLUGIN_URL . '/image-hover-effects-ultimate/public/image/6.jpg'
                             Style 28 <span>4 Effects</span>
                         </div>
                         <div class="iheb-admin-style-select-panel-bottom-right">
-                            <?php
-                            if ($status == 'valid') {
-                                echo '<button type="button" class="btn btn-success orphita-style-select" dataid="general-28">Select</button>';
-                            } else {
-                                echo '<button type="button" class="btn ctu-pro-only">Pro Only</button>';
-                            }
-                            ?>
+                            <?php echo iheudatainputid('general', 28);?>
                         </div>
                     </div>
                 </div>
@@ -1871,13 +1792,7 @@ $iheuimage6 = WP_PLUGIN_URL . '/image-hover-effects-ultimate/public/image/6.jpg'
                             Style 29 <span>Single Effect</span>
                         </div>
                         <div class="iheb-admin-style-select-panel-bottom-right">
-                           <?php
-                            if ($status == 'valid') {
-                                echo '<button type="button" class="btn btn-success orphita-style-select" dataid="general-29">Select</button>';
-                            } else {
-                                echo '<button type="button" class="btn ctu-pro-only">Pro Only</button>';
-                            }
-                            ?>
+                            <?php echo iheudatainputid('general', 29);?>
                         </div>
                     </div>
                 </div>
@@ -1931,40 +1846,10 @@ $iheuimage6 = WP_PLUGIN_URL . '/image-hover-effects-ultimate/public/image/6.jpg'
                             Style 30 <span> Single Effects</span>
                         </div>
                         <div class="iheb-admin-style-select-panel-bottom-right">
-                            <?php
-                            if ($status == 'valid') {
-                                echo '<button type="button" class="btn btn-success orphita-style-select" dataid="general-30">Select</button>';
-                            } else {
-                                echo '<button type="button" class="btn ctu-pro-only">Pro Only</button>';
-                            }
-                            ?>
+                           <?php echo iheudatainputid('general', 30);?>
                         </div>
                     </div>
-                    <div class="modal fade" id="iheu-general-30-data" >
-                        <form method="post">
-                            <div class="modal-dialog modal-sm">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                        <h4 class="modal-title">Style Settings</h4>
-                                    </div>
-                                    <div class="modal-body">
-                                        <div class="form-group row form-group-sm">
-                                            <label for="style-name" class="col-sm-6 col-form-label"  data-toggle="tooltip" class="tooltipLink" data-original-title="Give Your Template Name">Name</label>
-                                            <div class="col-sm-6 nopadding">
-                                                <input class="form-control" type="text" value=""  name="style-name">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <input type="hidden" name="style" value="general-30">
-                                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                                        <input type="submit" class="btn btn-primary" name="submit" value="Save">
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
+                    
                 </div>
                 <div class="iheb-admin-style-select-panel margin">
                     <div class="iheb-admin-style-select-panel-upper">
@@ -2012,13 +1897,7 @@ $iheuimage6 = WP_PLUGIN_URL . '/image-hover-effects-ultimate/public/image/6.jpg'
                             Style 31 <span> Single Effects</span>
                         </div>
                         <div class="iheb-admin-style-select-panel-bottom-right">
-                            <?php
-                            if ($status == 'valid') {
-                                echo '<button type="button" class="btn btn-success orphita-style-select" dataid="general-31">Select</button>';
-                            } else {
-                                echo '<button type="button" class="btn ctu-pro-only">Pro Only</button>';
-                            }
-                            ?>
+                           <?php echo iheudatainputid('general', 31);?>
                         </div>
                     </div>
                 </div>
@@ -2071,13 +1950,7 @@ $iheuimage6 = WP_PLUGIN_URL . '/image-hover-effects-ultimate/public/image/6.jpg'
                             Style 32 <span> Single Effects</span>
                         </div>
                         <div class="iheb-admin-style-select-panel-bottom-right">
-                           <?php
-                            if ($status == 'valid') {
-                                echo '<button type="button" class="btn btn-success orphita-style-select" dataid="general-32">Select</button>';
-                            } else {
-                                echo '<button type="button" class="btn ctu-pro-only">Pro Only</button>';
-                            }
-                            ?>
+                            <?php echo iheudatainputid('general', 32);?>
                         </div>
                     </div>
                 </div>
@@ -2096,7 +1969,7 @@ $iheuimage6 = WP_PLUGIN_URL . '/image-hover-effects-ultimate/public/image/6.jpg'
                 </div>
                 <div class="modal-body">
                     <div class="form-group row form-group-sm">
-                        <label for="style-name" class="col-sm-6 col-form-label"  data-toggle="tooltip" class="tooltipLink" data-original-title="Give Your Template Name">Name</label>
+                        <label for="style-name" class="col-sm-6 oxi-control-label"  data-toggle="tooltip" class="tooltipLink" data-original-title="Give Your Template Name">Name</label>
                         <div class="col-sm-6 nopadding">
                             <input class="form-control" type="text" value=""  name="style-name">
                         </div>

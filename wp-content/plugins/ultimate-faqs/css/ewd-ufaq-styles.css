@@ -23,14 +23,14 @@
 }
 
 .ufaq-permalink {
-  margin-left: 10px;
+  margin: 24px 0;
 }
 .ufaq-permalink-image {
 	background: url("../images/insert_link.png");
 	height: 21px;
 	width: 30px;
-	margin-top: -25px;
-	margin-left: 90px;
+	margin-top: -32px;
+	margin-left: 112px;
 }
 
 .ewd-ufaq-author-date {
@@ -68,6 +68,9 @@
 }
 .ufaq-faq-search{
   margin:5px 0 !important;
+}
+.ufaq-search-highlight {
+  background: #f7ff00;
 }
 .ewd-otp-field-label{
 width: auto !important;
@@ -125,7 +128,7 @@ margin:0 auto;
   margin-top: 14px;
 }
 .ufaq-custom-field-label {
-  font-weight: bold;
+  font-weight: normal;
 }
 
 .ufaq-faq-body .comment-respond {
@@ -182,7 +185,68 @@ margin:0 auto;
 }
 
 
+/***********************
+* Pagination
+***********************/
+.ewd-ufaq-bottom {
+  clear: both;
+}
+.ewd-ufaq-previous-faqs h4 {
+  float: left;
+  padding-left: 12px;
+  cursor: pointer;
+  font-weight: 600;
+}
+.ewd-ufaq-next-faqs h4 {
+  float: right;
+  padding-right: 12px;
+  cursor: pointer;
+  font-weight: 600;
+}
+.ewd-ufaq-load-more h4 {
+  text-align: center;
+  cursor: pointer;
+  font-weight: 600;
+}
 
+
+/***********************
+* Columns
+***********************/
+.ufaq-faq-div.ufaq-faq-column-count-Two {
+  width: 48%;
+  margin-right: 2%;
+  float: left;
+  clear: none;
+}
+.ufaq-faq-div.ufaq-faq-column-count-Three {
+  width: 31%;
+  margin-right: 2%;
+  float: left;
+  clear: none;
+}
+.ufaq-faq-div.ufaq-faq-column-count-Four {
+  width: 23%;
+  margin-right: 2%;
+  float: left;
+  clear: none;
+}
+
+@media only screen and (max-width: 960px) {
+  .ufaq-faq-div.ufaq-faq-column-count-Three.ufaq-faq-responsive-columns-Yes,
+  .ufaq-faq-div.ufaq-faq-column-count-Four.ufaq-faq-responsive-columns-Yes {
+    width: 48%;
+    margin-right: 2%;
+  }
+}
+@media only screen and (max-width: 520px) {
+  .ufaq-faq-div.ufaq-faq-column-count-Two.ufaq-faq-responsive-columns-Yes,
+  .ufaq-faq-div.ufaq-faq-column-count-Three.ufaq-faq-responsive-columns-Yes,
+  .ufaq-faq-div.ufaq-faq-column-count-Four.ufaq-faq-responsive-columns-Yes {
+    width: 100%;
+    margin-right: none;
+  }
+}
 
 /***********************
 Color Block Style
@@ -271,13 +335,15 @@ margin-top: 4px;
 .ufaq-faq-display-style-Minimalist .ufaq-social-links ul {
 float: left;
 margin-bottom: 14px;
+position: relative;
+width: auto;
 }
 .ufaq-faq-display-style-Minimalist .ufaq-permalink {
 margin: 24px 0;
 }
 .ufaq-faq-display-style-Minimalist .ufaq-permalink-image {
-margin-top: -22px;
-margin-left: 100px;
+margin-top: -32px;
+margin-left: 112px;
 }
 
 .ufaq-faq-display-style-Minimalist .ewd-ufaq-author-date {
@@ -341,13 +407,15 @@ margin-top: 4px;
 .ufaq-faq-display-style-Border_Block .ufaq-social-links ul {
 float: left;
 margin-bottom: 14px;
+position: relative;
+width: auto;
 }
 .ufaq-faq-display-style-Border_Block .ufaq-permalink {
 margin: 24px 0;
 }
 .ufaq-faq-display-style-Border_Block .ufaq-permalink-image {
-margin-top: -22px;
-margin-left: 100px;
+margin-top: -32px;
+margin-left: 112px;
 }
 
 .ufaq-faq-display-style-Border_Block .ewd-ufaq-author-date {
@@ -401,6 +469,8 @@ margin-top: 4px;
 .ufaq-faq-display-style-Contemporary .ufaq-social-links ul {
 float: left;
 margin-bottom: 14px;
+position: relative;
+width: auto;
 }
 .ufaq-faq-display-style-Contemporary .ufaq-permalink {
 margin-left: 0;
@@ -410,7 +480,12 @@ margin-bottom: 10px;
   margin-bottom: 14px;
 }
 
-
+.ufaq-social-links-label {
+  float: left;
+  margin-right: 8px;
+  position: relative;
+  top: 3px;
+}
 
 
 
@@ -505,3 +580,18 @@ width: 80%;
 }
 
 
+
+/*
+==============================================
+Pagination
+==============================================
+*/
+.ewd-ufaq-previous-faqs, .ewd-ufaq-next-faqs {
+    margin-top: 16px;
+}
+.ewd-ufaq-previous-faqs {
+    float: left;
+}
+.ewd-ufaq-next-faqs {
+    float: right;
+}

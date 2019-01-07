@@ -20,6 +20,7 @@ function EWD_UFAQ_Taxonomy_Page($tag, $taxonomy) {
 add_action( 'add_meta_boxes', 'EWD_UFAQ_Add_Meta_Boxes' );
 function EWD_UFAQ_Add_Meta_Boxes () {
 	add_meta_box("ufaq-meta", __("FAQ Details", 'ultimate-faqs'), "EWD_UFAQ_Meta_Box", "ufaq", "normal", "high");
+	add_meta_box("ufaq-meta-need-help", __("Need Help?", 'ultimate-faqs'), "EWD_UFAQ_Need_Help_Meta_Box", "ufaq", "side", "high");
 }
 
 /**
@@ -27,6 +28,15 @@ function EWD_UFAQ_Add_Meta_Boxes () {
  *
  * @param WP_Post $post The object for the current post/page.
  */
+
+function EWD_UFAQ_Need_Help_Meta_Box( $post ) {
+	echo "<div class='ewd-ufaq-need-help-box'>";
+		echo "<div class='ewd-ufaq-need-help-text'>Visit our Support Center for documentation and tutorials</div>";
+		echo "<a class='ewd-ufaq-need-help-button' href='https://www.etoilewebdesign.com/support-center/?Plugin=UFAQ' target='_blank'>GET SUPPORT</a>";
+	echo "</div>";
+}
+
+
 function EWD_UFAQ_Meta_Box( $post ) {
 	$FAQ_Fields_Array = get_option("EWD_UFAQ_FAQ_Fields");
 	if (!is_array($FAQ_Fields_Array)) {$FAQ_Fields_Array = array();}
@@ -121,7 +131,7 @@ function EWD_UFAQ_Meta_Box( $post ) {
 			echo "";
 		}
 		elseif ($FAQ_Field_Item['FieldType'] == "file") {
-			echo "<input name='Custom_Field_" . $FAQ_Field_Item['FieldID'] . "' class='ewd-ufaq-file-input' type='file' value='" . $Value . "' /><br/>Current Filename: " . $Value . "";
+			echo "<input name='Custom_Field_" . $FAQ_Field_Item['FieldID'] . "' class='ewd-ufaq-file-input' type='file' value='" . $Value . "' /><br/><label>Current " . $FAQ_Field_Item['FieldName'] . " File: </label>" . $Value . "";
 		}
 		elseif ($FAQ_Field_Item['FieldType'] == "link") {
 		    echo "<input name='Custom_Field_" . $FAQ_Field_Item['FieldID'] . "' id='ewd-ufaq-input-" . $FAQ_Field_Item['FieldID'] . "' class='ewd-ufaq-text-input' type='text' value='" . $Value . "' size='60' />";

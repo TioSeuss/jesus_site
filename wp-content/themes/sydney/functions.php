@@ -79,6 +79,9 @@ function sydney_setup() {
 		'default-color' => 'ffffff',
 		'default-image' => '',
 	) ) );
+
+	//Gutenberg align-wide support
+	add_theme_support( 'align-wide' );
 }
 endif; // sydney_setup
 add_action( 'after_setup_theme', 'sydney_setup' );
@@ -168,7 +171,7 @@ function sydney_scripts() {
 
 	wp_enqueue_style( 'sydney-fonts', esc_url( sydney_google_fonts() ), array(), null );
 
-	wp_enqueue_style( 'sydney-style', get_stylesheet_uri(), '', '20180213' );
+	wp_enqueue_style( 'sydney-style', get_stylesheet_uri(), '', '20180710' );
 
 	wp_enqueue_style( 'sydney-font-awesome', get_template_directory_uri() . '/fonts/font-awesome.min.css' );
 
@@ -177,7 +180,7 @@ function sydney_scripts() {
 
 	wp_enqueue_script( 'sydney-scripts', get_template_directory_uri() . '/js/scripts.js', array('jquery'),'', true );
 
-	wp_enqueue_script( 'sydney-main', get_template_directory_uri() . '/js/main.min.js', array('jquery'),'20180213', true );
+	wp_enqueue_script( 'sydney-main', get_template_directory_uri() . '/js/main.min.js', array('jquery'),'20180716', true );
 
 	wp_enqueue_script( 'sydney-skip-link-focus-fix', get_template_directory_uri() . '/js/skip-link-focus-fix.js', array(), '20130115', true );
 
@@ -234,11 +237,6 @@ add_action( 'wp_enqueue_scripts', 'sydney_enqueue_bootstrap', 9 );
 /**
  * Elementor editor scripts
  */
-function sydney_elementor_editor_scripts() {
-	wp_enqueue_script( 'sydney-elementor-editor', get_template_directory_uri() . '/js/elementor.js', array( 'jquery' ), '20181215', true );
-}
-add_action('elementor/frontend/after_register_scripts', 'sydney_elementor_editor_scripts');
-
 
 /**
  * Change the excerpt length
@@ -415,6 +413,11 @@ require get_template_directory() . '/inc/woocommerce.php';
 require get_template_directory() . '/inc/upsell/class-customize.php';
 
 /**
+ * Gutenberg
+ */
+require get_template_directory() . '/inc/editor.php';
+
+/**
  * Demo content
  */
 require_once dirname( __FILE__ ) . '/demo-content/setup.php';
@@ -426,6 +429,8 @@ require_once dirname( __FILE__ ) . '/plugins/class-tgm-plugin-activation.php';
 
 add_action( 'tgmpa_register', 'sydney_recommend_plugin' );
 function sydney_recommend_plugin() {
+
+	$plugins = array();
 
 	if ( !defined( 'SITEORIGIN_PANELS_VERSION' ) ) {
 	    $plugins[] = array(

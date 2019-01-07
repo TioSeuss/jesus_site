@@ -37,6 +37,8 @@ function EWD_UFAQ_Import(){
     echo $wpdb->last_query;
 }
 
+if (!class_exists('ComposerAutoloaderInit4618f5c41cf5e27cc7908556f031e4d4')) {require_once EWD_UFAQ_CD_PLUGIN_PATH . 'PHPSpreadsheet/vendor/autoload.php';}
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 function Add_EWD_UFAQs_From_Spreadsheet($Excel_File_Name){
     global $wpdb;
 
@@ -45,13 +47,8 @@ function Add_EWD_UFAQs_From_Spreadsheet($Excel_File_Name){
 
     $Excel_URL = EWD_UFAQ_CD_PLUGIN_PATH . 'faq-sheets/' . $Excel_File_Name;
 
-    // Uses the PHPExcel class to simplify the file parsing process
-    include_once(EWD_UFAQ_CD_PLUGIN_PATH . 'PHPExcel/Classes/PHPExcel.php');
-
-    // Build the workbook object out of the uploaded spredsheet
-    $inputFileType = PHPExcel_IOFactory::identify($Excel_URL);
-    $objReader = PHPExcel_IOFactory::createReader($inputFileType);
-    $objWorkBook = $objReader->load($Excel_URL);
+    // Build the workbook object out of the uploaded spreadsheet
+    $objWorkBook = \PhpOffice\PhpSpreadsheet\IOFactory::load($Excel_URL);
 
     // Create a worksheet object out of the product sheet in the workbook
     $sheet = $objWorkBook->getActiveSheet();
@@ -64,8 +61,8 @@ function Add_EWD_UFAQs_From_Spreadsheet($Excel_File_Name){
 
     // Get column names
     $highestColumn = $sheet->getHighestColumn();
-    $highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn);
-    for ($column = 0; $column < $highestColumnIndex; $column++) {
+    $highestColumnIndex = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($highestColumn);
+    for ($column = 1; $column <= $highestColumnIndex; $column++) {
         if (trim($sheet->getCellByColumnAndRow($column, 1)->getValue()) == "Question") {$Question_Column = $column;}
         if (trim($sheet->getCellByColumnAndRow($column, 1)->getValue()) == "Answer") {$Answer_Column = $column;}
         if (trim($sheet->getCellByColumnAndRow($column, 1)->getValue()) == "Categories") {$Categories_Column = $column;}
@@ -81,7 +78,7 @@ function Add_EWD_UFAQs_From_Spreadsheet($Excel_File_Name){
     // Put the spreadsheet data into a multi-dimensional array to facilitate processing
     $highestRow = $sheet->getHighestRow();
     for ($row = 2; $row <= $highestRow; $row++) {
-        for ($column = 0; $column < $highestColumnIndex; $column++) {
+        for ($column = 1; $column <= $highestColumnIndex; $column++) {
             $Data[$row][$column] = $sheet->getCellByColumnAndRow($column, $row)->getValue();
         }
     }
@@ -98,6 +95,9 @@ function Add_EWD_UFAQs_From_Spreadsheet($Excel_File_Name){
             if ($Col_Index == $Tags_Column and $Tags_Column !== null) {$Post_Tags = explode(",", esc_sql($Value));}
             if ($Col_Index == $Date_Column and $Date_Column !== null) {$Post['post_date'] = esc_sql($Value);}
         }
+
+        if (!is_array($Post_Categories)) {$Post_Categories = array();}
+        if (!is_array($Post_Tags)) {$Post_Tags = array();}
 
         if ($Post['post_title'] == '') {continue;}
 

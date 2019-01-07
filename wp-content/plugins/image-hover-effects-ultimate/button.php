@@ -13,12 +13,14 @@ wp_enqueue_script('iheu-vendor-bootstrap-jss', plugins_url('css-js/bootstrap.min
 wp_enqueue_style('iheu-vendor-bootstrap', plugins_url('css-js/bootstrap.min.css', __FILE__));
 wp_enqueue_style('iheu-vendor-style', plugins_url('css-js/style.css', __FILE__));
 wp_enqueue_style('iheu-button-style', plugins_url('css-js/button-style.css', __FILE__));
-wp_enqueue_style('font-awesome-5-0-13', plugins_url('css-js/font-awesome.min.css', __FILE__));
+$faversion = get_option('oxi_addons_font_awesome_version');
+$faversion = explode('||', $faversion);
+wp_enqueue_style('font-awesome-' . $faversion[0], $faversion[1]);
 wp_enqueue_style('iheu-style', plugins_url('public/style.css', __FILE__));
 wp_enqueue_script('iheu-viewportchecker', plugins_url('public/viewportchecker.js', __FILE__));
 
+
 image_hover_ultimate_user_capabilities();
-$status = get_option('image_hover_ultimate_license_status');
 if (!empty($_POST['submit']) && $_POST['submit'] == 'Save') {
     if ($_POST['style'] == 'button-1') {
         $name = sanitize_text_field($_POST['style-name']);
@@ -45,7 +47,6 @@ if (!empty($_POST['submit']) && $_POST['submit'] == 'Save') {
         $style_name = sanitize_text_field($_POST['style']);
         $css = 'iheu-item |image-ultimate-responsive-1|image-radius |50|image-width |250|image-height |250|image-margin |20|image-padding |30|background-color |rgba(0, 146, 194, 0.5)|content-alignment ||open-in-new-tab ||image-animation |pulse|animation-durations |1|content-animation ||inner-shadow |0|inner-shadow-color |rgba(0, 146, 194, 0.3)|box-shadow ||box-shadow-color ||heading-font-size ||heading-font-color ||heading-font-familly ||heading-font-weight ||heading-underline ||heading-padding-bottom ||heading-margin-bottom ||desc-font-size ||desc-font-color ||desc-font-familly ||desc-font-weight ||desc-padding-bottom ||bottom-font-size ||bottom-font-color ||bottom-font-background ||bottom-font-familly ||bottom-font-weight ||bottom-hover-color ||bottom-hover-background ||bottom-border-radius ||bottom-padding-top-bottom ||bottom-padding-left-right ||bottom-align ||bottom-margin-left ||bottom-margin-right ||iheu-css ||button-font-size |18|button-font-color |#7e009e|button-font-background |rgba(255, 255, 255, 1)|button-hover-color |#ffffff|button-hover-background |rgba(126, 0, 158, 1)|button-border-radius |46|button-height-width |40|button-margin-right |7|iheu-directions |left_to_right|';
     }
-
     if ($_POST['style'] == 'button-6') {
         $name = sanitize_text_field($_POST['style-name']);
         $style_name = sanitize_text_field($_POST['style']);
@@ -98,10 +99,10 @@ if (!empty($_POST['submit']) && $_POST['submit'] == 'Save') {
 <div class="wrap">
     <?php echo iheu_promote_free(); ?>
     <div class="iheu-admin-wrapper">
-        <h1>Select Style</h1>
-        <p>Select Style from our Template list</p>
-        <div class="iheu-admin-new-row">
-            <div class="iheu-admin-row">
+        <div class="iheu-admin-row">
+            <h1>Select Style</h1>
+            <p>Select Style from our Template list</p>
+            <div class="iheu-admin-new-row">            
                 <div class="iheb-admin-style-select-panel margin">
                     <div class="iheb-admin-style-select-panel-upper">
                         <div class="image-ultimate-container"> 
@@ -150,7 +151,7 @@ if (!empty($_POST['submit']) && $_POST['submit'] == 'Save') {
                             Style 1 <span>Single Effects</span>
                         </div>
                         <div class="iheb-admin-style-select-panel-bottom-right">
-                            <button type="button" class="btn btn-success orphita-style-select" dataid="button-1">Select</button>
+                            <?php echo iheudatainputid('button', 1); ?>
                         </div>
                     </div>
                 </div>
@@ -200,7 +201,7 @@ if (!empty($_POST['submit']) && $_POST['submit'] == 'Save') {
                             Style 2 <span>4 Effects</span>
                         </div>
                         <div class="iheb-admin-style-select-panel-bottom-right">
-                            <button type="button" class="btn btn-success orphita-style-select" dataid="button-2">Select</button>
+                            <?php echo iheudatainputid('button', 2); ?>
                         </div>
                     </div>
                 </div>
@@ -253,7 +254,7 @@ if (!empty($_POST['submit']) && $_POST['submit'] == 'Save') {
                             Style 3 <span>2 Effects</span>
                         </div>
                         <div class="iheb-admin-style-select-panel-bottom-right">
-                            <button type="button" class="btn btn-success orphita-style-select" dataid="button-3">Select</button>
+                            <?php echo iheudatainputid('button', 3); ?>
                         </div>
                     </div>
                 </div>
@@ -304,7 +305,7 @@ if (!empty($_POST['submit']) && $_POST['submit'] == 'Save') {
                             Style 4 <span>2 Effects</span>
                         </div>
                         <div class="iheb-admin-style-select-panel-bottom-right">
-                            <button type="button" class="btn btn-success orphita-style-select" dataid="button-4">Select</button>
+                            <?php echo iheudatainputid('button', 4); ?>
                         </div>
                     </div>
                 </div>
@@ -357,7 +358,7 @@ if (!empty($_POST['submit']) && $_POST['submit'] == 'Save') {
                             Style 5 <span>3 Effects</span>
                         </div>
                         <div class="iheb-admin-style-select-panel-bottom-right">
-                            <button type="button" class="btn btn-success orphita-style-select" dataid="button-5">Select</button>
+                            <?php echo iheudatainputid('button', 5); ?>
                         </div>
                     </div>
                 </div>
@@ -410,13 +411,7 @@ if (!empty($_POST['submit']) && $_POST['submit'] == 'Save') {
                             Button Effects 6 <span>4 Layout</span>
                         </div>
                         <div class="iheb-admin-style-select-panel-bottom-right">
-                            <?php
-                            if ($status == 'valid') {
-                                echo '<button type="button" class="btn btn-success orphita-style-select" dataid="button-6">Select</button>';
-                            } else {
-                                echo '<button type="button" class="btn ctu-pro-only">Pro Only</button>';
-                            }
-                            ?>
+                            <?php echo iheudatainputid('button', 6); ?>
                         </div>
                     </div>
                 </div>
@@ -469,13 +464,7 @@ if (!empty($_POST['submit']) && $_POST['submit'] == 'Save') {
                             Button Effects 7 <span>2 Layout</span>
                         </div>
                         <div class="iheb-admin-style-select-panel-bottom-right">
-                            <?php
-                            if ($status == 'valid') {
-                                echo '<button type="button" class="btn btn-success orphita-style-select" dataid="button-7">Select</button>';
-                            } else {
-                                echo '<button type="button" class="btn ctu-pro-only">Pro Only</button>';
-                            }
-                            ?>
+                            <?php echo iheudatainputid('button', 7); ?>
                         </div>
                     </div>
                 </div>
@@ -528,13 +517,7 @@ if (!empty($_POST['submit']) && $_POST['submit'] == 'Save') {
                             Style 8 <span>2 Effects</span>
                         </div>
                         <div class="iheb-admin-style-select-panel-bottom-right">
-                            <?php
-                            if ($status == 'valid') {
-                                echo '<button type="button" class="btn btn-success orphita-style-select" dataid="button-8">Select</button>';
-                            } else {
-                                echo '<button type="button" class="btn ctu-pro-only">Pro Only</button>';
-                            }
-                            ?>
+                            <?php echo iheudatainputid('button', 8); ?>
                         </div>
                     </div>
                 </div>
@@ -578,19 +561,14 @@ if (!empty($_POST['submit']) && $_POST['submit'] == 'Save') {
                                 </div> 
                             </div>
                         </div>
+
                     </div>
                     <div class="iheb-admin-style-select-panel-bottom">
                         <div class="iheb-admin-style-select-panel-bottom-left">
                             Style 9 <span>2 Effects</span>
                         </div>
                         <div class="iheb-admin-style-select-panel-bottom-right">
-                            <?php
-                            if ($status == 'valid') {
-                                echo '<button type="button" class="btn btn-success orphita-style-select" dataid="button-9">Select</button>';
-                            } else {
-                                echo '<button type="button" class="btn ctu-pro-only">Pro Only</button>';
-                            }
-                            ?>
+                            <?php echo iheudatainputid('button', 9); ?>
                         </div>
                     </div>
                 </div>
@@ -647,13 +625,7 @@ if (!empty($_POST['submit']) && $_POST['submit'] == 'Save') {
                             Button Effects 10 <span>4 Layout</span>
                         </div>
                         <div class="iheb-admin-style-select-panel-bottom-right">
-                            <?php
-                            if ($status == 'valid') {
-                                echo '<button type="button" class="btn btn-success orphita-style-select" dataid="button-10">Select</button>';
-                            } else {
-                                echo '<button type="button" class="btn ctu-pro-only">Pro Only</button>';
-                            }
-                            ?>
+                            <?php echo iheudatainputid('button', 10); ?>
                         </div>
                     </div>
                 </div>
@@ -708,13 +680,7 @@ if (!empty($_POST['submit']) && $_POST['submit'] == 'Save') {
                             Button Effects 11 <span>4 Layout</span>
                         </div>
                         <div class="iheb-admin-style-select-panel-bottom-right">
-                            <?php
-                            if ($status == 'valid') {
-                                echo '<button type="button" class="btn btn-success orphita-style-select" dataid="button-11">Select</button>';
-                            } else {
-                                echo '<button type="button" class="btn ctu-pro-only">Pro Only</button>';
-                            }
-                            ?>
+                            <?php echo iheudatainputid('button', 11); ?>
                         </div>
                     </div>
                 </div>

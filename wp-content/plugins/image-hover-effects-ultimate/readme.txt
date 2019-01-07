@@ -3,8 +3,8 @@ Contributors: biplob018
 Donate link: https://www.oxilab.org
 Tags: responsive image effects, awesome css3 effects, awesome image effects,  css3 effects, effects, top image effects for wordpress,  hover effect. 
 Requires at least: 3.0.1
-Stable tag: 8.3
-Tested up to: 4.9.6
+Stable tag: 8.6
+Tested up to: 5.0.0
 Requires PHP: 5.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -34,7 +34,7 @@ Hover effect on the image is an important part of creating an attractive and pro
 + [Help and Support ](https://wordpress.org/support/plugin/image-hover-effects-ultimate#new-post "Help and Support")
 
 
-Consider the comfort of developers we’ve lunched an advanced pure CSS3 based Image hover effect plugin named Image Hover Effect Ultimate. A non-coding person can easily develop his/her own site by using our plugin. We designer our image hover plugin very handy for all users. Everybody can add a beautiful image with amazing hover style to their web page by using our plugin. Image hover effect ultimate WordPress plugin is fully responsive hover effect plugin with Visual Composer built into it. With this plugin a developer can easily add 60+ amazing image hover effects/caption hover (with pro version) without any scripting at all. Bring your images to live with some beautiful animation and transition hover effects with this awesome plugin. Image hover effect on your website it’s really attractive and very important part of your page. If you are looking for fast, easy caption hovers effect with simple and very beautiful, highly customizable design here is it. Caption hover where even newbie in WordPress will be able to create your first image effect with slide show and a carousel in a few minutes. And at the same time WordPress professional developers can get advanced tools and freedom of creativity. Just download this Image Hover Effect Ultimate plugin and you’ll not look for any other Hover Effect anymore!
+Consider the comfort of developers we’ve lunched an advanced pure CSS3 based Image hover effect plugin named Image Hover Effect Ultimate. A non-coding person can easily develop his/her own site by using our plugin. We designer our image hover plugin very handy for all users. Everybody can add a beautiful image with amazing hover style to their web page by using our plugin. Image hover effect ultimate Wordpress plugin is fully responsive hover effect plugin with Visual Composer built into it. With this plugin a developer can easily add 60+ amazing image hover effects/caption hover (with pro version) without any scripting at all. Bring your images to live with some beautiful animation and transition hover effects with this awesome plugin. Image hover effect on your website it’s really attractive and very important part of your page. If you are looking for fast, easy caption hovers effect with simple and very beautiful, highly customizable design here is it. Caption hover where even newbie in WordPress will be able to create your first image effect with slide show and a carousel in a few minutes. And at the same time WordPress professional developers can get advanced tools and freedom of creativity. Just download this Image Hover Effect Ultimate plugin and you’ll not look for any other Hover Effect anymore!
 
 
 =Advantages of the Plugin=
@@ -53,7 +53,7 @@ Image Hover Effect Ultimate can be enjoyed in any environment. Be it on a mobile
 
 Using Image Hover Effect Ultimate WordPress Plugin a WordPress developer can easily create SEO-friendly image hover effect to individual image so that their customers simply reach to exactly the right product/item details right away. You can easily add links to your image hover to popular social media, such as Facebook, Twitter, Tumblr, Instagram, VK, Google Plus, the interest so on, so that your customers can help you to spread the word about your product! It is pretty cool, isn’t it? 
 
-We designed Image Hover Effect Ultimate plugin, including some exceptional features. Our plugin is much more effective when you use this for any eCommerce website. With Image Hover Effect WordPress plugin, you can easily add an image hover item to each product page, so that your customers can see the full description about the products they’re browsing just by hovering over the image. It’s the most comprehensive solution for every eCommerce site!
+We designed Image Hover Effect Ultimate plugin, including some exceptional features. Our plugin is much more effective when you use this for any eCommerce website. With Image Hover Effect Wordpress plugin, you can easily add an image hover item to each product page, so that your customers can see the full description about the products they’re browsing just by hovering over the image. It’s the most comprehensive solution for every eCommerce site!
 
 =Clone Image Settings=
 
@@ -168,7 +168,7 @@ The number of the **image hover effects** for each image is not limited. Various
 
 Image Hover Effects Ultimate contains 150+ hover effect styles. You can find more variations in the effects. If you aren’t sure which one is perfect for you using then you can take a look at our live demo section. Here you can see all Effects style live demo. You can find that demo at our official website or at the live plugin interface. You also can pick directly from those effects. We’ve designed our plugin very user-friendly and handy to use this kind of features.
 
-Tags: 3d, responsive, responsive image effects, awesome css3 effects, awesome image effects, image style, modern style, CSS Animation, css effects, css3, responsive plugin, css3 effects, effects, effects css3, responsive images, css3 powered effects, effects hover, hover, hover css effects, hover effects, mouse over top hover effects wordpress, animated image wp, 3d style effects, top image effects for wordpress, top image caption for wordpress, wordpress image hover plugin, image styles wordpress, best photo caption, best hover effects, best image caption wordpress, wordpress animation, css3 image caption, hover effect, css3 hover effects, css3 transition, animation, button, circle, css3, creative, css, effect, gallery, grid, hover, image, material, minimal, 3d, animated, animation, clean, css, css3, effects, hover, gallery, grid, hover, square, thumbnail, transition, caption, css3, hover, image, Caption WordPress Plugin, latest css3 effects, Css Caption Plugin, pure css3 effects, awesome image effects, responsive hover effects, gallery, photogallery, photos, text effect, thumbnails, wordpress hover, ihover wordpress plugin, image hover, wp image caption, css3 transition, content hover, captions, image captions, pure css3 effects, css3 hover item, css3 effects for wordpress, 2016 top image caption. 
+Tags: 3d, responsive, responsive image effects, awesome css3 effects, awesome image effects, image style, modern style, CSS Animation, css effects, css3, responsive plugin, css3 effects, effects, effects css3, responsive images, css3 powered effects, effects hover, hover, hover css effects, hover effects, mouse over top hover effects wordpress, animated image wp, 3d style effects, top image effects for wordpress, top image caption for wordpress, wordpress image hover plugin, image styles wordpress, best photo caption, best hover effects, best image caption wordpress, wordpress animation, css3 image caption, hover effect, css3 hover effects, css3 transition, animation, button, circle, css3, creative, css, effect, gallery, grid, hover, image, material, minimal, 3d, animated, animation, clean, css, css3, effects, hover, gallery, grid, hover, square, thumbnail, transition, caption, css3, hover, image, Caption Wordpress Plugin, latest css3 effects, Css Caption Plugin, pure css3 effects, awesome image effects, responsive hover effects, gallery, photogallery, photos, text effect, thumbnails, wordpress hover, ihover wordpress plugin, image hover, wp image caption, css3 transition, content hover, captions, image captions, pure css3 effects, css3 hover item, css3 effects for wordpress, 2016 top image caption. 
 
 
 == Installation ==
@@ -179,7 +179,7 @@ We’ve made it very simple and very easy to use. The installation process of th
 > + Download the plugin image-hover-effects-ultimate.zip from WordPress Plugin Directory.
 > + Unzip the zip file and extract the plugin folder named <strong>image-hover-effects-ultimate.zip
 > + Left that plugin folder into your wp-content/plugins folder.
-> + Go and refresh your WordPress administration panels and from the menu bar click on Plugins.
+> + Go and refresh your Wordpress administration panels and from the menu bar click on Plugins.
 > + Now you may see your plug-in listed under inactive plug-in tab.
 > + Click active to turn your wordpress plugin on.
 
@@ -317,6 +317,17 @@ Its too easy Chose your style from Effects List and click at Clone.
 
 
 == Changelog ==
+
+= 8.6 = 
+*Fixed Bugs
+*Added Font Awesome 5.5
+
+= 8.5 = 
+*Fixed Bugs
+
+= 8.4 = 
+*Fixed Bugs
+
 = 8.3 = 
 *Update font Awesome
 *Add image Rearrange Options
@@ -404,6 +415,16 @@ Its too easy Chose your style from Effects List and click at Clone.
 
 
 == Upgrade Notice ==
+= 8.6 = 
+Fixed Bugs
+Added Font Awesome 5.5
+
+= 8.5 = 
+Fixed Bugs
+
+= 8.4 = 
+Fixed Bugs
+
 = 8.3 = 
 Update font Awesome
 Add image Rearrange Options

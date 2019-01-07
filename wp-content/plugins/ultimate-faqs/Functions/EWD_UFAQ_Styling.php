@@ -1,5 +1,8 @@
 <?php
 function EWD_UFAQ_Add_Modified_Styles() {
+	$UFAQ_Styling_FAQ_Heading_Type = get_option("EWD_UFAQ_Styling_FAQ_Heading_Type");
+	$UFAQ_Styling_Category_Heading_Type  = get_option("EWD_UFAQ_Styling_Category_Heading_Type");
+	
 	$StylesString = "<style>";
 	$StylesString .=".ewd-ufaq-post-margin-symbol { ";
 		if (get_option("EWD_UFAQ_Styling_Default_Bg_Color") != "") {$StylesString .= "background-color:" .  get_option("EWD_UFAQ_Styling_Default_Bg_Color") . " !important;";}
@@ -16,6 +19,21 @@ function EWD_UFAQ_Add_Modified_Styles() {
 		if (get_option("EWD_UFAQ_Styling_Block_Bg_Color") != "") {$StylesString .= "background-color:" .  get_option("EWD_UFAQ_Styling_Block_Bg_Color") . " !important;";}
 		if (get_option("EWD_UFAQ_Styling_Block_Font_Color") != "") {$StylesString .="color:" . get_option("EWD_UFAQ_Styling_Block_Font_Color") . " !important;";}
 		$StylesString .="}\n";
+	$StylesString .=".ufaq-faq-display-style-Border_Block.ewd-ufaq-post-active, .ufaq-faq-display-style-Border_Block:hover, .ufaq-faq-display-style-Border_Block:hover h1, .ufaq-faq-display-style-Border_Block:hover h2, .ufaq-faq-display-style-Border_Block:hover h3, .ufaq-faq-display-style-Border_Block:hover h4, .ufaq-faq-display-style-Border_Block:hover h5, .ufaq-faq-display-style-Border_Block:hover h6 { ";
+		if (get_option("EWD_UFAQ_Styling_Block_Bg_Color") != "") {$StylesString .= "background-color:" .  get_option("EWD_UFAQ_Styling_Block_Bg_Color") . " !important;";}
+		if (get_option("EWD_UFAQ_Styling_Block_Font_Color") != "") {$StylesString .="color:" . get_option("EWD_UFAQ_Styling_Block_Font_Color") . " !important;";}
+		$StylesString .="}\n";
+	$StylesString .=".ufaq-faq-display-style-Border_Block .ufaq-faq-body { ";
+		if (get_option("EWD_UFAQ_Styling_Block_Bg_Color") != "") {$StylesString .= "border-color:" .  get_option("EWD_UFAQ_Styling_Block_Bg_Color") . " !important;";}
+		$StylesString .="}\n";
+	$StylesString .=".ufaq-faq-display-style-Border_Block .comment-reply-title, .ufaq-faq-display-style-Border_Block:hover .comment-reply-title { ";
+		$StylesString .= "background-color: transparent !important;";
+		$StylesString .="}\n";
+	$StylesString .="div.ufaq-faq-category-title " . $UFAQ_Styling_Category_Heading_Type . " " . get_option("EWD_UFAQ_Styling_Category_Heading_Type") . " { ";
+		if (get_option("EWD_UFAQ_Styling_Category_Heading_Font") != "") {$StylesString .= "font-family:" .  get_option("EWD_UFAQ_Styling_Category_Heading_Font") . " !important;";}
+		if (get_option("EWD_UFAQ_Styling_Category_Heading_Font_Size") != "") {$StylesString .= "font-size:" .  get_option("EWD_UFAQ_Styling_Category_Heading_Font_Size") . " !important;";}
+		if (get_option("EWD_UFAQ_Styling_Category_Heading_Font_Color") != "") {$StylesString .= "color:" .  get_option("EWD_UFAQ_Styling_Category_Heading_Font_Color") . " !important;";}
+		$StylesString .="}\n";
 	$StylesString .=".ufaq-faq-header-title a{ ";
 		if (get_option("EWD_UFAQ_Styling_List_Font") != "") {$StylesString .= "font-family:" .  get_option("EWD_UFAQ_Styling_List_Font") . " !important;";}
 		if (get_option("EWD_UFAQ_Styling_List_Font_Size") != "") {$StylesString .="font-size:" . get_option("EWD_UFAQ_Styling_List_Font_Size") . " !important;";}
@@ -23,7 +41,7 @@ function EWD_UFAQ_Add_Modified_Styles() {
 		if (get_option("EWD_UFAQ_Styling_List_Margin") != "") {$StylesString .= "margin:" . get_option("EWD_UFAQ_Styling_List_Margin") . " !important;";}
 		if (get_option("EWD_UFAQ_Styling_List_Padding") != "") {$StylesString .= "padding:" . get_option("EWD_UFAQ_Styling_List_Padding") . " !important;";}
 		$StylesString .="}\n";
-	$StylesString .="div.ufaq-faq-title h4 { ";
+	$StylesString .="div.ufaq-faq-title " . $UFAQ_Styling_FAQ_Heading_Type . " { ";
 		if (get_option("EWD_UFAQ_Styling_Question_Font") != "") {$StylesString .= "font-family:" .  get_option("EWD_UFAQ_Styling_Question_Font") . " !important;";}
 		if (get_option("EWD_UFAQ_Styling_Question_Font_Size") != "") {$StylesString .="font-size:" . get_option("EWD_UFAQ_Styling_Question_Font_Size") . " !important;";}
 		if (get_option("EWD_UFAQ_Styling_Question_Font_Color") != "") {$StylesString .= "color:" . get_option("EWD_UFAQ_Styling_Question_Font_Color") . " !important;";}
@@ -39,6 +57,11 @@ function EWD_UFAQ_Add_Modified_Styles() {
 		if (get_option("EWD_UFAQ_Styling_Answer_Font_Color") != "") {$StylesString .= "color:" . get_option("EWD_UFAQ_Styling_Answer_Font_Color") . " !important;";}
 		if (get_option("EWD_UFAQ_Styling_Answer_Margin") != "") {$StylesString .= "margin:" . get_option("EWD_UFAQ_Styling_Answer_Margin") . " !important;";}
 		if (get_option("EWD_UFAQ_Styling_Answer_Padding") != "") {$StylesString .= "padding:" . get_option("EWD_UFAQ_Styling_Answer_Padding") . " !important;";}
+		$StylesString .="}\n";
+	$StylesString .="div.ufaq-faq-body, .ufaq-faq-display-style-Border_Block .ufaq-faq-body { ";
+		if (get_option("EWD_UFAQ_Styling_Answer_Font") != "") {$StylesString .= "font-family:" .  get_option("EWD_UFAQ_Styling_Answer_Font") . " !important;";}
+		if (get_option("EWD_UFAQ_Styling_Answer_Font_Size") != "") {$StylesString .="font-size:" . get_option("EWD_UFAQ_Styling_Answer_Font_Size") . " !important;";}
+		if (get_option("EWD_UFAQ_Styling_Answer_Font_Color") != "") {$StylesString .= "color:" . get_option("EWD_UFAQ_Styling_Answer_Font_Color") . " !important;";}
 		$StylesString .="}\n";
 	$StylesString .="div.ewd-ufaq-author-date { ";
 		if (get_option("EWD_UFAQ_Styling_Postdate_Font") != "") {$StylesString .= "font-family:" .  get_option("EWD_UFAQ_Styling_Postdate_Font") . " !important;";}

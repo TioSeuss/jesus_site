@@ -13,6 +13,9 @@ function ShowTab(TabName) {
 		jQuery("#"+TabName+"_Menu").addClass("nav-tab-active");
 }
 
+jQuery(document).ready(function() {
+	jQuery('.ewd-ufaq-review-ask-overlay, .ewd-ufaq-review-ask-popup').removeClass('ufaq-hidden');
+});
 /* This code is required to make changing the FAQ order a drag-and-drop affair */
 jQuery(document).ready(function() {
 	jQuery('.ewd-ufaq-list').sortable({
@@ -200,4 +203,113 @@ jQuery(document).ready(function($){
 		$('#ewd-ufaq-dash-optional-table-up-caret').toggle();
 		$('#ewd-ufaq-dash-optional-table-down-caret').toggle();
 	});
+});
+
+//OPTIONS HELP/DESCRIPTION TEXT
+jQuery(document).ready(function($) {
+	$('.ufaq-option-set .form-table tr').each(function(){
+		var thisOptionClick = $(this);
+		thisOptionClick.find('th').click(function(){
+			thisOptionClick.find('td p').toggle();
+		});
+	});
+	$('.ewdOptionHasInfo').each(function(){
+		var thisNonTableOptionClick = $(this);
+		thisNonTableOptionClick.find('.ewd-ufaq-admin-styling-subsection-label').click(function(){
+			thisNonTableOptionClick.find('fieldset p').toggle();
+		});
+	});
+	$(function(){
+		$(window).resize(function(){
+			$('.ufaq-option-set .form-table tr').each(function(){
+				var thisOption = $(this);
+				if( $(window).width() < 783 ){
+					if( thisOption.find('.ewd-ufaq-admin-hide-radios').length > 0 ) {
+						thisOption.find('td p').show();			
+						thisOption.find('th').css('background-image', 'none');			
+						thisOption.find('th').css('cursor', 'default');			
+					}
+					else{
+						thisOption.find('td p').hide();
+						thisOption.find('th').css('background-image', 'url(../wp-content/plugins/ultimate-faqs/images/options-asset-info.png)');			
+						thisOption.find('th').css('background-position', '95% 20px');			
+						thisOption.find('th').css('background-size', '18px 18px');			
+						thisOption.find('th').css('background-repeat', 'no-repeat');			
+						thisOption.find('th').css('cursor', 'pointer');								
+					}		
+				}
+				else{
+					thisOption.find('td p').hide();
+					thisOption.find('th').css('background-image', 'url(../wp-content/plugins/ultimate-faqs/images/options-asset-info.png)');			
+					thisOption.find('th').css('background-position', 'calc(100% - 20px) 15px');			
+					thisOption.find('th').css('background-size', '18px 18px');			
+					thisOption.find('th').css('background-repeat', 'no-repeat');			
+					thisOption.find('th').css('cursor', 'pointer');			
+				}
+			});
+			$('.ewdOptionHasInfo').each(function(){
+				var thisNonTableOption = $(this);
+				if( $(window).width() < 783 ){
+					if( thisNonTableOption.find('.ewd-ufaq-admin-hide-radios').length > 0 ) {
+						thisNonTableOption.find('fieldset p').show();			
+						thisNonTableOption.find('ewd-ufaq-admin-styling-subsection-label').css('background-image', 'none');			
+						thisNonTableOption.find('ewd-ufaq-admin-styling-subsection-label').css('cursor', 'default');			
+					}
+					else{
+						thisNonTableOption.find('fieldset p').hide();
+						thisNonTableOption.find('ewd-ufaq-admin-styling-subsection-label').css('background-image', 'url(../wp-content/plugins/ultimate-faqs/images/options-asset-info.png)');			
+						thisNonTableOption.find('ewd-ufaq-admin-styling-subsection-label').css('background-position', 'calc(100% - 30px) 15px');			
+						thisNonTableOption.find('ewd-ufaq-admin-styling-subsection-label').css('background-size', '18px 18px');			
+						thisNonTableOption.find('ewd-ufaq-admin-styling-subsection-label').css('background-repeat', 'no-repeat');			
+						thisNonTableOption.find('ewd-ufaq-admin-styling-subsection-label').css('cursor', 'pointer');								
+					}		
+				}
+				else{
+					thisNonTableOption.find('fieldset p').hide();
+					thisNonTableOption.find('ewd-ufaq-admin-styling-subsection-label').css('background-image', 'url(../wp-content/plugins/ultimate-faqs/images/options-asset-info.png)');			
+					thisNonTableOption.find('ewd-ufaq-admin-styling-subsection-label').css('background-position', 'calc(100% - 30px) 15px');			
+					thisNonTableOption.find('ewd-ufaq-admin-styling-subsection-label').css('background-size', '18px 18px');			
+					thisNonTableOption.find('ewd-ufaq-admin-styling-subsection-label').css('background-repeat', 'no-repeat');			
+					thisNonTableOption.find('ewd-ufaq-admin-styling-subsection-label').css('cursor', 'pointer');			
+				}
+			});
+		}).resize();
+	});	
+});
+
+
+//OPTIONS PAGE YES/NO TOGGLE SWITCHES
+jQuery(document).ready(function($) {
+	jQuery('.ewd-ufaq-admin-option-toggle').on('change', function() {
+		var Input_Name = jQuery(this).data('inputname'); console.log(Input_Name);
+		if (jQuery(this).is(':checked')) {
+			jQuery('input[name="' + Input_Name + '"][value="Yes"]').prop('checked', true).trigger('change');
+			jQuery('input[name="' + Input_Name + '"][value="No"]').prop('checked', false);
+		}
+		else {
+			jQuery('input[name="' + Input_Name + '"][value="Yes"]').prop('checked', false).trigger('change');
+			jQuery('input[name="' + Input_Name + '"][value="No"]').prop('checked', true);
+		}
+	});
+	$(function(){
+		$(window).resize(function(){
+			$('.ufaq-option-set .form-table tr').each(function(){
+				var thisOptionTr = $(this);
+				if( $(window).width() < 783 ){
+					if( thisOptionTr.find('.ewd-ufaq-admin-switch').length > 0 ) {
+						thisOptionTr.find('th').css('width', 'calc(90% - 50px');			
+						thisOptionTr.find('th').css('padding-right', 'calc(5% + 50px');			
+					}
+					else{
+						thisOptionTr.find('th').css('width', '90%');			
+						thisOptionTr.find('th').css('padding-right', '5%');			
+					}		
+				}
+				else{
+					thisOptionTr.find('th').css('width', '200px');			
+					thisOptionTr.find('th').css('padding-right', '46px');			
+				}
+			});
+		}).resize();
+	});	
 });

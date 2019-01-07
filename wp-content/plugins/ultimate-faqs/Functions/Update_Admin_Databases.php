@@ -47,9 +47,12 @@ function EWD_UFAQ_UpdateOptions() {
     if (isset($_POST['access_role'])) {update_option('EWD_UFAQ_Access_Role', sanitize_text_field($_POST['access_role']));}
 
     if (isset($_POST['display_style']) and $UFAQ_Full_Version == "Yes") {update_option('EWD_UFAQ_Display_Style',  sanitize_text_field($_POST['display_style']));}
+    if (isset($_POST['faq_number_of_columns']) and $UFAQ_Full_Version == "Yes") {update_option('EWD_UFAQ_FAQ_Number_Of_Columns',  sanitize_text_field($_POST['faq_number_of_columns']));}
+    if (isset($_POST['responsive_columns']) and $UFAQ_Full_Version == "Yes") {update_option('EWD_UFAQ_Responsive_Columns',  sanitize_text_field($_POST['responsive_columns']));}
     if (isset($_POST['color_block_shape']) and $UFAQ_Full_Version == "Yes") {update_option('EWD_UFAQ_Color_Block_Shape',  sanitize_text_field($_POST['color_block_shape']));}
     if (isset($_POST['Options_Submit']) and $UFAQ_Full_Version == "Yes") {update_option('EWD_UFAQ_FAQs_Per_Page',  sanitize_text_field($_POST['faqs_per_page']));}
     if (isset($_POST['faq_ratings']) and $UFAQ_Full_Version == "Yes") {update_option('EWD_UFAQ_FAQ_Ratings',  sanitize_text_field($_POST['faq_ratings']));}
+    if (isset($_POST['page_type']) and $UFAQ_Full_Version == "Yes") {update_option('EWD_UFAQ_Page_Type',  sanitize_text_field($_POST['page_type']));}
     if (isset($_POST['woocommerce_faqs']) and $UFAQ_Full_Version == "Yes") {update_option('EWD_UFAQ_WooCommerce_FAQs',  sanitize_text_field($_POST['woocommerce_faqs']));}
     if (isset($_POST['use_product']) and $UFAQ_Full_Version == "Yes") {update_option('EWD_UFAQ_Use_Product',  sanitize_text_field($_POST['use_product']));}
     if (isset($_POST['reveal_effect']) and $UFAQ_Full_Version == "Yes") {update_option('EWD_UFAQ_Reveal_Effect', sanitize_text_field($_POST['reveal_effect']));}
@@ -57,10 +60,12 @@ function EWD_UFAQ_UpdateOptions() {
     if (isset($_POST['allow_proposed_answer']) and $UFAQ_Full_Version == "Yes") {update_option('EWD_UFAQ_Allow_Proposed_Answer',  sanitize_text_field($_POST['allow_proposed_answer']));}
     if (isset($_POST['submit_custom_fields']) and $UFAQ_Full_Version == "Yes") {update_option('EWD_UFAQ_Submit_Custom_Fields',  sanitize_text_field($_POST['submit_custom_fields']));}
     if (isset($_POST['submit_question_captcha']) and $UFAQ_Full_Version == "Yes") {update_option('EWD_UFAQ_Submit_Question_Captcha',  sanitize_text_field($_POST['submit_question_captcha']));}
+    if (isset($_POST['submitted_default_category']) and $UFAQ_Full_Version == "Yes") {update_option('EWD_UFAQ_Submitted_Default_Category', sanitize_text_field($_POST['submitted_default_category']));}
     if (isset($_POST['admin_question_notification']) and $UFAQ_Full_Version == "Yes") {update_option('EWD_UFAQ_Admin_Question_Notification', sanitize_text_field($_POST['admin_question_notification']));}
     if (isset($_POST['Options_Submit']) and $UFAQ_Full_Version == "Yes") {update_option('EWD_UFAQ_Admin_Notification_Email', sanitize_text_field($_POST['admin_notification_email']));}
     if (isset($_POST['submit_faq_email']) and $UFAQ_Full_Version == "Yes") {update_option('EWD_UFAQ_Submit_FAQ_Email', sanitize_text_field($_POST['submit_faq_email']));}
     if (isset($_POST['faq_auto_complete_titles']) and $UFAQ_Full_Version == "Yes") {update_option('EWD_UFAQ_Auto_Complete_Titles', sanitize_text_field($_POST['faq_auto_complete_titles']));}
+    if (isset($_POST['highlight_search_term']) and $UFAQ_Full_Version == "Yes") {update_option('EWD_UFAQ_Highlight_Search_Term', sanitize_text_field($_POST['highlight_search_term']));}
     if (isset($_POST['slug_base']) and $UFAQ_Full_Version == "Yes") {update_option('EWD_UFAQ_Slug_Base', $_POST['slug_base']);}
     if (isset($_POST['Socialmedia']) and $UFAQ_Full_Version == "Yes") {update_option('EWD_UFAQ_Social_Media',  $Social_Media);}
 
@@ -98,28 +103,31 @@ function EWD_UFAQ_UpdateOptions() {
     if (isset($_POST['hide_blank_fields'])) {update_option('EWD_UFAQ_Hide_Blank_Fields', sanitize_text_field($_POST['hide_blank_fields']));}
 
 
-    if (isset($_POST['posted_label'])) {update_option('EWD_UFAQ_Posted_Label',  sanitize_text_field($_POST['posted_label']));}
-    if (isset($_POST['by_label'])) {update_option('EWD_UFAQ_By_Label',  sanitize_text_field($_POST['by_label']));}
-    if (isset($_POST['on_label'])) {update_option('EWD_UFAQ_On_Label',  sanitize_text_field($_POST['on_label']));}
-    if (isset($_POST['category_label'])) {update_option('EWD_UFAQ_Category_Label',  sanitize_text_field($_POST['category_label']));}
-    if (isset($_POST['tag_label'])) {update_option('EWD_UFAQ_Tag_Label',  sanitize_text_field($_POST['tag_label']));}
+    if (isset($_POST['posted_label']) and $UFAQ_Full_Version == "Yes") {update_option('EWD_UFAQ_Posted_Label',  sanitize_text_field($_POST['posted_label']));}
+    if (isset($_POST['by_label']) and $UFAQ_Full_Version == "Yes") {update_option('EWD_UFAQ_By_Label',  sanitize_text_field($_POST['by_label']));}
+    if (isset($_POST['on_label']) and $UFAQ_Full_Version == "Yes") {update_option('EWD_UFAQ_On_Label',  sanitize_text_field($_POST['on_label']));}
+    if (isset($_POST['category_label']) and $UFAQ_Full_Version == "Yes") {update_option('EWD_UFAQ_Category_Label',  sanitize_text_field($_POST['category_label']));}
+    if (isset($_POST['tag_label']) and $UFAQ_Full_Version == "Yes") {update_option('EWD_UFAQ_Tag_Label',  sanitize_text_field($_POST['tag_label']));}
     if (isset($_POST['enter_question_label'])) {update_option('EWD_UFAQ_Enter_Question_Label',  sanitize_text_field($_POST['enter_question_label']));}
-    if (isset($_POST['search_label'])) {update_option('EWD_UFAQ_Search_Label',  sanitize_text_field($_POST['search_label']));}
-    if (isset($_POST['permalink_label'])) {update_option('EWD_UFAQ_Permalink_Label',  sanitize_text_field($_POST['permalink_label']));}
-    if (isset($_POST['back_to_top_label'])) {update_option('EWD_UFAQ_Back_To_Top_Label',  sanitize_text_field($_POST['back_to_top_label']));}
-    if (isset($_POST['woocommerce_tab_label'])) {update_option('EWD_UFAQ_WooCommerce_Tab_Label',  sanitize_text_field($_POST['woocommerce_tab_label']));}
+    if (isset($_POST['search_label']) and $UFAQ_Full_Version == "Yes") {update_option('EWD_UFAQ_Search_Label',  sanitize_text_field($_POST['search_label']));}
+    if (isset($_POST['permalink_label']) and $UFAQ_Full_Version == "Yes") {update_option('EWD_UFAQ_Permalink_Label',  sanitize_text_field($_POST['permalink_label']));}
+    if (isset($_POST['back_to_top_label']) and $UFAQ_Full_Version == "Yes") {update_option('EWD_UFAQ_Back_To_Top_Label',  sanitize_text_field($_POST['back_to_top_label']));}
+    if (isset($_POST['woocommerce_tab_label']) and $UFAQ_Full_Version == "Yes") {update_option('EWD_UFAQ_WooCommerce_Tab_Label',  sanitize_text_field($_POST['woocommerce_tab_label']));}
+    if (isset($_POST['share_faq_label']) and $UFAQ_Full_Version == "Yes") {update_option('EWD_UFAQ_Share_FAQ_Label',  sanitize_text_field($_POST['share_faq_label']));}
+    if (isset($_POST['find_faq_helpful_label']) and $UFAQ_Full_Version == "Yes") {update_option('EWD_UFAQ_Find_FAQ_Helpful_Label',  sanitize_text_field($_POST['find_faq_helpful_label']));}
+    if (isset($_POST['search_placeholder_label']) and $UFAQ_Full_Version == "Yes") {update_option('EWD_UFAQ_Search_Placeholder_Label',  sanitize_text_field($_POST['search_placeholder_label']));}
 
-    if (isset($_POST['thank_you_submit_label'])) {update_option('EWD_UFAQ_Thank_You_Submit_Label',  sanitize_text_field($_POST['thank_you_submit_label']));}
-    if (isset($_POST['submit_question_label'])) {update_option('EWD_UFAQ_Submit_Question_Label',  sanitize_text_field($_POST['submit_question_label']));}
+    if (isset($_POST['thank_you_submit_label']) and $UFAQ_Full_Version == "Yes") {update_option('EWD_UFAQ_Thank_You_Submit_Label',  sanitize_text_field($_POST['thank_you_submit_label']));}
+    if (isset($_POST['submit_question_label']) and $UFAQ_Full_Version == "Yes") {update_option('EWD_UFAQ_Submit_Question_Label',  sanitize_text_field($_POST['submit_question_label']));}
     if (isset($_POST['please_fill_form_below_label'])) {update_option('EWD_UFAQ_Please_Fill_Form_Below_Label',  sanitize_text_field($_POST['please_fill_form_below_label']));}
-    if (isset($_POST['send_question_label'])) {update_option('EWD_UFAQ_Send_Question_Label',  sanitize_text_field($_POST['send_question_label']));}
-    if (isset($_POST['question_title_label'])) {update_option('EWD_UFAQ_Question_Title_Label',  sanitize_text_field($_POST['question_title_label']));}
+    if (isset($_POST['send_question_label']) and $UFAQ_Full_Version == "Yes") {update_option('EWD_UFAQ_Send_Question_Label',  sanitize_text_field($_POST['send_question_label']));}
+    if (isset($_POST['question_title_label']) and $UFAQ_Full_Version == "Yes") {update_option('EWD_UFAQ_Question_Title_Label',  sanitize_text_field($_POST['question_title_label']));}
     if (isset($_POST['what_question_being_answered_label'])) {update_option('EWD_UFAQ_What_Question_Being_Answered_Label',  sanitize_text_field($_POST['what_question_being_answered_label']));}
-    if (isset($_POST['proposed_answer_label'])) {update_option('EWD_UFAQ_Proposed_Answer_Label',  sanitize_text_field($_POST['proposed_answer_label']));}
-    if (isset($_POST['review_author_label'])) {update_option('EWD_UFAQ_Review_Author_Label',  sanitize_text_field($_POST['review_author_label']));}
+    if (isset($_POST['proposed_answer_label']) and $UFAQ_Full_Version == "Yes") {update_option('EWD_UFAQ_Proposed_Answer_Label',  sanitize_text_field($_POST['proposed_answer_label']));}
+    if (isset($_POST['review_author_label']) and $UFAQ_Full_Version == "Yes") {update_option('EWD_UFAQ_Review_Author_Label',  sanitize_text_field($_POST['review_author_label']));}
     if (isset($_POST['what_name_with_review_label'])) {update_option('EWD_UFAQ_What_Name_With_Review_Label',  sanitize_text_field($_POST['what_name_with_review_label']));}
-    if (isset($_POST['retrieving_results'])) {update_option('EWD_UFAQ_Retrieving_Results',  sanitize_text_field($_POST['retrieving_results']));}
-    if (isset($_POST['no_results_found_text'])) {update_option('EWD_UFAQ_No_Results_Found_Text',  sanitize_text_field($_POST['no_results_found_text']));}
+    if (isset($_POST['retrieving_results']) and $UFAQ_Full_Version == "Yes") {update_option('EWD_UFAQ_Retrieving_Results',  sanitize_text_field($_POST['retrieving_results']));}
+    if (isset($_POST['no_results_found_text']) and $UFAQ_Full_Version == "Yes") {update_option('EWD_UFAQ_No_Results_Found_Text',  sanitize_text_field($_POST['no_results_found_text']));}
 
     if (isset($_POST['ufaq_styling_default_bg_color'])) {update_option('EWD_UFAQ_Styling_Default_Bg_Color',  sanitize_hex_color($_POST['ufaq_styling_default_bg_color']));}
     if (isset($_POST['ufaq_styling_default_font_color'])) {update_option('EWD_UFAQ_Styling_Default_Font_Color',  sanitize_hex_color($_POST['ufaq_styling_default_font_color']));}
@@ -151,6 +159,9 @@ function EWD_UFAQ_UpdateOptions() {
     if (isset($_POST['ufaq_styling_postdate_font_color'])) {update_option('EWD_UFAQ_Styling_Postdate_Font_Color',  sanitize_hex_color($_POST['ufaq_styling_postdate_font_color']));}
     if (isset($_POST['ufaq_styling_postdate_margin'])) {update_option('EWD_UFAQ_Styling_Postdate_Margin',  sanitize_text_field($_POST['ufaq_styling_postdate_margin']));}
     if (isset($_POST['ufaq_styling_postdate_padding'])) {update_option('EWD_UFAQ_Styling_Postdate_Padding',  sanitize_text_field($_POST['ufaq_styling_postdate_padding']));}
+    if (isset($_POST['ufaq_styling_category_heading_font'])) {update_option('EWD_UFAQ_Styling_Category_Heading_Font',  sanitize_text_field($_POST['ufaq_styling_category_heading_font']));}
+    if (isset($_POST['ufaq_styling_category_heading_font_size'])) {update_option('EWD_UFAQ_Styling_Category_Heading_Font_Size',  sanitize_text_field($_POST['ufaq_styling_category_heading_font_size']));}
+    if (isset($_POST['ufaq_styling_category_heading_font_color'])) {update_option('EWD_UFAQ_Styling_Category_Heading_Font_Color',  sanitize_hex_color($_POST['ufaq_styling_category_heading_font_color']));}
     if (isset($_POST['ufaq_styling_category_font'])) {update_option('EWD_UFAQ_Styling_Category_Font',  sanitize_text_field($_POST['ufaq_styling_category_font']));}
     if (isset($_POST['ufaq_styling_category_font_size'])) {update_option('EWD_UFAQ_Styling_Category_Font_Size',  sanitize_text_field($_POST['ufaq_styling_category_font_size']));}
     if (isset($_POST['ufaq_styling_category_font_color'])) {update_option('EWD_UFAQ_Styling_Category_Font_Color',  sanitize_hex_color($_POST['ufaq_styling_category_font_color']));}

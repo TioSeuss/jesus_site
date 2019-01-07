@@ -1,280 +1,4 @@
 <?php
-
-function iheu_ultimate_oxi_shortcode_square21($styleid, $styledata, $listdata, $userdata) {
-      ?>
-    <div class="image-ultimate-container image-ultimate-container-<?php echo $styleid; ?>"> 
-        <div class="image-ultimate-row">
-            <style>
-                @media only screen and (max-width: 850px){
-                   .image-ultimate-container-<?php echo $styleid; ?>{
-                        overflow-x: visible !important;
-                        overflow-y: visible  !important;
-                    }
-                }
-                .image-ultimate-map-absulate{
-                    position: absolute;
-                    width: 100%;
-                    height: 100%;
-                    top: 0;
-                }
-                .image-ultimate-map-absulate img{
-                    width: 100%;
-                    height: 100%;
-                }
-                .image-ultimate-map-absulate a{
-                    text-decoration: none !important;
-                }
-                .image-ultimate-map-<?php echo $styleid; ?> {
-                    max-width: <?php echo $styledata[5]; ?>px;
-                    width: 100%;
-                    margin: 0 auto;
-                    position: relative;
-                }
-                .image-ultimate-map-<?php echo $styleid; ?>:after {
-                    padding-bottom: <?php echo $styledata[7] / $styledata[5] * 100; ?>%;
-                    content: "";
-                    display: block;
-                }
-                .image-ultimate-hover-animation-<?php echo $styleid; ?> {
-                    animation-duration: <?php echo $styledata[21]; ?>s;
-                }
-                .image-ultimate-hover-padding-<?php echo $styleid; ?>{
-                    padding: <?php echo $styledata[9]; ?>px;
-                }
-                .image-ultimate-hover-<?php echo $styleid; ?>{
-                    position: relative;
-                    width: 100%;
-                    height: 100%;
-                    background: <?php echo $styledata[13]; ?>;
-                    -webkit-transition: -webkit-transform 0.4s;
-                    -moz-transition: -moz-transform 0.4s;
-                    transition: transform 0.4s;
-
-                }
-                .image-ultimate-hover-<?php echo $styleid; ?> .iheu-img {
-                    position: absolute;
-                    top: 0;
-                    bottom: 0;
-                    left: 0;
-                    right: 0;
-                    width: 100%;
-                    height: 100%;
-                    z-index: 10;
-                    -webkit-transition: -webkit-transform 0.4s;
-                    -moz-transition: -moz-transform 0.4s;
-                    transition: transform 0.4s;
-
-                }
-                .image-ultimate-hover-<?php echo $styleid; ?> .iheu-img:before {
-                    position: absolute;
-                    display: block;
-                    content: '';
-                    width: 100%;
-                    height: 100%;
-                    box-shadow: inset 0 0 0 <?php echo $styledata[25]; ?>px <?php echo $styledata[27]; ?>;
-                }
-
-                .image-ultimate-hover-<?php echo $styleid; ?> .iheu-info {
-                    background: <?php echo $styledata[13]; ?>;
-
-                }
-                .image-ultimate-hover-<?php echo $styleid; ?> .iheu-info {
-                    position: absolute;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    -webkit-backface-visibility: hidden;
-                    -moz-backface-visibility: hidden;
-                    backface-visibility: hidden;
-                    -webkit-transition: all 0.4s;
-                    -moz-transition: all 0.4s;
-                    transition: all 0.4s;
-                }
-                .image-ultimate-hover-<?php echo $styleid; ?>.bottom_to_top .iheu-info {
-                    bottom:0px;
-                }
-                .image-ultimate-hover-<?php echo $styleid; ?>.bottom_to_top:hover .iheu-info,
-                .image-ultimate-hover-<?php echo $styleid; ?>.bottom_to_top.iheu-touch .iheu-info{
-                    bottom:0px;
-                    height: <?php echo $styledata[3]; ?>%;
-                    box-shadow: 0 0 0 10px <?php echo $styledata[13]; ?>;
-
-                }
-                .image-ultimate-hover-<?php echo $styleid; ?>.top_to_bottom .iheu-info {
-                    top:0px;
-                }
-                .image-ultimate-hover-<?php echo $styleid; ?>.top_to_bottom:hover .iheu-info,
-                .image-ultimate-hover-<?php echo $styleid; ?>.top_to_bottom.iheu-touch .iheu-info{
-                    top:0px;
-                    height: <?php echo $styledata[3]; ?>%;
-                    box-shadow: 0 0 0 10px <?php echo $styledata[13]; ?>;
-                }
-                .image-ultimate-hover-<?php echo $styleid; ?> .iheu-info .iheu-data{
-                    position: absolute;
-                    margin: <?php echo $styledata[11]; ?>px;
-                    left: 0;
-                    right: 0;
-                }
-                .image-ultimate-hover-<?php echo $styleid; ?>.top_to_bottom .iheu-info .iheu-data{
-                    bottom: 0;
-                }
-                .image-ultimate-hover-<?php echo $styleid; ?>.bottom_to_top .iheu-info .iheu-data{
-                    top: 0;
-                }
-                .image-ultimate-hover-<?php echo $styleid; ?> .iheu-info h3 {
-                    font-size: <?php echo $styledata[33]; ?>px;
-                    font-weight: <?php echo $styledata[39]; ?>;
-                    margin-bottom: <?php echo $styledata[45]; ?>px;
-                    margin-top: 0;
-                    line-height: 120%;
-                    float:left;
-                    display: inline-block;
-                    font-family: <?php echo iheu_font_familly_special_charecter($styledata[37]); ?>;
-                    color: <?php echo $styledata[35]; ?>;
-                }
-                .image-ultimate-hover-<?php echo $styleid; ?> .iheu-info p {
-                    font-size: <?php echo $styledata[47]; ?>px;
-                    font-weight: <?php echo $styledata[53]; ?>;
-                    margin-top: 0;
-                    line-height: 120%;
-                    width: 100%;
-                    margin-bottom: 0;
-                    float: left;
-                    text-align: left;
-                    font-family: <?php echo iheu_font_familly_special_charecter($styledata[51]); ?>;
-                    color: <?php echo $styledata[49]; ?>;
-                }
-                .image-ultimate-hover-<?php echo $styleid; ?> a.iheu-button{
-                    padding: <?php echo $styledata[73]; ?>px <?php echo $styledata[75]; ?>px;
-                    -webkit-border-radius: <?php echo $styledata[71]; ?>px;
-                    -moz-border-radius: <?php echo $styledata[71]; ?>px;
-                    border-radius: <?php echo $styledata[71]; ?>px;
-                    font-weight: <?php echo $styledata[65]; ?>;
-                    font-size: <?php echo $styledata[57]; ?>px;
-                    font-family: <?php echo iheu_font_familly_special_charecter($styledata[63]); ?>;
-                    background: <?php echo $styledata[61]; ?>;
-                    color: <?php echo $styledata[59]; ?>;
-                    text-decoration: none;
-                    right: 0;
-                    position: absolute;
-
-                }
-                .image-ultimate-hover-<?php echo $styleid; ?>.top_to_bottom a.iheu-button{
-                    bottom: 0px;
-                }
-                .image-ultimate-hover-<?php echo $styleid; ?>.bottom_to_top a.iheu-button{
-                    top: 0px;
-                }
-                .image-ultimate-hover-<?php echo $styleid; ?> a.iheu-button:hover{
-                    background: <?php echo $styledata[69]; ?>;
-                    color: <?php echo $styledata[67]; ?>;
-                }
-                <?php echo $styledata[83]; ?>
-            </style>
-
-            <?php
-            foreach ($listdata as $value) {
-                $backgoundimage = '';
-                $opennewtab = '';
-                $iheuh3 = '';
-                $iheup = '';
-                $iheubuttontext = '';
-                $dataavanimation = '';
-                $dataanimation = '';
-                if (!empty($styledata[19])) {
-                    $dataanimation = 'orphita-animation';
-                    $dataavanimation = 'orphita-animation="'.$styledata[19].'"';
-                }
-                if (!empty($value['hoverimage'])) {
-                    $backgoundimage = 'style="background: linear-gradient( ' . $styledata[13] . ', ' . $styledata[13] . '), url(' . $value['hoverimage'] . ');-moz-background-size: 100% 100%;-o-background-size: 100% 100%; background-size: 100% 100%;"';
-                }
-                if ($styledata[17] == '_blank') {
-                    $opennewtab = 'target="_blank"';
-                }
-                if ($value['title'] != '') {
-                    $iheuh3 = '<h3 class="' . $styledata[23] . '"> ' . iheu_html_special_charecter($value['title']) . ' </h3>';
-                }
-                if ($value['files'] != '') {
-                    $iheup = '<p class="' . $styledata[23] . '"> ' . iheu_html_special_charecter($value['files']) . ' </p>';
-                }
-                if ($value['buttom_text'] != '') {
-                    $iheubuttontext = '<a ' . $opennewtab . ' href="' . $value['link'] . '" class="' . $styledata[23] . ' iheu-button"> ' . iheu_html_special_charecter($value['buttom_text']) . ' </a>';
-                }
-
-                if ($value['link'] == '') {
-                    $valuedata = '<div class="iheu-img">
-                                                          <img src="' . $value['image'] . '">
-                                                    </div>
-                                                    <div class="iheu-info" ' . $backgoundimage . '>
-                                                        <div class="iheu-data">
-                                                            ' . $iheuh3 . '
-                                                            ' . $iheup . '
-                                                        </div>
-                                                    </div>';
-                }
-                if ($value['link'] != '' && $value['buttom_text'] == '') {
-                    $valuedata = '<a ' . $opennewtab . ' href="' . $value['link'] . '" class="iheutabhover"> 
-                                                        <div class="iheu-img">
-                                                             <img src="' . $value['image'] . '">
-                                                        </div>
-                                                        <div class="iheu-info" ' . $backgoundimage . '>
-                                                            <div class="iheu-data">
-                                                                ' . $iheuh3 . '
-                                                                ' . $iheup . '
-                                                            </div>
-                                                        </div>
-                                                     </a>';
-                }
-                if ($value['link'] != '' && $value['buttom_text'] != '') {
-                    $valuedata = '<div class="iheu-img">
-                                                         <img src="' . $value['image'] . '">
-                                                     </div>
-                                                     <div class="iheu-info" ' . $backgoundimage . '>
-                                                            <div class="iheu-data">
-                                                                ' . $iheuh3 . '
-                                                                ' . $iheup . '
-                                                                ' . $iheubuttontext . '
-                                                            </div>
-                                                     </div>';
-                }
-                $adminheading = '';
-                $admindata = '';
-                if ($userdata == 'admin') {
-                    $adminheading = 'iheu-editing';
-                    $admindata = '<div class="iheu-admin-absulote">
-                                    <div class="iheu-style-absulate-edit">
-                                        <form method="post"> ' . wp_nonce_field("iheueditdata") . '
-                                            <input type="hidden" name="item-id" value="' . $value['id'] . '">
-                                            <button class="btn btn-primary" type="submit" value="edit" name="edit">Edit</button>
-                                        </form>
-                                    </div>
-                                    <div class="iheu-style-absulate-delete">
-                                        <form method="post">  ' . wp_nonce_field("iheudeletedata") . '
-                                            <input type="hidden" name="item-id" value="' . $value['id'] . '">
-                                            <button class="btn btn-danger " type="submit" value="delete" name="delete">Delete</button>
-                                        </form>
-                                    </div>
-                                </div>';
-                }
-                echo '<div '.$dataavanimation.' class="' . $styledata[1] . ' '.$dataanimation.' '.$adminheading.' image-ultimate-hover-animation-'.$styleid.' image-ultimate-hover-padding-' . $styleid . '">
-                                            <div class="image-ultimate-map-' . $styleid . '">
-                                                <div class="image-ultimate-map-absulate">
-                                                    <div class="image-ultimate-hover image-ultimate-hover-' . $styleid . ' ' . $styledata[85] . '">
-                                                            ' . $valuedata . '
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            ' . $admindata . '
-                                         </div>';
-            }
-
-
-            ?>
-        </div>
-    </div>
-    <?php
-}
-
 function iheu_ultimate_oxi_shortcode_square20($styleid, $styledata, $listdata, $userdata) {
   ?>
     <div class="image-ultimate-container"> 
@@ -786,6 +510,282 @@ function iheu_ultimate_oxi_shortcode_square19($styleid, $styledata, $listdata, $
     </div>
     <?php
 }
+function iheu_ultimate_oxi_shortcode_square21($styleid, $styledata, $listdata, $userdata) {
+      ?>
+    <div class="image-ultimate-container image-ultimate-container-<?php echo $styleid; ?>"> 
+        <div class="image-ultimate-row">
+            <style>
+                @media only screen and (max-width: 850px){
+                   .image-ultimate-container-<?php echo $styleid; ?>{
+                        overflow-x: visible !important;
+                        overflow-y: visible  !important;
+                    }
+                }
+                .image-ultimate-map-absulate{
+                    position: absolute;
+                    width: 100%;
+                    height: 100%;
+                    top: 0;
+                }
+                .image-ultimate-map-absulate img{
+                    width: 100%;
+                    height: 100%;
+                }
+                .image-ultimate-map-absulate a{
+                    text-decoration: none !important;
+                }
+                .image-ultimate-map-<?php echo $styleid; ?> {
+                    max-width: <?php echo $styledata[5]; ?>px;
+                    width: 100%;
+                    margin: 0 auto;
+                    position: relative;
+                }
+                .image-ultimate-map-<?php echo $styleid; ?>:after {
+                    padding-bottom: <?php echo $styledata[7] / $styledata[5] * 100; ?>%;
+                    content: "";
+                    display: block;
+                }
+                .image-ultimate-hover-animation-<?php echo $styleid; ?> {
+                    animation-duration: <?php echo $styledata[21]; ?>s;
+                }
+                .image-ultimate-hover-padding-<?php echo $styleid; ?>{
+                    padding: <?php echo $styledata[9]; ?>px;
+                }
+                .image-ultimate-hover-<?php echo $styleid; ?>{
+                    position: relative;
+                    width: 100%;
+                    height: 100%;
+                    background: <?php echo $styledata[13]; ?>;
+                    -webkit-transition: -webkit-transform 0.4s;
+                    -moz-transition: -moz-transform 0.4s;
+                    transition: transform 0.4s;
+
+                }
+                .image-ultimate-hover-<?php echo $styleid; ?> .iheu-img {
+                    position: absolute;
+                    top: 0;
+                    bottom: 0;
+                    left: 0;
+                    right: 0;
+                    width: 100%;
+                    height: 100%;
+                    z-index: 10;
+                    -webkit-transition: -webkit-transform 0.4s;
+                    -moz-transition: -moz-transform 0.4s;
+                    transition: transform 0.4s;
+
+                }
+                .image-ultimate-hover-<?php echo $styleid; ?> .iheu-img:before {
+                    position: absolute;
+                    display: block;
+                    content: '';
+                    width: 100%;
+                    height: 100%;
+                    box-shadow: inset 0 0 0 <?php echo $styledata[25]; ?>px <?php echo $styledata[27]; ?>;
+                }
+
+                .image-ultimate-hover-<?php echo $styleid; ?> .iheu-info {
+                    background: <?php echo $styledata[13]; ?>;
+
+                }
+                .image-ultimate-hover-<?php echo $styleid; ?> .iheu-info {
+                    position: absolute;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    -webkit-backface-visibility: hidden;
+                    -moz-backface-visibility: hidden;
+                    backface-visibility: hidden;
+                    -webkit-transition: all 0.4s;
+                    -moz-transition: all 0.4s;
+                    transition: all 0.4s;
+                }
+                .image-ultimate-hover-<?php echo $styleid; ?>.bottom_to_top .iheu-info {
+                    bottom:0px;
+                }
+                .image-ultimate-hover-<?php echo $styleid; ?>.bottom_to_top:hover .iheu-info,
+                .image-ultimate-hover-<?php echo $styleid; ?>.bottom_to_top.iheu-touch .iheu-info{
+                    bottom:0px;
+                    height: <?php echo $styledata[3]; ?>%;
+                    box-shadow: 0 0 0 10px <?php echo $styledata[13]; ?>;
+
+                }
+                .image-ultimate-hover-<?php echo $styleid; ?>.top_to_bottom .iheu-info {
+                    top:0px;
+                }
+                .image-ultimate-hover-<?php echo $styleid; ?>.top_to_bottom:hover .iheu-info,
+                .image-ultimate-hover-<?php echo $styleid; ?>.top_to_bottom.iheu-touch .iheu-info{
+                    top:0px;
+                    height: <?php echo $styledata[3]; ?>%;
+                    box-shadow: 0 0 0 10px <?php echo $styledata[13]; ?>;
+                }
+                .image-ultimate-hover-<?php echo $styleid; ?> .iheu-info .iheu-data{
+                    position: absolute;
+                    margin: <?php echo $styledata[11]; ?>px;
+                    left: 0;
+                    right: 0;
+                }
+                .image-ultimate-hover-<?php echo $styleid; ?>.top_to_bottom .iheu-info .iheu-data{
+                    bottom: 0;
+                }
+                .image-ultimate-hover-<?php echo $styleid; ?>.bottom_to_top .iheu-info .iheu-data{
+                    top: 0;
+                }
+                .image-ultimate-hover-<?php echo $styleid; ?> .iheu-info h3 {
+                    font-size: <?php echo $styledata[33]; ?>px;
+                    font-weight: <?php echo $styledata[39]; ?>;
+                    margin-bottom: <?php echo $styledata[45]; ?>px;
+                    margin-top: 0;
+                    line-height: 120%;
+                    float:left;
+                    display: inline-block;
+                    font-family: <?php echo iheu_font_familly_special_charecter($styledata[37]); ?>;
+                    color: <?php echo $styledata[35]; ?>;
+                }
+                .image-ultimate-hover-<?php echo $styleid; ?> .iheu-info p {
+                    font-size: <?php echo $styledata[47]; ?>px;
+                    font-weight: <?php echo $styledata[53]; ?>;
+                    margin-top: 0;
+                    line-height: 120%;
+                    width: 100%;
+                    margin-bottom: 0;
+                    float: left;
+                    text-align: left;
+                    font-family: <?php echo iheu_font_familly_special_charecter($styledata[51]); ?>;
+                    color: <?php echo $styledata[49]; ?>;
+                }
+                .image-ultimate-hover-<?php echo $styleid; ?> a.iheu-button{
+                    padding: <?php echo $styledata[73]; ?>px <?php echo $styledata[75]; ?>px;
+                    -webkit-border-radius: <?php echo $styledata[71]; ?>px;
+                    -moz-border-radius: <?php echo $styledata[71]; ?>px;
+                    border-radius: <?php echo $styledata[71]; ?>px;
+                    font-weight: <?php echo $styledata[65]; ?>;
+                    font-size: <?php echo $styledata[57]; ?>px;
+                    font-family: <?php echo iheu_font_familly_special_charecter($styledata[63]); ?>;
+                    background: <?php echo $styledata[61]; ?>;
+                    color: <?php echo $styledata[59]; ?>;
+                    text-decoration: none;
+                    right: 0;
+                    position: absolute;
+
+                }
+                .image-ultimate-hover-<?php echo $styleid; ?>.top_to_bottom a.iheu-button{
+                    bottom: 0px;
+                }
+                .image-ultimate-hover-<?php echo $styleid; ?>.bottom_to_top a.iheu-button{
+                    top: 0px;
+                }
+                .image-ultimate-hover-<?php echo $styleid; ?> a.iheu-button:hover{
+                    background: <?php echo $styledata[69]; ?>;
+                    color: <?php echo $styledata[67]; ?>;
+                }
+                <?php echo $styledata[83]; ?>
+            </style>
+
+            <?php
+            foreach ($listdata as $value) {
+                $backgoundimage = '';
+                $opennewtab = '';
+                $iheuh3 = '';
+                $iheup = '';
+                $iheubuttontext = '';
+                $dataavanimation = '';
+                $dataanimation = '';
+                if (!empty($styledata[19])) {
+                    $dataanimation = 'orphita-animation';
+                    $dataavanimation = 'orphita-animation="'.$styledata[19].'"';
+                }
+                if (!empty($value['hoverimage'])) {
+                    $backgoundimage = 'style="background: linear-gradient( ' . $styledata[13] . ', ' . $styledata[13] . '), url(' . $value['hoverimage'] . ');-moz-background-size: 100% 100%;-o-background-size: 100% 100%; background-size: 100% 100%;"';
+                }
+                if ($styledata[17] == '_blank') {
+                    $opennewtab = 'target="_blank"';
+                }
+                if ($value['title'] != '') {
+                    $iheuh3 = '<h3 class="' . $styledata[23] . '"> ' . iheu_html_special_charecter($value['title']) . ' </h3>';
+                }
+                if ($value['files'] != '') {
+                    $iheup = '<p class="' . $styledata[23] . '"> ' . iheu_html_special_charecter($value['files']) . ' </p>';
+                }
+                if ($value['buttom_text'] != '') {
+                    $iheubuttontext = '<a ' . $opennewtab . ' href="' . $value['link'] . '" class="' . $styledata[23] . ' iheu-button"> ' . iheu_html_special_charecter($value['buttom_text']) . ' </a>';
+                }
+
+                if ($value['link'] == '') {
+                    $valuedata = '<div class="iheu-img">
+                                                          <img src="' . $value['image'] . '">
+                                                    </div>
+                                                    <div class="iheu-info" ' . $backgoundimage . '>
+                                                        <div class="iheu-data">
+                                                            ' . $iheuh3 . '
+                                                            ' . $iheup . '
+                                                        </div>
+                                                    </div>';
+                }
+                if ($value['link'] != '' && $value['buttom_text'] == '') {
+                    $valuedata = '<a ' . $opennewtab . ' href="' . $value['link'] . '" class="iheutabhover"> 
+                                                        <div class="iheu-img">
+                                                             <img src="' . $value['image'] . '">
+                                                        </div>
+                                                        <div class="iheu-info" ' . $backgoundimage . '>
+                                                            <div class="iheu-data">
+                                                                ' . $iheuh3 . '
+                                                                ' . $iheup . '
+                                                            </div>
+                                                        </div>
+                                                     </a>';
+                }
+                if ($value['link'] != '' && $value['buttom_text'] != '') {
+                    $valuedata = '<div class="iheu-img">
+                                                         <img src="' . $value['image'] . '">
+                                                     </div>
+                                                     <div class="iheu-info" ' . $backgoundimage . '>
+                                                            <div class="iheu-data">
+                                                                ' . $iheuh3 . '
+                                                                ' . $iheup . '
+                                                                ' . $iheubuttontext . '
+                                                            </div>
+                                                     </div>';
+                }
+                $adminheading = '';
+                $admindata = '';
+                if ($userdata == 'admin') {
+                    $adminheading = 'iheu-editing';
+                    $admindata = '<div class="iheu-admin-absulote">
+                                    <div class="iheu-style-absulate-edit">
+                                        <form method="post"> ' . wp_nonce_field("iheueditdata") . '
+                                            <input type="hidden" name="item-id" value="' . $value['id'] . '">
+                                            <button class="btn btn-primary" type="submit" value="edit" name="edit">Edit</button>
+                                        </form>
+                                    </div>
+                                    <div class="iheu-style-absulate-delete">
+                                        <form method="post">  ' . wp_nonce_field("iheudeletedata") . '
+                                            <input type="hidden" name="item-id" value="' . $value['id'] . '">
+                                            <button class="btn btn-danger " type="submit" value="delete" name="delete">Delete</button>
+                                        </form>
+                                    </div>
+                                </div>';
+                }
+                echo '<div '.$dataavanimation.' class="' . $styledata[1] . ' '.$dataanimation.' '.$adminheading.' image-ultimate-hover-animation-'.$styleid.' image-ultimate-hover-padding-' . $styleid . '">
+                                            <div class="image-ultimate-map-' . $styleid . '">
+                                                <div class="image-ultimate-map-absulate">
+                                                    <div class="image-ultimate-hover image-ultimate-hover-' . $styleid . ' ' . $styledata[85] . '">
+                                                            ' . $valuedata . '
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            ' . $admindata . '
+                                         </div>';
+            }
+
+
+            ?>
+        </div>
+    </div>
+    <?php
+}
+
+
 
 function iheu_ultimate_oxi_shortcode_square18($styleid, $styledata, $listdata, $userdata) {
    ?>

@@ -20,23 +20,6 @@
 
 <!-- START NEW DASHBOARD -->
 
-<?php if ($Ask_Review_Date < time() and get_option("EWD_UFAQ_Install_Time") < time() - 3600*24*4) { ?>
-<div id='ewd-ufaq-review-ask-overlay'></div>
-<div class='ewd-ufaq-review-ask-popup'>
-	<div class='ewd-ufaq-review-ask-title'><?php _e('Thank You!', 'ultimate-faqs'); ?></div>
-	<div class='ewd-ufaq-review-ask-content'>
-		<p><?php _e('We wanted to thank the users of our plugins for all of their great reviews recently.', 'ultimate-faqs'); ?></p>
-		<p><?php _e('Your positive feedback and constructive suggestions on how to improve our plugins make coming in to work every day worth it for us.', 'ultimate-faqs'); ?></p>
-		<p><strong><?php _e("Haven't had a chance to leave a review yet? You can do so at:", 'ultimate-faqs'); ?></strong></p>
-		<a href='https://wordpress.org/support/plugin/ultimate-faqs/reviews/' target="_blank" class='ewd-ufaq-review-ask-content-link'>Leave a Review!</a>
-	</div>
-	<div class='ewd-ufaq-review-ask-footer-links'>
-		<div class='ewd-ufaq-hide-review-ask' id="ewd-ufaq-hide-review-ask-week" data-askreviewdelay='7'><?php _e('Ask me in a week', 'ultimate-faqs'); ?></div>
-		<div class='ewd-ufaq-hide-review-ask' id="ewd-ufaq-hide-review-ask-never" data-askreviewdelay='2000'><?php _e('Never ask me again', 'ultimate-faqs'); ?></div>
-	</div>
-</div>
-<?php } ?>
-
 <div id="ewd-ufaq-dashboard-content-area">
 
 	<div id="ewd-ufaq-dashboard-content-left">
@@ -47,7 +30,7 @@
 					<form method="post" action="admin.php?page=EWD-UFAQ-Options" class="ewd-ufaq-dashboard-key-widget">
 						<input class="ewd-ufaq-dashboard-key-widget-input" name="Key" type="text" placeholder="<?php _e('Enter Product Key Here', 'ultimate-faqs'); ?>">
 						<input class="ewd-ufaq-dashboard-key-widget-submit" name="EWD_UFAQ_Upgrade_To_Full" type="submit" value="<?php _e('UNLOCK PREMIUM', 'ultimate-faqs'); ?>">
-						<div class="ewd-ufaq-dashboard-key-widget-text">Don't have a key? Use the <a href="http://www.etoilewebdesign.com/plugins/ultimate-faq/#buy" target="_blank">Upgrade Now</a> button above to purchase and unlock all premium features.</div>
+						<div class="ewd-ufaq-dashboard-key-widget-text">Don't have a key? Use the <a href="https://www.etoilewebdesign.com/license-payment/?Selected=UFAQ&Quantity=1" target="_blank">Upgrade Now</a> button above to purchase and unlock all premium features.</div>
 					</form>
 				</div>
 			</div>
@@ -216,7 +199,7 @@
 						<li>SEO-Friendly Permalinks</li>
 						<li>+ More</li>
 					</ul>
-					<a href="http://www.etoilewebdesign.com/plugins/ultimate-faq/#buy" class="ewd-ufaq-dashboard-get-premium-widget-button" target="_blank">UPGRADE NOW</a>
+					<a href="https://www.etoilewebdesign.com/license-payment/?Selected=UFAQ&Quantity=1" class="ewd-ufaq-dashboard-get-premium-widget-button" target="_blank">UPGRADE NOW</a>
 					<?php if (!get_option("EWD_UFAQ_Trial_Happening")) { ?>
 						<form method="post" action="admin.php?page=EWD-UFAQ-Options">
 							<input name="Key" type="hidden" value='EWD Trial'>
@@ -272,7 +255,7 @@
 				</ul>
 			</div>
 			<div class="ewd-ufaq-dashboard-new-footer-one-buttons">
-				<a class="ewd-ufaq-dashboard-new-upgrade-button" href="http://www.etoilewebdesign.com/plugins/ultimate-faq/#buy" target="_blank">UPGRADE NOW</a>
+				<a class="ewd-ufaq-dashboard-new-upgrade-button" href="https://www.etoilewebdesign.com/license-payment/?Selected=UFAQ&Quantity=1" target="_blank">UPGRADE NOW</a>
 			</div>
 		</div>
 	</div> <!-- ewd-ufaq-dashboard-new-footer-one -->
@@ -293,7 +276,7 @@
 			<li>SUPPORT</li>
 			<li><a href="https://www.youtube.com/playlist?list=PLEndQUuhlvSrNdfu5FKa1uGHsaKZxgdWt" target="_blank">YouTube Tutorials</a></li>
 			<li><a href="https://wordpress.org/support/plugin/ultimate-faqs" target="_blank">Forums</a></li>
-			<li><a href="http://www.etoilewebdesign.com/plugins/ultimate-faq/documentation-ultimate-faq/" target="_blank">Documentation</a></li>
+			<li><a href="https://www.etoilewebdesign.com/plugins/ultimate-faq/documentation-ultimate-faq/" target="_blank">Documentation</a></li>
 			<li><a href="https://wordpress.org/plugins/ultimate-faqs/#faq" target="_blank">FAQs</a></li>
 		</ul>
 	</div>

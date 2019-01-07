@@ -1,6 +1,30 @@
 <?php
-/* The function that creates the HTML on the front-end, based on the parameters
-* supplied in the product-catalog shortcode */
+function UFAQ_Display_FAQs_Block() {
+    if(function_exists('render_block_core_block')){  
+		wp_register_script( 'ewd-ufaq-blocks-js', plugins_url( '../blocks/ewd-ufaq-blocks.js', __FILE__ ), array( 'wp-blocks', 'wp-element', 'wp-components', 'wp-editor' ) );
+		wp_register_style( 'ewd-ufaq-blocks-css', plugins_url( '../blocks/ewd-ufaq-blocks.css', __FILE__ ), array( 'wp-edit-blocks' ), filemtime( plugin_dir_path( __FILE__ ) . '../blocks/ewd-ufaq-blocks.css' ) );
+		register_block_type( 'ultimate-faqs/ewd-ufaq-display-faq-block', array(
+			'attributes'      => array(
+				'post_count' => array(
+					'type' => 'string',
+				),
+				'include_category' => array(
+					'type' => 'string',
+				),
+				'exclude_category' => array(
+					'type' => 'string',
+				),
+			),
+			'editor_script'   => 'ewd-ufaq-blocks-js',
+			'editor_style'  => 'ewd-ufaq-blocks-css',
+			'render_callback' => 'Display_FAQs',
+		) );
+	}
+	// Define our shortcode, too, using the same render function as the block.
+	add_shortcode( 'ultimate-faqs', 'Display_FAQs' );
+}
+add_action( 'init', 'UFAQ_Display_FAQs_Block' );
+
 function Display_FAQs($atts) {
 	$Custom_CSS = get_option("EWD_UFAQ_Custom_CSS");
 	$FAQ_Toggle = get_option("EWD_UFAQ_Toggle");
@@ -19,11 +43,16 @@ function Display_FAQs($atts) {
 	$Comments_On = get_option("EWD_UFAQ_Comments_On");
 
 	$Display_Style = get_option("EWD_UFAQ_Display_Style");
+	$FAQ_Number_Of_Columns = get_option("EWD_UFAQ_FAQ_Number_Of_Columns");
+	$Responsive_Columns = get_option("EWD_UFAQ_Responsive_Columns");
 	$Color_Block_Shape = get_option("EWD_UFAQ_Color_Block_Shape");
+	$FAQs_Per_Page = get_option("EWD_UFAQ_FAQs_Per_Page");
+	$Page_Type = get_option("EWD_UFAQ_Page_Type");
 	$FAQ_Ratings = get_option("EWD_UFAQ_FAQ_Ratings");
 	$Reveal_Effect = get_option("EWD_UFAQ_Reveal_Effect");
 	$Pretty_Permalinks = get_option("EWD_UFAQ_Pretty_Permalinks");
 	$Display_All_Answers = get_option("EWD_UFAQ_Display_All_Answers");
+	$Highlight_Search_Term = get_option("EWD_UFAQ_Highlight_Search_Term");
     $Socialmedia_String = get_option("EWD_UFAQ_Social_Media");
     $Socialmedia = explode(",", $Socialmedia_String);
     $FAQ_Elements = get_option("EWD_UFAQ_FAQ_Elements");
@@ -55,6 +84,11 @@ function Display_FAQs($atts) {
 	$No_Results_Found_Text = get_option("EWD_UFAQ_No_Results_Found_Text");
 		if ($No_Results_Found_Text == "") {$No_Results_Found_Text = __("No result FAQ's contained the term '%s'", 'ultimate-faqs');}
 
+	$Share_FAQ_Label = get_option("EWD_UFAQ_Share_FAQ_Label");
+	if ($Share_FAQ_Label == "") {$Share_FAQ_Label = __("Share", 'ultimate-faqs');}
+	$Find_FAQ_Helpful_Label = get_option("EWD_UFAQ_Find_FAQ_Helpful_Label");
+	if ($Find_FAQ_Helpful_Label == "") {$Find_FAQ_Helpful_Label = __("Did you find this FAQ helpful?", 'ultimate-faqs');}
+
 	$UFAQ_Styling_Category_Heading_Type = get_option("EWD_UFAQ_Styling_Category_Heading_Type");
 	$UFAQ_Styling_FAQ_Heading_Type = get_option("EWD_UFAQ_Styling_FAQ_Heading_Type");
 
@@ -85,9 +119,11 @@ function Display_FAQs($atts) {
 			'orderby' => "",
 			'order' => "",
 			'ajax' => "No",
+			'faqs_only' => "No",
 			'current_url' => "",
 			'only_titles' => "No",
 			'display_all_answers' => "",
+			'faq_page' => 0,
             'post_count'=>-1),
 			$atts
 		)
@@ -102,6 +138,10 @@ function Display_FAQs($atts) {
 	if (strpos($No_Results_Found_Text, "%s")) {$No_Results_Found_Text = str_replace("%s", $search_string, $No_Results_Found_Text);}
 
 	$search_string = strtolower($search_string);
+
+	if ($FAQs_Per_Page == '') {$FAQs_Per_Page = 999999;}
+	$Skip_FAQs = $faq_page * $FAQs_Per_Page;
+	$Max_FAQ_Count = ($faq_page + 1) * $FAQs_Per_Page;
 
 	if ($display_all_answers != "") {$Display_All_Answers = $display_all_answers;}
 
@@ -222,6 +262,10 @@ function Display_FAQs($atts) {
 		$ReturnString .= "%LIST_HEADER_PLACEHOLDER%";
 	}
 
+	$ReturnString .= "<div class='ewd-ufaq-faqs'>";
+
+	if ($faqs_only == 'Yes') {$ReturnString = '';}
+
 	$Counter = 0;
 	$All_Categories = array();
 	foreach ($Category_Array as $Category) {
@@ -283,6 +327,17 @@ function Display_FAQs($atts) {
 	    }
 
 	    while ( $FAQ_Query->have_posts() ): $FAQ_Query->the_post(); global $post;
+
+	    		if ($Counter < $Skip_FAQs) {
+	    			$Counter++;
+	    			continue;
+	    		}
+
+	    		if ($Counter >= $Max_FAQ_Count) {
+	    			$ReturnString .= "<div class='ewd-ufaq-max-faqs-not-reached'></div>";
+	    			break 2;
+	    		}
+
 	    		$faq = get_post();
 				$Category_Terms = wp_get_post_terms($faq->ID, 'ufaq-category');
 				$Tag_Terms = wp_get_post_terms($faq->ID, 'ufaq-tag');
@@ -304,10 +359,13 @@ function Display_FAQs($atts) {
 					$Display_FAQ_ID = "";
 				}
 
-				$TitlesArray[] = json_encode($faq->post_title);
-				$HeaderString .= "<div class='ufaq-faq-header-title'><a href='' class='ufaq-faq-header-link'  data-postid='" . $Unique_ID . "-" . $faq->ID . "-" . $Counter  . "'>" . apply_filters('the_title', $faq->post_title, $faq->ID) . "</a></div>";
+				$Post_Title = EWD_UFAQ_Add_Search_Spans($faq->post_title, $search_string, $Highlight_Search_Term);
+				$Post_Content = EWD_UFAQ_Add_Search_Spans($faq->post_content, $search_string, $Highlight_Search_Term);
 
-				$ReturnString .= "<div class='ufaq-faq-div ufaq-faq-display-style-" . $Display_Style . "' id='ufaq-post-" . $Unique_ID . "-" . $faq->ID . "-" . $Counter  . "' data-postid='" . $Unique_ID . "-" . $faq->ID . "-" . $Counter . "' itemscope itemtype='http://schema.org/Question'>";
+				$TitlesArray[] = json_encode($Post_Title);
+				$HeaderString .= "<div class='ufaq-faq-header-title'><a href='' class='ufaq-faq-header-link'  data-postid='" . $Unique_ID . "-" . $faq->ID . "-" . $Counter  . "'>" . apply_filters('the_title', $Post_Title, $faq->ID) . "</a></div>";
+
+				$ReturnString .= "<div class='ufaq-faq-div ufaq-faq-column-count-" . $FAQ_Number_Of_Columns . " ufaq-faq-responsive-columns-" . $Responsive_Columns . " ufaq-faq-display-style-" . $Display_Style . "' id='ufaq-post-" . $Unique_ID . "-" . $faq->ID . "-" . $Counter  . "' data-postid='" . $Unique_ID . "-" . $faq->ID . "-" . $Counter . "' itemscope itemtype='http://schema.org/Question'>";
 
 				$ReturnString .= "<div class='ufaq-faq-title";
 				if ($FAQ_Toggle != "No") {$ReturnString .= " ufaq-faq-toggle";}
@@ -315,7 +373,7 @@ function Display_FAQs($atts) {
 				$ReturnString .= "<a class='ewd-ufaq-post-margin'  href='" . get_permalink($faq->ID) . "'><div class='ewd-ufaq-post-margin-symbol " . $Color_Block_Shape . "' id='ewd-ufaq-post-margin-symbol-" . $Unique_ID . "-" . $faq->ID . "-" . $Counter  . "'><span id='ewd-ufaq-post-symbol-" . $Unique_ID . "-" . $faq->ID . "-" . $Counter;
 				if ($Display_All_Answers == "Yes") {$ReturnString .= "'>" . $Toggle_Symbol . "</span></div>";}
 				else {$ReturnString .= "'>" . strtolower($Toggle_Symbol) . "</span></div>";}
-				$ReturnString .= "<div class='ufaq-faq-title-text'><" . $UFAQ_Styling_FAQ_Heading_Type . " itemprop='name'>" . apply_filters('the_title', $faq->post_title, $faq->ID) . "</" . $UFAQ_Styling_FAQ_Heading_Type . "></div><div class='ewd-ufaq-clear'></div></a>";
+				$ReturnString .= "<div class='ufaq-faq-title-text'><" . $UFAQ_Styling_FAQ_Heading_Type . " itemprop='name'>" . apply_filters('the_title', $Post_Title, $faq->ID) . "</" . $UFAQ_Styling_FAQ_Heading_Type . "></div><div class='ewd-ufaq-clear'></div></a>";
 				$ReturnString .= "</div>";
 
 				if (strlen($faq->post_excerpt) > 0) {$ReturnString .= "<div class='ufaq-faq-excerpt' id='ufaq-excerpt-" . $faq->ID . "'>" . apply_filters('the_content', html_entity_decode($faq->post_excerpt)) . "</div>";}
@@ -335,7 +393,7 @@ function Display_FAQs($atts) {
 					}
 
 					if ($FAQ_Element == "Body") {
-						$ReturnString .= "<div class='ewd-ufaq-post-margin ufaq-faq-post' id='ufaq-post-" . $faq->ID . "' itemprop='text'>" . apply_filters('the_content', html_entity_decode($faq->post_content)) . "</div>";
+						$ReturnString .= "<div class='ewd-ufaq-post-margin ufaq-faq-post' id='ufaq-post-" . $faq->ID . "' itemprop='text'>" . apply_filters('the_content', html_entity_decode($Post_Content)) . "</div>";
 					}
 
 					if ($FAQ_Element == "Custom_Fields" and sizeOf($FAQ_Fields_Array) > 0) {
@@ -396,7 +454,7 @@ function Display_FAQs($atts) {
 
 						$ReturnString .= "<div class='ewd-ufaq-ratings'>";
 						$ReturnString .= "<div class='ewd-ufaq-ratings-label'>";
-						$ReturnString .= __("Did you find this FAQ helpful?", 'ultimate-faqs');
+						$ReturnString .= $Find_FAQ_Helpful_Label;
 						$ReturnString .= "</div>";
 						$ReturnString .= "<div class='ewd-ufaq-rating-button ewd-ufaq-up-vote' data-ratingfaqid='" . $faq->ID . "' itemprop='upvoteCount'>" . $Up_Votes . "</div>";
 						$ReturnString .= "<div class='ewd-ufaq-rating-button ewd-ufaq-down-vote' data-ratingfaqid='" . $faq->ID . "' itemprop='downvoteCount'>" . $Down_Votes . "</div>";
@@ -406,7 +464,7 @@ function Display_FAQs($atts) {
 
 					if ($FAQ_Element == "Social_Media") {
 						if ($Socialmedia[0] != "Blank" and $Socialmedia[0] != "") {
-							$ReturnString .= "<div class='ufaq-social-links'>Share: ";
+							$ReturnString .= "<div class='ufaq-social-links'><span class='ufaq-social-links-label'>" . $Share_FAQ_Label . ": </span>";
 							$ReturnString .= "<ul class='rrssb-buttons'>";
 						}
 						if(in_array("Facebook", $Socialmedia)) {$ReturnString .= EWD_UFAQ_Add_Social_Media_Buttons("Facebook", get_permalink($faq->ID), $faq->post_title);}
@@ -421,10 +479,11 @@ function Display_FAQs($atts) {
 						}
 					}
 
-			    	if ($FAQ_Element == "Permalink" and $Include_Permalink == "Yes" and $ajax == "No") {
-			    		$ReturnString .= "<div class='ufaq-permalink'>" . $Permalink_Label;
+			    	if ($FAQ_Element == "Permalink" and ($Include_Permalink == "Yes" or $Include_Permalink == "Text" or $Include_Permalink == "Icon") and $ajax == "No") {
+			    		$ReturnString .= "<div class='ufaq-permalink'>";
 						$ReturnString .= "<a href='" . $FAQ_Permalink . "'>";
-						$ReturnString .= "<div class='ufaq-permalink-image'></div>";
+						if ($Include_Permalink == "Yes" or $Include_Permalink == "Text") {$ReturnString .= $Permalink_Label;}
+						if ($Include_Permalink == "Yes" or $Include_Permalink == "Icon") {$ReturnString .= "<div class='ufaq-permalink-image'></div>";}
 						$ReturnString .= "</a>";
 						$ReturnString .= "</div>";
 			    	}
@@ -455,17 +514,40 @@ function Display_FAQs($atts) {
 
 		if ($Category != "EWD_UFAQ_ALL_CATEGORIES" and $Category != "uncategorized" and $FAQ_Query->post_count > 0) {
 			$ReturnString .= "</div>";
-			$ReturnString .= "</div>";
 			$HeaderString .= "</div>";
 		}
+
+		if ($faqs_only != 'Yes') {$ReturnString .= "</div>";} //ewd-ufaq-faqs
 	}
 
-	if ($Counter == 0 and $search_string != "") {
+
+	if ($Counter == 0 and $search_string != "" and $faqs_only != 'Yes') {
 		$ReturnString .= "<div class='ewd-ufaq-no-results'>" . $No_Results_Found_Text . "</div>";
 	}
 
-	$ReturnString .= "</div>";
-	$HeaderString .= "</div>";
+	if ($Group_By_Category == "Yes") {
+		$ReturnString .= "</div>";
+	}
+
+	if ($faqs_only != 'Yes') {
+		$ReturnString .= "</div>";
+
+		$ReturnString .= "<div class='ewd-ufaq-bottom ewd-ufaq-page-type-" . $Page_Type . "' data-currentpage='" . $faq_page . "'>";
+		$ReturnString .= "<form>";
+		$ReturnString .= "<input type='hidden' name='include_category' value='" . $include_category . "' id='ufaq-include-category' />";
+    	$ReturnString .= "<input type='hidden' name='exclude_category' value='" . $exclude_category . "' id='ufaq-exclude-category' />";
+    	$ReturnString .= "<input type='hidden' name='orderby' value='" . $orderby . "' id='ufaq-orderby' />";
+    	$ReturnString .= "<input type='hidden' name='order' value='" . $order . "' id='ufaq-order' />";
+    	$ReturnString .= "<input type='hidden' name='post_count' value='" . $post_count . "' id='ufaq-post-count' />";
+    	$ReturnString .= "<input type='hidden' name='current_url' value='" . $_SERVER['REQUEST_URI'] . "' id='ufaq-current-url' />";
+    	$ReturnString .= "</form>";
+		if ($Page_Type == 'Distinct') {$ReturnString .= "<div class='ewd-ufaq-previous-faqs " . ($Skip_FAQs == 0 ? 'ewd-ufaq-hidden' : '') . "'><h4>" . __('Previous', 'ultimate-faqs') . "</h4></div>";}
+		if ($Page_Type == 'Distinct') {$ReturnString .= "<div class='ewd-ufaq-next-faqs " . ($Counter >= $Max_FAQ_Count ? '' : 'ewd-ufaq-hidden') . "'><h4>" . __('Next', 'ultimate-faqs') . "</h4></div>";}
+		if ($Page_Type == 'Load_More') {$ReturnString .= "<div class='ewd-ufaq-load-more " . ($Counter >= $Max_FAQ_Count ? '' : 'ewd-ufaq-hidden') . "'><h4>" . __('Load More', 'ultimate-faqs') . "</h4></div>";}
+		$ReturnString .= "</div>";
+		
+		$HeaderString .= "</div>";
+	}
 
 	$ReturnString = str_replace("%LIST_HEADER_PLACEHOLDER%", $HeaderString, $ReturnString);
 
@@ -483,7 +565,6 @@ function Display_FAQs($atts) {
 
 	return $ReturnString;
 }
-add_shortcode("ultimate-faqs", "Display_FAQs");
 
 function EWD_UFAQ_Category_Matches($Category, $include_category_array, $exclude_category_array) {
 	$Excluded = EWD_UFAQ_Excluded_Category_Check($Category, $exclude_category_array);
@@ -517,6 +598,13 @@ function EWD_UFAQ_Included_Category_Check($Category, $include_category_array) {
 		$Parent_Category = get_term($Category->parent, 'ufaq-category');
 		return EWD_UFAQ_Included_Category_Check($Parent_Category, $include_category_array);
 	}
+}
+
+function EWD_UFAQ_Add_Search_Spans($Text, $search_string, $Highlight_Search_Term) {
+	if ($Highlight_Search_Term != "Yes" or $search_string == "") {return $Text;}
+
+	$Highlighted_Text = preg_replace("/($search_string)/i", "<span class='ufaq-search-highlight'>$1</span>", $Text);
+	return $Highlighted_Text;
 }
 
 function EWD_UFAQ_Enqueue_Scripts_In_Shortcode() {

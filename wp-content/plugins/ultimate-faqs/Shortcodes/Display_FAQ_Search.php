@@ -1,5 +1,4 @@
 <?php
-
 function UFAQ_AJAX_Search($atts) {
     global $wp;
 
@@ -10,6 +9,8 @@ function UFAQ_AJAX_Search($atts) {
     if ($Enter_Question_Label == "") {$Enter_Question_Label =  __('Enter your question', 'ultimate-faqs');}
     $Search_Label = get_option("EWD_UFAQ_Search_Label");
     if ($Search_Label == "") {$Search_Label = __("Search", 'ultimate-faqs');}
+    $Search_Placeholder_Label = get_option("EWD_UFAQ_Search_Placeholder_Label");
+    if ($Search_Placeholder_Label == "") {$Search_Placeholder_Label = __("Enter your question", 'ultimate-faqs');}
 
     $current_url = $_SERVER['REQUEST_URI'];
     $ReturnString = "";
@@ -52,7 +53,8 @@ function UFAQ_AJAX_Search($atts) {
     $ReturnString .= "<input type='hidden' name='order' value='" . $order . "' id='ufaq-order' />";
     $ReturnString .= "<input type='hidden' name='post_count' value='" . $post_count . "' id='ufaq-post-count' />";
     $ReturnString .= "<input type='hidden' name='current_url' value='" . $_SERVER['REQUEST_URI'] . "' id='ufaq-current-url' />";
-    $ReturnString .= "<input type='text' id='ufaq-ajax-text-input' class='ufaq-text-input' name='Question ' placeholder='" . $Enter_Question_Label . "...' value='" . (isset($_GET['faq_search_term']) ? esc_attr($_GET['faq_search_term']) : '') . "'>";
+    $ReturnString .= "<input type='hidden' name='show_on_load' value='" . $show_on_load . "' id='ufaq-show-on-load' />";
+    $ReturnString .= "<input type='text' id='ufaq-ajax-text-input' class='ufaq-text-input' name='Question ' placeholder='" . $Search_Placeholder_Label . "...' value='" . (isset($_GET['faq_search_term']) ? esc_attr($_GET['faq_search_term']) : '') . "'>";
     $ReturnString .= "</div>";
     if ($Auto_Complete_Titles != "Yes" and $show_on_load == "No") {$ReturnString .= "<label for='Submit'></label><input type='button' id='ufaq-ajax-search-btn' class='ewd-otp-submit pure-button pure-button-primary' name='Search' value='" . $Search_Label . "'>";}
     $ReturnString .= "</form>";
@@ -63,5 +65,31 @@ function UFAQ_AJAX_Search($atts) {
     
     return $ReturnString;
 }
-if ($UFAQ_Full_Version == "Yes") {add_shortcode("ultimate-faq-search", "UFAQ_AJAX_Search");}
-?>
+function UFAQ_Search_FAQs_Block() {
+    if(function_exists('render_block_core_block')){  
+        wp_register_script( 'ewd-ufaq-blocks-js', plugins_url( '../blocks/ewd-ufaq-blocks.js', __FILE__ ), array( 'wp-blocks', 'wp-element', 'wp-components', 'wp-editor' ) );
+        wp_register_style( 'ewd-ufaq-blocks-css', plugins_url( '../blocks/ewd-ufaq-blocks.css', __FILE__ ), array( 'wp-edit-blocks' ), filemtime( plugin_dir_path( __FILE__ ) . '../blocks/ewd-ufaq-blocks.css' ) );
+        register_block_type( 'ultimate-faqs/ewd-ufaq-search-block', array(
+            'attributes'      => array(
+                'include_category' => array(
+                    'type' => 'string',
+                ),
+                'exclude_category' => array(
+                    'type' => 'string',
+                ),
+                 'show_on_load' => array(
+                    'type' => 'string',
+                ),
+           ),
+            'editor_script'   => 'ewd-ufaq-blocks-js', // The script name we gave in the wp_register_script() call.
+            'editor_style'  => 'ewd-ufaq-blocks-css',
+            'render_callback' => 'UFAQ_AJAX_Search',
+        ) );
+    }
+    // Define our shortcode, too, using the same render function as the block.
+    $UFAQ_Full_Version = get_option("EWD_UFAQ_Full_Version");
+    if ($UFAQ_Full_Version == "Yes") { add_shortcode("ultimate-faq-search", "UFAQ_AJAX_Search"); }
+}
+add_action( 'init', 'UFAQ_Search_FAQs_Block' );
+
+

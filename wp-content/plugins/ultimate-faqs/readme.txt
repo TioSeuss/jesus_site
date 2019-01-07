@@ -2,7 +2,7 @@
 Contributors: Rustaurius, EtoileWebDesign
 Tags: faq, faqs, woocommerce faq, frequently asked questions, faq widget
 Requires at least: 3.9.0
-Tested up to: 4.9
+Tested up to: 5.0
 License: GPLv3
 License URI:http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -13,6 +13,10 @@ FAQ plugin that lets you easily create, order and publicize FAQs using shortcode
 FAQ plugin that lets you create, organize and publicize your FAQs (frequently asked questions) in no time through your Wordpress admin panel. Select from multiple FAQ layouts and styles. 
 
 [FAQ Demo](https://www.etoilewebdesign.com/ultimate-faq-demo/)
+
+<strong>Tested with WordPress 5.0!</strong>
+
+<strong>New Gutenberg blocks included for displaying FAQs as well as for the search and submit form!</strong>
 
 = FAQ Key Features =
 * Unlimited FAQs, with unlimited tag and category support
@@ -270,6 +274,69 @@ Video 3 - FAQs Ordering
 
 
 == Changelog ==
+= 1.8.11 =
+- Corrected issue with Gutenberg blocks not displaying in new WordPress 5.0
+
+= 1.8.10 =
+- Updated enqueued JS version number to help with any issues related to the frequency of the request for feedback
+
+= 1.8.9 =
+- Added in missing call to global version number variable for enqueued files
+
+= 1.8.8 =
+- Added version number to enqueued files
+
+= 1.8.7 =
+- Update to fix class conflict with PHPSpreadsheet if using more than one of our plugins
+
+= 1.8.6 =
+- Update to fix same-page permalinks
+- Update to fix sidebar misalignment issue when Group By Category is enabled
+
+= 1.8.5 =
+- Update to correct potential alignment issues when Group FAQs by Category enabled
+
+= 1.8.4 =
+- Made the request for feedback less intrusive
+
+= 1.8.3 =
+- Another minor update for the rewite_rules issue
+
+= 1.8.2 =
+- Removed an extra set of quotation marks that was causing flush_rewrite_rules to sometimes be called unnecessarily on init
+- Fixed a styling option that wasn't working correctly for setting the category heading type
+
+= 1.8.1 =
+- Fixes a notice about trying to get property of a non-object
+
+= 1.8.0 =
+- <strong>This is a big update with many new features, corrections, revised admin styling, etc., so please take caution and test before updating on a live site</strong>
+- Added in easy-to-use Gutenberg blocks for ultimate-faqs, ultimate-faq-search, submit-faq, recent-faqs and popular-faqs shortcodes
+- Added in Gutenberg compatibily for the FAQ post create/edit screen
+- The Options pages have a brand new and easy-to-use design!
+- Added in new labelling options
+- Added in a feature to display FAQs in multiple columns
+- Added in option to set a default category for submitted questions
+- Added in option to choose the number of FAQs that display per page (pagination), with options for distinct pages, a load more button or infinite scroll
+- Made block styling options apply to border block theme as well
+- Added in styling option for category headings
+- Added in functionality for FAQ search, when "show on load" isn't being used, to have all FAQ results clear again when the search bar is cleared
+- Added in option for the permalink to display just the text or just the icon
+- Switched from using PHPExcel to the new PHPSpreadsheet for importing and exporting
+- Made permalink text also a link (not just the icon)
+- Corrected some alignment and styling issues with the FAQ Details meta box on the FAQ post create/edit screen
+- Corrected issue with question/title styling not applying if you chose something other than H4 for FAQ Heading Type
+- Updated comment label for FAQs that have comments enabled
+- Minor styling changes to the FAQ display, including alignment of labels and corresponding fields
+- Removed Color Block option from FAQ Display Style. (With the current Toggle Symbol styling options, it was redundant. If you had this option chosen, nothing will change, as it will automatically switch you to the Default option and keep any color changes you had made using the Toggle Symbol styling as well as your choice for the Color Block Shape.)
+- Generated new .pot file
+
+= 1.7.3 =
+- Made the review ask pop up conditional on having JavaScript enabled and error-free
+
+= 1.7.2 =
+- Added in an option to highlight the search term in the FAQ question and answer when using the search shortcode
+
 = 1.7.1 =
 - Added an explanation for why "file" type custom fields cannot be included in a user-submitted FAQ
 - Fixed a small admin CSS conflict with Gravity Forms

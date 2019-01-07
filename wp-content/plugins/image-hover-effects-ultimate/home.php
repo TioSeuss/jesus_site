@@ -5,7 +5,9 @@ image_hover_ultimate_user_capabilities();
 wp_enqueue_script('iheu-vendor-bootstrap-jss', plugins_url('css-js/bootstrap.min.js', __FILE__));
 wp_enqueue_style('iheu-vendor-bootstrap', plugins_url('css-js/bootstrap.min.css', __FILE__));
 wp_enqueue_style('iheu-vendor-style', plugins_url('css-js/style.css', __FILE__));
-wp_enqueue_style('font-awesome-5-0-13', plugins_url('css-js/font-awesome.min.css', __FILE__));
+$faversion = get_option('oxi_addons_font_awesome_version');
+$faversion = explode('||', $faversion);
+wp_enqueue_style('font-awesome-' . $faversion[0], $faversion[1]);
 global $wpdb;
 if (!empty($_REQUEST['_wpnonce'])) {
     $nonce = $_REQUEST['_wpnonce'];
@@ -47,49 +49,51 @@ if (!empty($_POST['submit']) && $_POST['submit'] == 'Clone' && is_numeric($_POST
 $data = $wpdb->get_results('SELECT * FROM ' . $wpdb->prefix . 'image_hover_ultimate_style ORDER BY id DESC', ARRAY_A);
 ?>
 <div class="wrap">
-    <?php echo iheu_promote_free(); ?>
-    <h1> Image Hover Effects <a href="<?php echo admin_url("admin.php?page=image-hover-ultimate-new"); ?>" class="btn btn-primary"> Add New</a></h1>
-    <div class="iheu-admin-wrapper table-responsive" style="margin-top: 20px; margin-bottom: 20px;">
-        <?php
-        if (count($data) == 0) {
-            ?>
-            <div class="iheb-style-settings-preview">
-                <div class="iheb-add-new-item-heading">
-                    <a href="<?php echo admin_url("admin.php?page=image-hover-ultimate-new"); ?>">
-                        <div class="iheb-add-new-item">
-                            <span>
-                                <i class="fa fa-plus-circle"></i>
-                                Create Your First Hover Effects
-                            </span>
-                        </div>
-                    </a>
-                </div>
-            </div>
 
+    <?php echo iheu_promote_free(); ?>
+    <div class="iheu-admin-row">            
+        <h1> Image Hover Effects <a href="<?php echo admin_url("admin.php?page=image-hover-ultimate-new"); ?>" class="btn btn-primary"> Add New</a></h1>
+        <div class="iheu-admin-wrapper table-responsive" style="margin-top: 20px; margin-bottom: 20px;">
             <?php
-        } else {
-            ?>
-            <table class="table table-hover widefat " style="background-color: #fff; border: 1px solid #ccc">
-                <thead>
-                    <tr>
-                        <th style="width: 11%">ID</th>
-                        <th style="width: 10%">Name</th>
-                        <th style="width: 13%">Template</th>
-                        <th style="width: 42%">Shortcode</th>
-                        <th style="width: 25%">Edit Delete</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    foreach ($data as $value) {
-                        $id = $value['id'];
-                        echo ' <tr>';
-                        echo ' <td>' . $id . '</td>';
-                        echo '  <td >' . $value['name'] . '</td>';
-                        echo ' <td >' . str_replace("-", " ", $value['style_name']) . '</td>';
-                        echo '<td ><span>Shortcode <input type="text" onclick="this.setSelectionRange(0, this.value.length)" value="[iheu_ultimate_oxi id=&quot;' . $id . '&quot;]"></span>'
-                        . '<span>Php Code <input type="text" onclick="this.setSelectionRange(0, this.value.length)" value="&lt;?php echo do_shortcode(&#039;[iheu_ultimate_oxi  id=&quot;' . $id . '&quot;]&#039;); ?&gt;"></span></td>';
-                        echo '<td >
+            if (count($data) == 0) {
+                ?>
+                <div class="iheb-style-settings-preview">
+                    <div class="iheb-add-new-item-heading">
+                        <a href="<?php echo admin_url("admin.php?page=image-hover-ultimate-new"); ?>">
+                            <div class="iheb-add-new-item">
+                                <span>
+                                    <i class="fa fa-plus-circle"></i>
+                                    Create Your First Hover Effects
+                                </span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <?php
+            } else {
+                ?>
+                <table class="table table-hover widefat " style="background-color: #fff; border: 1px solid #ccc">
+                    <thead>
+                        <tr>
+                            <th style="width: 11%">ID</th>
+                            <th style="width: 10%">Name</th>
+                            <th style="width: 13%">Template</th>
+                            <th style="width: 42%">Shortcode</th>
+                            <th style="width: 25%">Edit Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        foreach ($data as $value) {
+                            $id = $value['id'];
+                            echo ' <tr>';
+                            echo ' <td>' . $id . '</td>';
+                            echo '  <td >' . $value['name'] . '</td>';
+                            echo ' <td >' . str_replace("-", " ", $value['style_name']) . '</td>';
+                            echo '<td ><span>Shortcode <input type="text" onclick="this.setSelectionRange(0, this.value.length)" value="[iheu_ultimate_oxi id=&quot;' . $id . '&quot;]"></span>'
+                            . '<span>Php Code <input type="text" onclick="this.setSelectionRange(0, this.value.length)" value="&lt;?php echo do_shortcode(&#039;[iheu_ultimate_oxi  id=&quot;' . $id . '&quot;]&#039;); ?&gt;"></span></td>';
+                            echo '<td >
                                    <button type="button" class="btn btn-success orphita-style-clone" title="Clone"  style="float:left" dataid="' . $id . '">Copy</button>
                                     <a href="' . admin_url("admin.php?page=image-hover-ultimate-new&styleid=$id") . '"  title="Edit"  class="btn btn-info" style="float:left; margin-right: 5px; margin-left: 5px;">Edit</a>
                                     <form method="post" class="orphita-style-delete">
@@ -99,13 +103,14 @@ $data = $wpdb->get_results('SELECT * FROM ' . $wpdb->prefix . 'image_hover_ultim
                                     </form>
                                    
                              </td>';
-                        echo ' </tr>';
+                            echo ' </tr>';
+                        }
                     }
-                }
-                ?>
+                    ?>
 
-            </tbody>
+                </tbody>
             </table>
+        </div>
     </div>
 </div>
 <script type="text/javascript">

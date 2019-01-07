@@ -8,12 +8,12 @@ if (!isset($_GET['styleid'])) {
     include image_hover_ultimate_plugin_url . 'public/style-new.php';
 }
 if (isset($_GET['styleid'])) {
+    iheu_vendor_js_css('style');
     $id = $_GET['styleid'];
     global $wpdb;
     $table_name = $wpdb->prefix . 'image_hover_ultimate_style';
     $styledata = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_name WHERE id = %d ", $id), ARRAY_A);
-    include image_hover_ultimate_plugin_url . 'public/' . $styledata['style_name'] . '.php';    
-    iheu_vendor_js_css('style');
+    include image_hover_ultimate_plugin_url . 'public/' . $styledata['style_name'] . '.php';
     iheu_media_scripts();
 }
 
@@ -22,7 +22,9 @@ function iheu_vendor_js_css($data) {
     wp_enqueue_style('iheu-vendor-style', plugins_url('css-js/style.css', __FILE__));
     wp_enqueue_script('iheu-vendor-bootstrap-jss', plugins_url('css-js/bootstrap.min.js', __FILE__));
     wp_enqueue_style('iheu-vendor-bootstrap', plugins_url('css-js/bootstrap.min.css', __FILE__));
-    wp_enqueue_style('font-awesome-5-0-13', plugins_url('css-js/font-awesome.min.css', __FILE__));
+    $faversion = get_option('oxi_addons_font_awesome_version');
+    $faversion = explode('||', $faversion);
+    wp_enqueue_style('font-awesome-' . $faversion[0], $faversion[1]);
     wp_enqueue_style('iheu-style', plugins_url('public/style.css', __FILE__));
     wp_enqueue_script('jQuery');
     if ($data == 'style') {
@@ -30,6 +32,11 @@ function iheu_vendor_js_css($data) {
         wp_enqueue_style('ctu-vendor-minicolors', plugins_url('css-js/jquery.minicolors.css', __FILE__));
         wp_enqueue_script('ctu-vendor-jss', plugins_url('css-js/vendor.js', __FILE__));
         wp_enqueue_script('ctu-vendor-font-select', plugins_url('css-js/font-select.js', __FILE__));
+        wp_enqueue_script('YouTubePopUps', plugins_url('css-js/YouTubePopUps.js', __FILE__));
+        $jquery = 'setTimeout(function () {
+                                        jQuery(".oxi-addons-tutorials").grtyoutube({autoPlay: true, theme: "light"});
+                                    }, 500);';
+        wp_add_inline_script('YouTubePopUps', $jquery);
     }
     wp_enqueue_script('iheu-viewportchecker', plugins_url('public/viewportchecker.js', __FILE__));
 }
@@ -49,7 +56,7 @@ function iheu_admin_style_panel_tab2($styleid, $listdata) {
             </div>
             <div class="iheb-add-new-item"  id="iheb-add-new-item">
                 <span>
-                    <i class="fa fa-plus-circle"></i>
+                    <i class="fas fa-plus-circle"></i>
                     Add new Items
                 </span>
 
@@ -74,11 +81,21 @@ function iheu_admin_style_panel_tab2($styleid, $listdata) {
         </div>
         <div class="orphita-add-new-item-panel">
             <div class="orphita-add-new-item-heading">
+                Quick Tutorials
+            </div>
+            <a class="orphita-add-new-item oxi-addons-tutorials" youtubeid="fUZ1SC0UAtY">
+                <span>
+                    <i class="fab fa-youtube"></i>
+                </span>                        
+            </a>
+        </div>
+        <div class="orphita-add-new-item-panel">
+            <div class="orphita-add-new-item-heading">
                 Image Rearrange
             </div>
             <div class="orphita-add-new-item" id="orphita-drag-and-drop">
                 <span>
-                    <i class="fa fa-cogs"></i>
+                    <i class="fas fa-cogs"></i>
                 </span>
 
             </div>
@@ -117,7 +134,6 @@ function iheu_admin_style_panel_tab2($styleid, $listdata) {
 }
 
 function iheu_admin_style_item_data($title, $files, $link, $bottom, $image, $hoverimage, $itemid) {
-    $status = get_option('image_hover_ultimate_license_status');
     ?>
     <div id="iheb-add-new-item-data" class="modal fade" role="dialog">
         <div class="modal-dialog">
@@ -161,7 +177,7 @@ function iheu_admin_style_item_data($title, $files, $link, $bottom, $image, $hov
                             <small class="form-text text-muted">Add or Modify Your Image link.</small>
                         </div>
                         <div class="form-group">
-                            <label for="ctu-title">Hover Background Image <?php if ($status != 'valid') {   echo '<span class="ctu-pro-only">Pro Only</span>';  } ?></label>
+                            <label for="ctu-title" class="iheu-hover-image-upload-url">Hover Background Image</label>
                             <div class="col-xs-12-div">
                                 <div class="col-xs-8-div">
                                     <input type="text "class="form-control" id="iheu-hover-image-upload-url" name="iheu-hover-image-upload-url" value="<?php echo $hoverimage; ?>">

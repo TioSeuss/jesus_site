@@ -1,6 +1,4 @@
 <?php
-/* The function that creates the HTML on the front-end, based on the parameters
-* supplied in the customer-order shortcode */
 function Insert_Question_Form($atts) {
 	global $user_message;
 	global $wpdb;
@@ -153,6 +151,20 @@ function Insert_Question_Form($atts) {
 
 	return $ReturnString;
 }
-if ($UFAQ_Full_Version == "Yes") {add_shortcode("submit-question", "Insert_Question_Form");}
+function UFAQ_Submit_FAQ_Block() {
+    if(function_exists('render_block_core_block')){  
+        wp_register_script( 'ewd-ufaq-blocks-js', plugins_url( '../blocks/ewd-ufaq-blocks.js', __FILE__ ), array( 'wp-blocks', 'wp-element', 'wp-components', 'wp-editor' ) );
+		wp_register_style( 'ewd-ufaq-blocks-css', plugins_url( '../blocks/ewd-ufaq-blocks.css', __FILE__ ), array( 'wp-edit-blocks' ), filemtime( plugin_dir_path( __FILE__ ) . '../blocks/ewd-ufaq-blocks.css' ) );
+        register_block_type( 'ultimate-faqs/ewd-ufaq-submit-faq-block', array(
+            'editor_script'   => 'ewd-ufaq-blocks-js', // The script name we gave in the wp_register_script() call.
+			'editor_style'  => 'ewd-ufaq-blocks-css',
+            'render_callback' => 'Insert_Question_Form',
+        ) );
+        // Define our shortcode, too, using the same render function as the block.
+    }
+    $UFAQ_Full_Version = get_option("EWD_UFAQ_Full_Version");
+	if ($UFAQ_Full_Version == "Yes") {add_shortcode("submit-question", "Insert_Question_Form");}
+}
+add_action( 'init', 'UFAQ_Submit_FAQ_Block' );
 
-?>
+

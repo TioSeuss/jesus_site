@@ -68,27 +68,29 @@ function EWD_UFAQ_Export_To_PDF() {
 		}
 }
 
+if (!class_exists('ComposerAutoloaderInit4618f5c41cf5e27cc7908556f031e4d4')) {require_once EWD_UFAQ_CD_PLUGIN_PATH . 'PHPSpreadsheet/vendor/autoload.php';}
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xls;
+use PhpOffice\PhpSpreadsheet\Writer\Csv;
 function EWD_UFAQ_Export_To_Excel() {
 	$FAQ_Fields_Array = get_option("EWD_UFAQ_FAQ_Fields");
 	if (!is_array($FAQ_Fields_Array)) {$FAQ_Fields_Array = array();}
 
-	include_once('../wp-content/plugins/ultimate-faqs/PHPExcel/Classes/PHPExcel.php');
-
 		// Instantiate a new PHPExcel object
-		$objPHPExcel = new PHPExcel();
+		$Spreadsheet = new Spreadsheet();
 		// Set the active Excel worksheet to sheet 0
-		$objPHPExcel->setActiveSheetIndex(0);
+		$Spreadsheet->setActiveSheetIndex(0);
 
 		// Print out the regular order field labels
-		$objPHPExcel->getActiveSheet()->setCellValue("A1", "Question");
-		$objPHPExcel->getActiveSheet()->setCellValue("B1", "Answer");
-		$objPHPExcel->getActiveSheet()->setCellValue("C1", "Categories");
-		$objPHPExcel->getActiveSheet()->setCellValue("D1", "Tags");
-		$objPHPExcel->getActiveSheet()->setCellValue("E1", "Post Date");
+		$Spreadsheet->getActiveSheet()->setCellValue("A1", "Question");
+		$Spreadsheet->getActiveSheet()->setCellValue("B1", "Answer");
+		$Spreadsheet->getActiveSheet()->setCellValue("C1", "Categories");
+		$Spreadsheet->getActiveSheet()->setCellValue("D1", "Tags");
+		$Spreadsheet->getActiveSheet()->setCellValue("E1", "Post Date");
 
 		$column = 'F';
 		foreach ($FAQ_Fields_Array as $FAQ_Field_Item) {
-     		$objPHPExcel->getActiveSheet()->setCellValue($column."1", $FAQ_Field_Item['FieldName']);
+     		$Spreadsheet->getActiveSheet()->setCellValue($column."1", $FAQ_Field_Item['FieldName']);
     		$column++;
 		}  
 
@@ -120,16 +122,16 @@ function EWD_UFAQ_Export_To_Excel() {
     	 	}
     	 	else {$Tag_String = "";}
 
-    	 	$objPHPExcel->getActiveSheet()->setCellValue("A" . $rowCount, $Post->post_title);
-			$objPHPExcel->getActiveSheet()->setCellValue("B" . $rowCount, $Post->post_content);
-			$objPHPExcel->getActiveSheet()->setCellValue("C" . $rowCount, $Category_String);
-			$objPHPExcel->getActiveSheet()->setCellValue("D" . $rowCount, $Tag_String);
-			$objPHPExcel->getActiveSheet()->setCellValue("E" . $rowCount, $Post->post_date);
+    	 	$Spreadsheet->getActiveSheet()->setCellValue("A" . $rowCount, $Post->post_title);
+			$Spreadsheet->getActiveSheet()->setCellValue("B" . $rowCount, $Post->post_content);
+			$Spreadsheet->getActiveSheet()->setCellValue("C" . $rowCount, $Category_String);
+			$Spreadsheet->getActiveSheet()->setCellValue("D" . $rowCount, $Tag_String);
+			$Spreadsheet->getActiveSheet()->setCellValue("E" . $rowCount, $Post->post_date);
 
 			$column = 'F';
 			foreach ($FAQ_Fields_Array as $FAQ_Field_Item) {
      			$Value = get_post_meta($Post->ID, "Custom_Field_" . $FAQ_Field_Item['FieldID'], true);
-     			$objPHPExcel->getActiveSheet()->setCellValue($column . $rowCount, $Value);
+     			$Spreadsheet->getActiveSheet()->setCellValue($column . $rowCount, $Value);
     			$column++;
 			}  
 
@@ -139,21 +141,22 @@ function EWD_UFAQ_Export_To_Excel() {
     		unset($Tag_String);
 		}
 
-
 		// Redirect output to a client’s web browser (Excel5)
 		if (!isset($Format_Type) == "CSV") {
 			header('Content-Type: application/vnd.ms-excel');
 			header('Content-Disposition: attachment;filename="FAQ_Export.csv"');
 			header('Cache-Control: max-age=0');
-			$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'CSV');
+			$objWriter = new Csv($Spreadsheet);
 			$objWriter->save('php://output');
+			die();
 		}
-		else {
+		else {echo 'Printing spreadsheet<br><br><br><br>';
 			header('Content-Type: application/vnd.ms-excel');
 			header('Content-Disposition: attachment;filename="FAQ_Export.xls"');
 			header('Cache-Control: max-age=0');
-			$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+			$objWriter = new Xls($Spreadsheet);
 			$objWriter->save('php://output');
+			die();
 		}
 
 }

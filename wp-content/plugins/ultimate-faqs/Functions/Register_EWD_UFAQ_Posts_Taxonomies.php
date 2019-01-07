@@ -31,7 +31,8 @@ function EWD_UFAQ_Create_Posttype() {
 				'capability_type' => 'post',
 				'menu_position' => null,
 				'menu_icon' => 'dashicons-format-status',
-				'supports' => array('title','editor','author','excerpt','comments')
+				'supports' => array('title','editor','author','excerpt','comments'),
+				'show_in_rest' => true
 	  ); 
 
 	register_post_type( 'ufaq' , $args );
@@ -56,7 +57,8 @@ function EWD_UFAQ_Create_Category_Taxonomy() {
 			'new_item_name' => __('New FAQ Category Name', 'ultimate-faqs'),
 			'menu_name' => __('FAQ Categories', 'ultimate-faqs'),
 		),
-		'query_var' => true
+		'query_var' => true,
+		'show_in_rest' => true
 	));
 
 	register_taxonomy('ufaq-tag', 'ufaq', array(
@@ -75,7 +77,8 @@ function EWD_UFAQ_Create_Category_Taxonomy() {
 			'add_new_item' => __('Add New FAQ Tag', 'ultimate-faqs'),
 			'new_item_name' => __('New FAQ Tag Name', 'ultimate-faqs'),
 			'menu_name' => __('FAQ Tags', 'ultimate-faqs'),
-		)
+		),
+		'show_in_rest' => true
 	));
 }
 add_action( 'init', 'EWD_UFAQ_Create_Category_Taxonomy', 0 );
