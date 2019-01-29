@@ -246,6 +246,8 @@
 	};
 
  	var headerFixed = function() {
+
+		if ( $( '.site-header' ).length ) {
 			var headerFix = $('.site-header').offset().top;
 			$(window).on('load scroll', function() {
 				var y = $(this).scrollTop();
@@ -262,6 +264,7 @@
 					$('.site-header').removeClass('float-header');
 				}
 			});
+		}	
 	};
 
 	var counter = function() {
