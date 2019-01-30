@@ -6,7 +6,9 @@ services:
     image: wordpress
     restart: always
     volumes:
-      - ./wp-content:/var/www/html/wp-content     
+      - ./wp-content:/var/www/html/wp-content
+      - ./wp-config:/usr/local/etc/php/conf.d/wp-config.php
+      - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini    
     environment:
       WORDPRESS_DB_HOST: db:3306
       WORDPRESS_DB_PASSWORD: Vult.us2015
