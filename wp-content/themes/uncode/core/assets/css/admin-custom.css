@@ -44,6 +44,25 @@
 .tmb-overlay-gradient-bottom .style-transparent-bg { background-color: transparent !important; background-image: -webkit-linear-gradient(bottom, transparent 0%, transparent 50%) !important; background-image: -moz-linear-gradient(bottom, transparent 0%, transparent 50%) !important; background-image: -o-linear-gradient(bottom, transparent 0%, transparent 50%) !important; background-image: linear-gradient(to top, transparent 0%, transparent 50%) !important;}
 
 /*----------------------------------------------------------
+#color-841485
+----------------------------------------------------------*/
+.style-color-841485-bg { background-color: #2c89ef; }
+.btn-color-841485 { color: #ffffff !important; background-color: #2c89ef !important; border-color: #2c89ef !important; }
+.btn-color-841485:not(.btn-hover-nobg):hover, .btn-color-841485:not(.btn-hover-nobg):focus,btn-color-841485:active { background-color: transparent !important; border-color: #2c89ef !important;}
+.btn-color-841485.btn-flat:not(.btn-hover-nobg):hover, .btn-color-841485.btn-flat:not(.btn-hover-nobg):focus,btn-color-841485.btn-flat:active { background-color: #1f7ce2 !important; border-color: #1f7ce2 !important;}
+.btn-color-841485:not(.btn-flat):not(.btn-hover-nobg):not(.btn-text-skin):hover, .btn-color-841485:not(.btn-hover-nobg):not(.btn-text-skin):focus,btn-color-841485:active { color: #2c89ef !important; }
+.btn-color-841485.btn-outline { background-color: transparent !important; border-color: #2c89ef !important; }
+.btn-color-841485.btn-outline:not(.btn-text-skin) { color: #2c89ef !important; }
+.btn-color-841485.btn-outline:not(.btn-hover-nobg):hover, .btn-color-841485.btn-outline:not(.btn-hover-nobg):focus, btn-color-841485.btn-outline:active { background-color: #2c89ef !important; border-color: #2c89ef !important; }
+.btn-color-841485.btn-outline:not(.btn-hover-nobg):not(.btn-text-skin):hover, .btn-color-841485.btn-outline:not(.btn-hover-nobg):not(.btn-text-skin):focus, btn-color-841485.btn-outline:active { color: #ffffff !important; }
+.style-light .btn-color-841485.btn-text-skin.btn-outline, .style-light .btn-color-841485.btn-text-skin:not(.btn-outline):hover { color: #303133 !important; }
+.style-light .btn-color-841485.btn-text-skin.btn-outline:hover { color: #ffffff !important; }
+.text-color-841485-color { color: #2c89ef !important; fill: #2c89ef !important; }
+.border-color-841485-color { border-color: #2c89ef !important; }
+.tmb-overlay-gradient-top .style-color-841485-bg { background-color: transparent !important; background-image: -webkit-linear-gradient(top, #2c89ef 0%, transparent 50%) !important; background-image: -moz-linear-gradient(top, #2c89ef 0%, transparent 50%) !important; background-image: -o-linear-gradient(top, #2c89ef 0%, transparent 50%) !important; background-image: linear-gradient(to bottom, #2c89ef 0%, transparent 50%) !important;}
+.tmb-overlay-gradient-bottom .style-color-841485-bg { background-color: transparent !important; background-image: -webkit-linear-gradient(bottom, #2c89ef 0%, transparent 50%) !important; background-image: -moz-linear-gradient(bottom, #2c89ef 0%, transparent 50%) !important; background-image: -o-linear-gradient(bottom, #2c89ef 0%, transparent 50%) !important; background-image: linear-gradient(to top, #2c89ef 0%, transparent 50%) !important;}
+
+/*----------------------------------------------------------
 #color-jevc
 ----------------------------------------------------------*/
 .style-color-jevc-bg { background-color: #000000; }
@@ -61,44 +80,6 @@
 .border-color-jevc-color { border-color: #000000 !important; }
 .tmb-overlay-gradient-top .style-color-jevc-bg { background-color: transparent !important; background-image: -webkit-linear-gradient(top, #000000 0%, transparent 50%) !important; background-image: -moz-linear-gradient(top, #000000 0%, transparent 50%) !important; background-image: -o-linear-gradient(top, #000000 0%, transparent 50%) !important; background-image: linear-gradient(to bottom, #000000 0%, transparent 50%) !important;}
 .tmb-overlay-gradient-bottom .style-color-jevc-bg { background-color: transparent !important; background-image: -webkit-linear-gradient(bottom, #000000 0%, transparent 50%) !important; background-image: -moz-linear-gradient(bottom, #000000 0%, transparent 50%) !important; background-image: -o-linear-gradient(bottom, #000000 0%, transparent 50%) !important; background-image: linear-gradient(to top, #000000 0%, transparent 50%) !important;}
-
-/*----------------------------------------------------------
-#color-144933
-----------------------------------------------------------*/
-.style-color-144933-bg { background-color: #2d89ef; }
-.btn-color-144933 { color: #ffffff !important; background-color: #2d89ef !important; border-color: #2d89ef !important; }
-.btn-color-144933:not(.btn-hover-nobg):hover, .btn-color-144933:not(.btn-hover-nobg):focus,btn-color-144933:active { background-color: transparent !important; border-color: #2d89ef !important;}
-.btn-color-144933.btn-flat:not(.btn-hover-nobg):hover, .btn-color-144933.btn-flat:not(.btn-hover-nobg):focus,btn-color-144933.btn-flat:active { background-color: #207ce2 !important; border-color: #207ce2 !important;}
-.btn-color-144933:not(.btn-flat):not(.btn-hover-nobg):not(.btn-text-skin):hover, .btn-color-144933:not(.btn-hover-nobg):not(.btn-text-skin):focus,btn-color-144933:active { color: #2d89ef !important; }
-.btn-color-144933.btn-outline { background-color: transparent !important; border-color: #2d89ef !important; }
-.btn-color-144933.btn-outline:not(.btn-text-skin) { color: #2d89ef !important; }
-.btn-color-144933.btn-outline:not(.btn-hover-nobg):hover, .btn-color-144933.btn-outline:not(.btn-hover-nobg):focus, btn-color-144933.btn-outline:active { background-color: #2d89ef !important; border-color: #2d89ef !important; }
-.btn-color-144933.btn-outline:not(.btn-hover-nobg):not(.btn-text-skin):hover, .btn-color-144933.btn-outline:not(.btn-hover-nobg):not(.btn-text-skin):focus, btn-color-144933.btn-outline:active { color: #ffffff !important; }
-.style-light .btn-color-144933.btn-text-skin.btn-outline, .style-light .btn-color-144933.btn-text-skin:not(.btn-outline):hover { color: #303133 !important; }
-.style-light .btn-color-144933.btn-text-skin.btn-outline:hover { color: #ffffff !important; }
-.text-color-144933-color { color: #2d89ef !important; fill: #2d89ef !important; }
-.border-color-144933-color { border-color: #2d89ef !important; }
-.tmb-overlay-gradient-top .style-color-144933-bg { background-color: transparent !important; background-image: -webkit-linear-gradient(top, #2d89ef 0%, transparent 50%) !important; background-image: -moz-linear-gradient(top, #2d89ef 0%, transparent 50%) !important; background-image: -o-linear-gradient(top, #2d89ef 0%, transparent 50%) !important; background-image: linear-gradient(to bottom, #2d89ef 0%, transparent 50%) !important;}
-.tmb-overlay-gradient-bottom .style-color-144933-bg { background-color: transparent !important; background-image: -webkit-linear-gradient(bottom, #2d89ef 0%, transparent 50%) !important; background-image: -moz-linear-gradient(bottom, #2d89ef 0%, transparent 50%) !important; background-image: -o-linear-gradient(bottom, #2d89ef 0%, transparent 50%) !important; background-image: linear-gradient(to top, #2d89ef 0%, transparent 50%) !important;}
-
-/*----------------------------------------------------------
-#color-166974
-----------------------------------------------------------*/
-.style-color-166974-bg { background-color: #e14d43; }
-.btn-color-166974 { color: #ffffff !important; background-color: #e14d43 !important; border-color: #e14d43 !important; }
-.btn-color-166974:not(.btn-hover-nobg):hover, .btn-color-166974:not(.btn-hover-nobg):focus,btn-color-166974:active { background-color: transparent !important; border-color: #e14d43 !important;}
-.btn-color-166974.btn-flat:not(.btn-hover-nobg):hover, .btn-color-166974.btn-flat:not(.btn-hover-nobg):focus,btn-color-166974.btn-flat:active { background-color: #d44036 !important; border-color: #d44036 !important;}
-.btn-color-166974:not(.btn-flat):not(.btn-hover-nobg):not(.btn-text-skin):hover, .btn-color-166974:not(.btn-hover-nobg):not(.btn-text-skin):focus,btn-color-166974:active { color: #e14d43 !important; }
-.btn-color-166974.btn-outline { background-color: transparent !important; border-color: #e14d43 !important; }
-.btn-color-166974.btn-outline:not(.btn-text-skin) { color: #e14d43 !important; }
-.btn-color-166974.btn-outline:not(.btn-hover-nobg):hover, .btn-color-166974.btn-outline:not(.btn-hover-nobg):focus, btn-color-166974.btn-outline:active { background-color: #e14d43 !important; border-color: #e14d43 !important; }
-.btn-color-166974.btn-outline:not(.btn-hover-nobg):not(.btn-text-skin):hover, .btn-color-166974.btn-outline:not(.btn-hover-nobg):not(.btn-text-skin):focus, btn-color-166974.btn-outline:active { color: #ffffff !important; }
-.style-light .btn-color-166974.btn-text-skin.btn-outline, .style-light .btn-color-166974.btn-text-skin:not(.btn-outline):hover { color: #303133 !important; }
-.style-light .btn-color-166974.btn-text-skin.btn-outline:hover { color: #ffffff !important; }
-.text-color-166974-color { color: #e14d43 !important; fill: #e14d43 !important; }
-.border-color-166974-color { border-color: #e14d43 !important; }
-.tmb-overlay-gradient-top .style-color-166974-bg { background-color: transparent !important; background-image: -webkit-linear-gradient(top, #e14d43 0%, transparent 50%) !important; background-image: -moz-linear-gradient(top, #e14d43 0%, transparent 50%) !important; background-image: -o-linear-gradient(top, #e14d43 0%, transparent 50%) !important; background-image: linear-gradient(to bottom, #e14d43 0%, transparent 50%) !important;}
-.tmb-overlay-gradient-bottom .style-color-166974-bg { background-color: transparent !important; background-image: -webkit-linear-gradient(bottom, #e14d43 0%, transparent 50%) !important; background-image: -moz-linear-gradient(bottom, #e14d43 0%, transparent 50%) !important; background-image: -o-linear-gradient(bottom, #e14d43 0%, transparent 50%) !important; background-image: linear-gradient(to top, #e14d43 0%, transparent 50%) !important;}
 
 /*----------------------------------------------------------
 #color-nhtu
@@ -466,21 +447,21 @@
 /*----------------------------------------------------------
 #accent
 ----------------------------------------------------------*/
-.style-accent-bg { background-color: #2d89ef; }
-.btn-accent { color: #ffffff !important; background-color: #2d89ef !important; border-color: #2d89ef !important; }
-.btn-accent:not(.btn-hover-nobg):hover, .btn-accent:not(.btn-hover-nobg):focus,btn-accent:active { background-color: transparent !important; border-color: #2d89ef !important;}
-.btn-accent.btn-flat:not(.btn-hover-nobg):hover, .btn-accent.btn-flat:not(.btn-hover-nobg):focus,btn-accent.btn-flat:active { background-color: #207ce2 !important; border-color: #207ce2 !important;}
-.btn-accent:not(.btn-flat):not(.btn-hover-nobg):not(.btn-text-skin):hover, .btn-accent:not(.btn-hover-nobg):not(.btn-text-skin):focus,btn-accent:active { color: #2d89ef !important; }
-.btn-accent.btn-outline { background-color: transparent !important; border-color: #2d89ef !important; }
-.btn-accent.btn-outline:not(.btn-text-skin) { color: #2d89ef !important; }
-.btn-accent.btn-outline:not(.btn-hover-nobg):hover, .btn-accent.btn-outline:not(.btn-hover-nobg):focus, btn-accent.btn-outline:active { background-color: #2d89ef !important; border-color: #2d89ef !important; }
+.style-accent-bg { background-color: #2c89ef; }
+.btn-accent { color: #ffffff !important; background-color: #2c89ef !important; border-color: #2c89ef !important; }
+.btn-accent:not(.btn-hover-nobg):hover, .btn-accent:not(.btn-hover-nobg):focus,btn-accent:active { background-color: transparent !important; border-color: #2c89ef !important;}
+.btn-accent.btn-flat:not(.btn-hover-nobg):hover, .btn-accent.btn-flat:not(.btn-hover-nobg):focus,btn-accent.btn-flat:active { background-color: #1f7ce2 !important; border-color: #1f7ce2 !important;}
+.btn-accent:not(.btn-flat):not(.btn-hover-nobg):not(.btn-text-skin):hover, .btn-accent:not(.btn-hover-nobg):not(.btn-text-skin):focus,btn-accent:active { color: #2c89ef !important; }
+.btn-accent.btn-outline { background-color: transparent !important; border-color: #2c89ef !important; }
+.btn-accent.btn-outline:not(.btn-text-skin) { color: #2c89ef !important; }
+.btn-accent.btn-outline:not(.btn-hover-nobg):hover, .btn-accent.btn-outline:not(.btn-hover-nobg):focus, btn-accent.btn-outline:active { background-color: #2c89ef !important; border-color: #2c89ef !important; }
 .btn-accent.btn-outline:not(.btn-hover-nobg):not(.btn-text-skin):hover, .btn-accent.btn-outline:not(.btn-hover-nobg):not(.btn-text-skin):focus, btn-accent.btn-outline:active { color: #ffffff !important; }
 .style-light .btn-accent.btn-text-skin.btn-outline, .style-light .btn-accent.btn-text-skin:not(.btn-outline):hover { color: #303133 !important; }
 .style-light .btn-accent.btn-text-skin.btn-outline:hover { color: #ffffff !important; }
-.text-accent-color { color: #2d89ef !important; fill: #2d89ef !important; }
-.border-accent-color { border-color: #2d89ef !important; }
-.tmb-overlay-gradient-top .style-accent-bg { background-color: transparent !important; background-image: -webkit-linear-gradient(top, #2d89ef 0%, transparent 50%) !important; background-image: -moz-linear-gradient(top, #2d89ef 0%, transparent 50%) !important; background-image: -o-linear-gradient(top, #2d89ef 0%, transparent 50%) !important; background-image: linear-gradient(to bottom, #2d89ef 0%, transparent 50%) !important;}
-.tmb-overlay-gradient-bottom .style-accent-bg { background-color: transparent !important; background-image: -webkit-linear-gradient(bottom, #2d89ef 0%, transparent 50%) !important; background-image: -moz-linear-gradient(bottom, #2d89ef 0%, transparent 50%) !important; background-image: -o-linear-gradient(bottom, #2d89ef 0%, transparent 50%) !important; background-image: linear-gradient(to top, #2d89ef 0%, transparent 50%) !important;}
+.text-accent-color { color: #2c89ef !important; fill: #2c89ef !important; }
+.border-accent-color { border-color: #2c89ef !important; }
+.tmb-overlay-gradient-top .style-accent-bg { background-color: transparent !important; background-image: -webkit-linear-gradient(top, #2c89ef 0%, transparent 50%) !important; background-image: -moz-linear-gradient(top, #2c89ef 0%, transparent 50%) !important; background-image: -o-linear-gradient(top, #2c89ef 0%, transparent 50%) !important; background-image: linear-gradient(to bottom, #2c89ef 0%, transparent 50%) !important;}
+.tmb-overlay-gradient-bottom .style-accent-bg { background-color: transparent !important; background-image: -webkit-linear-gradient(bottom, #2c89ef 0%, transparent 50%) !important; background-image: -moz-linear-gradient(bottom, #2c89ef 0%, transparent 50%) !important; background-image: -o-linear-gradient(bottom, #2c89ef 0%, transparent 50%) !important; background-image: linear-gradient(to top, #2c89ef 0%, transparent 50%) !important;}
 
 /*----------------------------------------------------------
 #Style light
@@ -511,12 +492,7 @@
 /*----------------------------------------------------------
 #proxima-nova,sans-serif
 ----------------------------------------------------------*/
-.font-120273 { font-family: proxima-nova,sans-serif !important; }
-
-/*----------------------------------------------------------
-#proxima-nova-condensed,sans-serif
-----------------------------------------------------------*/
-.font-755241 { font-family: proxima-nova-condensed,sans-serif !important; }
+.font-161020 { font-family: proxima-nova,sans-serif !important; }
 
 /*----------------------------------------------------------
 #Poppins
