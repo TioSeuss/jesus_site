@@ -9,7 +9,9 @@
 $ok_php = true;
 if ( function_exists( 'phpversion' ) ) {
 	$php_version = phpversion();
-	if (version_compare($php_version,'5.3.0') < 0) $ok_php = false;
+	if (version_compare($php_version,'5.3.0') < 0) {
+		$ok_php = false;
+	}
 }
 if (!$ok_php && !is_admin()) {
 	$title = esc_html__( 'PHP version obsolete','uncode' );
@@ -23,6 +25,11 @@ if (!$ok_php && !is_admin()) {
  * Load core utilities functions.
  */
 require_once get_template_directory() . '/core/inc/core-utilities.php';
+
+/**
+ * Install functions.
+ */
+require_once get_template_directory() . '/core/inc/install.php';
 
 /**
  * Load the main functions.
@@ -50,40 +57,9 @@ require_once get_template_directory() . '/core/inc/admin.php';
 require_once get_template_directory() . '/core/inc/export/uncode_export.php';
 
 /**
- * Font system.
- */
-require_once get_template_directory() . '/core/font-system/font-system.php';
-
-/**
  * Load the color system.
  */
 require_once get_template_directory() . '/core/inc/colors.php';
-
-/**
- * Required: set 'ot_theme_mode' filter to true.
- */
-require_once get_template_directory() . '/core/theme-options/assets/theme-mode/functions.php';
-
-/**
- * Required: include OptionTree.
- */
-load_template( get_template_directory() . '/core/theme-options/ot-loader.php' );
-
-/**
- * Load the theme options.
- */
-require_once get_template_directory() . '/core/theme-options/assets/theme-mode/theme-options.php';
-
-/**
- * Load the main functions.
- */
-require_once get_template_directory() . '/core/inc/performance.php';
-
-/**
-
- * Load the theme meta boxes.
- */
-require_once get_template_directory() . '/core/theme-options/assets/theme-mode/meta-boxes.php';
 
 /**
  * Load TGM plugins activation.
@@ -109,17 +85,23 @@ require_once get_template_directory() . '/core/inc/uncode-comment-walker.php';
 /**
  * Load menu builder.
  */
-if ($ok_php) require_once get_template_directory() . '/partials/menus.php';
+if ($ok_php) {
+	require_once get_template_directory() . '/partials/menus.php';
+}
 
 /**
  * Load header builder.
  */
-if ($ok_php) require_once get_template_directory() . '/partials/headers.php';
+if ($ok_php) {
+	require_once get_template_directory() . '/partials/headers.php';
+}
 
 /**
  * Load elements partial.
  */
-if ($ok_php) require_once get_template_directory() . '/partials/elements.php';
+if ($ok_php) {
+	require_once get_template_directory() . '/partials/elements.php';
+}
 
 /**
  * Custom template tags for this theme.
@@ -145,11 +127,6 @@ if (class_exists( 'WooCommerce' )) {
 }
 
 /**
- * Load one click demo
- */
-require_once get_template_directory() . '/core/one-click-demo/init.php';
-
-/**
  * Load Jetpack compatibility file.
  */
 require_once get_template_directory() . '/core/inc/jetpack.php';
@@ -163,6 +140,11 @@ require_once get_template_directory() . '/core/inc/galleries.php';
  * Load third-party compatibility file.
  */
 require_once get_template_directory() . '/core/inc/compatibility/compatibility.php';
+
+/**
+ * Deprecated functions.
+ */
+require_once get_template_directory() . '/core/inc/deprecated-functions.php';
 
 add_action( 'after_setup_theme', 'uncode_related_post_call' );
 if ( ! function_exists( 'uncode_related_post_call' ) ) :

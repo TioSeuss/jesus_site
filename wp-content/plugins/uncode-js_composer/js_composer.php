@@ -1,9 +1,9 @@
 <?php
 /*
-Plugin Name: Uncode Page Builder (Visual Composer)
+Plugin Name: Uncode WPBakery Page Builder
 Plugin URI: http://wpbakery.com
-Description: Extended version of Page Builder (Visual Composer) - Drag and drop page builder for WordPress. Take full control over your WordPress site, build any layout you can imagine – no programming knowledge required.
-Version: 5.6
+Description: Tailored version of WPBakery Page Builder - Drag and drop page builder for WordPress. Take full control over your WordPress site, build any layout you can imagine – no programming knowledge required.
+Version: 5.7
 Author: Michael M - WPBakery.com
 Author URI: http://wpbakery.com
 */
@@ -19,7 +19,7 @@ if ( ! defined( 'WPB_VC_VERSION' ) ) {
 	/**
 	 *
 	 */
-	define( 'WPB_VC_VERSION', '5.6' );
+	define( 'WPB_VC_VERSION', '5.7' );
 }
 
 /**

@@ -7,9 +7,9 @@ global $front_background_colors, $menutype;
 *****/
 
 if ( is_multisite() ) {
-	$uncode_option = get_blog_option( get_current_blog_id(), uncode_id() );
+	$uncode_option = get_blog_option( get_current_blog_id(), ot_options_id() );
 } else {
-	$uncode_option = get_option(uncode_id());
+	$uncode_option = get_option(ot_options_id());
 }
 
 if (empty($uncode_option)) {
@@ -74,9 +74,10 @@ echo "\n" . "----------------------------------------------------------";
 echo "\n" . "*/";
 
 /** Loop colors **/
-foreach ($front_background_colors as $key => $value)
-{
-	if (!isset($value) || $value === '') continue;
+foreach ($front_background_colors as $key => $value) {
+	if (!isset($value) || $value === '') {
+		continue;
+	}
 	$value = str_replace(';nb',';b',$value);
 	$value = str_replace(';n}',';}',$value);
 	echo "\n\n" . '/*----------------------------------------------------------';
@@ -85,15 +86,6 @@ foreach ($front_background_colors as $key => $value)
 	if (strpos($value, 'background') !== false) {
 		echo "\n" . '.style-' . $key . '-bg { ' . $value . ' }';
 		echo "\n" . '.btn-' . $key . ' { color: #ffffff !important; ' . $value . str_replace('background','border-image',$value) . '}';
-		echo "\n" . '.btn-' . $key . ':not(.btn-hover-nobg):hover, .btn-' . $key . ':not(.btn-hover-nobg):focus,btn-' . $key . ':active { ' . $value . str_replace('background','border-image',$value) . '}';
-		echo "\n" . '.btn-' . $key . '.btn-flat:not(.btn-hover-nobg):hover, .btn-' . $key . '.btn-flat:not(.btn-hover-nobg):focus,btn-' . $key . '.btn-flat:active { ' . $value . str_replace('background','border-image',$value) . '}';
-		echo "\n" . '.btn-' . $key . ':not(.btn-hover-nobg):not(.btn-text-skin):hover, .btn-' . $key . ':not(.btn-hover-nobg):not(.btn-text-skin):focus,btn-' . $key . ':active { ' . $value . '-webkit-background-clip: text;-webkit-text-fill-color: transparent; }';
-		echo "\n" . '.btn-' . $key . '.btn-outline { background-color: transparent !important; ' . str_replace('background','border-image',$value) . '}';
-		echo "\n" . '.btn-' . $key . '.btn-outline:not(.btn-text-skin) { ' . $value . '-webkit-background-clip: text;-webkit-text-fill-color: transparent; }';
-		echo "\n" . '.btn-' . $key . '.btn-outline:not(.btn-hover-nobg):hover, .btn-' . $key . '.btn-outline:not(.btn-hover-nobg):focus, btn-' . $key . '.btn-outline:active { ' . $value . str_replace('background','border-image',$value) . '}';
-		echo "\n" . '.btn-' . $key . '.btn-outline:not(.btn-flat):not(.btn-hover-nobg):not(.btn-text-skin):hover, .btn-' . $key . '.btn-outline:not(.btn-hover-nobg):not(.btn-text-skin):focus, btn-' . $key . '.btn-outline:active { color: #ffffff !important; }';
-		echo "\n" . '.style-light .btn-' . $key . '.btn-text-skin.btn-outline, .style-light .btn-' . $key . '.btn-text-skin:not(.btn-outline):hover { color: ' . $btn_outline . ' !important; }';
-		echo "\n" . '.style-light .btn-' . $key . '.btn-text-skin.btn-outline:hover { color: #ffffff !important; }';
 		echo "\n" . '.border-' . $key . '-color {'.str_replace('background','border-image',$value).'}';
 		preg_match_all("/rgb\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)/i", $value, $matches);
 		if (isset($matches[0][0])) {
@@ -103,30 +95,35 @@ foreach ($front_background_colors as $key => $value)
 		echo "\n" . '.text-' . $key . '-color > * { background: none !important \0/IE9; }';
 		echo "\n" . '@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) { .text-' . $key . '-color > * { background: none !important; } }';
 	} else {
-		if ( function_exists('uncode_darken_color'))
+		if ( function_exists('uncode_darken_color')) {
 			$darken_value = uncode_darken_color( $value );
-		else
+		} else {
 			$darken_value = $value;
+		}
 		echo "\n" . '.style-' . $key . '-bg { background-color: ' . $value . '; }';
 		if ($key !== 'white') {
 			echo "\n" . '.btn-' . $key . ' { color: #ffffff !important; background-color: ' . $value . ' !important; border-color: ' . $value . ' !important; }';
-		} else echo "\n" . '.btn-' . $key . ' { color: #1a1b1c !important; background-color: ' . $value . ' !important; border-color: ' . $value . ' !important; }';
-		echo "\n" . '.btn-' . $key . ':not(.btn-hover-nobg):hover, .btn-' . $key . ':not(.btn-hover-nobg):focus,btn-' . $key . ':active { background-color: transparent !important; border-color: ' . $value . ' !important;}';
+		} else {
+			echo "\n" . '.btn-' . $key . ' { color: #1a1b1c !important; background-color: ' . $value . ' !important; border-color: ' . $value . ' !important; }';
+		}
+		echo "\n" . '.btn-' . $key . ':not(.btn-hover-nobg):not(.icon-animated):hover, .btn-' . $key . ':not(.btn-hover-nobg):not(.icon-animated):focus,btn-' . $key . ':active { background-color: transparent !important; border-color: ' . $value . ' !important;}';
 		echo "\n" . '.btn-' . $key . '.btn-flat:not(.btn-hover-nobg):hover, .btn-' . $key . '.btn-flat:not(.btn-hover-nobg):focus,btn-' . $key . '.btn-flat:active { background-color: ' . $darken_value . ' !important; border-color: ' . $darken_value . ' !important;}';
-		echo "\n" . '.btn-' . $key . ':not(.btn-flat):not(.btn-hover-nobg):not(.btn-text-skin):hover, .btn-' . $key . ':not(.btn-hover-nobg):not(.btn-text-skin):focus,btn-' . $key . ':active { color: ' . $value . ' !important; }';
+		echo "\n" . '.btn-' . $key . ':not(.btn-flat):not(.btn-hover-nobg):not(.icon-animated):not(.btn-text-skin):hover, .btn-' . $key . ':not(.btn-flat):not(.btn-hover-nobg):not(.icon-animated):not(.btn-text-skin):focus,btn-' . $key . ':active { color: ' . $value . ' !important; }';
 		echo "\n" . '.btn-' . $key . '.btn-outline { background-color: transparent !important; border-color: ' . $value . ' !important; }';
 		echo "\n" . '.btn-' . $key . '.btn-outline:not(.btn-text-skin) { color: ' . $value . ' !important; }';
 		echo "\n" . '.btn-' . $key . '.btn-outline:not(.btn-hover-nobg):hover, .btn-' . $key . '.btn-outline:not(.btn-hover-nobg):focus, btn-' . $key . '.btn-outline:active { background-color: ' . $value . ' !important; border-color: ' . $value . ' !important; }';
-		echo "\n" . '.btn-' . $key . '.btn-outline:not(.btn-hover-nobg):not(.btn-text-skin):hover, .btn-' . $key . '.btn-outline:not(.btn-hover-nobg):not(.btn-text-skin):focus, btn-' . $key . '.btn-outline:active { color: #ffffff !important; }';
+		echo "\n" . '.btn-' . $key . '.btn-outline:not(.btn-hover-nobg):not(.btn-text-skin):not(.icon-animated):hover, .btn-' . $key . '.btn-outline:not(.btn-hover-nobg):not(.btn-text-skin):not(.icon-animated):focus, btn-' . $key . '.btn-outline:active { color: #ffffff !important; }';
 		echo "\n" . '.style-light .btn-' . $key . '.btn-text-skin.btn-outline, .style-light .btn-' . $key . '.btn-text-skin:not(.btn-outline):hover { color: ' . $btn_outline . ' !important; }';
 		echo "\n" . '.style-light .btn-' . $key . '.btn-text-skin.btn-outline:hover { color: #ffffff !important; }';
 		echo "\n" . '.text-' . $key . '-color { color: ' . $value . ' !important; fill: ' . $value . ' !important; }';
 		echo "\n" . '.border-' . $key . '-color { border-color: ' . $value . ' !important; }';
-		echo "\n" . '.tmb-overlay-gradient-top .style-' . $key . '-bg { background-color: transparent !important; background-image: -webkit-linear-gradient(top, ' . $value . ' 0%, transparent 50%) !important; background-image: -moz-linear-gradient(top, ' . $value . ' 0%, transparent 50%) !important; background-image: -o-linear-gradient(top, ' . $value . ' 0%, transparent 50%) !important; background-image: linear-gradient(to bottom, ' . $value . ' 0%, transparent 50%) !important;}';
-		echo "\n" . '.tmb-overlay-gradient-bottom .style-' . $key . '-bg { background-color: transparent !important; background-image: -webkit-linear-gradient(bottom, ' . $value . ' 0%, transparent 50%) !important; background-image: -moz-linear-gradient(bottom, ' . $value . ' 0%, transparent 50%) !important; background-image: -o-linear-gradient(bottom, ' . $value . ' 0%, transparent 50%) !important; background-image: linear-gradient(to top, ' . $value . ' 0%, transparent 50%) !important;}';
+		echo "\n" . '.tmb-overlay-gradient-top .style-' . $key . '-bg { background-color: transparent !important; background-image: linear-gradient(to bottom, ' . $value . ' 0%, transparent 50%) !important;}';
+		echo "\n" . '.tmb-overlay-gradient-bottom .style-' . $key . '-bg:not(.tmb-term-evidence) { background-color: transparent !important; background-image: linear-gradient(to top, ' . $value . ' 0%, transparent 50%) !important;}';
 	}
 
-	if ($key === $cs_logo_color_light) $cs_logo_color_light = $value;
+	if ($key === $cs_logo_color_light) {
+		$cs_logo_color_light = $value;
+	}
 	if ($key === $cs_menu_color_light) {
 		if (strpos($value, 'background') !== false) {
 			preg_match_all("/rgb\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)/i", $value, $matches);
@@ -134,27 +131,63 @@ foreach ($front_background_colors as $key => $value)
 				$cs_menu_color_light = $matches[0][0];
 			}
 			echo "\n" . '.menu-light .menu-smart a, .menu-light .menu-smart a i:before { -webkit-text-fill-color: transparent !important; -webkit-background-clip: text !important; ' . $value . '}';
-		} else $cs_menu_color_light = $value;
+		} else {
+			$cs_menu_color_light = $value;
+		}
 	}
-	if ($key === $cs_menu_bg_color_light) $cs_menu_bg_color_light = $value;
-	if ($key === $cs_submenu_bg_color_light) $cs_submenu_bg_color_light = $value;
-	if ($key === $cs_menu_border_color_light) $cs_menu_border_color_light = $value;
-	if ($key === $cs_menu_border_alpha_light) $cs_menu_border_alpha_light = $value;
-	if ($key === $cs_heading_color_light) $cs_heading_color_light = $value;
-	if ($key === $cs_text_color_light) $cs_text_color_light = $value;
-	if ($key === $cs_bg_color_light) $cs_bg_color_light = $value;
+	if ($key === $cs_menu_bg_color_light) {
+		$cs_menu_bg_color_light = $value;
+	}
+	if ($key === $cs_submenu_bg_color_light) {
+		$cs_submenu_bg_color_light = $value;
+	}
+	if ($key === $cs_menu_border_color_light) {
+		$cs_menu_border_color_light = $value;
+	}
+	if ($key === $cs_menu_border_alpha_light) {
+		$cs_menu_border_alpha_light = $value;
+	}
+	if ($key === $cs_heading_color_light) {
+		$cs_heading_color_light = $value;
+	}
+	if ($key === $cs_text_color_light) {
+		$cs_text_color_light = $value;
+	}
+	if ($key === $cs_bg_color_light) {
+		$cs_bg_color_light = $value;
+	}
 
-	if ($key === $cs_logo_color_dark) $cs_logo_color_dark = $value;
-	if ($key === $cs_menu_color_dark) $cs_menu_color_dark = $value;
-	if ($key === $cs_menu_bg_color_dark) $cs_menu_bg_color_dark = $value;
-	if ($key === $cs_submenu_bg_color_dark) $cs_submenu_bg_color_dark = $value;
-	if ($key === $cs_menu_border_color_dark) $cs_menu_border_color_dark = $value;
-	if ($key === $cs_menu_border_color_dark) $cs_menu_border_color_dark = $value;
-	if ($key === $cs_heading_color_dark) $cs_heading_color_dark = $value;
-	if ($key === $cs_text_color_dark) $cs_text_color_dark = $value;
-	if ($key === $cs_bg_color_dark) $cs_bg_color_dark = $value;
+	if ($key === $cs_logo_color_dark) {
+		$cs_logo_color_dark = $value;
+	}
+	if ($key === $cs_menu_color_dark) {
+		$cs_menu_color_dark = $value;
+	}
+	if ($key === $cs_menu_bg_color_dark) {
+		$cs_menu_bg_color_dark = $value;
+	}
+	if ($key === $cs_submenu_bg_color_dark) {
+		$cs_submenu_bg_color_dark = $value;
+	}
+	if ($key === $cs_menu_border_color_dark) {
+		$cs_menu_border_color_dark = $value;
+	}
+	if ($key === $cs_menu_border_color_dark) {
+		$cs_menu_border_color_dark = $value;
+	}
+	if ($key === $cs_heading_color_dark) {
+		$cs_heading_color_dark = $value;
+	}
+	if ($key === $cs_text_color_dark) {
+		$cs_text_color_dark = $value;
+	}
+	if ($key === $cs_bg_color_dark) {
+		$cs_bg_color_dark = $value;
+	}
 
-	if ($key === $cs_accent_color) $cs_accent_color = $value;
+	if ($key === $cs_accent_color) {
+		$cs_accent_color = $value;
+	}
 }
 
 if ($cs_bg_color_light !== '') {
@@ -200,9 +233,20 @@ if (isset($uncode_option['_uncode_font_groups'])) {
 		foreach ($fonts as $key => $value) {
 			$font_class = $value['_uncode_font_group_unique_id'];
 			$font_name = urldecode($value['_uncode_font_group']);
-			if ($font_name === 'manual') $font_name = $value['_uncode_font_manual'];
-			if (strpos($font_name, ' ') > 0 && strpos($font_name, "'") === false && strpos($font_name, "\"") === false) {
-				$font_name = "'" . $font_name . "'";
+			if ($font_name === 'manual') {
+				$font_name = $value['_uncode_font_manual'];
+			}
+			$font_name = str_replace( ', ', ',', $font_name );
+			$font_name_arr = explode( ',', $font_name );
+			$font_name = '';
+			foreach ( $font_name_arr as $key => $font_name_value ) {
+				if (strpos($font_name_value, ' ') > 0 && strpos($font_name_value, "'") === false && strpos($font_name_value, "\"") === false) {
+					$font_name_value = "'" . $font_name_value . "'";
+				}
+				$font_name .= $font_name_value;
+				if ( ( $key+1 ) < count($font_name_arr) ) {
+				    $font_name .= ',';
+				}
 			}
 			if ($font_name !== '') {
 				echo "\n\n" . '/*----------------------------------------------------------';
@@ -211,12 +255,24 @@ if (isset($uncode_option['_uncode_font_groups'])) {
 				echo "\n" . '.' . $font_class . ' { font-family: ' . $font_name . ' !important; }';
 			}
 
-			if ($font_class === $cs_body_font_family) $cs_body_font_family = $font_name;
-			if ($font_class === $cs_ui_font_family) $cs_ui_font_family = $font_name;
-			if ($font_class === $cs_menu_font_family) $cs_menu_font_family = $font_name;
-			if ($font_class === $cs_heading_font_family) $cs_heading_font_family = $font_name;
-			if ($font_class === $cs_buttons_font_family) $cs_buttons_font_family = $font_name;
-			if ($font_class === $cs_font_fallback) $cs_font_fallback = $font_name;
+			if ($font_class === $cs_body_font_family) {
+				$cs_body_font_family = $font_name;
+			}
+			if ($font_class === $cs_ui_font_family) {
+				$cs_ui_font_family = $font_name;
+			}
+			if ($font_class === $cs_menu_font_family) {
+				$cs_menu_font_family = $font_name;
+			}
+			if ($font_class === $cs_heading_font_family) {
+				$cs_heading_font_family = $font_name;
+			}
+			if ($font_class === $cs_buttons_font_family) {
+				$cs_buttons_font_family = $font_name;
+			}
+			if ($font_class === $cs_font_fallback) {
+				$cs_font_fallback = $font_name;
+			}
 
 		}
 	}
@@ -234,7 +290,9 @@ if (isset($uncode_option['_uncode_heading_font_sizes'])) {
 			$first_mquery = $value['_uncode_heading_font_size'] / 1.5;
 			if ($value['_uncode_heading_font_size'] > 35) {
 				echo "\n" . '@media (max-width: 959px) { .' . $value['_uncode_heading_font_size_unique_id'] . ' { font-size: ' . $first_mquery . 'px; }}';
-				if ($first_mquery > 35) echo "\n" . '@media (max-width: 569px) { .' . $value['_uncode_heading_font_size_unique_id'] . ' { font-size: 35px; }}';
+				if ($first_mquery > 35) {
+					echo "\n" . '@media (max-width: 569px) { .' . $value['_uncode_heading_font_size_unique_id'] . ' { font-size: 35px; }}';
+				}
 			}
 			if ($first_mquery > 28) {
 				echo "\n" . '@media (max-width: 320px) { .' . $value['_uncode_heading_font_size_unique_id'] . ' { font-size: 28px; }}';
@@ -290,7 +348,9 @@ if ($h1 !== '') {
 	$first_mquery = $h1 / 1.5;
 	if ($h1 > 35) {
 		echo "\n" . '@media (max-width: 959px) { h1:not([class*="fontsize-"]),.h1:not([class*="fontsize-"]) { font-size: ' . $first_mquery . 'px; }}';
-		if ($first_mquery > 35) echo "\n" . '@media (max-width: 569px) { h1:not([class*="fontsize-"]),.h1:not([class*="fontsize-"]) { font-size: 35px; }}';
+		if ($first_mquery > 35) {
+			echo "\n" . '@media (max-width: 569px) { h1:not([class*="fontsize-"]),.h1:not([class*="fontsize-"]) { font-size: 35px; }}';
+		}
 	}
 	if ($first_mquery > 28) {
 		echo "\n" . '@media (max-width: 320px) { h1:not([class*="fontsize-"]),.h1:not([class*="fontsize-"]) { font-size: 28px; }}';
@@ -301,7 +361,9 @@ if ($h2 !== '') {
 	$first_mquery = $h2 / 1.5;
 	if ($h2 > 35) {
 		echo "\n" . '@media (max-width: 959px) { h2:not([class*="fontsize-"]),.h2:not([class*="fontsize-"]) { font-size: ' . $first_mquery . 'px; }}';
-		if ($first_mquery > 35) echo "\n" . '@media (max-width: 569px) { h2:not([class*="fontsize-"]),.h2:not([class*="fontsize-"]) { font-size: 35px; }}';
+		if ($first_mquery > 35) {
+			echo "\n" . '@media (max-width: 569px) { h2:not([class*="fontsize-"]),.h2:not([class*="fontsize-"]) { font-size: 35px; }}';
+		}
 	}
 	if ($first_mquery > 28) {
 		echo "\n" . '@media (max-width: 320px) { h2:not([class*="fontsize-"]),.h2:not([class*="fontsize-"]) { font-size: 28px; }}';
@@ -312,7 +374,9 @@ if ($h3 !== '') {
 	$first_mquery = $h3 / 1.5;
 	if ($h3 > 35) {
 		echo "\n" . '@media (max-width: 959px) { h3:not([class*="fontsize-"]),.h3:not([class*="fontsize-"]) { font-size: ' . $first_mquery . 'px; }}';
-		if ($first_mquery > 35) echo "\n" . '@media (max-width: 569px) { h3:not([class*="fontsize-"]),.h3:not([class*="fontsize-"]) { font-size: 35px; }}';
+		if ($first_mquery > 35) {
+			echo "\n" . '@media (max-width: 569px) { h3:not([class*="fontsize-"]),.h3:not([class*="fontsize-"]) { font-size: 35px; }}';
+		}
 	}
 	if ($first_mquery > 28) {
 		echo "\n" . '@media (max-width: 320px) { h3:not([class*="fontsize-"]),.h3:not([class*="fontsize-"]) { font-size: 28px; }}';
@@ -323,7 +387,9 @@ if ($h4 !== '') {
 	$first_mquery = $h4 / 1.5;
 	if ($h4 > 35) {
 		echo "\n" . '@media (max-width: 959px) { h4:not([class*="fontsize-"]),.h4:not([class*="fontsize-"]) { font-size: ' . $first_mquery . 'px; }}';
-		if ($first_mquery > 35) echo "\n" . '@media (max-width: 569px) { h4:not([class*="fontsize-"]),.h4:not([class*="fontsize-"]) { font-size: 35px; }}';
+		if ($first_mquery > 35) {
+			echo "\n" . '@media (max-width: 569px) { h4:not([class*="fontsize-"]),.h4:not([class*="fontsize-"]) { font-size: 35px; }}';
+		}
 	}
 	if ($first_mquery > 28) {
 		echo "\n" . '@media (max-width: 320px) { h4:not([class*="fontsize-"]),.h4:not([class*="fontsize-"]) { font-size: 28px; }}';
@@ -334,7 +400,9 @@ if ($h5 !== '') {
 	$first_mquery = $h5 / 1.5;
 	if ($h5 > 35) {
 		echo "\n" . '@media (max-width: 959px) { h5:not([class*="fontsize-"]),.h5:not([class*="fontsize-"]) { font-size: ' . $first_mquery . 'px; }}';
-		if ($first_mquery > 35) echo "\n" . '@media (max-width: 569px) { h5:not([class*="fontsize-"]),.h5:not([class*="fontsize-"]) { font-size: 35px; }}';
+		if ($first_mquery > 35) {
+			echo "\n" . '@media (max-width: 569px) { h5:not([class*="fontsize-"]),.h5:not([class*="fontsize-"]) { font-size: 35px; }}';
+		}
 	}
 	if ($first_mquery > 28) {
 		echo "\n" . '@media (max-width: 320px) { h5:not([class*="fontsize-"]),.h5:not([class*="fontsize-"]) { font-size: 28px; }}';
@@ -345,7 +413,9 @@ if ($h6 !== '') {
 	$first_mquery = $h6 / 1.5;
 	if ($h6 > 35) {
 		echo "\n" . '@media (max-width: 959px) { h6:not([class*="fontsize-"]),.h6:not([class*="fontsize-"]) { font-size: ' . $first_mquery . 'px; }}';
-		if ($first_mquery > 35) echo "\n" . '@media (max-width: 569px) { h6:not([class*="fontsize-"]),.h6:not([class*="fontsize-"]) { font-size: 35px; }}';
+		if ($first_mquery > 35) {
+			echo "\n" . '@media (max-width: 569px) { h6:not([class*="fontsize-"]),.h6:not([class*="fontsize-"]) { font-size: 35px; }}';
+		}
 	}
 	if ($first_mquery > 28) {
 		echo "\n" . '@media (max-width: 320px) { h6:not([class*="fontsize-"]),.h6:not([class*="fontsize-"]) { font-size: 28px; }}';
@@ -406,13 +476,21 @@ $font_family_btn = $cs_buttons_font_family . $font_family_fallback;
 $font_family_ui = $cs_ui_font_family . $font_family_fallback;
 
 $menu_font_weight = $uncode_option['_uncode_menu_font_weight'];
+$menu_letter_spacing = $uncode_option['_uncode_menu_letter_spacing'];
 $menu_font_size = $uncode_option['_uncode_menu_font_size'];
-if ($menu_font_size === '') $menu_font_size = 12;
+if ($menu_font_size === '') {
+	$menu_font_size = 12;
+}
 $submenu_font_size = $uncode_option['_uncode_submenu_font_size'];
-if ($submenu_font_size === '') $submenu_font_size = 12;
+if ($submenu_font_size === '') {
+	$submenu_font_size = 12;
+}
 $menu_mobile_font_size = $uncode_option['_uncode_menu_mobile_font_size'];
-if ($menu_mobile_font_size === '') $menu_mobile_font_size = 12;
+if ($menu_mobile_font_size === '') {
+	$menu_mobile_font_size = 12;
+}
 $heading_font_weight = $uncode_option['_uncode_heading_font_weight'];
+$heading_letter_space = $uncode_option['_uncode_menu_letter_spacing'];
 $btn_font_weight = $uncode_option['_uncode_buttons_font_weight'];
 $ui_font_weight = $uncode_option['_uncode_ui_font_weight'];
 $btn_text_transform = $uncode_option['_uncode_buttons_text_transform'];
@@ -425,8 +503,9 @@ if (isset($uncode_option['_uncode_heading_font_spacings'])) {
 	$font_spacings = $uncode_option['_uncode_heading_font_spacings'];
 	if (!empty($font_spacings) && is_array($font_spacings)) {
 		foreach ($font_spacings as $key => $value) {
-			if ( $value['_uncode_heading_font_spacing_unique_id'] === $btn_letter_spacing )
+			if ( $value['_uncode_heading_font_spacing_unique_id'] === $btn_letter_spacing ) {
 				$btn_letter_spacing = $value['_uncode_heading_font_spacing'];
+			}
 		}
 	}
 }

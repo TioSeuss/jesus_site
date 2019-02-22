@@ -1,7 +1,7 @@
 <?php
 
 function uncode_add_enhanced_panel(){
-	add_submenu_page( 'upload.php', esc_html__("Add oEmbed, external IMG, SVG code, HTML or Shortcode",'uncode'), esc_html__("Add Multimedia",'uncode'), 'manage_options', 'add-other', 'uncode_addOtherMedia');
+	add_submenu_page( 'upload.php', esc_html__("Add oEmbed, external IMG, SVG code, HTML or Shortcode",'uncode'), esc_html__("Add Multimedia",'uncode'), 'publish_posts', 'add-other', 'uncode_addOtherMedia');
 }
 add_action('admin_menu', 'uncode_add_enhanced_panel');
 
@@ -71,7 +71,9 @@ function uncode_recordMedia(){
 		}
 
 		$attr = Array('width' => $width, 'height' => $height);
-		if ($width !== '' && $height !== '') update_post_meta($new, '_wp_attachment_metadata', $attr);
+		if ($width !== '' && $height !== '') {
+			update_post_meta($new, '_wp_attachment_metadata', $attr);
+		}
 
 		if (!isset($_POST['postid'])) {
 			$element = array(
@@ -185,7 +187,9 @@ function uncode_addScripts() {
 
 			var inserted = false;
 
-			if ($('textarea.embed').val() != '') getEmbed($('textarea.embed').val());
+			if ($('textarea.embed').val() != '') {
+				getEmbed($('textarea.embed').val());
+			}
 
 			function find_add_sizes(mime, width, height) {
 				if ( width != undefined && width != 0 && height != undefined && height != 0 && !inserted) {
@@ -280,9 +284,12 @@ function uncode_addOtherMedia() {
 						data: jQuery('#media-submit').serialize(),
 						success:function(results){
 							var originalURL = jQuery('#publish').attr('data-url'),
-    					exists = originalURL.indexOf('postid');
-    					if (exists === -1) window.location = originalURL + '&postid=' + results.id;
-							else window.location = originalURL;
+    						exists = originalURL.indexOf('postid');
+    						if (exists === -1) {
+    							window.location = originalURL + '&postid=' + results.id;
+    						} else {
+    							window.location = originalURL;
+    						}
 						}
 					});
 				} else {
@@ -312,7 +319,7 @@ function uncode_addOtherMedia() {
 							<div id="content">
 								<div id="titlediv" class="controls">
 									<div id="titlewrap">
-										<input placeholder="<?php esc_html_e('Enter title here*','uncode'); ?>" type="text" name="mle-title" size="30" value="<?php if (isset($post)) echo esc_attr($post->post_title); ?>" id="title" autocomplete="off">
+										<input placeholder="<?php esc_html_e('Enter title here*','uncode'); ?>" type="text" name="mle-title" size="30" value="<?php if (isset($post)) {echo esc_attr($post->post_title);} ?>" id="title" autocomplete="off">
 									</div>
 									<?php
 										if (isset($_REQUEST['postid'])) {
@@ -329,13 +336,13 @@ function uncode_addOtherMedia() {
 								</div>
 								<div class="media-embed controls section">
 									<p><strong><?php esc_html_e('Insert from URL*','uncode'); ?></strong></p>
-									<textarea id="linkUrl" rows="10" name="mle-code" class="embed"><?php if (isset($post)) wp_kses_post($get_code); ?></textarea>
-									<input type="hidden" name="mle-mime" id="mle-mime" value="<?php if (isset($post)) echo esc_attr($post->post_mime_type); ?>">
+									<textarea id="linkUrl" rows="10" name="mle-code" class="embed"><?php if (isset($post)) {wp_kses_post($get_code);} ?></textarea>
+									<input type="hidden" name="mle-mime" id="mle-mime" value="<?php if (isset($post)) {echo esc_attr($post->post_mime_type);} ?>">
 									<div class="oembed"></div><div class="oembed_code" style="display: none;"></div>
 								</div>
 								<div class="media-caption controls section">
 									<p><strong><?php esc_html_e('Caption','uncode'); ?></strong></p>
-									<input type="text" name="mle-caption" class="alignment" data-setting="caption" value="<?php if (isset($post)) echo esc_attr($post->post_excerpt); ?>">
+									<input type="text" name="mle-caption" class="alignment" data-setting="caption" value="<?php if (isset($post)) {echo esc_attr($post->post_excerpt);} ?>">
 								</div>
 								<div class="media-description section">
 									<p><strong><?php esc_html_e('Description','uncode'); ?></strong></p>

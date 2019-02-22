@@ -147,7 +147,7 @@
 			} else if ($input.hasClass("gutter_size")) {
 				if ($value == 6) $marker.html('4x');
 				else $marker.html("2x");
-			} else if ($input.hasClass("top_padding") || $input.hasClass("bottom_padding") || $input.hasClass("h_padding") || $input.hasClass("zoom_width") || $input.hasClass("zoom_height")) {
+			} else if ($input.hasClass("top_padding") || $input.hasClass("bottom_padding") || $input.hasClass("h_padding") || $input.hasClass("zoom_width") || $input.hasClass("zoom_height") || $input.hasClass("off_grid_val")) {
 				$marker.html('6x');
 			} else if ($input.hasClass("column_padding") || $input.hasClass("single_padding") || $input.hasClass("media_padding") || $input.hasClass("empty_h") || $input.hasClass("shift_x") || $input.hasClass("shift_y") || $input.hasClass("shift_y_down")) {
 				$marker.html('4x');
@@ -197,6 +197,30 @@
 						break;
 					case 7:
 						$marker.html('3x');
+						break;
+				}
+			} else if ($input.hasClass("off_grid_val")) {
+				switch (parseInt($value)) {
+					case 1:
+						$marker.html('0.5x');
+						break;
+					case 2:
+						$marker.html('1x');
+						break;
+					case 3:
+						$marker.html('2x');
+						break;
+					case 4:
+						$marker.html('3x');
+						break;
+					case 5:
+						$marker.html('4x');
+						break;
+					case 6:
+						$marker.html('5x');
+						break;
+					case 7:
+						$marker.html('6x');
 						break;
 				}
 			} else if ($input.hasClass("empty_h") || $input.hasClass("single_padding") || $input.hasClass("media_padding") || $input.hasClass("shift_x") || $input.hasClass("shift_y") || $input.hasClass("shift_y_down") || $input.hasClass("zoom_width") || $input.hasClass("zoom_height")) {
@@ -253,4 +277,5 @@
 			} else $marker.html($value);
 		}
 	}
+
 }(window.jQuery);

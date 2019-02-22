@@ -19,8 +19,12 @@ $css_class = apply_filters( VC_SHORTCODE_CUSTOM_CSS_FILTER_TAG, 'uncode_consent_
 
 if ($css_animation !== '') {
 	$css_class .= 'animate_when_almost_visible ' . $css_animation;
-	if ($animation_delay !== '') $div_data['data-delay'] = $animation_delay;
-	if ($animation_speed !== '') $div_data['data-speed'] = $animation_speed;
+	if ($animation_delay !== '') {
+		$div_data['data-delay'] = $animation_delay;
+	}
+	if ($animation_speed !== '') {
+		$div_data['data-speed'] = $animation_speed;
+	}
 }
 
 $div_data_attributes = array_map(function ($v, $k) { return $k . '="' . $v . '"'; }, $div_data, array_keys($div_data));

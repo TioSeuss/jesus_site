@@ -54,12 +54,12 @@ function uncode_core_system_status_print_memory() {
 				<?php if ( $memory_is_ok ) : ?>
 					<?php echo $memory_formatted_text; ?>
 				<?php else : ?>
-					<?php echo sprintf( esc_html__( 'You only have %s available and it\'s not enough to run the system. If you have already increased the memory limit please check with your hosting provider for increase it (at least 96MB is required).','uncode' ), $memory_formatted_text ); ?>
+					<?php echo sprintf( esc_html__( 'You only have %s available and it\'s not enough to run the system. If you have already increased the memory limit please check with your hosting provider for increase it (at least 96MB is required)','uncode' ), $memory_formatted_text ); ?>
 				<?php endif; ?>
 			</mark>
 			<span class="calculating" style="display: none;"><?php esc_html_e( 'Calculating…', 'uncode' ); ?></span>
 			<mark class="yes" style="display: none;">%d% MB</mark>
-			<mark class="error" style="display: none;"><?php esc_html_e( 'You only have %d% MB available and it\'s not enough to run the system. If you have already increased the memory limit please check with your hosting provider for increase it (at least 96MB is required).','uncode' ); ?></mark>
+			<mark class="error" style="display: none;"><?php esc_html_e( 'You only have %d% MB available and it\'s not enough to run the system. If you have already increased the memory limit please check with your hosting provider for increase it (at least 96MB is required)','uncode' ); ?></mark>
 			&nbsp;<a href="#" id="php-memory-check"><i class="fa fa-refresh"></i></a>
 		</td>
 	</tr>

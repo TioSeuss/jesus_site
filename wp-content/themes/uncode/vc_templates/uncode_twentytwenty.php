@@ -11,7 +11,9 @@ global $adaptive_images, $adaptive_images_async;
 $el_class = $this->getExtraClass($el_class);
 $css_class = apply_filters(VC_SHORTCODE_CUSTOM_CSS_FILTER_TAG, 'uncode-twentytwenty ' . $el_class, $this->settings['base'], $atts);
 
-if ($media_before === '' || $media_after === '') return;
+if ($media_before === '' || $media_after === '') {
+	return;
+}
 
 $media_attributes_before = uncode_get_media_info($media_before);
 $media_before_metavalue = unserialize($media_attributes_before->metadata);
@@ -22,7 +24,7 @@ $resized_image_before = uncode_resize_image($media_attributes_before->id, $media
 $img_data_before = '';
 if ($adaptive_images === 'on' && $adaptive_images_async === 'on') {
 	$img_class_before = ' class="img-responsive adaptive-async"';
-	$img_data_before = ' data-uniqueid="' . esc_attr( $media_before.'-'.big_rand() ) . '" data-guid="' . esc_attr( $media_attributes_before->guid ) . '" data-path="' . esc_attr( $media_attributes_before->path ) . '" data-width="' . esc_attr( $media_before_metavalue['width'] ) . '" data-height="' . esc_attr( $media_before_metavalue['height'] ) . '" data-singlew="12" data-singleh="null" data-crop=""';
+	$img_data_before = ' data-uniqueid="' . esc_attr( $media_before.'-'.uncode_big_rand() ) . '" data-guid="' . esc_attr( $media_attributes_before->guid ) . '" data-path="' . esc_attr( $media_attributes_before->path ) . '" data-width="' . esc_attr( $media_before_metavalue['width'] ) . '" data-height="' . esc_attr( $media_before_metavalue['height'] ) . '" data-singlew="12" data-singleh="null" data-crop=""';
 } else {
 	$img_class_before = '';
 	$img_data_before = '';
@@ -37,7 +39,7 @@ $resized_image_after = uncode_resize_image($media_attributes_after->id, $media_a
 $img_data_after = '';
 if ($adaptive_images === 'on' && $adaptive_images_async === 'on') {
 	$img_class_after = ' class="img-responsive adaptive-async"';
-	$img_data_after = ' data-uniqueid="' . esc_attr( $media_after.'-'.big_rand() ) . '" data-guid="' . esc_attr( $media_attributes_after->guid ) . '" data-path="' . esc_attr( $media_attributes_after->path ) . '" data-width="' . esc_attr( $media_after_metavalue['width'] ) . '" data-height="' . esc_attr( $media_after_metavalue['height'] ) . '" data-singlew="12" data-singleh="null" data-crop=""';
+	$img_data_after = ' data-uniqueid="' . esc_attr( $media_after.'-'.uncode_big_rand() ) . '" data-guid="' . esc_attr( $media_attributes_after->guid ) . '" data-path="' . esc_attr( $media_attributes_after->path ) . '" data-width="' . esc_attr( $media_after_metavalue['width'] ) . '" data-height="' . esc_attr( $media_after_metavalue['height'] ) . '" data-singlew="12" data-singleh="null" data-crop=""';
 } else {
 	$img_class_after = '';
 	$img_data_after = '';
@@ -47,7 +49,7 @@ if ($adaptive_images === 'on' && $adaptive_images_async === 'on') {
 
 <div class="<?php echo esc_attr( $css_class ); ?>">
 	<div class="twentytwenty-container">
-		<img src="<?php echo esc_url( $resized_image_before['url'] ); ?>" width="<?php echo esc_attr( $resized_image_before['width'] ); ?>" height="<?php echo esc_attr( $resized_image_before['height'] ); ?>"<?php echo $img_class_before.$img_data_before; ?>>
-		<img src="<?php echo esc_url( $resized_image_after['url'] ); ?>" width="<?php echo esc_attr( $resized_image_after['width'] ); ?>" height="<?php echo esc_attr( $resized_image_after['height'] ); ?>"<?php echo $img_class_after.$img_data_after; ?>>
+		<img src="<?php echo esc_url( $resized_image_before['url'] ); ?>" width="<?php echo esc_attr( $resized_image_before['width'] ); ?>" height="<?php echo esc_attr( $resized_image_before['height'] ); ?>"<?php echo wp_kses_post( $img_class_before.$img_data_before ); ?>>
+		<img src="<?php echo esc_url( $resized_image_after['url'] ); ?>" width="<?php echo esc_attr( $resized_image_after['width'] ); ?>" height="<?php echo esc_attr( $resized_image_after['height'] ); ?>"<?php echo wp_kses_post( $img_class_after.$img_data_after ); ?>>
 	</div>
 </div>

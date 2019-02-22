@@ -14,8 +14,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 function uncode_get_admin_panel_menu_pages() {
 	$welcome_desc = sprintf( esc_html__( "Thank you for choosing %s theme from ThemeForest. Please register your purchase and make sure that you've fulfilled all of the requirements.", "uncode" ), UNCODE_NAME );
-	if ( defined('ENVATO_HOSTED_SITE') )
+	if ( defined('ENVATO_HOSTED_SITE') ) {
 		$welcome_desc = sprintf( esc_html__( "%s - Creative Multiuse WordPress Theme is now installed and ready to use!", "uncode" ), UNCODE_NAME );
+	}
 	$pages = array(
 		'welcome' => array(
 			'title'       => esc_html__( 'Welcome', 'uncode' ),
@@ -26,28 +27,33 @@ function uncode_get_admin_panel_menu_pages() {
 		'plugins' => array(
 			'title'       => esc_html__( 'Plugins', 'uncode' ),
 			'page_title'  => esc_html__( 'Plugins', 'uncode' ),
-			'description' => esc_html__( 'Uncode Core and Uncode Visual Composer (WPBakery Page Builder) are the only required plugins. Any other plugins are optional.', 'uncode' ),
+			'description' => esc_html__( 'Uncode Core and Uncode WPBakery Page Builder are the only required plugins. Any other plugins are optional.', 'uncode' ),
 			'url'         => admin_url( 'admin.php?page=uncode-plugins' )
 		),
-		'import' => array(
+	);
+
+	if ( class_exists( 'UncodeCore_Plugin' ) && defined( 'UNCODE_CORE_ADVANCED' ) ) {
+		$pages[ 'import' ] = array(
 			'title'       => esc_html__( 'Import Demo', 'uncode' ),
 			'page_title'  => esc_html__( 'Import Demo', 'uncode' ),
 			'description' => esc_html__( 'Here you can import demo layouts. This is the easiest way to start building your site. Before you install any demos, please read through the following information.', 'uncode' ),
 			'url'         => admin_url( 'admin.php?page=uncode-import-demo' )
-		),
-		'fonts' => array(
+		);
+
+		$pages[ 'fonts' ] = array(
 			'title'       => esc_html__( 'Font Stacks', 'uncode' ),
 			'page_title'  => esc_html__( 'Font Stacks', 'uncode' ),
 			'description' => esc_html__( 'Import fonts from the most popular fonts libraries and create your Font Stacks.', 'uncode' ),
 			'url'         => admin_url( 'admin.php?page=uncode-font-stacks' )
-		),
-		'utils' => array(
+		);
+
+		$pages[ 'utils' ] = array(
 			'title'       => esc_html__( 'Options Utils', 'uncode' ),
 			'page_title'  => esc_html__( 'Options Utils', 'uncode' ),
 			'description' => esc_html__( 'Find useful tools to save as manual backup or to export/import your Theme Options.', 'uncode' ),
 			'url'         => admin_url( 'admin.php?page=uncode-settings' )
-		),
-	);
+		);
+	}
 
 	if ( ot_get_option('_uncode_admin_help') !== 'off' && ! defined('ENVATO_HOSTED_SITE') ) {
 		$pages['support'] = array(
@@ -85,42 +91,6 @@ function uncode_admin_panel_page_title( $page_id, $data = false ) {
 }
 
 /**
- * Output uncode panel title.
- *
- * @return string
- */
-/*function uncode_admin_panel_title() {
-	$active_theme  = wp_get_theme();
-	$theme_name    = $active_theme->Name;
-	$theme_version = $active_theme->Version;
-
-	if ( is_child_theme() ) {
-		$parent_theme  = $active_theme->parent();
-		$theme_name    = $parent_theme->Name;
-		$theme_version = $parent_theme->Version;
-	}
-
-	ob_start();
-	?>
-
-	<div class="uncode-admin-panel-title">
-		<span class="uncode-admin-panel-title__parent-theme"><?php echo $theme_name . ' ' . $theme_version; ?></span>
-
-		<?php if ( is_child_theme() ) :
-			$active_theme  = wp_get_theme();
-			?>
-			<span class="uncode-admin-panel-title__sep"> - </span>
-			<span class="uncode-admin-panel-title__child-theme"><?php echo esc_html( $active_theme->Name ); ?></span>
-		<?php else : ?>
-
-		<?php endif; ?>
-	</div>
-
-	<?php
-	return ob_get_clean();
-}*/
-
-/**
  * Output uncode panel menu.
  *
  * @param  string $active_tab
@@ -140,10 +110,10 @@ function uncode_admin_panel_menu( $active_tab ) {
 
 					<?php if ( $active_tab == $page_id ) : ?>
 
-						<span class="uncode-admin-panel-menu__link uncode-admin-panel-menu__link--<?php echo $page_id; ?> uncode-admin-panel-menu__link--active"><?php echo $page[ 'title' ]; ?></span>
+						<span class="uncode-admin-panel-menu__link uncode-admin-panel-menu__link--<?php echo esc_attr( $page_id ); ?> uncode-admin-panel-menu__link--active"><?php echo esc_attr( $page[ 'title' ] ); ?></span>
 					<?php else : ?>
 
-						<a href="<?php echo esc_url( $page[ 'url' ] ) ?>" class="uncode-admin-panel-menu__link uncode-admin-panel-menu__link--<?php echo $page_id; ?>"><?php echo $page[ 'title' ]; ?></a>
+						<a href="<?php echo esc_url( $page[ 'url' ] ) ?>" class="uncode-admin-panel-menu__link uncode-admin-panel-menu__link--<?php echo esc_attr( $page_id ); ?>"><?php echo esc_attr( $page[ 'title' ] ); ?></a>
 					<?php endif; ?>
 
 				</li>
@@ -171,7 +141,6 @@ function uncode_open_tgmpa_form() {
 		<?php echo uncode_admin_panel_page_title( 'plugins' ); ?>
 
 		<div class="uncode-admin-panel">
-			<?php //echo uncode_admin_panel_title(); ?>
 			<?php echo uncode_admin_panel_menu( 'plugins' ); ?>
 
 			<div class="uncode-admin-panel__content">

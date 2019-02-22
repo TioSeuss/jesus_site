@@ -63,8 +63,9 @@ class Walker_Nav_Menu_Edit_Custom extends Walker_Nav_Menu  {
 		$original_title = '';
 		if ( 'taxonomy' == $item->type ) {
 			$original_title = get_term_field( 'name', $item->object_id, $item->object, 'raw' );
-			if ( is_wp_error( $original_title ) )
+			if ( is_wp_error( $original_title ) ) {
 				$original_title = false;
+			}
 		} elseif ( 'post_type' == $item->type ) {
 			$original_object = get_post( $item->object_id );
 			$original_title = get_the_title( $original_object->ID );
@@ -90,13 +91,19 @@ class Walker_Nav_Menu_Edit_Custom extends Walker_Nav_Menu  {
 
 		$title = ( ! isset( $item->label ) || '' == $item->label ) ? $title : $item->label;
 
-		if ($item->megamenu) $parent_mega = $item->ID;
-		if ($parent_mega == $item->menu_item_parent) $sublabel = esc_html__('MEGAMENU TITLE', 'uncode');
-		else $sublabel = $item->megamenu ? esc_html__('MEGAMENU', 'uncode') : esc_html__('sub item', 'uncode');
+		if ($item->megamenu) {
+			$parent_mega = $item->ID;
+		}
+		if ($parent_mega == $item->menu_item_parent) {
+			$sublabel = esc_html__('MEGAMENU TITLE', 'uncode');
+		} else {
+			$sublabel = $item->megamenu ? esc_html__('MEGAMENU', 'uncode') : esc_html__('sub item', 'uncode');
+		}
 
 		$submenu_text = '';
-		if ( 0 == $depth && $item->megamenu != 'megamenu')
+		if ( 0 == $depth && $item->megamenu != 'megamenu') {
 			$submenu_text = 'style="display: none;"';
+		}
 
 		?>
 		<li id="menu-item-<?php echo esc_attr($item_id); ?>" class="<?php echo implode(' ', $classes ); ?>">

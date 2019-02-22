@@ -994,6 +994,14 @@ class RevSliderSlide extends RevSliderElementsBase{
 
 				$attr['title'] = $caption;
 				$attr['content'] = $caption;
+				
+				if(trim($attr['title']) == ''){
+					$attr['title'] = RevSliderFunctions::getVal($this->postData, 'caption');
+				}
+				if(trim($attr['content']) == ''){
+					$attr['content'] = RevSliderFunctions::getVal($this->postData, 'caption');
+				}
+				
 				$attr['link'] = 'https://www.instagram.com/p/' . $this->postData->shortcode;
 				$attr['date'] = $this->postData->taken_at_timestamp;
 				$attr['date'] = date_i18n(get_option('date_format').' '.get_option('time_format'), $attr['date']);

@@ -720,10 +720,15 @@ function uncode_vc_render_field( $output, $param, $value, $settings, $atts ) {
 }
 endif;//uncode_vc_render_field
 
-remove_action( 'admin_footer', 'vc_loop_include_templates' );
-add_action( 'admin_footer', 'uncode_vc_loop_include_templates' );
-if ( !function_exists('uncode_vc_loop_include_templates') ):
-function uncode_vc_loop_include_templates() {
-	require_once (get_template_directory() . '/vc_templates/params/loop/templates.html');
+// Be sure that Uncode is active first
+if ( defined( 'UNCODE_SLIM' ) ) {
+
+	if ( ! function_exists('uncode_vc_loop_include_templates') ) :
+		function uncode_vc_loop_include_templates() {
+			require_once (get_template_directory() . '/vc_templates/params/loop/templates.html');
+		}
+	endif; //uncode_vc_loop_include_templates
+
+	remove_action( 'admin_footer', 'vc_loop_include_templates' );
+	add_action( 'admin_footer', 'uncode_vc_loop_include_templates' );
 }
-endif;//uncode_vc_loop_include_templates

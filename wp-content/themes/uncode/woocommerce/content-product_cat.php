@@ -36,10 +36,14 @@ $overlay_style = $stylesArray[!array_search($general_style, $stylesArray) ];
 $overlay_back_color = 'style-' . $overlay_style . '-bg';
 
 $item_thumb_id = get_woocommerce_term_meta( $category->term_id, 'thumbnail_id', true  );
-if ($item_thumb_id == false) $item_thumb_id = '';
+if ($item_thumb_id == false) {
+	$item_thumb_id = '';
+}
 
 $category_title = $category->name;
-if ( $category->count > 0 ) $category_title .= apply_filters( 'woocommerce_subcategory_count_html', ' <span class="count">(' . $category->count . ')</span>', $category );
+if ( $category->count > 0 ) {
+	$category_title .= apply_filters( 'woocommerce_subcategory_count_html', ' <span class="count">(' . $category->count . ')</span>', $category );
+}
 
 
 $block_classes = array(
@@ -80,9 +84,44 @@ $block_data['text_length'] = 300;
 $block_data['product'] = true;
 
 
-if ($item_thumb_id !== '') $layout['media'] = array();
-else $layout['media'] = array('placeholder');
+if ($item_thumb_id !== '') {
+	$layout['media'] = array();
+} else {
+	$layout['media'] = array('placeholder');
+}
 $layout['title'] = array();
 
+/**
+ * woocommerce_before_subcategory hook.
+ *
+ * @hooked woocommerce_template_loop_category_link_open - 10
+ */
+do_action( 'woocommerce_before_subcategory', $category );
+
+/**
+ * woocommerce_before_subcategory_title hook.
+ *
+ * @hooked woocommerce_subcategory_thumbnail - 10
+ */
+do_action( 'woocommerce_before_subcategory_title', $category );
+
+/**
+ * woocommerce_shop_loop_subcategory_title hook.
+ *
+ * @hooked woocommerce_template_loop_category_title - 10
+ */
+do_action( 'woocommerce_shop_loop_subcategory_title', $category );
+
+/**
+ * woocommerce_after_subcategory_title hook.
+ */
+do_action( 'woocommerce_after_subcategory_title', $category );
+
+/**
+ * woocommerce_after_subcategory hook.
+ *
+ * @hooked woocommerce_template_loop_category_link_close - 10
+ */
+do_action( 'woocommerce_after_subcategory', $category );
 
 echo uncode_create_single_block($block_data, rand() , 'masonry', $layout, false, 'no');

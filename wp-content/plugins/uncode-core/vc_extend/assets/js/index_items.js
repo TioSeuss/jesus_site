@@ -81,6 +81,17 @@
 		}
 		/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 	window.itemIndex = function() {
+
+		var sortedListStyle = function(){
+			$.each($('.vc_sorted-list-container select'), function(index, val) {
+				wrapSelect($(val));
+			});
+		}
+		sortedListStyle();
+		$('.vc_sorted-list-checkbox input').on('change', function(){
+			setTimeout( sortedListStyle, 100 );
+		});
+
 		var $checkIfLoop = $('.wpb_el_type_loop .loop_field').length,
 			$checkIfGallery = $('.uncode_gallery').length;
 		if ($checkIfLoop == 0) {
@@ -132,6 +143,7 @@
 						var el = event.currentTarget;
 						setTimeout(function() {
 							fixSortableListCallback($(el).closest('.vc_sorted-list').find('input.text_length'));
+							fixSortableListCallbackLink($(el).closest('.vc_sorted-list').find('input.read_more_text'));
 						}, 500);
 					});
 				});
@@ -142,6 +154,7 @@
 						var el = event.currentTarget;
 						setTimeout(function() {
 							fixSortableListCallback($(el).closest('.vc_sorted-list').find('input.text_length'));
+							fixSortableListCallbackLink($(el).closest('.vc_sorted-list').find('input.read_more_text'));
 						}, 500);
 					});
 				});
@@ -153,6 +166,9 @@
 						$.each($('.vc_sorted-list-container .vc_control-text'), function(index, val) {
 							fixSortableListEvents($(val));
 						});
+						$.each($('.vc_sorted-list-container .vc_control-link'), function(index, val) {
+							fixSortableListEventsLink($(val));
+						});
 					}, 500);
 				});
 				$('#vc_edit-form-tab-1 .vc_sorted-list-container').on("sortupdate", function(event, ui) {
@@ -160,10 +176,16 @@
 						$.each($('.vc_control-text', event.currentTarget), function(index, val) {
 							fixSortableListEvents($(val));
 						});
+						$.each($('.vc_control-link', event.currentTarget), function(index, val) {
+							fixSortableListEventsLink($(val));
+						});
 					}, 500);
 				});
 				$.each($('#vc_edit-form-tab-1 .vc_control-text'), function(index, val) {
 					fixSortableListEvents($(val));
+				});
+				$.each($('#vc_edit-form-tab-1 .vc_control-link'), function(index, val) {
+					fixSortableListEventsLink($(val));
 				});
 			};
 
@@ -311,6 +333,66 @@
 								$inputVal[$index] = $inputVal[$index].replace($values[$i], $this.val());
 								$textFound = true;
 							}
+						}
+						if (!$textFound) $inputVal[$index] = $inputVal[$index] + '|' + $this.val();
+						$inputVal[$index] = $inputVal[$index].replace(/\|$/, "");
+					}
+				}
+				$listInput.val($inputVal.join(','));
+			}
+		}
+
+		function fixSortableListEventsLink(el) {
+			var $this = el,
+				$list = $this.closest('.vc_sorted-list'),
+				$listInput = $list.find('.sorted_list_field'),
+				$inputVal = $listInput.val().split(','),
+				$textLength = '',
+				$textFound = false;
+			for (var $index in $inputVal) {
+				if ($inputVal[$index].indexOf('link|') != -1) {
+					var $values = $inputVal[$index].split('|');
+					if (typeof $values[3] != 'undefined') {
+						$textLength = $values[3];
+						$textFound = true;
+					} else if (typeof $values[2] != 'undefined' && $values[2] != 'default_size' && $values[2] != 'small_size') {
+						$textLength = $values[2];
+						$textFound = true;
+					}
+				}
+			}
+			if ($list.find('input.read_more_text').length == 0) {
+				if ($textFound) {
+					$this.append('<div class="sorted-list-custom-link edit_form_line"><input type="text" class="wpb_vc_param_value read_more_text" name="read_more_text" value="' + $textLength + '" placeholder="' + SiteParameters.loc_strings.read_more + '"></div>');
+				} else {
+					$this.append('<div class="sorted-list-custom-link edit_form_line"><input type="text" class="wpb_vc_param_value read_more_text" name="read_more_text" value="" placeholder="' + SiteParameters.loc_strings.read_more + '"></div>');
+				}
+				$('input', $this).on('change input paste', function() {
+					fixSortableListCallbackLink(this);
+				});
+			} else {
+				$.each($('input', $this), function(index, val) {
+					fixSortableListCallbackLink(val);
+				});
+			}
+		}
+
+		function fixSortableListCallbackLink(el) {
+			var $this = $(el),
+				$list = $this.closest('.vc_sorted-list'),
+				$listInput = $list.find('.sorted_list_field'),
+				$textFound = false;
+			if ($this.val() != '')  {
+				var $inputVal = $listInput.val().split(',');
+				for (var $index in $inputVal) {
+					if ($inputVal[$index].indexOf('ink') != -1) {
+						var $values = $inputVal[$index].split('|');
+						if (typeof $values[3] != 'undefined') {
+							$inputVal[$index] = $inputVal[$index].replace($values[3], $this.val());
+							$textFound = true;
+						} else if (typeof $values[2] != 'undefined' && $values[2] != 'default_size' && $values[2] != 'small_size') {
+							$inputVal[$index] = $inputVal[$index].replace($values[2], $this.val());
+							$textFound = true;
 						}
 						if (!$textFound) $inputVal[$index] = $inputVal[$index] + '|' + $this.val();
 						$inputVal[$index] = $inputVal[$index].replace(/\|$/, "");
@@ -593,7 +675,25 @@
 			$.each($('#uncode_items_container, #uncode_matrix_items_container').find('.vc_control-text'), function(index, val) {
 				refreshControlText(this, $retrieveBundle);
 			});
+			$.each($('#uncode_items_container, #uncode_matrix_items_container').find('.vc_control-link'), function(index, val) {
+				refreshControlLink(this, $retrieveBundle);
+			});
 			$('input.text_length', $container).not('[bindset]').attr('bindset','true').on('change input paste', function(e){
+				var $container = $(e.target).parents('ul.option-tree-setting-wrap').eq(0),
+					dataContainer = $container.data('container'),
+					$containerParent = $container.parent(),
+					$bundleInput = $containerParent.find('.uncode_bundle_items'),
+					$retrieveBundle = $bundleInput.val() != '' ? JSON.parse(Base64.decode($bundleInput.val())) : new Object(),
+
+					data = {
+						bundle: $retrieveBundle,
+						bundleInput: $bundleInput,
+						originOpt: dataContainer
+					},
+					buildObj = {target: e.target, data: data };
+				buildBundle(buildObj);
+			});
+			$('input.read_more_text', $container).not('[bindset]').attr('bindset','true').on('change input paste', function(e){
 				var $container = $(e.target).parents('ul.option-tree-setting-wrap').eq(0),
 					dataContainer = $container.data('container'),
 					$containerParent = $container.parent(),
@@ -628,7 +728,7 @@
 					buildBundle(buildObj);
 				});
 			});
-			$('input, select', $container).not('.type_numeric_slider').not('.text_length').not('[bindset]').attr('bindset','true').on('change', function(e){
+			$('input, select', $container).not('.type_numeric_slider').not('.text_length').not('.read_more_text').not('[bindset]').attr('bindset','true').on('change', function(e){
 				var $container = $(e.target).parents('ul.option-tree-setting-wrap').eq(0),
 					dataContainer = $container.data('container'),
 					$containerParent = $container.parent(),
@@ -807,11 +907,14 @@
 					if (itemVal == 'text') {
 						if ($this.is(':checked')) refreshControlText($this.closest('.vc_sorted-list').find('.vc_control-text'), $retrieveBundle);
 					}
+					if (itemVal == 'link') {
+						if ($this.is(':checked')) refreshControlLink($this.closest('.vc_sorted-list').find('.vc_control-link'), $retrieveBundle);
+					}
 					setTimeout(function() {
 						var $listContainer = $this.closest('.vc_sorted-list').find('li[data-name=' + itemVal + ']');
 						$.each($('input,select', $listContainer), function(index, val) {
 							if (!$(val).attr('bindset')) {
-								if ($(this).hasClass('text_length')) $(val).attr('bindset', 'true').bind('change input paste', {
+								if ($(this).hasClass('text_length') || $(this).hasClass('read_more_text')) $(val).attr('bindset', 'true').bind('change input paste', {
 									bundle: $retrieveBundle,
 									bundleInput: $bundleInput,
 								}, buildBundle);
@@ -906,6 +1009,30 @@
 				var $div = '<div class="sorted-list-custom-text edit_form_line"><input type="text" class="wpb_vc_param_value text_length" name="text_length" value="" placeholder="Chars number…"></div>';
 				if ($textLength != '' && $textLength != undefined && $textFound) {
 					$this.append('<div class="sorted-list-custom-text edit_form_line"><input type="text" class="wpb_vc_param_value text_length" name="text_length" value="' + $textLength + '" placeholder="Chars number…"></div>');
+				} else $this.append($div);
+			} else $this.append($div);
+		}
+
+		function refreshControlLink(el, $retrieveBundle) {
+			var $this = $(el),
+				$list = $this.closest('.vc_sorted-list'),
+				$listParentId = $this.closest('.list-list-item').attr('data-id'),
+				$listInput = $list.find('.sorted_list_field'),
+				$inputVal = $listInput.val().split(','),
+				$textLength = '',
+				$textFound = false;
+			for (var $index in $inputVal) {
+				if ($inputVal[$index].indexOf('link|') != -1) {
+					$textFound = true;
+				}
+			}
+			try {
+				$textLength = $retrieveBundle[$listParentId + '_i']['read_more_text'];
+			} catch (e) {}
+			if ($textFound && $textFound != '' && !$('.read_more_text', $this).length) {
+				var $div = '<div class="sorted-list-custom-link edit_form_line"><input type="text" class="wpb_vc_param_value read_more_text" name="read_more_text" value="" placeholder="' + SiteParameters.loc_strings.read_more + '"></div>';
+				if ($textLength != '' && $textLength != undefined && $textFound) {
+					$this.append('<div class="sorted-list-custom-link edit_form_line"><input type="text" class="wpb_vc_param_value read_more_text" name="read_more_text" value="' + $textLength + '" placeholder="' + SiteParameters.loc_strings.read_more + '"></div>');
 				} else $this.append($div);
 			} else $this.append($div);
 		}

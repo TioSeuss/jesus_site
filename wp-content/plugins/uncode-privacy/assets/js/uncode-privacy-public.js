@@ -9,6 +9,16 @@
 	}
 
 	window.uncode_toolkit_privacy_has_consent = function( consent ) {
+		// Check consents that are on by default first
+		var consentSwitch = $('#gdpr-consent-' + consent);
+
+		if (consentSwitch.length) {
+			if (consentSwitch.attr('data-default-on') === 'true' && consentSwitch.prop('checked')) {
+				return true;
+			}
+		}
+
+		// Check saved cookies
 		if ( Cookies.get('uncode_privacy[consent_types]') ) {
 			var consentArray = JSON.parse( Cookies.get('uncode_privacy[consent_types]') );
 			if ( consentArray.indexOf( consent ) > -1 ) {
@@ -78,7 +88,7 @@
 		/**
 		 * Check switch via JS
 		 */
-		var switchs = $('.gdpr-switch').find('input');
+		var switches = $('.gdpr-switch').find('input');
 
 		function add_active_color(el) {
 			el.next().css('background', Uncode_Privacy_Parameters.accent_color);
@@ -88,7 +98,7 @@
 			el.next().css('background', '#ccc');
 		}
 
-		switchs.each(function() {
+		switches.each(function() {
 			var _this = $(this);
 
 			if ($('body').hasClass('logged-in')) {
@@ -107,7 +117,7 @@
 		});
 
 		if (!$('body').hasClass('logged-in')) {
-			switchs.each(function() {
+			switches.each(function() {
 				var _this = $(this);
 				var type = _this.attr('name') == 'user_consents[]' ? 'consent' : 'cookie';
 
@@ -124,9 +134,6 @@
 				}
 			});
 		}
-
-
-
 	});
 
 })( jQuery );

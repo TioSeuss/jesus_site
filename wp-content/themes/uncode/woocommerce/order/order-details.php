@@ -66,8 +66,8 @@ if ( $show_downloads ) {
 				foreach ( $order->get_order_item_totals() as $key => $total ) {
 					?>
 					<tr>
-						<th scope="row"><?php echo $total['label']; ?></th>
-						<td><?php echo ( 'payment_method' === $key ) ? esc_html( $total['value'] ) : $total['value']; ?></td>
+						<th scope="row"><?php echo wp_kses_post( $total['label'] ); ?></th>
+						<td><?php echo ( 'payment_method' === $key ) ? wp_kses_post( $total['value'] ) : $total['value']; ?></td>
 					</tr>
 					<?php
 				}

@@ -206,6 +206,18 @@
 					}
 					
 					var content = '[rev_slider alias="'+slider_handle+'"'+order+'][/rev_slider]';
+
+					//Gutenberg addition
+					if( jQuery('body').hasClass('gutenberg-editor-page') || jQuery('body').hasClass('block-editor-page') || jQuery('body').hasClass('wp-editor') ){
+						slider_slug = jQuery('.slider_slug');
+						slider_slug.val(content);
+						window.revslider_react.state.text = content; 
+						window.revslider_react.props.attributes.text = content;
+						window.revslider_react.state.sliderTitle = jQuery('select[name="revslider-existing-slider"] option:selected').text();
+						window.revslider_react.props.attributes.sliderTitle = jQuery('select[name="revslider-existing-slider"] option:selected').text();
+						window.revslider_react.forceUpdate();
+					}
+
 					if(!revslider_is_vc){
 						
 						if(opened_by_mce){

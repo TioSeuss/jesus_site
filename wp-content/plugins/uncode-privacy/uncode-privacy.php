@@ -3,7 +3,7 @@
  * Plugin Name:       Uncode Privacy
  * Plugin URI:        https://undsgn.com/
  * Description:       Privacy toolkit for Undsgn themes.
- * Version:           1.0.0
+ * Version:           2.0.0
  * Author:            Undsgn
  * Author URI:        https://undsgn.com/
  * Requires at least: 4.0
@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Plugin version.
  */
-define( 'UNCODE_TOOLKIT_PRIVACY_VERSION', '1.0.0' );
+define( 'UNCODE_TOOLKIT_PRIVACY_VERSION', '2.0.0' );
 
 require plugin_dir_path( __FILE__ ) . 'includes/class-uncode-toolkit-privacy.php';
 require plugin_dir_path( __FILE__ ) . 'includes/uncode-toolkit-privacy-helper-functions.php';

@@ -82,3 +82,5 @@ $show_shipping = ! wc_ship_to_billing_address_only() && $order->needs_shipping_a
 </div><!-- /.col2-set -->
 
 <?php endif; ?>
+
+<?php do_action( 'woocommerce_order_details_after_customer_details', $order ); ?>

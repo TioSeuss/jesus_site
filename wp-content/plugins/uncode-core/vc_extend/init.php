@@ -17,6 +17,9 @@ function uncode_custom_css_classes_for_vc_row_and_vc_column($class_string, $tag)
 add_filter('vc_shortcodes_css_class', 'uncode_custom_css_classes_for_vc_row_and_vc_column', 10, 2);
 
 function uncode_init_front_custom_vc() {
+	if ( ! defined( 'UNCODE_SLIM' ) ) {
+		return;
+	}
 
 	vc_disable_frontend();
 	/**
@@ -38,6 +41,9 @@ add_action('init', 'uncode_init_front_custom_vc', 1000);
 
 function uncode_init_back_custom_vc()
 {
+	if ( ! defined( 'UNCODE_SLIM' ) ) {
+		return;
+	}
 
 	require_once 'config/override_map.php';
 	require_once 'config/uncode_map.php';
@@ -50,6 +56,10 @@ add_action('admin_init', 'uncode_init_back_custom_vc');
 
 function uncode_init_custom_js()
 {
+	if ( ! defined( 'UNCODE_SLIM' ) ) {
+		return;
+	}
+
 	wp_enqueue_style('vc-admin', plugins_url( 'assets/css/vc_admin.css', __FILE__ ), false, UncodeCore_Plugin::VERSION);
 	if ( is_rtl() )
 		wp_enqueue_style('vc-admin-rtl', plugins_url( 'assets/css/vc_admin-rtl.css', __FILE__ ), 'vc-admin', UncodeCore_Plugin::VERSION);
@@ -315,19 +325,6 @@ function uncode_get_loop_suggestion() {
 
 add_action( 'wp_ajax_wpb_get_loop_suggestion', 'uncode_get_loop_suggestion' );
 
-function uncode_get_html()
-{
-	$content = vc_post_param('content');
-	$content = stripslashes($content);
-	$pattern = get_shortcode_regex();
-
-	if ($content != '') echo Html::trim($content, 120);
-
-	die();
-}
-
-add_action('wp_ajax_uncode_get_html', 'uncode_get_html');
-
 function uncode_get_admin_media_post()
 {
 	$id = vc_post_param('content');
@@ -371,79 +368,6 @@ function uncode_get_admin_media_post()
 }
 
 add_action('wp_ajax_uncode_get_media_post', 'uncode_get_admin_media_post');
-
-class Html
-{
-
-	protected $reachedLimit = false, $totalLen = 0, $maxLen = 25, $toRemove = array();
-
-	public static function trim($html, $maxLen = 25)
-	{
-		$html = strip_tags($html, '<img/>');
-		require_once get_template_directory() . '/core/inc/HTML5/Parser.php';
-		$dom = HTML5_Parser::parse($html);
-
-		$html = new static ();
-		$toRemove = $html->walk($dom, $maxLen);
-
-		// remove any nodes that passed our limit
-		foreach ($toRemove as $child) $child
-			->parentNode
-			->removeChild($child);
-
-		// remove wrapper tags added by DD (doctype, html...)
-		if (version_compare(PHP_VERSION, '5.3.6') < 0)
-		{
-			if ($dom->firstChild->firstChild->firstChild !== null && $dom->firstChild !== null) {
-				$dom->removeChild($dom->firstChild);
-				$dom->replaceChild($dom->firstChild->firstChild->firstChild, $dom->firstChild);
-			}
-			return $dom->saveHTML();
-		}
-
-		return $dom
-			->saveHTML($dom
-			->getElementsByTagName('body')
-			->item(0));
-	}
-
-	protected function walk(DomNode $node, $maxLen)
-	{
-
-		if ($this
-			->reachedLimit)
-		{
-			$this->toRemove[] = $node;
-		} else
-		{
-
-			// only text nodes should have text,
-			// so do the splitting here
-			if ($node instanceof DomText)
-			{
-				$this
-					->totalLen+= $nodeLen = strlen($node->nodeValue);
-
-				// use mb_strlen / mb_substr for UTF-8 support
-				if ($this
-					->totalLen > $maxLen)
-				{
-					$node
-						->nodeValue = substr($node
-						->nodeValue, 0, $nodeLen - ($this->totalLen - $maxLen)) . '...';
-					$this->reachedLimit = true;
-				}
-			}
-
-			// if node has children, walk its child elements
-			if (isset($node
-				->childNodes)) foreach ($node
-				->childNodes as $child) $this->walk($child, $maxLen);
-		}
-
-		return $this->toRemove;
-	}
-}
 
 class uncode_generic_admin extends WPBakeryShortCode
 {
@@ -760,6 +684,24 @@ class uncode_author_profile extends WPBakeryShortCode
 	}
 }
 
+class uncode_socials extends WPBakeryShortCode
+{
+	public function template($content = '')
+	{
+		return $this
+			->contentAdmin($this->atts);
+	}
+}
+
+class uncode_info_box extends WPBakeryShortCode
+{
+	public function template($content = '')
+	{
+		return $this
+			->contentAdmin($this->atts);
+	}
+}
+
 class uncode_index extends WPBakeryShortCode
 {
 	protected $filter_categories = array();
@@ -1035,11 +977,15 @@ function uncode_vc_iconpicker_type_uncode( $icons ) {
 
 	global $wp_filesystem;
 	if (empty($wp_filesystem)) {
-	  require_once (ABSPATH . '/wp-admin/includes/file.php');
-	  WP_Filesystem();
+		require_once (ABSPATH . '/wp-admin/includes/file.php');
+		WP_Filesystem();
 	}
-	$file      = OT_DIR.'selection.json';
-  $response = $wp_filesystem->get_contents($file);
+	$file      = UNCODE_ICONS_PATH ? get_template_directory() . '/core/assets/icons/selection.json' : '';
+	$response  = $wp_filesystem->get_contents($file);
+
+	if ( ! $response ) {
+		return $icons;
+	}
 
 	/* Will result in $api_response being an array of data,
 	parsed from the JSON response of the API listed above */
@@ -1051,28 +997,6 @@ function uncode_vc_iconpicker_type_uncode( $icons ) {
 	}
 
 	return array_merge( $icons, $uncode_icons );
-}
-
-class Single_width_callback {
-	private $key;
-	private $shortcode;
-
-	function __construct( $key, $shortcode ) {
-		$this->key = $key;
-		$this->shortcode = $shortcode;
-	}
-
-	public function calculate_single_width( $matches ) {
-		preg_match("|\d+|", reset($matches), $m);
-		return $this->shortcode . ' col_width="'.(($this->key / 12) * $m[0]).'"';
-	}
-}
-
-function uncode_replace_inner_single_width( $content, $width_media, $shortcode ) {
-	$pattern  = "/{$shortcode} col_width=\"[0-9]*\"/";
-	$callback = new Single_width_callback( $width_media, $shortcode );
-	$content  = preg_replace_callback( $pattern, array( $callback, 'calculate_single_width' ), $content );
-	return $content;
 }
 
 function uncode_core_check_if_gutenberg_is_active() {
@@ -1107,3 +1031,26 @@ function uncode_vc_row_layouts() {
 	}
 }
 endif; //uncode_vc_row_layouts
+
+add_filter( 'vc_nav_controls', 'uncode_vc_nav_controls' );
+if ( ! function_exists( 'uncode_vc_nav_controls' ) ) :
+/**
+ * Hide custom CSS from Content Block.
+ * @since Uncode 2.0.0
+ */
+function uncode_vc_nav_controls( $controls ) {
+	$post_type = uncode_get_current_post_type();
+
+	if ( $post_type !== 'uncodeblock' ) {
+		return $controls;
+	} else {
+		$new_controls = array();
+		foreach ($controls as $key => $control) {
+			if ( $control[0] !== 'custom_css' ) {
+				$new_controls[] = $control;
+			}
+		}
+		return $new_controls;
+	}
+}
+endif; //uncode_vc_nav_controls

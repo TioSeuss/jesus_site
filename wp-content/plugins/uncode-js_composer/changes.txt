@@ -1,3 +1,8 @@
+13.02.2019 - ver 5.7
+  - Update: Compatibility with PHP 7.3
+  - Fix: WooCommerce corrected editable role
+  - Fix: Page preview styles independent from view page
+
 27.11.2018 - ver 5.6
   - Update: Compatibility with Wordpress 5.0
 

@@ -157,7 +157,9 @@
                 label = opt;
                 }
                 params = _.indexOf(data.value, value) >=0 ? ' checked="true"' : '';
-            if(!_.isEmpty(params) && is_locked) params += ' disabled="true"';
+            if(!_.isEmpty(params) && is_locked) {
+				params += ' disabled="true"';
+			}
             if ( value !== 'uncodeblock' && value !== 'uncode_gallery' ) {
             #>
             <label><input type="checkbox" data-input="{{ name }}" value="{{ value }}" {{ params }}/> {{ label }}</label>

@@ -4,7 +4,7 @@ Plugin Name: Slider Revolution
 Plugin URI: https://revolution.themepunch.com/
 Description: Slider Revolution - Premium responsive slider
 Author: ThemePunch
-Version: 5.4.8
+Version: 5.4.8.2
 Author URI: https://themepunch.com
 */
 
@@ -17,7 +17,7 @@ if(class_exists('RevSliderFront')) {
 	die('ERROR: It looks like you have more than one instance of Slider Revolution installed. Please remove additional instances for this plugin to work again.');
 }
 
-$revSliderVersion	= '5.4.8';
+$revSliderVersion	= '5.4.8.2';
 $revSliderAsTheme	= false;
 $revslider_screens	= array();
 $revslider_fonts	= array();
@@ -228,6 +228,7 @@ try{
 	
 	add_action('plugins_loaded', array( 'RevSliderFront', 'createDBTables' )); //add update checks
 	add_action('plugins_loaded', array( 'RevSliderPluginUpdate', 'do_update_checks' )); //add update checks
+	add_action('plugins_loaded', array( 'RevSliderWpml', 'add_hooks' ));
 	
 }catch(Exception $e){
 	$message = $e->getMessage();

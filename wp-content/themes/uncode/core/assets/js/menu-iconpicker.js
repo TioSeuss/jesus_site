@@ -7,7 +7,7 @@
 			});
 			// Get the JSON file
 			$.ajax({
-				url: SiteParameters.OT_PATH + 'selection.json',
+				url: SiteParameters.ICONS_PATH,
 				type: 'GET',
 				dataType: 'json'
 			}).done(function(response) {

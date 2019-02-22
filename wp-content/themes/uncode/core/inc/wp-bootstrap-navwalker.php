@@ -77,12 +77,16 @@ class wp_bootstrap_navwalker extends Walker_Nav_Menu {
 		}
 		$indent = ( $depth ) ? str_repeat( "\t", $depth ) : '';
 
-		if ($item->description !== '' && ($menutype === 'menu-overlay' || $menutype === 'menu-overlay-center')) $description = '<span class="menu-item-description">' . $item->description . '</span>';
+		if ($item->description !== '' && ($menutype === 'menu-overlay' || $menutype === 'menu-overlay-center')) {
+			$description = '<span class="menu-item-description">' . $item->description . '</span>';
+		}
 
 		/**
 		 * Get the icon
 		 */
-		if ( ! empty( $item->icon )) $icon_html = '<i class="menu-icon ' . esc_attr( $item->icon ) . '"></i>';
+		if ( ! empty( $item->icon )) {
+			$icon_html = '<i class="menu-icon ' . esc_attr( $item->icon ) . '"></i>';
+		}
 
 		/**
 		 * Dividers, Headers or Disabled
@@ -111,19 +115,27 @@ class wp_bootstrap_navwalker extends Walker_Nav_Menu {
 
 			$classes = empty( $item->classes ) ? array() : (array) $item->classes;
 			$classes[] = 'menu-item-' . $item->ID;
-			if ($item->button) $classes[] = 'menu-btn-container';
+			if ($item->button) {
+				$classes[] = 'menu-btn-container';
+			}
 
-			if ( $args->has_children )
+			if ( $args->has_children ) {
 				$classes[] = 'dropdown';
+			}
 
 			if ( in_array( 'current-menu-item', $classes )) {
 				$parse_link = parse_url($item->url);
-				if (!isset($parse_link['fragment'])) $classes[] = 'active';
+				if (!isset($parse_link['fragment'])) {
+					$classes[] = 'active';
+				}
 			}
 
-			if ($item->button) $classes[] = 'btn';
-			else {
-				if ($depth === 0)	$classes[] = 'menu-item-link';
+			if ($item->button) {
+				$classes[] = 'btn';
+			} else {
+				if ($depth === 0) {
+					$classes[] = 'menu-item-link';
+				}
 			}
 			$class_names = join( ' ', apply_filters( 'nav_menu_css_class', array_filter( $classes ), $item, $args ) );
 
@@ -169,9 +181,9 @@ class wp_bootstrap_navwalker extends Walker_Nav_Menu {
 			 * property is NOT null we apply it as the class name for the glyphicon.
 			 */
 			if (!isset($item->logo) && !$item->logo) {
-				if ( ! empty( $item->icon ) && ! $item->button )
+				if ( ! empty( $item->icon ) && ! $item->button ) {
 					$item_output .= '<a'. $attributes .'>' . $icon_html;
-				else {
+				} else {
 					$item_output .= ( $args->has_children) ? '<a'. $attributes .' data-type="title">' : '<a'. $attributes .'>';
 				}
 
@@ -212,14 +224,16 @@ class wp_bootstrap_navwalker extends Walker_Nav_Menu {
 	 * @return null Null on failure with no changes to parameters.
 	 */
 	public function display_element( $element, &$children_elements, $max_depth, $depth, $args, &$output ) {
-        if ( ! $element )
+        if ( ! $element ) {
             return;
+        }
 
         $id_field = $this->db_fields['id'];
 
         // Display this element.
-        if ( is_object( $args[0] ) )
+        if ( is_object( $args[0] ) ) {
            $args[0]->has_children = ! empty( $children_elements[ $element->$id_field ] );
+        }
 
         parent::display_element( $element, $children_elements, $max_depth, $depth, $args, $output );
     }
@@ -245,29 +259,34 @@ class wp_bootstrap_navwalker extends Walker_Nav_Menu {
 			if ( $container ) {
 				$fb_output = '<' . $container;
 
-				if ( $container_id )
+				if ( $container_id ) {
 					$fb_output .= ' id="' . $container_id . '"';
+				}
 
-				if ( $container_class )
+				if ( $container_class ) {
 					$fb_output .= ' class="' . $container_class . '"';
+				}
 
 				$fb_output .= '>';
 			}
 
 			$fb_output .= '<ul';
 
-			if ( $menu_id )
+			if ( $menu_id ) {
 				$fb_output .= ' id="' . $menu_id . '"';
+			}
 
-			if ( $menu_class )
+			if ( $menu_class ) {
 				$fb_output .= ' class="' . $menu_class . '"';
+			}
 
 			$fb_output .= '>';
 			$fb_output .= '<li><a href="' . admin_url( 'nav-menus.php' ) . '">Add a menu</a></li>';
 			$fb_output .= '</ul>';
 
-			if ( $container )
+			if ( $container ) {
 				$fb_output .= '</' . $container . '>';
+			}
 
 			return $fb_output;
 		}
@@ -286,25 +305,25 @@ class Uncode_Nav_Menu_Widget extends WP_Nav_Menu_Widget {
 		// Get menu
 		$nav_menu = ! empty( $instance['nav_menu'] ) ? wp_get_nav_menu_object( $instance['nav_menu'] ) : false;
 
-		if ( !$nav_menu )
+		if ( !$nav_menu ) {
 			return;
+		}
 
 		$instance['title'] = apply_filters( 'widget_title', empty( $instance['title'] ) ? '' : $instance['title'], $instance, $this->id_base );
 
-		echo $args['before_widget'];
+		echo wp_kses_post( $args['before_widget'] );
 
-		if ( !empty($instance['title']) )
-			echo $args['before_title'] . $instance['title'] . $args['after_title'];
+		if ( !empty($instance['title']) ) {
+			echo wp_kses_post( $args['before_title'] . $instance['title'] . $args['after_title'] );
+		}
 
 		wp_nav_menu( array( 'fallback_cb' => '', 'menu' => $nav_menu, 'menu_class' => isset($args['menu_class']) ? $args['menu_class'] : 'menu' ) );
 
-		echo $args['after_widget'];
+		echo wp_kses_post( $args['after_widget'] );
 	}
 
 }
 
-add_action("widgets_init", "uncode_custom_menu_widget");
-
-function uncode_custom_menu_widget() {
-	register_widget("Uncode_Nav_Menu_Widget");
+if ( function_exists( 'uncode_custom_menu_widget' ) ) {
+	add_action("widgets_init", "uncode_custom_menu_widget");
 }

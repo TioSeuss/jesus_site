@@ -29,7 +29,9 @@ if (isset($metabox_data['_uncode_specific_style'][0]) && $metabox_data['_uncode_
 	$style = ot_get_option('_uncode_general_style');
 	if (isset($metabox_data['_uncode_specific_bg_color'][0]) && $metabox_data['_uncode_specific_bg_color'][0] !== '') {
 		$bg_color = $metabox_data['_uncode_specific_bg_color'][0];
-	} else $bg_color = ot_get_option('_uncode_general_bg_color');
+	} else {
+		$bg_color = ot_get_option('_uncode_general_bg_color');
+	}
 }
 $bg_color = ($bg_color == '') ? ' style-'.$style.'-bg' : ' style-'.$bg_color.'-bg';
 
@@ -41,7 +43,9 @@ if ($page_content_full === '') {
 	$generic_content_full = ot_get_option('_uncode_' . $post_type . '_layout_width');
 	if ($generic_content_full === '') {
 		$main_content_full = ot_get_option('_uncode_body_full');
-		if ($main_content_full === '' || $main_content_full === 'off') $limit_content_width = ' limit-width';
+		if ($main_content_full === '' || $main_content_full === 'off') {
+			$limit_content_width = ' limit-width';
+		}
 	} else {
 		if ($generic_content_full === 'limit') {
 			$generic_custom_width = ot_get_option('_uncode_' . $post_type . '_layout_width_custom');
@@ -64,31 +68,30 @@ if ($page_content_full === '') {
 				$page_custom_width[0] = 12 * round(($page_custom_width[0]) / 12);
 			}
 			$page_custom_width = ' style="max-width: ' . implode("", $page_custom_width) . '; margin: auto;"';
-		} else $page_custom_width = '';
+		} else {
+			$page_custom_width = '';
+		}
 	}
 }
 
 $media = get_post_meta($post->ID, '_uncode_featured_media', 1);
 $media_display = get_post_meta($post->ID, '_uncode_featured_media_display', 1);
 $featured_image = get_post_thumbnail_id($post->ID);
-if ($featured_image === '') $featured_image = $media;
+if ($featured_image === '') {
+	$featured_image = $media;
+}
 
 /** Collect header data **/
-if (isset($metabox_data['_uncode_header_type'][0]) && $metabox_data['_uncode_header_type'][0] !== '')
-{
+if (isset($metabox_data['_uncode_header_type'][0]) && $metabox_data['_uncode_header_type'][0] !== '') {
 	$page_header_type = $metabox_data['_uncode_header_type'][0];
-	if ($page_header_type !== 'none')
-	{
+	if ($page_header_type !== 'none') {
 		$meta_data = uncode_get_specific_header_data($metabox_data, $post_type, $featured_image);
 		$metabox_data = $meta_data['meta'];
 		$show_title = $meta_data['show_title'];
 	}
-}
-else
-{
+} else {
 	$page_header_type = ot_get_option('_uncode_' . $post_type . '_header');
-	if ($page_header_type !== '' && $page_header_type !== 'none')
-	{
+	if ($page_header_type !== '' && $page_header_type !== 'none') {
 		$metabox_data['_uncode_header_type'] = array(
 			$page_header_type
 		);
@@ -99,11 +102,9 @@ else
 }
 
 /** Get layout info **/
-if (isset($metabox_data['_uncode_portfolio_active'][0]) && $metabox_data['_uncode_portfolio_active'][0] !== '')
-{
+if (isset($metabox_data['_uncode_portfolio_active'][0]) && $metabox_data['_uncode_portfolio_active'][0] !== '') {
 	/** Page specific info **/
-	if ($metabox_data['_uncode_portfolio_active'][0] !== 'off')
-	{
+	if ($metabox_data['_uncode_portfolio_active'][0] !== 'off') {
 		$layout = (isset($metabox_data['_uncode_portfolio_position'][0])) ? $metabox_data['_uncode_portfolio_position'][0] : '';
 		$sidebar_size = (isset($metabox_data['_uncode_portfolio_sidebar_size'][0])) ? $metabox_data['_uncode_portfolio_sidebar_size'][0] : 4;
 		$sidebar_sticky = (isset($metabox_data['_uncode_portfolio_sidebar_sticky'][0]) && $metabox_data['_uncode_portfolio_sidebar_sticky'][0] === 'on') ? ' sticky-element sticky-sidebar' : '';
@@ -111,13 +112,10 @@ if (isset($metabox_data['_uncode_portfolio_active'][0]) && $metabox_data['_uncod
 		$portfolio_style = (isset($metabox_data['_uncode_portfolio_style'][0])) ? $metabox_data['_uncode_portfolio_style'][0] : $style;
 		$portfolio_bg_color = (isset($metabox_data['_uncode_portfolio_bgcolor'][0]) && $metabox_data['_uncode_portfolio_bgcolor'][0] !== '') ? ' style-' . $metabox_data['_uncode_portfolio_bgcolor'][0] . '-bg' : '';
 	}
-}
-else
-{
+} else {
 	/** Page generic info **/
 	$layout = ot_get_option('_uncode_' . $post_type . '_position');
-	if ($layout !== 'off')
-	{
+	if ($layout !== 'off') {
 		$portfolio_style = ot_get_option('_uncode_' . $post_type . '_style');
 		$sidebar_size = ot_get_option('_uncode_' . $post_type . '_sidebar_size');
 		$sidebar_sticky = ot_get_option('_uncode_' . $post_type . '_sidebar_sticky');
@@ -127,18 +125,17 @@ else
 		$portfolio_bg_color = ($portfolio_bg_color !== '') ? ' style-' . $portfolio_bg_color . '-bg' : '';
 	}
 }
-if ($portfolio_style === '') $portfolio_style = $style;
+if ($portfolio_style === '') {
+	$portfolio_style = $style;
+}
 
 /** Get breadcrumb info **/
 $generic_breadcrumb = ot_get_option('_uncode_' . $post_type . '_breadcrumb');
 $page_breadcrumb = (isset($metabox_data['_uncode_specific_breadcrumb'][0])) ? $metabox_data['_uncode_specific_breadcrumb'][0] : '';
-if ($page_breadcrumb === '')
-{
+if ($page_breadcrumb === '') {
 	$breadcrumb_align = ot_get_option('_uncode_' . $post_type . '_breadcrumb_align');
 	$show_breadcrumb = ($generic_breadcrumb === 'off') ? false : true;
-}
-else
-{
+} else {
 	$breadcrumb_align = (isset($metabox_data['_uncode_specific_breadcrumb_align'][0])) ? $metabox_data['_uncode_specific_breadcrumb_align'][0] : '';
 	$show_breadcrumb = ($page_breadcrumb === 'off') ? false : true;
 }
@@ -146,24 +143,18 @@ else
 /** Get title info **/
 $generic_show_title = ot_get_option('_uncode_' . $post_type . '_title');
 $page_show_title = (isset($metabox_data['_uncode_specific_title'][0])) ? $metabox_data['_uncode_specific_title'][0] : '';
-if ($page_show_title === '')
-{
+if ($page_show_title === '') {
 	$show_title = ($generic_show_title === 'off') ? false : true;
-}
-else
-{
+} else {
 	$show_title = ($page_show_title === 'off') ? false : true;
 }
 
 /** Get media info **/
 $generic_show_media = ot_get_option('_uncode_' . $post_type . '_media');
 $page_show_media = (isset($metabox_data['_uncode_specific_media'][0])) ? $metabox_data['_uncode_specific_media'][0] : '';
-if ($page_show_media === '')
-{
+if ($page_show_media === '') {
 	$show_media = ($generic_show_media === 'off') ? false : true;
-}
-else
-{
+} else {
 	$show_media = ($page_show_media === 'off') ? false : true;
 }
 
@@ -171,8 +162,9 @@ if ( !$show_media && $featured_image !== '' ) {
 	$generic_show_featured_media = ot_get_option('_uncode_' . $post_type . '_featured_media');
 	$page_show_featured_media = (isset($metabox_data['_uncode_specific_featured_media'][0]) && $metabox_data['_uncode_specific_featured_media'][0] !== '') ? $metabox_data['_uncode_specific_featured_media'][0] : $generic_show_featured_media;
 
-	if ( $page_show_featured_media === 'on' )
+	if ( $page_show_featured_media === 'on' ) {
 		$media = $featured_image;
+	}
 } else {
 	$page_show_featured_media = false;
 }
@@ -186,46 +178,48 @@ $show_media = $page_show_featured_media && $page_show_featured_media!=='off' ? t
 
 $portfolio_details = ot_get_option('_uncode_portfolio_details');
 
-if (!empty($portfolio_details))
-{
+if (!empty($portfolio_details)) {
 
-	foreach ($portfolio_details as $key => $value)
-	{
+	foreach ($portfolio_details as $key => $value) {
 		$portfolio_detail = (isset($metabox_data[$value['_uncode_portfolio_detail_unique_id']][0])) ? $metabox_data[$value['_uncode_portfolio_detail_unique_id']][0] : '';
-		if ($portfolio_detail !== '')
-		{
 
+		if ($portfolio_detail !== '') {
 			$get_url = parse_url($portfolio_detail);
 			$portfolio_detail = str_replace(' rel="nofollow"', "", make_clickable($portfolio_detail));
-			if (isset($get_url['host'])) $portfolio_detail = preg_replace('/<a(.+?)>.+?<\/a>/i','<a$1 target="_blank">'.$get_url['host'].'</a>',$portfolio_detail);
-			else $portfolio_detail = preg_replace('/<a /','<a target="_blank" ',$portfolio_detail);
+			if (isset($get_url['host'])) {
+				$portfolio_detail = preg_replace('/<a(.+?)>.+?<\/a>/i','<a$1 target="_blank">'.$get_url['host'].'</a>',$portfolio_detail);
+			} else {
+				$portfolio_detail = preg_replace('/<a /','<a target="_blank" ',$portfolio_detail);
+			}
 			$info_content.= '<span class="detail-container"><span class="detail-label">' . $value['title'] . '</span><span class="detail-value">' . $portfolio_detail . '</span></span>';
 		}
 	}
-	if ($info_content !== '') $info_content = '<p>' . $info_content . '</p>';
+	if ($info_content !== '') {
+		$info_content = '<p>' . $info_content . '</p>';
+	}
 }
 
 while (have_posts()):
 	the_post();
 
 	/** Build header **/
-	if ($page_header_type !== '' && $page_header_type !== 'none')
-	{
-		$page_header = new unheader($metabox_data, $post->post_title);
+	if ($page_header_type !== '' && $page_header_type !== 'none') {
+		$page_header = new unheader($metabox_data, $post->post_title, $post->post_excerpt);
 
 		$header_html = $page_header->html;
 		if ($header_html !== '') {
 			echo '<div id="page-header">';
-			echo uncode_remove_wpautop( $page_header->html );
+			echo uncode_remove_p_tag( $page_header->html );
 			echo '</div>';
 		}
 	}
 	echo '<script type="text/javascript">UNCODE.initHeader();</script>';
 	/** Build breadcrumb **/
 
-	if ($show_breadcrumb && !is_front_page() && !is_home())
-	{
-		if ($breadcrumb_align === '') $breadcrumb_align = 'right';
+	if ($show_breadcrumb && !is_front_page() && !is_home()) {
+		if ($breadcrumb_align === '') {
+			$breadcrumb_align = 'right';
+		}
 		$breadcrumb_align = ' text-' . $breadcrumb_align;
 
 		if (isset($metabox_data['_uncode_specific_navigation_index'][0]) && $metabox_data['_uncode_specific_navigation_index'][0] !== '') {
@@ -240,8 +234,7 @@ while (have_posts()):
 
 	/** Build title **/
 
-	if ($show_title)
-	{
+	if ($show_title) {
 		$title_content .= apply_filters( 'uncode_before_body_title', '' );
 		$title_content .= '<div class="post-title-wrapper"><h1 class="post-title">' . get_the_title() . '</h1></div>';
 		$title_content .= apply_filters( 'uncode_after_body_title', '' );
@@ -250,29 +243,33 @@ while (have_posts()):
 	/** Build content **/
 
 	$the_content = get_the_content();
-	if (has_shortcode($the_content, 'vc_row')) $with_builder = true;
+	if (has_shortcode($the_content, 'vc_row')) {
+		$with_builder = true;
+	}
 
-	if (!$with_builder) $the_content = apply_filters('the_content', $the_content);
-	else {
+	if (!$with_builder) {
+		$the_content = apply_filters('the_content', $the_content);
+	} else {
 		$get_content_appended = apply_filters('the_content', '');
-		if (!is_null($get_content_appended) && $get_content_appended !== '') $the_content = $the_content . uncode_get_row_template($get_content_appended, $limit_width, $limit_content_width, $style, '', false, true, 'double', $page_custom_width);
+		if (!is_null($get_content_appended) && $get_content_appended !== '') {
+			$the_content = $the_content . uncode_get_row_template($get_content_appended, $limit_width, $limit_content_width, $style, '', false, true, 'double', $page_custom_width);
+		}
 	}
 
 	$text_content = uncode_the_content(get_the_excerpt());
 
 	/** Build media **/
 
-	if ($media !== '' && !$with_builder && $show_media && !post_password_required())
-	{
-		if ($layout === 'sidebar_right' || $layout === 'sidebar_left')
-		{
+	if ($media !== '' && !$with_builder && $show_media && !post_password_required()) {
+		if ($layout === 'sidebar_right' || $layout === 'sidebar_left') {
 			$media_size = 12 - $sidebar_size;
+		} else {
+			$media_size = 12;
 		}
-		else $media_size = 12;
 
 		$media_array = explode(',', $media);
 		$media_counter = count($media_array);
-		$rand_id = big_rand();
+		$rand_id = uncode_big_rand();
 		if ($media_counter === 0) $media_array = array(
 			$media
 		);
@@ -300,9 +297,10 @@ while (have_posts()):
 			}
 		}
 
-		foreach ($media_array as $key => $value)
-		{
-			if ($media_display === 'carousel') $value = $media;
+		foreach ($media_array as $key => $value) {
+			if ($media_display === 'carousel') {
+				$value = $media;
+			}
 			$block_data = array();
 			$block_data['tmb_data'] = array();
 			$block_layout['media'] = array();
@@ -313,16 +311,15 @@ while (have_posts()):
 				'tmb'
 			);
 			$block_data['text_padding'] = 'no-block-padding';
-			if ($media_display === 'isotope')
-			{
+			if ($media_display === 'isotope') {
 				$block_data['single_width'] = 4;
 				$block_data['classes'][] = 'tmb-iso-w4';
+			} else {
+				$block_data['single_width'] = $media_size;
 			}
-			else $block_data['single_width'] = $media_size;
 			$block_data['single_style'] = $style;
 			$block_data['classes'][] = 'tmb-' . $style;
-			if ($media_display === 'isotope')
-			{
+			if ($media_display === 'isotope') {
 				$block_data['classes'][] = 'tmb-overlay-anim';
 				$block_data['classes'][] = 'tmb-overlay-text-anim';
 				$block_data['single_icon'] = 'fa fa-plus2';
@@ -331,32 +328,34 @@ while (have_posts()):
 				$lightbox_classes = array();
 				$lightbox_classes['data-noarr'] = false;
 				$lightbox_classes['data-caption'] = true;
-			}
-			else
-			{
+			} else {
 				$lightbox_classes = false;
 				$block_data['link_class'] = 'inactive-link';
 				$block_data['link'] = '#';
 			}
-			if ($media_display !== 'carousel')
-			{
+
+			if ($media_display !== 'carousel') {
 				$block_data['classes'][] = 'tmb-media';
 				$block_data['animation'] = ' animate_when_almost_visible alpha-anim';
 				$block_data['tmb_data']['data-delay'] = 200;
 			}
 			$media_html = uncode_create_single_block($block_data, $rand_id, 'masonry', $block_layout, $lightbox_classes, false, true);
-			if ($media_display !== 'isotope') $media_content.= '<div class="post-media' . ((($media_counter - 1) !== $key && $media_display === 'stack') ? ' single-bottom-padding' : '') . '">' . $media_html . '</div>';
-			else
-			{
+			if ($media_display !== 'isotope') {
+				$media_content.= '<div class="post-media' . ((($media_counter - 1) !== $key && $media_display === 'stack') ? ' single-bottom-padding' : '') . '">' . $media_html . '</div>';
+			} else {
 				$media_content.= $media_html;
 			}
-			if ($media_display === 'carousel') break;
+			if ($media_display === 'carousel') {
+				break;
+			}
 		}
 
-		if ($media_display === 'isotope') $media_content.=
+		if ($media_display === 'isotope') {
+			$media_content.=
 					'</div>
 				</div>
 			</div>';
+		}
 	}
 
 	/** Build post after block **/
@@ -376,18 +375,24 @@ while (have_posts()):
 			$vc = new Vc_Base();
 			$vc->addShortcodesCustomCss($content_block_after);
 		}
-		if (has_shortcode($content_after_body, 'vc_row')) $content_after_body = '<div class="post-after row-container">' . $content_after_body . '</div>';
-		else $content_after_body = '<div class="post-after row-container">' . uncode_get_row_template($content_after_body, $limit_width, $limit_content_width, $style, '', false, true, 'double', $page_custom_width) . '</div>';
+		if (has_shortcode($content_after_body, 'vc_row')) {
+			$content_after_body = '<div class="post-after row-container">' . $content_after_body . '</div>';
+		} else {
+			$content_after_body = '<div class="post-after row-container">' . uncode_get_row_template($content_after_body, $limit_width, $limit_content_width, $style, '', false, true, 'double', $page_custom_width) . '</div>';
+		}
 		if (class_exists('RP4WP_Post_Link_Manager')) {
-			if ( is_array(RP4WP::get()->settings) )
+			if ( is_array(RP4WP::get()->settings) ) {
 				$automatic_linking_post_amount = RP4WP::get()->settings[ 'general_' . $post_type ]->get_option( 'automatic_linking_post_amount' );
-			else
+			} else {
 				$automatic_linking_post_amount = RP4WP::get()->settings->get_option( 'automatic_linking_post_amount' );
+			}
 			$uncode_related = new RP4WP_Post_Link_Manager();
 			$related_posts = $uncode_related->get_children($post->ID,false);
 			$related_posts_ids = array();
 			foreach ($related_posts as $key => $value) {
-				if (isset($value->ID)) $related_posts_ids[] = $value->ID;
+				if (isset($value->ID)) {
+					$related_posts_ids[] = $value->ID;
+				}
 			}
 			$archive_query = '';
 			$regex = '/\[uncode_index(.*?)\]/';
@@ -400,7 +405,9 @@ while (have_posts()):
 					foreach ($matches_attr as $key_attr => $value_attr) {
 						switch (trim($value_attr[1])) {
 							case 'auto_query':
-								if ($value_attr[2] === 'yes') $index_found = true;
+								if ($value_attr[2] === 'yes') {
+									$index_found = true;
+								}
 								break;
 							case 'loop':
 								$archive_query = $value_attr[2];
@@ -409,11 +416,14 @@ while (have_posts()):
 					}
 				}
 				if ($index_found) {
-					if ($archive_query === '') $archive_query = ' loop="size:10|by_id:' . implode(',', $related_posts_ids) .'|post_type:' . $post->post_type . '"';
-					else {
+					if ($archive_query === '') {
+						$archive_query = ' loop="size:10|by_id:' . implode(',', $related_posts_ids) .'|post_type:' . $post->post_type . '"';
+					} else {
 						$parse_query = uncode_parse_loop_data($archive_query);
 						$parse_query['by_id'] = implode(',', $related_posts_ids);
-						if (!isset($parse_query['order'])) $parse_query['order'] = 'none';
+						if (!isset($parse_query['order'])) {
+							$parse_query['order'] = 'none';
+						}
 						$parse_query['post_type'] = $post->post_type;
 						$archive_query = ' loop="' . uncode_unparse_loop_data($parse_query) . '"';
 					}
@@ -432,54 +442,53 @@ while (have_posts()):
 
 	$generic_show_share = ot_get_option('_uncode_' . $post_type . '_share');
 	$page_show_share = (isset($metabox_data['_uncode_specific_share'][0])) ? $metabox_data['_uncode_specific_share'][0] : '';
-	if ($page_show_share === '')
-	{
+	if ($page_show_share === '') {
 		$show_share = ($generic_show_share === 'off') ? false : true;
-	}
-	else
-	{
+	} else {
 		$show_share = ($page_show_share === 'off') ? false : true;
 	}
 
-	if ($show_share)
+	if ($show_share) {
 		$footer_content = '<div class="post-share">
 	          						<div class="detail-container">
 													<span class="detail-label">' . esc_html__('Share', 'uncode') . '</span>
 													<div class="share-button share-buttons share-inline only-icon"></div>
 												</div>
 											</div>';
+	}
 
 	$show_comments = ot_get_option('_uncode_' . $post_type . '_comments');
 
-	if ((comments_open() || '0' != get_comments_number()) && $show_comments === 'on')
-	{
+	if ((comments_open() || '0' != get_comments_number()) && $show_comments === 'on') {
 		ob_start();
 		comments_template();
 		$comment_content = ob_get_clean();
 		$comment_content = uncode_get_row_template($comment_content, '', $limit_content_width, $style, ' portfolio-comments portfolio-comments-' . $style, false, true, 'double');
 	}
 
-	if ($layout === 'sidebar_right' || $layout === 'sidebar_left')
-	{
+	if ($layout === 'sidebar_right' || $layout === 'sidebar_left') {
 
 		/** Build structure with sidebar **/
 
-		if ($sidebar_size === '' || empty($sidebar_size)) $sidebar_size = 4;
+		if ($sidebar_size === '' || empty($sidebar_size)) {
+			$sidebar_size = 4;
+		}
 		$main_size = 12 - $sidebar_size;
 		$expand_col = '';
 
-		if ($with_builder) $the_content = $media_content . $the_content;
-		else
-		{
-			if ($the_content !== '' && !empty($the_content))
-			{
+		if ($with_builder) {
+			$the_content = $media_content . $the_content;
+		} else {
+			if ($the_content !== '' && !empty($the_content)) {
 				$the_content = uncode_get_row_template($the_content, '', '', $style, ' limit-width', ($media_content !== '' ? true : 'double') , false, 'double');
 				$the_content = '<div class="post-content">' . $the_content . '</div>';
-				if ($media_content !== '') $the_content = uncode_get_row_template($media_content, '', $limit_content_width, $style, '', false, false, false) . $the_content;
-			}
-			else
-			{
-				if ($media_content !== '') $media_content = uncode_get_row_template($media_content, '', $limit_content_width, $style, '', false, false, 'double');
+				if ($media_content !== '') {
+					$the_content = uncode_get_row_template($media_content, '', $limit_content_width, $style, '', false, false, false) . $the_content;
+				}
+			} else {
+				if ($media_content !== '') {
+					$media_content = uncode_get_row_template($media_content, '', $limit_content_width, $style, '', false, false, 'double');
+				}
 				$the_content = $media_content . $the_content;
 			}
 		}
@@ -488,56 +497,39 @@ while (have_posts()):
 
 		$footer_classes = ' no-bottom-padding';
 
-		if ($portfolio_bg_color !== '')
-		{
-			if ($sidebar_fill === 'on')
-			{
+		if ($portfolio_bg_color !== '') {
+			if ($sidebar_fill === 'on') {
 				$sidebar_inner_padding.= ' std-block-padding';
 				$sidebar_padding.= $portfolio_bg_color;
 				$expand_col = ' unexpand';
 				$media_content = str_replace(' single-bottom-padding', '', $media_content);
-				if ($limit_content_width === '')
-				{
+				if ($limit_content_width === '') {
 					$row_classes.= ' no-h-padding col-no-gutter no-top-padding';
 					$footer_classes = ' single-top-padding';
-					if (!$with_builder)
-					{
+					if (!$with_builder) {
 						$main_classes.= ' std-block-padding';
 					}
-				}
-				else
-				{
+				} else {
 					$row_classes.= ' no-top-padding';
-					if (!$with_builder)
-					{
+					if (!$with_builder) {
 						$main_classes.= ' double-top-padding';
 					}
 				}
-			}
-			else
-			{
+			} else {
 				$row_classes .= ' double-top-padding';
   			$row_classes .= ' double-bottom-padding';
 				$sidebar_inner_padding.= $portfolio_bg_color . ' single-block-padding';
 			}
-		}
-		else
-		{
-			if ($with_builder)
-			{
-				if ($limit_content_width === '')
-				{
+		} else {
+			if ($with_builder) {
+				if ($limit_content_width === '') {
 					$row_classes.= ' col-half-gutter no-top-padding no-h-padding';
 					$sidebar_inner_padding.= ' double-top-padding single-block-padding';
-				}
-				else
-				{
+				} else {
 					$row_classes.= ' col-std-gutter no-top-padding';
 					$sidebar_inner_padding.= ' double-top-padding';
 				}
-			}
-			else
-			{
+			} else {
 				$row_classes.= ' col-std-gutter double-top-padding';
 				$main_classes.= ' double-bottom-padding';
 			}
@@ -549,7 +541,9 @@ while (have_posts()):
 		/** Create html with sidebar **/
 
 		if ($footer_content !== '') {
-			if ($limit_content_width === '') $footer_content = uncode_get_row_template($footer_content, $limit_width, $limit_content_width, $style, '', false, false, '');
+			if ($limit_content_width === '') {
+				$footer_content = uncode_get_row_template($footer_content, $limit_width, $limit_content_width, $style, '', false, false, '');
+			}
 			$footer_content = '<div class="post-footer post-footer-' . $style . ' style-' . $style . $footer_classes . '">' . $footer_content . '</div>';
 		}
 
@@ -580,27 +574,28 @@ while (have_posts()):
 										</div>';
 	}
 
-	if ($layout === 'portfolio_top' || $layout === 'portfolio_bottom')
-	{
+	if ($layout === 'portfolio_top' || $layout === 'portfolio_bottom') {
 
 		/** Create html without sidebar **/
 
-		if ($with_builder) $the_content = $media_content . $the_content;
-		else
-		{
-			if ($the_content !== '' && !empty($the_content))
-			{
+		if ($with_builder) {
+			$the_content = $media_content . $the_content;
+		} else {
+			if ($the_content !== '' && !empty($the_content)) {
 				$the_content = uncode_get_row_template($the_content, '', '', $style, ' limit-width', ($layout === 'portfolio_top' ? false : 'double') , false, ($layout === 'portfolio_top' ? 'double' : false));
 				$the_content = '<div class="post-content">' . $the_content . '</div>';
 			}
-			if ($media_content !== '') $media_content = uncode_get_row_template($media_content, '', $limit_content_width, $style, '', ($layout === 'portfolio_top' && $portfolio_bg_color === '' ? false : 'double') , true, ($layout === 'portfolio_bottom' && $portfolio_bg_color === '' ? false : 'double'));
+			if ($media_content !== '') {
+				$media_content = uncode_get_row_template($media_content, '', $limit_content_width, $style, '', ($layout === 'portfolio_top' && $portfolio_bg_color === '' ? false : 'double') , true, ($layout === 'portfolio_bottom' && $portfolio_bg_color === '' ? false : 'double'));
+			}
 			$the_content = $media_content . $the_content;
 		}
 
-		if ($footer_content !== '') $footer_content = '<div class="post-footer">' . $footer_content . '</div>';
+		if ($footer_content !== '') {
+			$footer_content = '<div class="post-footer">' . $footer_content . '</div>';
+		}
 
-		if ($title_content !== '')
-		{
+		if ($title_content !== '') {
 			$title_content = '<div class="row-inner">
 													<div class="col-lg-12">
 														<div class="uncont">
@@ -635,24 +630,24 @@ while (have_posts()):
 											</div>
 										</div>';
 
-		if ($layout === 'portfolio_top')
-		{
+		if ($layout === 'portfolio_top') {
 			$the_content = $info_content . $the_content;
-		}
-		else
-		{
+		} else {
 			$the_content = $the_content . $info_content;
 		}
 	}
 
 	/** Display post html **/
-	if ($layout === '')
-	{
-		if ($with_builder) $the_content = $media_content . $the_content;
-		else
-		{
-			if ($title_content !== '' || $the_content !== '') $the_content = uncode_get_row_template($title_content . $the_content, '', '', $style, ' limit-width', ($media_content === '' ? 'double' : false), false, 'double');
-			if ($media_content !== '') $media_content = uncode_get_row_template($media_content, '', $limit_content_width, $style, '', 'double', true, 'double');
+	if ($layout === '') {
+		if ($with_builder) {
+			$the_content = $media_content . $the_content;
+		} else {
+			if ($title_content !== '' || $the_content !== '') {
+				$the_content = uncode_get_row_template($title_content . $the_content, '', '', $style, ' limit-width', ($media_content === '' ? 'double' : false), false, 'double');
+			}
+			if ($media_content !== '') {
+				$media_content = uncode_get_row_template($media_content, '', $limit_content_width, $style, '', 'double', true, 'double');
+			}
 			$the_content = $media_content . $the_content;
 		}
 		$the_content = '<div class="post-content">' . $the_content . '</div>';
@@ -660,8 +655,7 @@ while (have_posts()):
 
 	/** Build and display navigation html **/
 	$navigation_option = ot_get_option('_uncode_' . $post_type . '_navigation_activate');
-	if ($navigation_option !== 'off')
-	{
+	if ($navigation_option !== 'off') {
 		$generic_index = true;
 		if (isset($metabox_data['_uncode_specific_navigation_index'][0]) && $metabox_data['_uncode_specific_navigation_index'][0] !== '') {
 			$navigation_index = $metabox_data['_uncode_specific_navigation_index'][0];
@@ -669,25 +663,29 @@ while (have_posts()):
 		} else {
 			$navigation_index = ot_get_option('_uncode_' . $post_type . '_navigation_index');
 		}
-		if ($navigation_index !== '')
-		{
+		if ($navigation_index !== '') {
 			$navigation_index_label = ot_get_option('_uncode_' . $post_type . '_navigation_index_label');
 			$navigation_index_link = get_permalink($navigation_index);
 			$navigation_index_btn = '<a class="btn btn-link text-default-color" href="' . esc_url($navigation_index_link) . '">' . ($navigation_index_label === '' ? get_the_title($navigation_index) : esc_html($navigation_index_label)) . '</a>';
+		} else {
+			$navigation_index_btn = '';
 		}
-		else $navigation_index_btn = '';
 		$navigation_nextprev_title = ot_get_option('_uncode_' . $post_type . '_navigation_nextprev_title');
 		$navigation = uncode_post_navigation($navigation_index_btn, $navigation_nextprev_title, $navigation_index, $generic_index);
-		if ($page_custom_width !== '') $limit_content_width = ' limit-width';
-		if (!empty($navigation) && $navigation !== '') $navigation_content = uncode_get_row_template($navigation, '', $limit_content_width, $style, ' row-navigation row-navigation-' . $style, true, true, true);
+		if ($page_custom_width !== '') {
+			$limit_content_width = ' limit-width';
+		}
+		if (!empty($navigation) && $navigation !== '') {
+			$navigation_content = uncode_get_row_template($navigation, '', $limit_content_width, $style, ' row-navigation row-navigation-' . $style, true, true, true);
+		}
 	}
 
 	$with_builder_class = $with_builder ? 'with-builder' : 'without-builder';
 
 	echo '<div class="page-body' . $bg_color . '">
 					<div class="portfolio-wrapper portfolio-wrapper--' . esc_html( $layout ) . ' portfolio-wrapper--' . esc_html( $with_builder_class ) . '"' . $page_custom_width . '>
-						<div class="portfolio-body">' . uncode_remove_wpautop($the_content) . '</div>' .
-						 uncode_remove_wpautop($content_after_body) . $comment_content .
+						<div class="portfolio-body">' . uncode_remove_p_tag($the_content) . '</div>' .
+						 uncode_remove_p_tag($content_after_body) . $comment_content .
 					'</div>
 				</div>'
 				. $navigation_content;

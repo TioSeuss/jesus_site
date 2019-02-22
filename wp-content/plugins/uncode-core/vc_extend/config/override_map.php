@@ -107,6 +107,8 @@ $heading_font = array(
 	esc_html__('Default CSS', 'uncode') => '',
 );
 
+$button_font = array();
+
 if (isset($fonts) && is_array($fonts)) {
 	foreach ($fonts as $key => $value) {
 		$button_font[$value['title']] = $heading_font[$value['title']] = $value['_uncode_font_group_unique_id'];
@@ -383,7 +385,7 @@ vc_map(array(
 		) ,
 		array(
 			"type" => "type_numeric_slider",
-			"heading" => '',
+			"heading" => esc_html__("Overlay opacity", 'uncode') ,
 			"param_name" => "overlay_alpha",
 			"min" => 0,
 			"max" => 100,
@@ -391,6 +393,31 @@ vc_map(array(
 			"value" => 50,
 			"description" => esc_html__("Set the transparency for the overlay.", 'uncode') ,
 			"group" => esc_html__("Style", 'uncode') ,
+		) ,
+		array(
+			"type" => "dropdown",
+			"heading" => esc_html__("Overlay blend mode (experimental)", 'uncode') ,
+			"param_name" => "overlay_color_blend",
+			"description" => esc_html__("Specify a blending mode. NB. It does not work on IE and Edge.", 'uncode') ,
+			"group" => esc_html__("Style", 'uncode') ,
+			"value" => array(
+				esc_html__('None', 'uncode') => '',
+				esc_html__('Multiply', 'uncode') => 'multiply',
+				esc_html__('Screen', 'uncode') => 'screen',
+				esc_html__('Overlay', 'uncode') => 'overlay',
+				esc_html__('Darken', 'uncode') => 'darken',
+				esc_html__('Lighten', 'uncode') => 'lighten',
+				esc_html__('Color dodge', 'uncode') => 'color-dodge',
+				esc_html__('Color burn', 'uncode') => 'color-burn',
+				esc_html__('Hard light', 'uncode') => 'hard-light',
+				esc_html__('Soft light', 'uncode') => 'soft-light',
+				esc_html__('Difference', 'uncode') => 'difference',
+				esc_html__('Exclusion', 'uncode') => 'exclusion',
+			) ,
+			"dependency" => array(
+				'element' => "overlay_color",
+				'not_empty' => true
+			) ,
 		) ,
 		array(
 			"type" => 'checkbox',
@@ -573,7 +600,7 @@ $row_params = array(
 		"value" => 2,
 		"description" => esc_html__("Set the bottom padding.", 'uncode') ,
 		"group" => esc_html__("Aspect", 'uncode') ,
-		"dependency" => Array(
+		"dependency" => array(
 			'element' => "override_padding",
 			'value' => array(
 				'yes'
@@ -625,14 +652,16 @@ $row_params = array(
 		) ,
 	) ,
 	array(
-		"type" => 'checkbox',
-		"heading" => esc_html__("Ken Burns", 'uncode') ,
+		"type" => "dropdown",
+		"heading" => esc_html__("Zoom effect", 'uncode') ,
 		"param_name" => "kburns",
-		"description" => esc_html__("Activate the background Ken Burns effect.", 'uncode') ,
-		"value" => Array(
-			esc_html__("Yes, please", 'uncode') => 'yes'
-		) ,
+		"description" => esc_html__("Activate the background zoom effect you prefer.", 'uncode') ,
 		"group" => esc_html__("Style", 'uncode'),
+		"value" => array(
+			esc_html__('None', 'uncode') => '',
+			esc_html__('Ken Burns', 'uncode') => 'yes',
+			esc_html__('Zoom Out', 'uncode') => 'zoom'
+		) ,
 		"dependency" => array(
 			'element' => "back_image",
 			'not_empty' => true
@@ -648,7 +677,7 @@ $row_params = array(
 	) ,
 	array(
 		"type" => "type_numeric_slider",
-		"heading" => '',
+		"heading" => esc_html__("Overlay opacity", 'uncode') ,
 		"param_name" => "overlay_alpha",
 		"min" => 0,
 		"max" => 100,
@@ -656,6 +685,31 @@ $row_params = array(
 		"value" => 50,
 		"description" => esc_html__("Set the transparency for the overlay.", 'uncode') ,
 		"group" => esc_html__("Style", 'uncode') ,
+	) ,
+	array(
+		"type" => "dropdown",
+		"heading" => esc_html__("Overlay blend mode (experimental)", 'uncode') ,
+		"param_name" => "overlay_color_blend",
+		"description" => esc_html__("Specify a blending mode. NB. It does not work on IE and Edge.", 'uncode') ,
+		"group" => esc_html__("Style", 'uncode') ,
+		"value" => array(
+			esc_html__('None', 'uncode') => '',
+			esc_html__('Multiply', 'uncode') => 'multiply',
+			esc_html__('Screen', 'uncode') => 'screen',
+			esc_html__('Overlay', 'uncode') => 'overlay',
+			esc_html__('Darken', 'uncode') => 'darken',
+			esc_html__('Lighten', 'uncode') => 'lighten',
+			esc_html__('Color dodge', 'uncode') => 'color-dodge',
+			esc_html__('Color burn', 'uncode') => 'color-burn',
+			esc_html__('Hard light', 'uncode') => 'hard-light',
+			esc_html__('Soft light', 'uncode') => 'soft-light',
+			esc_html__('Difference', 'uncode') => 'difference',
+			esc_html__('Exclusion', 'uncode') => 'exclusion',
+		) ,
+		"dependency" => array(
+			'element' => "overlay_color",
+			'not_empty' => true
+		) ,
 	) ,
 	array(
 		"type" => 'checkbox',
@@ -907,6 +961,11 @@ $row_params = array(
 			"hills-opacity" => array( esc_html__('Hills opacity', 'uncode') => get_template_directory_uri()."/library/img/dividers/hills-opacity.svg"),
 			"flow" => array( esc_html__('Flow', 'uncode') => get_template_directory_uri()."/library/img/dividers/flow.svg"),
 			"flow-opacity" => array( esc_html__('Flow opacity', 'uncode') => get_template_directory_uri()."/library/img/dividers/flow-opacity.svg"),
+			"step" => array( esc_html__('Step', 'uncode') => get_template_directory_uri()."/library/img/dividers/step.svg"),
+			"step_1_2" => array( esc_html__('Step 1/2', 'uncode') => get_template_directory_uri()."/library/img/dividers/step_1_2.svg"),
+			"step_2_3" => array( esc_html__('Step 2/3', 'uncode') => get_template_directory_uri()."/library/img/dividers/step_2_3.svg"),
+			"step_3_4" => array( esc_html__('Step 3/4', 'uncode') => get_template_directory_uri()."/library/img/dividers/step_3_4.svg"),
+			"gradient" => array( esc_html__('Gradient', 'uncode') => get_template_directory_uri()."/library/img/dividers/gradient.svg"),
 		),
 		"dependency" => array(
 			'element' => "shape_top_invert",
@@ -951,6 +1010,10 @@ $row_params = array(
 			"hills-opacity" => array( esc_html__('Hills opacity', 'uncode') => get_template_directory_uri()."/library/img/dividers/hills-opacity-inv.svg"),
 			"flow" => array( esc_html__('Flow', 'uncode') => get_template_directory_uri()."/library/img/dividers/flow-inv.svg"),
 			"flow-opacity" => array( esc_html__('Flow opacity', 'uncode') => get_template_directory_uri()."/library/img/dividers/flow-opacity-inv.svg"),
+			"step_1_2" => array( esc_html__('Step 1/2', 'uncode') => get_template_directory_uri()."/library/img/dividers/step_1_2-inv.svg"),
+			"step_2_3" => array( esc_html__('Step 2/3', 'uncode') => get_template_directory_uri()."/library/img/dividers/step_2_3-inv.svg"),
+			"step_3_4" => array( esc_html__('Step 3/4', 'uncode') => get_template_directory_uri()."/library/img/dividers/step_3_4-inv.svg"),
+			"gradient" => array( esc_html__('Gradient', 'uncode') => get_template_directory_uri()."/library/img/dividers/gradient-inv.svg"),
 		),
 		"dependency" => array(
 			'element' => "shape_top_invert",
@@ -1314,6 +1377,11 @@ $row_params = array(
 			"hills-opacity" => array( esc_html__('Hills opacity', 'uncode') => get_template_directory_uri()."/library/img/dividers/hills-opacity.svg"),
 			"flow" => array( esc_html__('Flow', 'uncode') => get_template_directory_uri()."/library/img/dividers/flow.svg"),
 			"flow-opacity" => array( esc_html__('Flow opacity', 'uncode') => get_template_directory_uri()."/library/img/dividers/flow-opacity.svg"),
+			"step" => array( esc_html__('Step', 'uncode') => get_template_directory_uri()."/library/img/dividers/step.svg"),
+			"step_1_2" => array( esc_html__('Step 1/2', 'uncode') => get_template_directory_uri()."/library/img/dividers/step_1_2.svg"),
+			"step_2_3" => array( esc_html__('Step 2/3', 'uncode') => get_template_directory_uri()."/library/img/dividers/step_2_3.svg"),
+			"step_3_4" => array( esc_html__('Step 3/4', 'uncode') => get_template_directory_uri()."/library/img/dividers/step_3_4.svg"),
+			"gradient" => array( esc_html__('Gradient', 'uncode') => get_template_directory_uri()."/library/img/dividers/gradient.svg"),
 		),
 		"dependency" => array(
 			'element' => "shape_bottom_invert",
@@ -1359,6 +1427,10 @@ $row_params = array(
 			"hills-opacity" => array( esc_html__('Hills opacity', 'uncode') => get_template_directory_uri()."/library/img/dividers/hills-opacity-inv.svg"),
 			"flow" => array( esc_html__('Flow', 'uncode') => get_template_directory_uri()."/library/img/dividers/flow-inv.svg"),
 			"flow-opacity" => array( esc_html__('Flow opacity', 'uncode') => get_template_directory_uri()."/library/img/dividers/flow-opacity-inv.svg"),
+			"step_1_2" => array( esc_html__('Step 1/2', 'uncode') => get_template_directory_uri()."/library/img/dividers/step_1_2-inv.svg"),
+			"step_2_3" => array( esc_html__('Step 2/3', 'uncode') => get_template_directory_uri()."/library/img/dividers/step_2_3-inv.svg"),
+			"step_3_4" => array( esc_html__('Step 3/4', 'uncode') => get_template_directory_uri()."/library/img/dividers/step_3_4-inv.svg"),
+			"gradient" => array( esc_html__('Gradient', 'uncode') => get_template_directory_uri()."/library/img/dividers/gradient-inv.svg"),
 		),
 		"dependency" => array(
 			'element' => "shape_bottom_invert",
@@ -1755,14 +1827,16 @@ $row_inner_params = array(
 		"group" => esc_html__("Style", 'uncode')
 	) ,
 	array(
-		"type" => 'checkbox',
-		"heading" => esc_html__("Ken Burns", 'uncode') ,
+		"type" => "dropdown",
+		"heading" => esc_html__("Zoom effect", 'uncode') ,
 		"param_name" => "kburns",
-		"description" => esc_html__("Activate the background Ken Burns effect.", 'uncode') ,
-		"value" => Array(
-			esc_html__("Yes, please", 'uncode') => 'yes'
-		) ,
+		"description" => esc_html__("Activate the background zoom effect you prefer.", 'uncode') ,
 		"group" => esc_html__("Style", 'uncode'),
+		"value" => array(
+			esc_html__('None', 'uncode') => '',
+			esc_html__('Ken Burns', 'uncode') => 'yes',
+			esc_html__('Zoom Out', 'uncode') => 'zoom'
+		) ,
 		"dependency" => array(
 			'element' => "back_image",
 			'not_empty' => true
@@ -1778,7 +1852,7 @@ $row_inner_params = array(
 	) ,
 	array(
 		"type" => "type_numeric_slider",
-		"heading" => '',
+		"heading" => esc_html__("Overlay opacity", 'uncode') ,
 		"param_name" => "overlay_alpha",
 		"min" => 0,
 		"max" => 100,
@@ -1786,6 +1860,31 @@ $row_inner_params = array(
 		"value" => 50,
 		"description" => esc_html__("Set the transparency for the overlay.", 'uncode') ,
 		"group" => esc_html__("Style", 'uncode') ,
+	) ,
+	array(
+		"type" => "dropdown",
+		"heading" => esc_html__("Overlay blend mode (experimental)", 'uncode') ,
+		"param_name" => "overlay_color_blend",
+		"description" => esc_html__("Specify a blending mode. NB. It does not work on IE and Edge.", 'uncode') ,
+		"group" => esc_html__("Style", 'uncode') ,
+		"value" => array(
+			esc_html__('None', 'uncode') => '',
+			esc_html__('Multiply', 'uncode') => 'multiply',
+			esc_html__('Screen', 'uncode') => 'screen',
+			esc_html__('Overlay', 'uncode') => 'overlay',
+			esc_html__('Darken', 'uncode') => 'darken',
+			esc_html__('Lighten', 'uncode') => 'lighten',
+			esc_html__('Color dodge', 'uncode') => 'color-dodge',
+			esc_html__('Color burn', 'uncode') => 'color-burn',
+			esc_html__('Hard light', 'uncode') => 'hard-light',
+			esc_html__('Soft light', 'uncode') => 'soft-light',
+			esc_html__('Difference', 'uncode') => 'difference',
+			esc_html__('Exclusion', 'uncode') => 'exclusion',
+		) ,
+		"dependency" => array(
+			'element' => "overlay_color",
+			'not_empty' => true
+		) ,
 	) ,
 	array(
 		"type" => 'checkbox',
@@ -1971,6 +2070,10 @@ $row_inner_params = array(
 			"hills-opacity" => array( esc_html__('Hills opacity', 'uncode') => get_template_directory_uri()."/library/img/dividers/hills-opacity.svg"),
 			"flow" => array( esc_html__('Flow', 'uncode') => get_template_directory_uri()."/library/img/dividers/flow.svg"),
 			"flow-opacity" => array( esc_html__('Flow opacity', 'uncode') => get_template_directory_uri()."/library/img/dividers/flow-opacity.svg"),
+			"step_1_2" => array( esc_html__('Step 1/2', 'uncode') => get_template_directory_uri()."/library/img/dividers/step_1_2.svg"),
+			"step_2_3" => array( esc_html__('Step 2/3', 'uncode') => get_template_directory_uri()."/library/img/dividers/step_2_3.svg"),
+			"step_3_4" => array( esc_html__('Step 3/4', 'uncode') => get_template_directory_uri()."/library/img/dividers/step_3_4.svg"),
+			"gradient" => array( esc_html__('Gradient', 'uncode') => get_template_directory_uri()."/library/img/dividers/gradient.svg"),
 		),
 		"dependency" => array(
 			'element' => "shape_top_invert",
@@ -2015,6 +2118,10 @@ $row_inner_params = array(
 			"hills-opacity" => array( esc_html__('Hills opacity', 'uncode') => get_template_directory_uri()."/library/img/dividers/hills-opacity-inv.svg"),
 			"flow" => array( esc_html__('Flow', 'uncode') => get_template_directory_uri()."/library/img/dividers/flow-inv.svg"),
 			"flow-opacity" => array( esc_html__('Flow opacity', 'uncode') => get_template_directory_uri()."/library/img/dividers/flow-opacity-inv.svg"),
+			"step_1_2" => array( esc_html__('Step 1/2', 'uncode') => get_template_directory_uri()."/library/img/dividers/step_1_2-inv.svg"),
+			"step_2_3" => array( esc_html__('Step 2/3', 'uncode') => get_template_directory_uri()."/library/img/dividers/step_2_3-inv.svg"),
+			"step_3_4" => array( esc_html__('Step 3/4', 'uncode') => get_template_directory_uri()."/library/img/dividers/step_3_4-inv.svg"),
+			"gradient" => array( esc_html__('Gradient', 'uncode') => get_template_directory_uri()."/library/img/dividers/gradient-inv.svg"),
 		),
 		"dependency" => array(
 			'element' => "shape_top_invert",
@@ -2378,6 +2485,10 @@ $row_inner_params = array(
 			"hills-opacity" => array( esc_html__('Hills opacity', 'uncode') => get_template_directory_uri()."/library/img/dividers/hills-opacity.svg"),
 			"flow" => array( esc_html__('Flow', 'uncode') => get_template_directory_uri()."/library/img/dividers/flow.svg"),
 			"flow-opacity" => array( esc_html__('Flow opacity', 'uncode') => get_template_directory_uri()."/library/img/dividers/flow-opacity.svg"),
+			"step_1_2" => array( esc_html__('Step 1/2', 'uncode') => get_template_directory_uri()."/library/img/dividers/step_1_2.svg"),
+			"step_2_3" => array( esc_html__('Step 2/3', 'uncode') => get_template_directory_uri()."/library/img/dividers/step_2_3.svg"),
+			"step_3_4" => array( esc_html__('Step 3/4', 'uncode') => get_template_directory_uri()."/library/img/dividers/step_3_4.svg"),
+			"gradient" => array( esc_html__('Gradient', 'uncode') => get_template_directory_uri()."/library/img/dividers/gradient.svg"),
 		),
 		"dependency" => array(
 			'element' => "shape_bottom_invert",
@@ -2423,6 +2534,10 @@ $row_inner_params = array(
 			"hills-opacity" => array( esc_html__('Hills opacity', 'uncode') => get_template_directory_uri()."/library/img/dividers/hills-opacity-inv.svg"),
 			"flow" => array( esc_html__('Flow', 'uncode') => get_template_directory_uri()."/library/img/dividers/flow-inv.svg"),
 			"flow-opacity" => array( esc_html__('Flow opacity', 'uncode') => get_template_directory_uri()."/library/img/dividers/flow-opacity-inv.svg"),
+			"step_1_2" => array( esc_html__('Step 1/2', 'uncode') => get_template_directory_uri()."/library/img/dividers/step_1_2-inv.svg"),
+			"step_2_3" => array( esc_html__('Step 2/3', 'uncode') => get_template_directory_uri()."/library/img/dividers/step_2_3-inv.svg"),
+			"step_3_4" => array( esc_html__('Step 3/4', 'uncode') => get_template_directory_uri()."/library/img/dividers/step_3_4-inv.svg"),
+			"gradient" => array( esc_html__('Gradient', 'uncode') => get_template_directory_uri()."/library/img/dividers/gradient-inv.svg"),
 		),
 		"dependency" => array(
 			'element' => "shape_bottom_invert",
@@ -2838,7 +2953,7 @@ vc_map(array(
 			"type" => 'checkbox',
 			"heading" => esc_html__("Expand height to 100%", 'uncode') ,
 			"param_name" => "expand_height",
-			"description" => esc_html__("Activate this to expand the height of the column to 100%, if you haven't activate the equal height row setting.", 'uncode') ,
+			"description" => esc_html__("Activate this to expand the height of the column to 100% when you have fluid content such as Maps. If you need to create equal height columns do not use this option but use the Rows > Inner Columns > Columns With Equal Height.", 'uncode') ,
 			'group' => esc_html__('Aspect', 'uncode') ,
 			"value" => Array(
 				'' => 'yes'
@@ -2927,18 +3042,20 @@ vc_map(array(
 			"group" => esc_html__("Style", 'uncode')
 		) ,
 		array(
-			"type" => 'checkbox',
-			"heading" => esc_html__("Ken Burns", 'uncode') ,
+			"type" => "dropdown",
+			"heading" => esc_html__("Zoom effect", 'uncode') ,
 			"param_name" => "kburns",
-			"description" => esc_html__("Activate the background Ken Burns effect.", 'uncode') ,
-			"value" => Array(
-				esc_html__("Yes, please", 'uncode') => 'yes'
+			"description" => esc_html__("Activate the background zoom effect you prefer.", 'uncode') ,
+			"group" => esc_html__("Style", 'uncode'),
+			"value" => array(
+				esc_html__('None', 'uncode') => '',
+				esc_html__('Ken Burns', 'uncode') => 'yes',
+				esc_html__('Zoom Out', 'uncode') => 'zoom'
 			) ,
-			"dependency" => Array(
+			"dependency" => array(
 				'element' => "back_image",
 				'not_empty' => true
 			) ,
-			"group" => esc_html__("Style", 'uncode')
 		) ,
 		array(
 			"type" => "dropdown",
@@ -2950,7 +3067,7 @@ vc_map(array(
 		) ,
 		array(
 			"type" => "type_numeric_slider",
-			"heading" => '',
+			"heading" => esc_html__("Overlay opacity", 'uncode') ,
 			"param_name" => "overlay_alpha",
 			"min" => 0,
 			"max" => 100,
@@ -2958,6 +3075,31 @@ vc_map(array(
 			"value" => 50,
 			"description" => esc_html__("Set the transparency for the overlay.", 'uncode') ,
 			"group" => esc_html__("Style", 'uncode') ,
+		) ,
+		array(
+			"type" => "dropdown",
+			"heading" => esc_html__("Overlay blend mode (experimental)", 'uncode') ,
+			"param_name" => "overlay_color_blend",
+			"description" => esc_html__("Specify a blending mode. NB. It does not work on IE and Edge.", 'uncode') ,
+			"group" => esc_html__("Style", 'uncode') ,
+			"value" => array(
+				esc_html__('None', 'uncode') => '',
+				esc_html__('Multiply', 'uncode') => 'multiply',
+				esc_html__('Screen', 'uncode') => 'screen',
+				esc_html__('Overlay', 'uncode') => 'overlay',
+				esc_html__('Darken', 'uncode') => 'darken',
+				esc_html__('Lighten', 'uncode') => 'lighten',
+				esc_html__('Color dodge', 'uncode') => 'color-dodge',
+				esc_html__('Color burn', 'uncode') => 'color-burn',
+				esc_html__('Hard light', 'uncode') => 'hard-light',
+				esc_html__('Soft light', 'uncode') => 'soft-light',
+				esc_html__('Difference', 'uncode') => 'difference',
+				esc_html__('Exclusion', 'uncode') => 'exclusion',
+			) ,
+			"dependency" => array(
+				'element' => "overlay_color",
+				'not_empty' => true
+			) ,
 		) ,
 		array(
 			"type" => "type_numeric_slider",
@@ -3013,7 +3155,7 @@ vc_map(array(
 			) ,
 		) ,
 		array(
-			"heading" => "",
+			"heading" => "Tablet text alignment",
 			"type" => 'dropdown',
 			"param_name" => "align_medium",
 			"description" => esc_html__("Specify the text alignment inside the content box in tablet layout mode.", 'uncode') ,
@@ -3026,14 +3168,14 @@ vc_map(array(
 			'group' => esc_html__('Responsive', 'uncode')
 		) ,
 		array(
-			"heading" => "",
+			"heading" => "Tablet column width",
 			"type" => "type_numeric_slider",
 			"param_name" => "medium_width",
 			"min" => 0,
 			"max" => 7,
 			"step" => 1,
 			"value" => 0,
-			"description" => esc_html__("COLUMN WIDTH. NB. If you change this value for one column you must specify a value for every column of the row.", 'uncode') ,
+			"description" => esc_html__("NB. If you change this value for one column you must specify a value for every column of the row.", 'uncode') ,
 			"group" => esc_html__("Responsive", 'uncode')
 		) ,
 		array(
@@ -3047,7 +3189,7 @@ vc_map(array(
 			) ,
 		) ,
 		array(
-			"heading" => "",
+			"heading" => "Mobile text alignment",
 			"type" => 'dropdown',
 			"param_name" => "align_mobile",
 			"description" => esc_html__("Specify the text alignment inside the content box in mobile layout mode.", 'uncode') ,
@@ -3060,21 +3202,21 @@ vc_map(array(
 			'group' => esc_html__('Responsive', 'uncode')
 		) ,
 		array(
-			"heading" => "",
+			"heading" => "Mobile column width",
 			"type" => "type_numeric_slider",
 			"param_name" => "mobile_width",
 			"min" => 0,
 			"max" => 7,
 			"step" => 1,
 			"value" => 0,
-			"description" => esc_html__("COLUMN WIDTH. NB. If you change this value for one column you must specify a value for every column of the row.", 'uncode') ,
+			"description" => esc_html__("NB. If you change this value for one column you must specify a value for every column of the row.", 'uncode') ,
 			"group" => esc_html__("Responsive", 'uncode')
 		) ,
 		array(
-			"heading" => "",
+			"heading" => "Mobile minimum height",
 			"type" => "textfield",
 			"param_name" => "mobile_height",
-			"description" => esc_html__("MINIMUM HEIGHT. Insert the value in pixel.", 'uncode') ,
+			"description" => esc_html__("Insert the value in pixel.", 'uncode') ,
 			'group' => esc_html__('Responsive', 'uncode')
 		) ,
 		array(
@@ -3178,7 +3320,8 @@ vc_map(array(
 			"description" => esc_html__("Activate this for the shadow effect.", 'uncode') ,
 			'group' => esc_html__('Extra', 'uncode') ,
 			"value" => array(
-				esc_html__('None', 'uncode') => '',
+				esc_html__('Disabled', 'uncode') => '',
+				esc_html__('None', 'uncode') => 'none',
 				esc_html__('Extra Small', 'uncode') => 'xs',
 				esc_html__('Small', 'uncode') => 'sm',
 				esc_html__('Standard', 'uncode') => 'std',
@@ -3315,7 +3458,7 @@ vc_map(array(
 			"type" => 'checkbox',
 			"heading" => esc_html__("Expand height to 100%", 'uncode') ,
 			"param_name" => "expand_height",
-			"description" => esc_html__("Activate this to expand the height of the column to 100%, if you haven't activate the equal height row setting.", 'uncode') ,
+			"description" => esc_html__("Activate this to expand the height of the column to 100% when you have fluid content such as Maps. If you need to create equal height columns do not use this option but use the Rows > Inner Columns > Columns With Equal Height.", 'uncode') ,
 			'group' => esc_html__('Aspect', 'uncode') ,
 			"value" => Array(
 				'' => 'yes'
@@ -3415,18 +3558,20 @@ vc_map(array(
 			"group" => esc_html__("Style", 'uncode')
 		) ,
 		array(
-			"type" => 'checkbox',
-			"heading" => esc_html__("Ken Burns", 'uncode') ,
+			"type" => "dropdown",
+			"heading" => esc_html__("Zoom effect", 'uncode') ,
 			"param_name" => "kburns",
-			"description" => esc_html__("Activate the background Ken Burns effect.", 'uncode') ,
-			"value" => Array(
-				esc_html__("Yes, please", 'uncode') => 'yes'
+			"description" => esc_html__("Activate the background zoom effect you prefer.", 'uncode') ,
+			"group" => esc_html__("Style", 'uncode'),
+			"value" => array(
+				esc_html__('None', 'uncode') => '',
+				esc_html__('Ken Burns', 'uncode') => 'yes',
+				esc_html__('Zoom Out', 'uncode') => 'zoom'
 			) ,
-			"dependency" => Array(
+			"dependency" => array(
 				'element' => "back_image",
 				'not_empty' => true
 			) ,
-			"group" => esc_html__("Style", 'uncode')
 		) ,
 		array(
 			"type" => "dropdown",
@@ -3438,7 +3583,7 @@ vc_map(array(
 		) ,
 		array(
 			"type" => "type_numeric_slider",
-			"heading" => '',
+			"heading" => esc_html__("Overlay opacity", 'uncode') ,
 			"param_name" => "overlay_alpha",
 			"min" => 0,
 			"max" => 100,
@@ -3446,6 +3591,31 @@ vc_map(array(
 			"value" => 50,
 			"description" => esc_html__("Set the transparency for the overlay.", 'uncode') ,
 			"group" => esc_html__("Style", 'uncode') ,
+		) ,
+		array(
+			"type" => "dropdown",
+			"heading" => esc_html__("Overlay blend mode (experimental)", 'uncode') ,
+			"param_name" => "overlay_color_blend",
+			"description" => esc_html__("Specify a blending mode. NB. IE and Edge still do not support it.", 'uncode') ,
+			"group" => esc_html__("Style", 'uncode') ,
+			"value" => array(
+				esc_html__('None', 'uncode') => '',
+				esc_html__('Multiply', 'uncode') => 'multiply',
+				esc_html__('Screen', 'uncode') => 'screen',
+				esc_html__('Overlay', 'uncode') => 'overlay',
+				esc_html__('Darken', 'uncode') => 'darken',
+				esc_html__('Lighten', 'uncode') => 'lighten',
+				esc_html__('Color dodge', 'uncode') => 'color-dodge',
+				esc_html__('Color burn', 'uncode') => 'color-burn',
+				esc_html__('Hard light', 'uncode') => 'hard-light',
+				esc_html__('Soft light', 'uncode') => 'soft-light',
+				esc_html__('Difference', 'uncode') => 'difference',
+				esc_html__('Exclusion', 'uncode') => 'exclusion',
+			) ,
+			"dependency" => array(
+				'element' => "overlay_color",
+				'not_empty' => true
+			) ,
 		) ,
 		array(
 			"type" => "css_editor",
@@ -3650,7 +3820,8 @@ vc_map(array(
 			"description" => esc_html__("Activate this for the shadow effect.", 'uncode') ,
 			'group' => esc_html__('Extra', 'uncode') ,
 			"value" => array(
-				esc_html__('None', 'uncode') => '',
+				esc_html__('Disabled', 'uncode') => '',
+				esc_html__('None', 'uncode') => 'none',
 				esc_html__('Extra Small', 'uncode') => 'xs',
 				esc_html__('Small', 'uncode') => 'sm',
 				esc_html__('Standard', 'uncode') => 'std',
@@ -3721,7 +3892,7 @@ vc_map(array(
 			'type' => 'textfield',
 			'heading' => esc_html__('Widget ID', 'uncode') ,
 			'param_name' => 'el_id',
-			'value' => (function_exists('big_rand')) ? big_rand() : rand() ,
+			'value' => (function_exists('uncode_big_rand')) ? uncode_big_rand() : rand() ,
 			'description' => esc_html__('This value has to be unique. Change it in case it\'s needed.', 'uncode') ,
 			'group' => esc_html__('General', 'uncode')
 		) ,
@@ -4013,9 +4184,9 @@ vc_map(array(
 		) ,
 		array(
 			"type" => 'checkbox',
-			"heading" => esc_html__("'Show all' opposite", 'uncode') ,
+			"heading" => esc_html__("'Show All' opposite", 'uncode') ,
 			"param_name" => "filter_all_opposite",
-			"description" => esc_html__("Activate this to position the 'Show all' button opposite to the rest.", 'uncode') ,
+			"description" => esc_html__("Activate this to position the 'Show All' button opposite to the rest.", 'uncode') ,
 			"value" => Array(
 				esc_html__("Yes, please", 'uncode') => 'yes'
 			) ,
@@ -4034,6 +4205,21 @@ vc_map(array(
 					'left',
 					'right'
 				)
+			) ,
+		) ,
+		array(
+			"type" => "textfield",
+			"heading" => esc_html__("'Show All' text", 'uncode') ,
+			"param_name" => "filter_all_text",
+			"description" => esc_html__("Specify the button label. NB. The default is 'Show All'.", 'uncode') ,
+			'group' => esc_html__('Module', 'uncode') ,
+			'dependency' => array(
+				'element' => 'type',
+				'value' => 'isotope',
+			) ,
+			'dependency' => array(
+				'element' => 'filtering',
+				'value' => 'yes',
 			) ,
 		) ,
 		array(
@@ -4140,7 +4326,7 @@ vc_map(array(
 			'type' => 'sorted_list',
 			'heading' => esc_html__('Media', 'uncode') ,
 			'param_name' => 'media_items',
-			'description' => esc_html__('Control teasers look. Enable blocks and place them in desired order. Note: This setting can be overridden on post to post basis.', 'uncode') ,
+			'description' => esc_html__('Enable or disable elements and place them in desired order.', 'uncode') ,
 			'value' => 'media|lightbox|original,icon',
 			"group" => esc_html__("Module", 'uncode') ,
 			'options' => array(
@@ -4212,7 +4398,25 @@ vc_map(array(
 				) ,
 				array(
 					'spacer',
-					esc_html__('Spacer', 'uncode') ,
+					esc_html__('Spacer One', 'uncode') ,
+					array(
+						array(
+							'half',
+							esc_html__('0.5x', 'uncode')
+						) ,
+						array(
+							'one',
+							esc_html__('1x', 'uncode')
+						) ,
+						array(
+							'two',
+							esc_html__('2x', 'uncode')
+						)
+					)
+				) ,
+				array(
+					'spacer_two',
+					esc_html__('Spacer Two', 'uncode') ,
 					array(
 						array(
 							'half',
@@ -4239,6 +4443,10 @@ vc_map(array(
 						array(
 							'reduced',
 							esc_html__('Reduced width', 'uncode')
+						),
+						array(
+							'extra',
+							esc_html__('Extra full width', 'uncode')
 						)
 					)
 				) ,
@@ -4253,6 +4461,10 @@ vc_map(array(
 						array(
 							'reduced',
 							esc_html__('Reduced width', 'uncode')
+						),
+						array(
+							'extra',
+							esc_html__('Extra full width', 'uncode')
 						)
 					)
 				) ,
@@ -4407,7 +4619,7 @@ vc_map(array(
 		) ,
 		array(
 			"type" => 'checkbox',
-			"heading" => esc_html__("Mobile navigation", 'uncode') ,
+			"heading" => esc_html__("Navigation Mobile", 'uncode') ,
 			"param_name" => "carousel_nav_mobile",
 			"description" => esc_html__("Activate the navigation to show navigational arrows for mobile devices.", 'uncode') ,
 			"value" => Array(
@@ -4465,7 +4677,7 @@ vc_map(array(
 		) ,
 		array(
 			"type" => 'checkbox',
-			"heading" => esc_html__("Mobile dots navigation", 'uncode') ,
+			"heading" => esc_html__("Dots Navigation Mobile", 'uncode') ,
 			"param_name" => "carousel_dots_mobile",
 			"description" => esc_html__("Activate the dots navigation to show navigational dots in the bottom for mobile devices.", 'uncode') ,
 			"value" => Array(
@@ -4486,6 +4698,22 @@ vc_map(array(
 				esc_html__("Yes, please", 'uncode') => 'yes'
 			) ,
 			"group" => esc_html__("Module", 'uncode') ,
+			'dependency' => array(
+				'element' => 'type',
+				'value' => 'carousel',
+			) ,
+		) ,
+		array(
+			'type' => 'dropdown',
+			'heading' => esc_html__('Dots Navigation Position', 'uncode') ,
+			'param_name' => 'carousel_dot_position',
+			"value" => array(
+				esc_html__('Center', 'uncode') => '',
+				esc_html__('Left', 'uncode') => 'left',
+				esc_html__('Right', 'uncode') => 'right',
+			) ,
+			"group" => esc_html__("Module", 'uncode') ,
+			'description' => esc_html__('Specify the position of dots.', 'uncode') ,
 			'dependency' => array(
 				'element' => 'type',
 				'value' => 'carousel',
@@ -4534,6 +4762,69 @@ vc_map(array(
 			) ,
 		) ,
 		array(
+			"type" => 'checkbox',
+			"heading" => esc_html__("Off-Grid", 'uncode') ,
+			"param_name" => "off_grid",
+			"description" => esc_html__("Activate this to put odd or even elements Off-Grid.", 'uncode') ,
+			"value" => Array(
+				esc_html__("Yes, please", 'uncode') => 'yes'
+			) ,
+			'std' => '',
+			'group' => esc_html__('Module', 'uncode') ,
+			'dependency' => array(
+				'element' => 'isotope_mode',
+				'value' => array(
+					'masonry',
+					'packery'
+				),
+			) ,
+		) ,
+		array(
+			"type" => 'dropdown',
+			"heading" => esc_html__("Select the set of items to shift.", 'uncode') ,
+			"param_name" => "off_grid_element",
+			"description" => esc_html__("Select what item to put Off-Grid.", 'uncode') ,
+			'value' => array(
+				esc_html__('Odd', 'uncode') => 'odd',
+				esc_html__('Even', 'uncode') => 'even',
+				esc_html__('Custom', 'uncode') => 'custom'
+			) ,
+			'group' => esc_html__('Module', 'uncode') ,
+			'dependency' => array(
+				'element' => 'off_grid',
+				'not_empty' => true,
+			) ,
+		) ,
+		array(
+			'type' => 'textfield',
+			'heading' => esc_html__('Off-Grid custom value', 'uncode') ,
+			'param_name' => 'off_grid_custom',
+			'value' => '0,2',
+			'description' => wp_kses(__('Enter a number or a series of comma separated numbers.<br />NB. The first element is identified by 0.', 'uncode'), array( 'br' => array( ) ) ) ,
+			'group' => esc_html__('Module', 'uncode') ,
+			'dependency' => array(
+				'element' => 'off_grid_element',
+				'value' => array(
+					'custom',
+				) ,
+			) ,
+		) ,
+		array(
+			"type" => "type_numeric_slider",
+			"heading" => esc_html__("Off-Grid value", 'uncode') ,
+			"param_name" => "off_grid_val",
+			"min" => 1,
+			"max" => 7,
+			"step" => 1,
+			"value" => 2,
+			"description" => esc_html__("Set the shift value.", 'uncode') ,
+			'group' => esc_html__('Module', 'uncode') ,
+			'dependency' => array(
+				'element' => 'off_grid',
+				'not_empty' => true,
+			) ,
+		) ,
+		array(
 			'type' => 'textfield',
 			'heading' => esc_html__('Breakpoint - First step', 'uncode') ,
 			'param_name' => 'screen_lg',
@@ -4573,6 +4864,51 @@ vc_map(array(
 				'value' => array(
 					'isotope',
 				) ,
+			) ,
+		) ,
+		array(
+			"type" => 'checkbox',
+			"heading" => esc_html__("Not active items semitransparency", 'uncode') ,
+			"param_name" => "carousel_half_opacity",
+			"description" => esc_html__("Activate this option to make semitransparent not active items.", 'uncode') ,
+			"std" => '',
+			"value" => Array(
+				esc_html__("Yes, please", 'uncode') => 'yes'
+			) ,
+			"group" => esc_html__("Module", 'uncode') ,
+			'dependency' => array(
+				'element' => 'type',
+				'value' => 'carousel',
+			) ,
+		) ,
+		array(
+			"type" => 'checkbox',
+			"heading" => esc_html__("Not active items scaled", 'uncode') ,
+			"param_name" => "carousel_scaled",
+			"description" => esc_html__("Activate this option to scale not active items.", 'uncode') ,
+			"std" => '',
+			"value" => Array(
+				esc_html__("Yes, please", 'uncode') => 'yes'
+			) ,
+			"group" => esc_html__("Module", 'uncode') ,
+			'dependency' => array(
+				'element' => 'type',
+				'value' => 'carousel',
+			) ,
+		) ,
+		array(
+			"type" => 'checkbox',
+			"heading" => esc_html__("Not clickable not active items", 'uncode') ,
+			"param_name" => "carousel_pointer_events",
+			"description" => esc_html__("Activate this option to make not clickable not active items.", 'uncode') ,
+			"std" => '',
+			"value" => Array(
+				esc_html__("Yes, please", 'uncode') => 'yes'
+			) ,
+			"group" => esc_html__("Module", 'uncode') ,
+			'dependency' => array(
+				'element' => 'type',
+				'value' => 'carousel',
 			) ,
 		) ,
 		array(
@@ -4742,6 +5078,31 @@ vc_map(array(
 			'group' => esc_html__('Blocks', 'uncode') ,
 		) ,
 		array(
+			"type" => "dropdown",
+			"heading" => esc_html__("Overlay blend mode (experimental)", 'uncode') ,
+			"param_name" => "single_overlay_blend",
+			"description" => esc_html__("Specify a blending mode. NB. It does not work on IE and Edge.", 'uncode') ,
+			'group' => esc_html__('Blocks', 'uncode'),
+			"value" => array(
+				esc_html__('None', 'uncode') => '',
+				esc_html__('Multiply', 'uncode') => 'multiply',
+				esc_html__('Screen', 'uncode') => 'screen',
+				esc_html__('Overlay', 'uncode') => 'overlay',
+				esc_html__('Darken', 'uncode') => 'darken',
+				esc_html__('Lighten', 'uncode') => 'lighten',
+				esc_html__('Color dodge', 'uncode') => 'color-dodge',
+				esc_html__('Color burn', 'uncode') => 'color-burn',
+				esc_html__('Hard light', 'uncode') => 'hard-light',
+				esc_html__('Soft light', 'uncode') => 'soft-light',
+				esc_html__('Difference', 'uncode') => 'difference',
+				esc_html__('Exclusion', 'uncode') => 'exclusion',
+			) ,
+			"dependency" => array(
+				'element' => "single_overlay_color",
+				'not_empty' => true
+			) ,
+		) ,
+		array(
 			"type" => "type_numeric_slider",
 			"heading" => esc_html__("Overlay opacity", 'uncode') ,
 			"param_name" => "single_overlay_opacity",
@@ -4845,6 +5206,20 @@ vc_map(array(
 			"group" => esc_html__("Blocks", 'uncode') ,
 		) ,
 		array(
+			"type" => 'checkbox',
+			"heading" => esc_html__("Image animation on mouse move", 'uncode') ,
+			"param_name" => "single_image_anim_move",
+			"description" => esc_html__("Activate this to animate the image on the mouse move.", 'uncode') ,
+			"value" => Array(
+				esc_html__("Yes, please", 'uncode') => 'yes'
+			) ,
+			"group" => esc_html__("Blocks", 'uncode') ,
+			'dependency' => array(
+				'element' => 'single_image_anim',
+				'value' => array('yes'),
+			)
+		) ,
+		array(
 			"type" => 'dropdown',
 			"heading" => esc_html__("Text horizontal alignment", 'uncode') ,
 			"param_name" => "single_h_align",
@@ -4878,6 +5253,7 @@ vc_map(array(
 				esc_html__('100%', 'uncode') => '',
 				esc_html__('75%', 'uncode') => 'three_quarter',
 				esc_html__('50%', 'uncode') => 'half',
+				esc_html__('Limit Width', 'uncode') => 'limit-width',
 			) ,
 			"group" => esc_html__("Blocks", 'uncode') ,
 		) ,
@@ -5097,6 +5473,20 @@ vc_map(array(
 			)
 		)) ,
 		array(
+			"type" => "checkbox",
+			"heading" => esc_html__("Animation first items", 'uncode') ,
+			"description" => esc_html__("...", 'uncode') ,
+			"param_name" => "single_animation_first",
+			"value" => Array(
+				esc_html__("Yes, please", 'uncode') => 'yes'
+			) ,
+			"group" => esc_html__("Blocks", 'uncode') ,
+			'dependency' => array(
+				'element' => 'type',
+				'value' => 'carousel' ,
+			) ,
+		) ,
+		array(
 			'type' => 'uncode_items',
 			'heading' => '',
 			'param_name' => 'items',
@@ -5230,9 +5620,9 @@ vc_map(array(
 		) ,
 		array(
 			"type" => 'checkbox',
-			"heading" => esc_html__("Text lead", 'uncode') ,
+			"heading" => esc_html__("Text large", 'uncode') ,
 			"param_name" => "text_lead",
-			"description" => esc_html__("Slightly enlarge the font size.", 'uncode') ,
+			"description" => esc_html__("Activate if you want to enlarge the font size.", 'uncode') ,
 			"value" => Array(
 				'' => 'yes'
 			) ,
@@ -5321,7 +5711,7 @@ vc_map(array(
 				esc_html__('Border', 'uncode') => '',
 				esc_html__('Dashed', 'uncode') => 'dashed',
 				esc_html__('Dotted', 'uncode') => 'dotted',
-				esc_html__('Double', 'uncode') => 'double',
+				//esc_html__('Double', 'uncode') => 'double',
 			) ,
 			'description' => esc_html__('Separator style.', 'uncode')
 		) ,
@@ -5667,7 +6057,7 @@ vc_map(array(
 			'type' => 'sorted_list',
 			'heading' => esc_html__('Media', 'uncode') ,
 			'param_name' => 'media_items',
-			'description' => esc_html__('Control teasers look. Enable blocks and place them in desired order. Note: This setting can be overridden on post to post basis.', 'uncode') ,
+			'description' => esc_html__('Enable or disable elements and place them in desired order.', 'uncode') ,
 			'value' => 'media',
 			"group" => esc_html__("Advanced", 'uncode') ,
 			'dependency' => array(
@@ -5725,7 +6115,25 @@ vc_map(array(
 				) ,
 				array(
 					'spacer',
-					esc_html__('Spacer', 'uncode') ,
+					esc_html__('Spacer One', 'uncode') ,
+					array(
+						array(
+							'half',
+							esc_html__('0.5x', 'uncode')
+						) ,
+						array(
+							'one',
+							esc_html__('1x', 'uncode')
+						) ,
+						array(
+							'two',
+							esc_html__('2x', 'uncode')
+						)
+					)
+				) ,
+				array(
+					'spacer_two',
+					esc_html__('Spacer Two', 'uncode') ,
 					array(
 						array(
 							'half',
@@ -5752,6 +6160,10 @@ vc_map(array(
 						array(
 							'reduced',
 							esc_html__('Reduced width', 'uncode')
+						),
+						array(
+							'extra',
+							esc_html__('Extra full width', 'uncode')
 						)
 					)
 				) ,
@@ -5766,6 +6178,10 @@ vc_map(array(
 						array(
 							'reduced',
 							esc_html__('Reduced width', 'uncode')
+						),
+						array(
+							'extra',
+							esc_html__('Extra full width', 'uncode')
 						)
 					)
 				) ,
@@ -5844,6 +6260,31 @@ vc_map(array(
 				'value' => 'yes'
 			) ,
 			'group' => esc_html__('Advanced', 'uncode') ,
+		) ,
+		array(
+			"type" => "dropdown",
+			"heading" => esc_html__("Overlay blend mode (experimental)", 'uncode') ,
+			"param_name" => "media_overlay_color_blend",
+			"description" => esc_html__("Specify a blending mode. NB. It does not work on IE and Edge.", 'uncode') ,
+			'group' => esc_html__('Advanced', 'uncode') ,
+			"value" => array(
+				esc_html__('None', 'uncode') => '',
+				esc_html__('Multiply', 'uncode') => 'multiply',
+				esc_html__('Screen', 'uncode') => 'screen',
+				esc_html__('Overlay', 'uncode') => 'overlay',
+				esc_html__('Darken', 'uncode') => 'darken',
+				esc_html__('Lighten', 'uncode') => 'lighten',
+				esc_html__('Color dodge', 'uncode') => 'color-dodge',
+				esc_html__('Color burn', 'uncode') => 'color-burn',
+				esc_html__('Hard light', 'uncode') => 'hard-light',
+				esc_html__('Soft light', 'uncode') => 'soft-light',
+				esc_html__('Difference', 'uncode') => 'difference',
+				esc_html__('Exclusion', 'uncode') => 'exclusion',
+			) ,
+			"dependency" => array(
+				'element' => "media_overlay_color",
+				'not_empty' => true
+			) ,
 		) ,
 		array(
 			"type" => "type_numeric_slider",
@@ -5983,6 +6424,20 @@ vc_map(array(
 				'value' => 'yes'
 			) ,
 			"group" => esc_html__("Advanced", 'uncode') ,
+		) ,
+		array(
+			"type" => 'checkbox',
+			"heading" => esc_html__("Image animation on mouse move", 'uncode') ,
+			"param_name" => "single_image_anim_move",
+			"description" => esc_html__("Activate this to animate the image on the mouse move.", 'uncode') ,
+			"value" => Array(
+				esc_html__("Yes, please", 'uncode') => 'yes'
+			) ,
+			"group" => esc_html__("Advanced", 'uncode') ,
+			'dependency' => array(
+				'element' => 'media_image_anim',
+				'value' => array('yes'),
+			)
 		) ,
 		array(
 			"type" => 'dropdown',
@@ -6174,6 +6629,39 @@ vc_map(array(
 			"description" => esc_html__("Specify the title letter spacing.", 'uncode') ,
 			"value" => $heading_space,
 			"group" => esc_html__("Advanced", 'uncode') ,
+			'dependency' => array(
+				'element' => 'advanced',
+				'value' => 'yes'
+			) ,
+		) ,
+		array(
+			'type' => 'textfield',
+			'heading' => esc_html__('Title Custom Text', 'uncode') ,
+			"param_name" => "media_title_custom",
+			"group" => esc_html__("Advanced", 'uncode') ,
+			'description' => esc_html__('Type a custom title.', 'uncode'),
+			'dependency' => array(
+				'element' => 'advanced',
+				'value' => 'yes'
+			) ,
+		) ,
+		array(
+			'type' => 'textfield',
+			'heading' => esc_html__('Description Custom Text', 'uncode') ,
+			"param_name" => "media_subtitle_custom",
+			"group" => esc_html__("Advanced", 'uncode') ,
+			'description' => esc_html__('Type a custom description.', 'uncode'),
+			'dependency' => array(
+				'element' => 'advanced',
+				'value' => 'yes'
+			) ,
+		) ,
+		array(
+			'type' => 'textfield',
+			'heading' => esc_html__('Caption Custom Text', 'uncode') ,
+			"param_name" => "media_caption_custom",
+			"group" => esc_html__("Advanced", 'uncode') ,
+			'description' => esc_html__('Type a custom caption.', 'uncode'),
 			'dependency' => array(
 				'element' => 'advanced',
 				'value' => 'yes'
@@ -7441,9 +7929,14 @@ if ( class_exists( 'WPCF7' ) )
 				'value' => $contact_forms,
 				'description' => esc_html__('Choose previously created contact form from the drop down list.', 'uncode')
 			),
-			$add_css_animation,
-			$add_animation_speed,
-			$add_animation_delay,
+			array(
+				'type' => 'checkbox',
+				'heading' => esc_html__('Input Text Underlined', 'uncode') ,
+				'param_name' => 'html_class',
+				'value' => array(
+					esc_html__('Yes, please', 'uncode') => 'input-underline'
+				)
+			) ,
 		)
 	));
 }
@@ -8027,6 +8520,18 @@ vc_map(array(
 
 /* Custom Heading element
  ----------------------------------------------------------- */
+$new_css_animation =  array (
+	esc_html__('Lines curtain', 'uncode') => 'curtain',
+	esc_html__('Words curtain', 'uncode') => 'curtain-words',
+	esc_html__('Words sliding', 'uncode') => 'single-slide',
+	esc_html__('Words sliding reverse', 'uncode') => 'single-slide-opposite',
+	esc_html__('Letters curtain', 'uncode') => 'single-curtain',
+	esc_html__('Letters typewriter', 'uncode') => 'typewriter',
+);
+$old_css_animation = $add_css_animation['value'];
+$add_text_css_animation = $add_css_animation;
+$add_text_css_animation['value'] = array_merge($old_css_animation, $new_css_animation);
+
 vc_map(array(
 	'name' => esc_html__('Heading', 'uncode') ,
 	'base' => 'vc_custom_heading',
@@ -8048,13 +8553,15 @@ vc_map(array(
 			'group' => esc_html__('General', 'uncode')
 		) ,
 		array(
-			"type" => 'checkbox',
+			"type" => 'dropdown',
 			"heading" => esc_html__("Automatic heading text", 'uncode') ,
 			"param_name" => "auto_text",
-			"description" => esc_html__("Activate this to pull automatic text content when used as heading for categories.", 'uncode') ,
+			"description" => esc_html__("Activate this to pull automatic text content (title or excerpt).", 'uncode') ,
 			'group' => esc_html__('General', 'uncode') ,
-			"value" => Array(
-				'' => 'yes'
+			"value" => array(
+				esc_html__('No', 'uncode') => '',
+				esc_html__('Get the title', 'uncode') => 'yes',
+				esc_html__('Get the excerpt', 'uncode') => 'excerpt',
 			) ,
 		) ,
 		array(
@@ -8191,9 +8698,9 @@ vc_map(array(
 		) ,
 		array(
 			"type" => 'checkbox',
-			"heading" => esc_html__("Subheading lead", 'uncode') ,
+			"heading" => esc_html__("Text large", 'uncode') ,
 			"param_name" => "sub_lead",
-			"description" => esc_html__("Slightly enlarge the font size.", 'uncode') ,
+			"description" => esc_html__("Activate if you want to enlarge the font size.", 'uncode') ,
 			"value" => Array(
 				'' => 'yes'
 			) ,
@@ -8239,9 +8746,47 @@ vc_map(array(
 				'' => 'yes'
 			) ,
 		) ,
-		$add_css_animation,
+		$add_text_css_animation,
 		$add_animation_speed,
 		$add_animation_delay,
+		array(
+			'type' => 'dropdown',
+			'heading' => esc_html__('Animation interval', 'uncode') ,
+			'param_name' => 'interval_animation',
+			'admin_label' => true,
+			'value' => array(
+				esc_html__('Default (ms 0)', 'uncode') => '',
+				esc_html__('ms 20', 'uncode') => 20,
+				esc_html__('ms 40', 'uncode') => 40,
+				esc_html__('ms 60', 'uncode') => 60,
+				esc_html__('ms 80', 'uncode') => 80,
+				esc_html__('ms 100', 'uncode') => 100,
+				esc_html__('ms 120', 'uncode') => 120,
+				esc_html__('ms 140', 'uncode') => 140,
+				esc_html__('ms 160', 'uncode') => 160,
+				esc_html__('ms 180', 'uncode') => 180,
+				esc_html__('ms 200', 'uncode') => 200,
+				esc_html__('ms 250', 'uncode') => 250,
+				esc_html__('ms 300', 'uncode') => 300,
+				esc_html__('ms 350', 'uncode') => 350,
+				esc_html__('ms 400', 'uncode') => 400,
+				esc_html__('ms 450', 'uncode') => 450,
+				esc_html__('ms 500', 'uncode') => 500,
+			) ,
+			'dependency' => array(
+				'element' => 'css_animation',
+				'value' => array(
+					'curtain',
+					'curtain-words',
+					'single-curtain',
+					'single-slide',
+					'single-slide-opposite',
+					'typewriter',
+				),
+			) ,
+			'group' => esc_html__('Animation', 'uncode') ,
+			'description' => esc_html__('Specify the interval between animations.', 'uncode')
+		) ,
 		array(
 			'type' => 'textfield',
 			'heading' => esc_html__('Extra class name', 'uncode') ,
@@ -8262,7 +8807,7 @@ vc_map(array(
 	'weight' => 97,
 	'php_class_name' => 'uncode_generic_admin',
 	'category' => esc_html__('Content', 'uncode') ,
-	'description' => esc_html__('Icon box from icon library', 'uncode') ,
+	'description' => esc_html__('Icon Box from icon library', 'uncode') ,
 	'params' => array(
 		array(
 			"type" => 'dropdown',
@@ -8364,6 +8909,19 @@ vc_map(array(
 		) ,
 		array(
 			'type' => 'checkbox',
+			'heading' => esc_html__('Icon animated', 'uncode') ,
+			'param_name' => 'icon_automatic',
+			'description' => esc_html__("Activate the animation effect.", 'uncode') ,
+			'value' => array(
+				esc_html__('Yes, please', 'uncode') => 'yes'
+			) ,
+			'dependency' => array(
+				'element' => 'background_style',
+				'not_empty' => true,
+			) ,
+		) ,
+		array(
+			'type' => 'checkbox',
 			'heading' => esc_html__('Icon shadow', 'uncode') ,
 			'param_name' => 'shadow',
 			'description' => esc_html__('Icon shadow.', 'uncode') ,
@@ -8432,12 +8990,13 @@ vc_map(array(
 			'heading' => esc_html__('Text', 'uncode') ,
 			'param_name' => 'content',
 			'admin_label' => true,
+			"value" => '',
 		) ,
 		array(
 			"type" => 'checkbox',
-			"heading" => esc_html__("Text lead", 'uncode') ,
+			"heading" => esc_html__("Text large", 'uncode') ,
 			"param_name" => "text_lead",
-			"description" => esc_html__("Slightly enlarge the font size.", 'uncode') ,
+			"description" => esc_html__("Activate if you want to enlarge the font size.", 'uncode') ,
 			"value" => Array(
 				'' => 'yes'
 			) ,

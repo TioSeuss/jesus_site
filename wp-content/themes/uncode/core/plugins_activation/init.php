@@ -21,6 +21,7 @@
  * Include the TGM_Plugin_Activation class.
  */
 require_once dirname( __FILE__ ) . '/class-tgm-plugin-activation.php';
+require_once dirname( __FILE__ ) . '/class-tgm-updater.php';
 
 add_action( 'tgmpa_register', 'uncode_register_required_plugins' );
 /**
@@ -43,101 +44,28 @@ function uncode_register_required_plugins() {
 	 * If the source is NOT from the .org repo, then source is also required.
 	 */
 	$plugins = array(
-
-		// This is an example of how to include a plugin bundled with a theme.
 		array(
 			'name'               => 'Uncode Core', // The plugin name.
 			'slug'               => 'uncode-core', // The plugin slug (typically the folder name).
 			'source'             => get_template_directory() . '/core/plugins_activation/plugins/uncode-core.zip', // The plugin source.
 			'required'           => true, // If false, the plugin is only 'recommended' instead of required.
-			'version'            => '1.7.3', // E.g. 1.0.0. If set, the active plugin must be this version or higher. If the plugin version is higher than the plugin version installed, the user will be notified to update the plugin.
+			'version'            => '2.0.0', // E.g. 1.0.0. If set, the active plugin must be this version or higher. If the plugin version is higher than the plugin version installed, the user will be notified to update the plugin.
 			'force_activation'   => true, // If true, plugin is activated upon theme activation and cannot be deactivated until theme switch.
 			'force_deactivation' => true, // If true, plugin is deactivated upon theme switch, useful for theme-specific plugins.
 			'external_url'       => '', // If set, overrides default API URL and points to an external URL.
 			'is_callable'        => '', // If set, this callable will be be checked for availability to determine if a plugin is active.
 		),
 		array(
-			'name'               => 'Uncode Page Builder (Visual Composer)', // The plugin name.
+			'name'               => 'Uncode WPBakery Page Builder', // The plugin name.
 			'slug'               => 'uncode-js_composer', // The plugin slug (typically the folder name).
 			'source'             => get_template_directory() . '/core/plugins_activation/plugins/uncode-js_composer.zip', // The plugin source.
 			'required'           => true, // If false, the plugin is only 'recommended' instead of required.
-			'version'            => '5.6', // E.g. 1.0.0. If set, the active plugin must be this version or higher. If the plugin version is higher than the plugin version installed, the user will be notified to update the plugin.
+			'version'            => '5.7', // E.g. 1.0.0. If set, the active plugin must be this version or higher. If the plugin version is higher than the plugin version installed, the user will be notified to update the plugin.
 			'force_activation'   => false, // If true, plugin is activated upon theme activation and cannot be deactivated until theme switch.
 			'force_deactivation' => false, // If true, plugin is deactivated upon theme switch, useful for theme-specific plugins.
 			'external_url'       => '', // If set, overrides default API URL and points to an external URL.
 			'is_callable'        => '', // If set, this callable will be be checked for availability to determine if a plugin is active.
 		),
-		array(
-			'name'               => 'Uncode Dave\'s WordPress Live Search', // The plugin name.
-			'slug'               => 'uncode-daves-wordpress-live-search', // The plugin slug (typically the folder name).
-			'source'             => get_template_directory() . '/core/plugins_activation/plugins/uncode-daves-wordpress-live-search.zip', // The plugin source.
-			'required'           => false, // If false, the plugin is only 'recommended' instead of required.
-			'version'            => '1.0.3', // E.g. 1.0.0. If set, the active plugin must be this version or higher. If the plugin version is higher than the plugin version installed, the user will be notified to update the plugin.
-			'force_activation'   => false, // If true, plugin is activated upon theme activation and cannot be deactivated until theme switch.
-			'force_deactivation' => false, // If true, plugin is deactivated upon theme switch, useful for theme-specific plugins.
-			'external_url'       => '', // If set, overrides default API URL and points to an external URL.
-			'is_callable'        => '', // If set, this callable will be be checked for availability to determine if a plugin is active.
-		),
-		array(
-			'name'               => 'Visual Composer Clipboard', // The plugin name.
-			'slug'               => 'vc_clipboard', // The plugin slug (typically the folder name).
-			'source'             => get_template_directory() . '/core/plugins_activation/plugins/vc_clipboard.zip', // The plugin source.
-			'required'           => false, // If false, the plugin is only 'recommended' instead of required.
-			'version'            => '4.5.0', // E.g. 1.0.0. If set, the active plugin must be this version or higher. If the plugin version is higher than the plugin version installed, the user will be notified to update the plugin.
-			'force_activation'   => false, // If true, plugin is activated upon theme activation and cannot be deactivated until theme switch.
-			'force_deactivation' => false, // If true, plugin is deactivated upon theme switch, useful for theme-specific plugins.
-			'external_url'       => '', // If set, overrides default API URL and points to an external URL.
-			'is_callable'        => '', // If set, this callable will be be checked for availability to determine if a plugin is active.
-		),
-		array(
-			'name'               => 'VC Particles Background', // The plugin name.
-			'slug'               => 'vcparticlesbackground', // The plugin slug (typically the folder name).
-			'source'             => get_template_directory() . '/core/plugins_activation/plugins/vcparticlesbackground.zip', // The plugin source.
-			'required'           => false, // If false, the plugin is only 'recommended' instead of required.
-			'version'            => '1.3', // E.g. 1.0.0. If set, the active plugin must be this version or higher. If the plugin version is higher than the plugin version installed, the user will be notified to update the plugin.
-			'force_activation'   => false, // If true, plugin is activated upon theme activation and cannot be deactivated until theme switch.
-			'force_deactivation' => false, // If true, plugin is deactivated upon theme switch, useful for theme-specific plugins.
-			'external_url'       => '', // If set, overrides default API URL and points to an external URL.
-			'is_callable'        => '', // If set, this callable will be be checked for availability to determine if a plugin is active.
-		),
-
-		array(
-			'name'               => 'Revolution Slider', // The plugin name.
-			'slug'               => 'revslider', // The plugin slug (typically the folder name).
-			'source'             => get_template_directory() . '/core/plugins_activation/plugins/revslider.zip', // The plugin source.
-			'required'           => false, // If false, the plugin is only 'recommended' instead of required.
-			'version'            => '5.4.8', // E.g. 1.0.0. If set, the active plugin must be this version or higher. If the plugin version is higher than the plugin version installed, the user will be notified to update the plugin.
-			'force_activation'   => false, // If true, plugin is activated upon theme activation and cannot be deactivated until theme switch.
-			'force_deactivation' => false, // If true, plugin is deactivated upon theme switch, useful for theme-specific plugins.
-			'external_url'       => '', // If set, overrides default API URL and points to an external URL.
-			'is_callable'        => '', // If set, this callable will be be checked for availability to determine if a plugin is active.
-		),
-
-		array(
-			'name'               => 'Layer Slider', // The plugin name.
-			'slug'               => 'LayerSlider', // The plugin slug (typically the folder name).
-			'source'             => get_template_directory() . '/core/plugins_activation/plugins/layersliderwp.zip', // The plugin source.
-			'required'           => false, // If false, the plugin is only 'recommended' instead of required.
-			'version'            => '6.7.6', // E.g. 1.0.0. If set, the active plugin must be this version or higher. If the plugin version is higher than the plugin version installed, the user will be notified to update the plugin.
-			'force_activation'   => false, // If true, plugin is activated upon theme activation and cannot be deactivated until theme switch.
-			'force_deactivation' => false, // If true, plugin is deactivated upon theme switch, useful for theme-specific plugins.
-			'external_url'       => '', // If set, overrides default API URL and points to an external URL.
-			'is_callable'        => '', // If set, this callable will be be checked for availability to determine if a plugin is active.
-		),
-
-		array(
-			'name'               => 'Uncode Privacy', // The plugin name.
-			'slug'               => 'uncode-privacy', // The plugin slug (typically the folder name).
-			'source'             => get_template_directory() . '/core/plugins_activation/plugins/uncode-privacy.zip', // The plugin source.
-			'required'           => false, // If false, the plugin is only 'recommended' instead of required.
-			'version'            => '1.0.0', // E.g. 1.0.0. If set, the active plugin must be this version or higher. If the plugin version is higher than the plugin version installed, the user will be notified to update the plugin.
-			'force_activation'   => false, // If true, plugin is activated upon theme activation and cannot be deactivated until theme switch.
-			'force_deactivation' => false, // If true, plugin is deactivated upon theme switch, useful for theme-specific plugins.
-			'external_url'       => '', // If set, overrides default API URL and points to an external URL.
-			'is_callable'        => '', // If set, this callable will be be checked for availability to determine if a plugin is active.
-		),
-
-		// This is an example of how to include a plugin from the WordPress Plugin Repository.
 		array(
 			'name'      => 'Contact Form 7',
 			'slug'      => 'contact-form-7',
@@ -162,6 +90,23 @@ function uncode_register_required_plugins() {
 			'required'  => false,
 		);
 
+	}
+
+	$premium_plugins = uncode_get_premium_plugins();
+
+	foreach ( $premium_plugins as $premium_plugin_data ) {
+		$plugins[] = array(
+			'name'               => $premium_plugin_data[ 'plugin_name' ], // The plugin name.
+			'slug'               => $premium_plugin_data[ 'plugin_slug' ], // The plugin slug (typically the folder name).
+			'source'             => $premium_plugin_data[ 'zip_url' ], // The plugin source.
+			'required'           => $premium_plugin_data[ 'required' ], // If false, the plugin is only 'recommended' instead of required.
+			'version'            => $premium_plugin_data[ 'version' ], // E.g. 1.0.0. If set, the active plugin must be this version or higher. If the plugin version is higher than the plugin version installed, the user will be notified to update the plugin.
+			'force_activation'   => $premium_plugin_data[ 'force_activation' ], // If true, plugin is activated upon theme activation and cannot be deactivated until theme switch.
+			'force_deactivation' => $premium_plugin_data[ 'force_deactivation' ], // If true, plugin is deactivated upon theme switch, useful for theme-specific plugins.
+			'external_url'       => '', // If set, overrides default API URL and points to an external URL.
+			'is_callable'        => '', // If set, this callable will be be checked for availability to determine if a plugin is active.
+			'is_premium'         => true,
+		);
 	}
 
 	/*
@@ -237,10 +182,5 @@ if ( ! function_exists( 'uncode_remove_sliders_notices' ) ) :
 function uncode_remove_sliders_notices(){
 	remove_action('admin_notices', array('RevSliderAdmin', 'add_plugins_page_notices'));
 	remove_action('admin_init', 'layerslider_check_notices');
-	if ( isset($GLOBALS['LS_AutoUpdate']) ) {
-		$ls_slider = $GLOBALS['LS_AutoUpdate'];
-		remove_filter('pre_set_site_transient_update_plugins', array($ls_slider, 'set_update_transient'));
-		remove_filter('plugins_api', array($ls_slider, 'set_updates_api_results'), 10, 3);
-	}
 }
 endif;//uncode_remove_sliders_notices

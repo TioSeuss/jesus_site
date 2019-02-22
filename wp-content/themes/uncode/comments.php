@@ -73,9 +73,11 @@ if ( post_password_required() ) {
 		if ( is_user_logged_in() ) {
 			$current_user = wp_get_current_user();
 			$gravatar = '<div class="comment-content"><div class="comment-figure"><figure class="gravatar">'.get_avatar( $current_user->ID, 256 ).'</figure><p class="logged-in-as"><a href="'.get_edit_user_link().'">'.$user_identity.'</a></p><a href="'.wp_logout_url( apply_filters( 'the_permalink', get_permalink( $post->ID ) ) ).'" title="Log out of this account" class="clearfix">'.esc_html__('Log out','uncode').'</a></div><div class="comment-meta post-meta"><p class="comment-form-comment comment-loggedin"><textarea id="comment" name="comment" cols="45" rows="8" aria-describedby="form-allowed-tags" aria-required="true"></textarea></p></div></div>';
-		} else $gravatar = '<p class="comment-form-comment"><label for="comment">' . _x( 'Comment', 'noun', 'uncode' ) . '</label> <textarea id="comment" name="comment" cols="45" rows="8" aria-describedby="form-allowed-tags" aria-required="true"></textarea></p>';
+		} else {
+			$gravatar = '<p class="comment-form-comment"><label for="comment">' . _x( 'Comment', 'noun', 'uncode' ) . '</label> <textarea id="comment" name="comment" cols="45" rows="8" aria-describedby="form-allowed-tags" aria-required="true"></textarea></p>';
+		}
 	?>
-	<div<?php if ( is_user_logged_in() ) echo ' class="form-indent"'; ?>>
+	<div<?php if ( is_user_logged_in() ) { echo ' class="form-indent"'; } ?>>
 	<?php
 		comment_form(
 			array(

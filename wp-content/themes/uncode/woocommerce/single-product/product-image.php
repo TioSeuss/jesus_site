@@ -57,11 +57,13 @@ $wrapper_classes   = apply_filters( 'woocommerce_single_product_image_gallery_cl
 ?>
 	<?php
 		if ( $product->get_image_id() ) {
-			$media_id = get_post_thumbnail_id();
+			$media_id = $product->get_image_id();
 			$image_title = esc_attr( get_the_title( $media_id ) );
 			$image_attributes = uncode_get_media_info($media_id);
 			$image_metavalues = unserialize($image_attributes->metadata);
-			if ($image_attributes->post_mime_type === 'image/gif' || $image_attributes->post_mime_type === 'image/url') $crop = false;
+			if ($image_attributes->post_mime_type === 'image/gif' || $image_attributes->post_mime_type === 'image/url') {
+				$crop = false;
+			}
 			$image_resized = uncode_resize_image($image_attributes->id, $image_attributes->guid, $image_attributes->path, $image_metavalues['width'], $image_metavalues['height'], $col_size, ($crop ? $col_size / $thumb_ratio : null), $crop);
 			$small_image_resized = uncode_resize_image($image_attributes->id, $image_attributes->guid, $image_attributes->path, $image_metavalues['width'], $image_metavalues['height'], 2, ($th_crop ? 2 / $small_ratio : null), $th_crop);
 			global $adaptive_images, $adaptive_images_async, $adaptive_images_async_blur;
@@ -79,7 +81,7 @@ $wrapper_classes   = apply_filters( 'woocommerce_single_product_image_gallery_cl
 			);
 			if ($adaptive_images === 'on' && $adaptive_images_async === 'on') {
 				$attributes['class'] = 'adaptive-async'.(($adaptive_images_async_blur === 'on') ? ' async-blurred' : '');
-				$attributes['data-uniqueid'] = $media_id.'-'.big_rand();
+				$attributes['data-uniqueid'] = $media_id.'-'.uncode_big_rand();
 				$attributes['data-guid'] = $image_attributes->guid;
 				$attributes['data-path'] = $image_attributes->path;
 				$attributes['data-width'] = $image_metavalues['width'];
@@ -90,9 +92,9 @@ $wrapper_classes   = apply_filters( 'woocommerce_single_product_image_gallery_cl
 			}
 
 			global $gallery_id;
-			$gallery_id = big_rand();
+			$gallery_id = uncode_big_rand();
 
-			$html = '<div data-thumb="' . esc_url( $small_image_resized['url'] ) . '" class="woocommerce-product-gallery__image"><a href="' . esc_url( $image_link ) . '" itemprop="image" title="' . esc_attr( $image_title ) . '" class="woocommerce-main-image" data-options="thumbnail: \''.$image_resized['url'].'\'" data-lbox="ilightbox_gallery-' . $gallery_id . '">';
+			$html = '<div data-thumb="' . esc_url( $small_image_resized['url'] ) . '" class="woocommerce-product-gallery__image"><a href="' . esc_url( $image_link ) . '" itemprop="image" title="' . esc_attr( $image_title ) . '" class="woocommerce-main-image" data-title="' . $image_title . '" data-caption="' . get_post_field( 'post_excerpt', $post_thumbnail_id ) . '" data-options="thumbnail: \''.$image_resized['url'].'\'" data-lbox="ilightbox_gallery-' . $gallery_id . '">';
 			$html .= get_the_post_thumbnail( $post->ID, 'shop_single', $attributes );
 			$html .= '</a></div>';
 

@@ -25,23 +25,33 @@ if ($price_color !== '') {
 		$el_color = ' style-' .$price_color .'-bg style-dark';
 		$button_color = 'default';
 	}
-} else $button_color = 'default';
+} else {
+	$button_color = 'default';
+}
 
 $title_array = explode("|", $title);
 $title_html = '<h3 class="' . esc_attr( trim($text_color) ) . '">'.$title_array[0].'</h3>';
-if (isset($title_array[1])) $title_html .= '<span class="plan-title-data' . esc_attr( $text_color ) . '">' . wp_kses_post( $title_array[1] ) . '</span>';
+if (isset($title_array[1])) {
+	$title_html .= '<span class="plan-title-data' . esc_attr( $text_color ) . '">' . wp_kses_post( $title_array[1] ) . '</span>';
+}
 
 $price_array = explode("|", $price);
 $price_html = '<span class="price' . esc_attr( $text_color ) . '">' . wp_kses_post( $price_array[0] ) . '</span>';
-if (isset($price_array[1])) $price_html .= '<span>'.$price_array[1].'</span>';
+if (isset($price_array[1])) {
+	$price_html .= '<span>'.$price_array[1].'</span>';
+}
 
 $css_class = apply_filters( VC_SHORTCODE_CUSTOM_CSS_FILTER_TAG, 'uncode-pricing', $this->settings['base'], $atts );
 
 $div_data = array();
 if ($css_animation !== '') {
 	$css_class .= ' ' . $css_animation . ' animate_when_almost_visible';
-	if ($animation_delay !== '') $div_data['data-delay'] = $animation_delay;
-	if ($animation_speed !== '') $div_data['data-speed'] = $animation_speed;
+	if ($animation_delay !== '') {
+		$div_data['data-delay'] = $animation_delay;
+	}
+	if ($animation_speed !== '') {
+		$div_data['data-speed'] = $animation_speed;
+	}
 }
 
 $div_data_attributes = array_map(function ($v, $k) { return $k . '="' . $v . '"'; }, $div_data, array_keys($div_data));
@@ -61,7 +71,9 @@ if (count($lists_array) > 0) {
 	foreach ($lists_array as $key => $value) {
 		$list_array = explode("|", $value);
 		$list_html = '<strong>'.$list_array[0].'</strong>';
-		if (isset($list_array[1])) $list_html .= ' ' . $list_array[1];
+		if (isset($list_array[1])) {
+			$list_html .= ' ' . $list_array[1];
+		}
 		$output .= '<li>'.$list_html.'</li>';
 	}
 }
@@ -83,11 +95,13 @@ if ($button !== '') {
 	$a_href = $button['url'];
 	$a_title = $button['title'];
 	$a_target = $button['target'];
-	if ($a_title !== '') $output .= '<div class="plan-button'.esc_attr($el_color).'"><a href="'.esc_url($a_href).'" class="btn btn-' . esc_attr($button_color) . esc_attr($button_class) . '" target="'.esc_attr($a_target).'">'.$a_title.'</a></div>';
+	if ($a_title !== '') {
+		$output .= '<div class="plan-button'.esc_attr($el_color).'"><a href="'.esc_url($a_href).'" class="btn btn-' . esc_attr($button_color) . esc_attr($button_class) . '" target="'.esc_attr($a_target).'">'.$a_title.'</a></div>';
+	}
 }
 $output .= '</div>';
 $output .= '</div>';
 $output .= '</div>';
 $output .= '</div>';
 
-echo uncode_remove_wpautop( wp_kses_post( $output ) );
+echo uncode_remove_p_tag( wp_kses_post( $output ) );

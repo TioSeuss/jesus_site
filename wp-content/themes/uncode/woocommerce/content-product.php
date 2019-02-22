@@ -15,15 +15,18 @@
  * @package WooCommerce/Templates
  * @version 3.4.0
  */
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly
+}
 
 global $product, $wp_query, $woocommerce_loop;
 $vars = $wp_query->query_vars;
 $single_post_width = (isset($vars['single_post_width']) && $vars['single_post_width'] !== '') ? $vars['single_post_width'] : ( isset($woocommerce_loop['columns']) ? 12/$woocommerce_loop['columns'] : 4 );
 
 // Ensure visibility
-if ( ! $product || ! $product->is_visible() )
+if ( ! $product || ! $product->is_visible() ) {
 	return;
+}
 
 $item_thumb_id = '';
 
@@ -37,7 +40,9 @@ $overlay_style = $stylesArray[!array_search($general_style, $stylesArray) ];
 $overlay_back_color = 'style-' . $overlay_style . '-bg';
 
 $item_thumb_id = get_post_meta($post->ID, '_uncode_featured_media', 1);
-if ($item_thumb_id === '') $item_thumb_id = get_post_thumbnail_id($post->ID);
+if ($item_thumb_id === '') {
+	$item_thumb_id = get_post_thumbnail_id($post->ID);
+}
 
 $block_classes = array(
 	'tmb'
@@ -52,6 +57,10 @@ $block_classes[] = 'tmb-overlay-text-anim';
 //$block_classes[] = 'tmb-text-space-reduced';
 $block_classes[] = 'tmb-iso-w' . $single_post_width;
 $block_classes[] = implode(' ', get_post_class());
+
+if ( ot_get_option('_uncode_woocommerce_enhanced_atc') === 'on' ) {
+	$block_classes[] = 'enhanced-atc';
+}
 
 $media_items = array();
 $block_data = array();
@@ -93,9 +102,50 @@ if (isset($woo_categories) && !empty($woo_categories)) {
 $block_data['single_categories_id'] = $categories_id;
 $block_data['single_categories'] = $categories_link;
 
-if ($item_thumb_id !== '') $layout['media'] = array();
-else $layout['media'] = array('placeholder');
+if ($item_thumb_id !== '') {
+	$layout['media'] = array();
+} else {
+	$layout['media'] = array('placeholder');
+}
 $layout['title'] = array();
 $layout['price'] = array();
+
+/**
+ * Hook: woocommerce_before_shop_loop_item.
+ *
+ * @hooked woocommerce_template_loop_product_link_open - 10
+ */
+do_action( 'woocommerce_before_shop_loop_item' );
+
+/**
+ * Hook: woocommerce_before_shop_loop_item_title.
+ *
+ * @hooked woocommerce_show_product_loop_sale_flash - 10
+ * @hooked woocommerce_template_loop_product_thumbnail - 10
+ */
+do_action( 'woocommerce_before_shop_loop_item_title' );
+
+/**
+ * Hook: woocommerce_shop_loop_item_title.
+ *
+ * @hooked woocommerce_template_loop_product_title - 10
+ */
+do_action( 'woocommerce_shop_loop_item_title' );
+
+/**
+ * Hook: woocommerce_after_shop_loop_item_title.
+ *
+ * @hooked woocommerce_template_loop_rating - 5
+ * @hooked woocommerce_template_loop_price - 10
+ */
+do_action( 'woocommerce_after_shop_loop_item_title' );
+
+/**
+ * Hook: woocommerce_after_shop_loop_item.
+ *
+ * @hooked woocommerce_template_loop_product_link_close - 5
+ * @hooked woocommerce_template_loop_add_to_cart - 10
+ */
+do_action( 'woocommerce_after_shop_loop_item' );
 
 echo uncode_create_single_block($block_data, rand() , 'masonry', $layout, false, 'no');

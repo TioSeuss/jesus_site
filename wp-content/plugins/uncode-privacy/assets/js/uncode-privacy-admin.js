@@ -76,5 +76,27 @@
 			$('.uncode-privacy-wrap .nav-tab-wrapper a:eq(0)').addClass('nav-tab-active');
 			$('.uncode-privacy-wrap .uncode-privacy-tab:eq(0)').removeClass('hidden');
 		}
+
+		$('.uncode-privacy-switch-checkbox').each(function() {
+			var checkbox = $(this);
+			var stateControl = checkbox.closest('tr').next();
+
+			if (checkbox.prop('checked')) {
+				stateControl.hide();
+			} else {
+				stateControl.show();
+			}
+		});
+
+		$(document).on('click', '.uncode-privacy-switch-checkbox', '.uncode-privacy-settings-form', function() {
+			var checkbox = $(this);
+			var stateControl = checkbox.closest('tr').next();
+
+			if (checkbox.prop('checked')) {
+				stateControl.hide();
+			} else {
+				stateControl.show();
+			}
+		});
 	});
 })( jQuery );

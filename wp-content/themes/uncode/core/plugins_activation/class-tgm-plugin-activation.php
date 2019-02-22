@@ -449,7 +449,9 @@ if ( ! class_exists( 'TGM_Plugin_Activation' ) ) {
 
 			// Setup the force activation hook.
 			if ( true === $this->has_forced_activation ) {
-				add_action( 'admin_init', array( $this, 'force_activation' ) );
+				// EDITED by UNCODE
+				// add_action( 'admin_init', array( $this, 'force_activation' ) );
+				add_action( 'admin_footer', array( $this, 'force_activation' ) );
 			}
 
 			// Setup the force deactivation hook.
@@ -1713,32 +1715,35 @@ if ( ! class_exists( 'TGM_Plugin_Activation' ) ) {
 		 *                or the plugin name if not.
 		 */
 		public function get_info_link( $slug ) {
-			if ( ! empty( $this->plugins[ $slug ]['external_url'] ) && preg_match( self::IS_URL_REGEX, $this->plugins[ $slug ]['external_url'] ) ) {
-				$link = sprintf(
-					'<a href="%1$s" target="_blank">%2$s</a>',
-					esc_url( $this->plugins[ $slug ]['external_url'] ),
-					esc_html( $this->plugins[ $slug ]['name'] )
-				);
-			} elseif ( 'repo' === $this->plugins[ $slug ]['source_type'] ) {
-				$url = add_query_arg(
-					array(
-						'tab'       => 'plugin-information',
-						'plugin'    => urlencode( $slug ),
-						'TB_iframe' => 'true',
-						'width'     => '640',
-						'height'    => '500',
-					),
-					self_admin_url( 'plugin-install.php' )
-				);
+			// EDITED by UNCODE (no hyperlink)
+			$link = esc_html( $this->plugins[ $slug ]['name'] ); // No hyperlink.
 
-				$link = sprintf(
-					'<a href="%1$s" class="thickbox">%2$s</a>',
-					esc_url( $url ),
-					esc_html( $this->plugins[ $slug ]['name'] )
-				);
-			} else {
-				$link = esc_html( $this->plugins[ $slug ]['name'] ); // No hyperlink.
-			}
+			// if ( ! empty( $this->plugins[ $slug ]['external_url'] ) && preg_match( self::IS_URL_REGEX, $this->plugins[ $slug ]['external_url'] ) ) {
+			// 	$link = sprintf(
+			// 		'<a href="%1$s" target="_blank">%2$s</a>',
+			// 		esc_url( $this->plugins[ $slug ]['external_url'] ),
+			// 		esc_html( $this->plugins[ $slug ]['name'] )
+			// 	);
+			// } elseif ( 'repo' === $this->plugins[ $slug ]['source_type'] ) {
+			// 	$url = add_query_arg(
+			// 		array(
+			// 			'tab'       => 'plugin-information',
+			// 			'plugin'    => urlencode( $slug ),
+			// 			'TB_iframe' => 'true',
+			// 			'width'     => '640',
+			// 			'height'    => '500',
+			// 		),
+			// 		self_admin_url( 'plugin-install.php' )
+			// 	);
+
+			// 	$link = sprintf(
+			// 		'<a href="%1$s" class="thickbox">%2$s</a>',
+			// 		esc_url( $url ),
+			// 		esc_html( $this->plugins[ $slug ]['name'] )
+			// 	);
+			// } else {
+			// 	$link = esc_html( $this->plugins[ $slug ]['name'] ); // No hyperlink.
+			// }
 
 			return $link;
 		}
@@ -1976,7 +1981,9 @@ if ( ! class_exists( 'TGM_Plugin_Activation' ) ) {
 		 */
 		public function does_plugin_have_update( $slug ) {
 			// Presume bundled and external plugins will point to a package which meets the minimum required version.
-			if ( 'repo' !== $this->plugins[ $slug ]['source_type'] ) {
+			// EDITED by UNCODE
+			// if ( 'repo' !== $this->plugins[ $slug ]['source_type'] ) {
+			if ( 'repo' !== $this->plugins[ $slug ]['source_type'] && ! isset( $this->plugins[ $slug ]['is_premium'] ) ) {
 				if ( $this->does_plugin_require_update( $slug ) ) {
 					return $this->plugins[ $slug ]['version'];
 				}
@@ -2769,8 +2776,16 @@ if ( ! class_exists( 'TGMPA_List_Table' ) ) {
 					'tgmpa-nonce'
 				);
 
+				// EDITED by UNCODE
+				// Add markup for premium plugins in install/activate/update links
+				$premium_link_html = '';
+
+				if ( in_array( $item['slug'], uncode_get_premium_plugins_slugs() ) ) {
+					$premium_link_html = 'class="uncode-premium-plugin-link" data-plugin-slug="' . $item['slug'] . '" data-action-type="' . $action . '"';
+				}
+
 				$action_links[ $action ] = sprintf(
-					'<a href="%1$s">' . esc_html( $text ) . '</a>', // $text contains the second placeholder.
+					'<a href="%1$s" ' . $premium_link_html . '>' . esc_html( $text ) . '</a>', // $text contains the second placeholder.
 					esc_url( $nonce_url ),
 					'<span class="screen-reader-text">' . esc_html( $item['sanitized_plugin'] ) . '</span>'
 				);

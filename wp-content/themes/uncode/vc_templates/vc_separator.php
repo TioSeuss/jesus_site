@@ -28,15 +28,27 @@ $classes = array();
 $div_data = array();
 if ($css_animation !== '') {
 	$css_class .= ' ' . $css_animation . ' animate_when_almost_visible';
-	if ($animation_delay !== '') $div_data['data-delay'] = $animation_delay;
-	if ($animation_speed !== '') $div_data['data-speed'] = $animation_speed;
+	if ($animation_delay !== '') {
+		$div_data['data-delay'] = $animation_delay;
+	}
+	if ($animation_speed !== '') {
+		$div_data['data-speed'] = $animation_speed;
+	}
 }
 
-if ($el_width !== '') $el_width = 'width: ' . $el_width .';';
-if ($el_height !== '') $el_height = 'border-top-width: ' . $el_height .';';
-if ($el_width !== '' || $el_height !== '') $inline_css = $el_width . $el_height;
+if ($el_width !== '') {
+	$el_width = 'width: ' . $el_width .';';
+}
+if ($el_height !== '') {
+	$el_height = 'border-top-width: ' . $el_height .';';
+}
+if ($el_width !== '' || $el_height !== '') {
+	$inline_css = $el_width . $el_height;
+}
 
-if ($type !== '') $classes[] = $type;
+if ($type !== '') {
+	$classes[] = $type;
+}
 
 $link = ( $link == '||' ) ? '' : $link;
 $link = vc_build_link( $link );
@@ -47,7 +59,9 @@ $a_target = $link['target'];
 if ($icon !== '') {
     $classes[] = "divider divider-".$icon_position."-icon";
     $icon_wrapper_class[] = 'divider-icon';
-    if ($a_href === '' && $scroll_top !== 'yes') $icon_wrapper_class[] = 'icon-inactive';
+    if ($a_href === '' && $scroll_top !== 'yes') {
+    	$icon_wrapper_class[] = 'icon-inactive';
+    }
 
     if ($sep_color === '') {
         $classes[] = 'style-default';
@@ -64,19 +78,25 @@ if ($icon !== '') {
 
 $div_data_attributes = array_map(function ($v, $k) { return $k . '="' . $v . '"'; }, $div_data, array_keys($div_data));
 
-if ($desktop_visibility === 'yes') $css_class .= ' desktop-hidden';
-if ($medium_visibility === 'yes') $css_class .= ' tablet-hidden';
-if ($mobile_visibility === 'yes') $css_class .= ' mobile-hidden';
+if ($desktop_visibility === 'yes') {
+	$css_class .= ' desktop-hidden';
+}
+if ($medium_visibility === 'yes') {
+	$css_class .= ' tablet-hidden';
+}
+if ($mobile_visibility === 'yes') {
+	$css_class .= ' mobile-hidden';
+}
 
 ?>
 <div class="divider-wrapper<?php echo esc_attr($css_class); ?>" <?php echo implode(' ', $div_data_attributes); ?>>
 <?php if ($icon === '') : ?>
-    <hr class="<?php echo esc_attr(trim(implode(' ' , $classes))); ?>" <?php if ($inline_css !== '') echo ' style="' . esc_attr($inline_css) .'"'; ?> />
+    <hr class="<?php echo esc_attr(trim(implode(' ' , $classes))); ?>" <?php if ($inline_css !== '') { echo ' style="' . esc_attr($inline_css) .'"'; } ?> />
 <?php else : ?>
-    <div class="<?php echo esc_attr(trim(implode(' ' , $classes))); ?>"<?php if ($inline_css !== '') echo ' style="' . esc_attr($inline_css) .'"'; ?>>
-        <?php if ($a_href !== '') {?>
+    <div class="<?php echo esc_attr(trim(implode(' ' , $classes))); ?>"<?php if ($inline_css !== '') { echo ' style="' . esc_attr($inline_css) .'"'; } ?>>
+        <?php if ($a_href !== '') { ?>
         <a href="<?php echo esc_url($a_href); ?>" class="custom-link" title="<?php echo esc_attr($a_title); ?>" target="<?php echo esc_attr( trim($a_target) ); ?>">
-        <?php } else if ($scroll_top === 'yes') { ?>
+        <?php } elseif ($scroll_top === 'yes') { ?>
         <a href="#" class="scroll-top">
         <?php } ?>
         <div class="<?php echo esc_attr(implode(' ', $icon_wrapper_class)); ?>">

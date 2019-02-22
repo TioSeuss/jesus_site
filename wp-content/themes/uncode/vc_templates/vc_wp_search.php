@@ -40,8 +40,8 @@ if ( is_object( $wp_widget_factory ) && isset( $wp_widget_factory->widgets, $wp_
 	$use_live_search = '';
 	$output .= '</div>';
 
-	echo $output;
+	echo uncode_switch_stock_string( $output );
 } else {
-	echo $this->debugComment( 'Widget ' . esc_attr( $type ) . 'Not found in : vc_wp_search' );
+	echo esc_html( $this->debugComment( 'Widget ' . $type . 'Not found in : vc_wp_search' ) );
 }
 // TODO: make more informative if wp is in debug mode

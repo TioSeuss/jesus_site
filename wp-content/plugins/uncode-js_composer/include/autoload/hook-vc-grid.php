@@ -83,7 +83,7 @@ class Vc_Hooks_Vc_Grid implements Vc_Vendor_Interface {
 	private function getShortcodeRegexForId() {
 		return '\\['                              // Opening bracket
 			. '(\\[?)'                           // 1: Optional second opening bracket for escaping shortcodes: [[tag]]
-			. '([\\w-_]+)'                     // 2: Shortcode name
+			. '([\\w\-_]+)'                     // 2: Shortcode name
 			. '(?![\\w-])'                       // Not followed by word character or hyphen
 			. '('                                // 3: Unroll the loop: Inside the opening shortcode tag
 			. '[^\\]\\/]*'                   // Not a closing bracket or forward slash
@@ -166,7 +166,7 @@ class Vc_Hooks_Vc_Grid implements Vc_Vendor_Interface {
 			if ( isset( $found[1] ) && is_array( $found[1] ) ) {
 				foreach ( $found[1] as $key => $parse_able ) {
 					if ( empty( $parse_able ) || '[' !== $parse_able ) {
-						$id_pattern = '/' . $this->grid_id_unique_name . '\:([\w-_]+)/';
+						$id_pattern = '/' . $this->grid_id_unique_name . '\:([\w\-_]+)/';
 						$id_value = $found[4][ $key ];
 
 						preg_match( $id_pattern, $id_value, $id_matches );

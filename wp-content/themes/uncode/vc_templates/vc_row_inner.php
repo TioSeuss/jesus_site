@@ -1,6 +1,6 @@
 <?php
 
-$el_class = $row_name = $back_image = $back_repeat = $back_attachment = $back_position = $back_size = $back_color = $overlay_color = $overlay_alpha = $unlock_row = $unlock_row_content = $limit_content = $row_inner_height_percent = $row_height_pixel = $inner_height = $kburns = $parallax = $equal_height = $top_padding = $bottom_padding = $h_padding = $gutter_size = $override_padding = $force_width_grid = $shift_y = $shift_y_fixed = $z_index = $css = $border_color = $border_style = $output = $row_style = $background_div = $row_inline_style = $desktop_visibility = $medium_visibility = $mobile_visibility = $sticky = $enable_bottom_divider = $shape_bottom_invert = $bottom_divider = $bottom_divider_inv = $shape_bottom_color = $shape_bottom_opacity = $shape_bottom_custom = $shape_bottom_index = $shape_bottom_h_use_pixel = $shape_bottom_height = $shape_bottom_height_percent = $shape_bottom_ratio = $shape_bottom_safe = $shape_bottom_responsive = $shape_bottom_tablet_hide = $shape_bottom_mobile_hide = $enable_top_divider = $shape_top_invert = $top_divider = $top_divider_inv = $shape_top_color = $shape_top_opacity = $shape_top_custom = $shape_top_index = $shape_top_h_use_pixel = $shape_top_height = $shape_top_height_percent = $shape_top_ratio = $shape_top_safe = $shape_top_responsive = $shape_top_tablet_hide = $shape_top_mobile_hide = $gdpr_consent_id = $gdpr_consent_logic = '';
+$el_class = $row_name = $back_image = $back_repeat = $back_attachment = $back_position = $back_size = $back_color = $overlay_color = $overlay_alpha = $overlay_color_blend = $unlock_row = $unlock_row_content = $limit_content = $row_inner_height_percent = $row_height_pixel = $inner_height = $kburns = $parallax = $equal_height = $top_padding = $bottom_padding = $h_padding = $gutter_size = $override_padding = $force_width_grid = $shift_y = $shift_y_fixed = $z_index = $css = $border_color = $border_style = $output = $row_style = $background_div = $row_inline_style = $desktop_visibility = $medium_visibility = $mobile_visibility = $sticky = $enable_bottom_divider = $shape_bottom_invert = $bottom_divider = $bottom_divider_inv = $shape_bottom_color = $shape_bottom_opacity = $shape_bottom_custom = $shape_bottom_index = $shape_bottom_h_use_pixel = $shape_bottom_height = $shape_bottom_height_percent = $shape_bottom_ratio = $shape_bottom_safe = $shape_bottom_responsive = $shape_bottom_tablet_hide = $shape_bottom_mobile_hide = $enable_top_divider = $shape_top_invert = $top_divider = $top_divider_inv = $shape_top_color = $shape_top_opacity = $shape_top_custom = $shape_top_index = $shape_top_h_use_pixel = $shape_top_height = $shape_top_height_percent = $shape_top_ratio = $shape_top_safe = $shape_top_responsive = $shape_top_tablet_hide = $shape_top_mobile_hide = $gdpr_consent_id = $gdpr_consent_logic = '';
 
 extract(shortcode_atts(array(
 	'el_class' => '',
@@ -13,6 +13,7 @@ extract(shortcode_atts(array(
 	'back_color' => '',
 	'overlay_color' => '',
 	'overlay_alpha' => '',
+	'overlay_color_blend' => '',
 	'unlock_row' => 'yes',
 	'unlock_row_content' => '',
 	'limit_content' => '',
@@ -81,12 +82,12 @@ if ( $gdpr_consent_id !== '' && uncode_privacy_check_needed($gdpr_consent_id) ) 
 	uncode_privacy_check_needed($gdpr_consent_id);
 	if ( $gdpr_consent_logic == 'include' && !uncode_privacy_has_consent($gdpr_consent_id) ) {
 		return;
-	} else if ( $gdpr_consent_logic == 'exclude' && uncode_privacy_has_consent($gdpr_consent_id) ) {
+	} elseif ( $gdpr_consent_logic == 'exclude' && uncode_privacy_has_consent($gdpr_consent_id) ) {
 		return;
 	}
 }
 
-global $row_cols_md_counter, $row_cols_sm_counter, $inner_column_style, $front_background_colors;
+global $row_cols_md_counter, $row_cols_sm_counter, $inner_column_style, $front_background_colors, $previous_blend;
 $row_cols_md_counter = $row_cols_sm_counter = 0;
 
 $row_classes = array(
@@ -95,34 +96,47 @@ $row_classes = array(
 $row_cont_classes = array();
 $row_inner_classes = array();
 
-if (strpos($content,'[uncode_slider') !== false || $has_slider === 'yes') $with_slider = true;
-else $with_slider = false;
+if (strpos($content,'[uncode_slider') !== false || $has_slider === 'yes') {
+	$with_slider = true;
+} else {
+	$with_slider = false;
+}
 
 $row_cont_classes[] = $this->getExtraClass($el_class);
-if ($sticky === 'yes') $row_cont_classes[] = 'sticky-element';
+if ($sticky === 'yes') {
+	$row_cont_classes[] = 'sticky-element';
+}
 
 $el_id = '';
-if ($row_name !== '') $row_name = ' data-name="' . esc_attr(trim($row_name)) . '"';
+if ($row_name !== '') {
+	$row_name = ' data-name="' . esc_attr(trim($row_name)) . '"';
+}
 
-if (!empty($back_color))
-{
+if (!empty($back_color)) {
 	$row_cont_classes[] = 'style-' . $back_color . '-bg';
 }
 
+if ( $previous_blend === true ) {
+	$row_classes[] = 'row-next-to-blend';
+}
+
 /** BEGIN - background construction **/
-if (!empty($back_image) || $overlay_color !== '')
-{
+if (!empty($back_image) || $overlay_color !== '') {
 
 	if ($parallax === 'yes') {
 		$back_attachment = '';
 		$back_size = 'cover';
-	} else if ($kburns === 'yes') {
+	} elseif ($kburns !== '') {
 		$back_size = 'cover';
 	} else {
-		if ($back_size === '') $back_size = 'cover';
+		if ($back_size === '') {
+			$back_size = 'cover';
+		}
 	}
 
-	if ($back_repeat === '') $back_repeat = 'no-repeat';
+	if ($back_repeat === '') {
+		$back_repeat = 'no-repeat';
+	}
 
 	if ( !empty($back_image) ) {
 		$back_array = array(
@@ -135,6 +149,11 @@ if (!empty($back_image) || $overlay_color !== '')
 		);
 	} else {
 		$back_array = array();
+	}
+
+	if ( $overlay_color_blend !== '' ) {
+		$back_array['mix-blend-mode'] = $overlay_color_blend;
+		$previous_blend = true;
 	}
 
 	$back_result_array = uncode_get_back_html($back_array, $overlay_color, $overlay_alpha, '', 'row');
@@ -464,6 +483,41 @@ foreach ($shape_positions as $shape_position) {
 		</svg>';
 						break;
 
+					case 'step':
+						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . '" x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
+		<path fill="' . ${'shape_'.$shape_position.'_divider_color'} . '" d="M240,0v24H0V0H240z"/>
+		</svg>';
+						break;
+
+					case 'step_1_2':
+						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . '" x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
+		<path fill="' . ${'shape_'.$shape_position.'_divider_color'} . '" d="M120,0v24H0V0H120z"/>
+		</svg>';
+						break;
+
+					case 'step_2_3':
+						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . '" x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
+		<path fill="' . ${'shape_'.$shape_position.'_divider_color'} . '" d="M0,0v24h160V0H0z"/>
+		</svg>';
+						break;
+
+					case 'step_3_4':
+						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . '" x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
+		<path fill="' . ${'shape_'.$shape_position.'_divider_color'} . '" d="M0,0v24h180V0H0z"/>
+		</svg>';
+						break;
+
+					case 'gradient':
+						$gradient_id = 'svg-gradient-'.uncode_big_rand();
+						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . '" x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
+		<linearGradient id="' . $gradient_id . '" gradientUnits="userSpaceOnUse" x1="119.9995" y1="0" x2="119.9995" y2="24.0005">
+			<stop  offset="0" style="stop-color:' . ${'shape_'.$shape_position.'_divider_color'} . ';stop-opacity:0"/>
+			<stop  offset="1" style="stop-color:' . ${'shape_'.$shape_position.'_divider_color'} . '"/>
+		</linearGradient>
+		<path fill="url(#' . $gradient_id . ')" d="M240,24V0H0v24H240z"/>
+		</svg>';
+						break;
+
 					default:
 						${$shape_position.'_divider_svg'} = '';
 						break;
@@ -475,20 +529,20 @@ foreach ($shape_positions as $shape_position) {
 
 				switch (${$shape_position.'_divider_inv'}) {
 					case 'arrow':
-						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . ' uncode-row-divider-invert" x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
+						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . ' x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
 		<path fill="' . ${'shape_'.$shape_position.'_divider_color'} . '" d="M240,24V0H119.98l22.812,24H240z M97.202,24v-0.029L119.971,0H0v24H97.202z"/>
 		</svg>';
 						break;
 
 					case 'book':
-						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . ' uncode-row-divider-invert" x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
+						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . ' x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
 		<path fill="' . ${'shape_'.$shape_position.'_divider_color'} . '" d="M0,0v24c0,0,19.131-0.15,46.562-0.068C91.348,24.093,119.761,4.839,120,0.239
 			c0.239,4.6,28.633,23.854,73.438,23.692C220.879,23.857,240,24,240,24V0H0z"/>
 		</svg>';
 						break;
 
 					case 'city':
-						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . ' uncode-row-divider-invert" x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
+						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . ' x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
 		<path fill="' . ${'shape_'.$shape_position.'_divider_color'} . '" d="M0,0v23.99l0,0l0.02-1.061l2.28,0.04L2.329,21h1.289l0.02-1.068h1.265v1.008l2.227,0.021v0.819l1.201,0.021
 			v1.739l1.528,0.021v-1.988h1.753l0.02-4.559h1.318v-0.771h1.372l-0.02,0.93h0.547l0.02-1.819h1.68v0.989H17.5l-0.02,5.498h1.001
 			v1.06h1.196l0.024-8.096h1.396v-0.91l3.213,0.021v0.949h1.626l-0.059,7.825l6.572,0.062L32.5,11.445l0.771,0.02v-1.04h1.797v0.91
@@ -513,7 +567,7 @@ foreach ($shape_positions as $shape_position) {
 						break;
 
 					case 'clouds':
-						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . ' uncode-row-divider-invert" x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
+						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . ' x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
 		<path fill="' . ${'shape_'.$shape_position.'_divider_color'} . '" d="M0.02,5.098c0.981-0.077,2.09-0.055,3.359,0.066c8.521,1.031,10.649,5.712,10.649,5.712
 			s1.733-0.669,3.75-0.197c1.924,0.471,2.861,2.488,2.861,2.488s0.103-0.481,1.128-0.668c1.03-0.187,1.543,0.187,1.543,0.187
 			s-0.312-1.997,1.25-2.631c1.558-0.669,3.271,0.658,3.271,0.658s0.186-2.773,2.109-3.914c1.919-1.141,4.131,0,4.131,0
@@ -534,7 +588,7 @@ foreach ($shape_positions as $shape_position) {
 						break;
 
 					case 'curve-asym-opacity':
-						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . ' uncode-row-divider-invert" x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
+						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . ' x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
 		<path fill="' . ${'shape_'.$shape_position.'_divider_color'} . '" fill-opacity="0.33" d="M0,0v24C47.91-5.42,92.93-4.712,239.512,24H240V0.02L0,0z"/>
 		<path fill="' . ${'shape_'.$shape_position.'_divider_color'} . '" fill-opacity="0.33" d="M0,0.02v14.361C34.971-6.26,95.62-3.501,240,21.203V0.02H0L0,0.02z"/>
 		<path fill="' . ${'shape_'.$shape_position.'_divider_color'} . '" d="M0,0.02v7.359C33.652-5.278,97.769-0.918,240,19.553V0.02H0L0,0.02z"/>
@@ -542,13 +596,13 @@ foreach ($shape_positions as $shape_position) {
 						break;
 
 					case 'curve-asym':
-						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . ' uncode-row-divider-invert" x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
+						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . ' x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
 		<path fill="' . ${'shape_'.$shape_position.'_divider_color'} . '" d="M0,0v24C47.998-8.379,93.12-7.608,240,24l0,0V0H0z"/>
 		</svg>';
 						break;
 
 					case 'curve-opacity':
-						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . ' uncode-row-divider-invert" x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
+						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . ' x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
 		<path fill="' . ${'shape_'.$shape_position.'_divider_color'} . '" fill-opacity="0.33" d="M240,24V0H0v24C0,24,47.861,5.107,119.849,5.107C191.855,5.107,240,24,240,24z"/>
 		<path fill="' . ${'shape_'.$shape_position.'_divider_color'} . '" fill-opacity="0.33" d="M119.829,2.661c55.562,0,98.521,9.957,120.171,16.271V0H0v18.902
 			C21.582,12.598,64.37,2.65,119.829,2.661z"/>
@@ -557,13 +611,13 @@ foreach ($shape_positions as $shape_position) {
 						break;
 
 					case 'curve':
-						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . ' uncode-row-divider-invert" x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
+						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . ' x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
 		<path fill="' . ${'shape_'.$shape_position.'_divider_color'} . '" d="M0,24l0.01-0.24V0H240v24c0,0-48.115-23.471-120.039-23.48C48.018,0.52,0,24,0,24L0,24z"/>
 		</svg>';
 						break;
 
 					case 'fan-opacity':
-						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . ' uncode-row-divider-invert" x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
+						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . ' x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
 		<path fill="' . ${'shape_'.$shape_position.'_divider_color'} . '" fill-opacity="0.25" d="M240,0H0v24l240-11.26V0z"/>
 		<path fill="' . ${'shape_'.$shape_position.'_divider_color'} . '" d="M0,0h240v12.74L0,0z"/>
 		<path fill="' . ${'shape_'.$shape_position.'_divider_color'} . '" fill-opacity="0.5" d="M0,0h240v12.74H0V0z"/>
@@ -571,7 +625,7 @@ foreach ($shape_positions as $shape_position) {
 						break;
 
 					case 'flow-opacity':
-						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . ' uncode-row-divider-invert" x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
+						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . ' x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
 		<path fill="' . ${'shape_'.$shape_position.'_divider_color'} . '" d="M0,0v14.873C21.602,4.718,57.48,0.13,71.021,4.278C86.958,9.136,80.64,23.589,96.958,22.37
 			C111.548,21.26,122.5,9.375,137.5,9.415c11.055,0.02,10.098,6.587,21.68,7.487c12.129,0.959,16.992-6.938,36.074-11.436
 			C212.773,1.339,228.613-0.62,240,0.569V0H0z"/>
@@ -585,7 +639,7 @@ foreach ($shape_positions as $shape_position) {
 						break;
 
 					case 'flow':
-						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . ' uncode-row-divider-invert" x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
+						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . ' x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
 		<path fill="' . ${'shape_'.$shape_position.'_divider_color'} . '" d="M64.819,1.902c17.09,5.936,10.542,23.624,26.831,21.993c14.277-1.422,25.83-15.676,40.079-15.576
 			c10.391,0.08,7.754,7.626,18.789,8.649c11.465,1.101,21.621-6.337,37.178-11.312c19.893-6.417,42.109-6.737,52.305-0.06V0H0v16.327
 			C21.479,2.603,49.629-3.363,64.819,1.902z"/>
@@ -593,7 +647,7 @@ foreach ($shape_positions as $shape_position) {
 						break;
 
 					case 'hills-opacity':
-						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . ' uncode-row-divider-invert" x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
+						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . ' x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
 		<path fill="' . ${'shape_'.$shape_position.'_divider_color'} . '" d="M0,0v4.852C5.059,3.421,11.812,1.84,18.75,1.101C32.91-0.43,39.399-0.07,45.532,0.46
 			C60.771,1.8,75.771,4.901,95.39,13.104c7.661,3.111,19.922,7.832,26.021,9.084c6.226,1.229,13.706,1.979,19.565,1.35
 			c2.637-0.26,5.858-0.35,12.891-1.909c7.129-1.541,15.137-4.142,20.625-6.183c10.664-4.011,24.551-5.521,34.697-5.711
@@ -610,7 +664,7 @@ foreach ($shape_positions as $shape_position) {
 						break;
 
 					case 'hills':
-						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . ' uncode-row-divider-invert" x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
+						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . ' x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
 		<path fill="' . ${'shape_'.$shape_position.'_divider_color'} . '" d="M0,0v8.043c0,0,12.358-4.922,25.488-6.433c13.13-1.51,19.151-1.18,24.81-0.65
 			c14.141,1.291,28.032,4.392,46.23,12.505c7.1,3.082,18.462,7.754,24.121,8.976c5.758,1.25,12.69,1.961,18.121,1.319
 			c2.44-0.26,5.42-0.34,11.953-1.901c6.602-1.479,14.043-4.029,19.12-6.093c9.884-3.951,22.716-5.472,32.169-5.642
@@ -619,7 +673,7 @@ foreach ($shape_positions as $shape_position) {
 						break;
 
 					case 'mountains':
-						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . ' uncode-row-divider-invert" x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
+						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . ' x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
 		<path fill="' . ${'shape_'.$shape_position.'_divider_color'} . '" d="M0,16.754c0.668-0.888,2.768-2.017,4.017-2.62h0.02c0.024-0.052,0.073-0.052,0.122-0.072
 			c0.02,0,0.02,0,0.048,0c0.029,0,0.073-0.043,0.103-0.043c0.02-0.053,0.02-0.053,0.049-0.053c0.039,0,0.068-0.053,0.122-0.053
 			c1.137-0.508,2.274-1.542,3.407-2.334c1.147-0.813,3.437-2.461,4.579-1.86c1.147,0.624,3.997,2.346,4.958,3.591
@@ -669,13 +723,13 @@ foreach ($shape_positions as $shape_position) {
 						break;
 
 					case 'pyramids':
-						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . ' uncode-row-divider-invert" x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
+						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . ' x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
 		<path fill="' . ${'shape_'.$shape_position.'_divider_color'} . '" d="M159.961,0L240,23.99V0H159.961z M0,24l57.051-10.216l28.56,7.315L159.961,0H0V24z"/>
 		</svg>';
 						break;
 
 					case 'ray-opacity':
-						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . ' uncode-row-divider-invert" x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
+						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . ' x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
 		<path fill="' . ${'shape_'.$shape_position.'_divider_color'} . '" d="M0,0v24L240,0H0z"/>
 		<path fill="' . ${'shape_'.$shape_position.'_divider_color'} . '" fill-opacity="0.33" d="M0,24h240V0"/>
 		<path fill="' . ${'shape_'.$shape_position.'_divider_color'} . '" fill-opacity="0.33" d="M240,12.393V0L0,24L240,12.393z"/>
@@ -683,13 +737,13 @@ foreach ($shape_positions as $shape_position) {
 						break;
 
 					case 'spear':
-						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . ' uncode-row-divider-invert" x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
+						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . ' x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
 		<path fill="' . ${'shape_'.$shape_position.'_divider_color'} . '" d="M240,0v24H134.698C124.5,24,120,13.04,120,0H240z M0,24h105.302C115.5,24,120,13.04,120,0H0V24z"/>
 		</svg>';
 						break;
 
 					case 'swoosh-opacity':
-						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . ' uncode-row-divider-invert" x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
+						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . ' x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
 		<path fill="' . ${'shape_'.$shape_position.'_divider_color'} . '" fill-opacity="0.33" d="M240,0H0v23.539c4.321,0.414,15.532,1.113,30.21-0.912
 			c20.112-2.798,32.139-6.213,51.309-6.309c19.902-0.073,39.072,3.361,63.754,1.07c24.806-2.301,42.91-15.015,94.707-15.015"/>
 		<path fill="' . ${'shape_'.$shape_position.'_divider_color'} . '" fill-opacity="0.33" d="M240,0H0v23.359c4.321,0.468,15.532,1.25,30.21-0.987
@@ -700,14 +754,14 @@ foreach ($shape_positions as $shape_position) {
 						break;
 
 					case 'swoosh':
-						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . ' uncode-row-divider-invert" x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
+						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . ' x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
 		<path fill="' . ${'shape_'.$shape_position.'_divider_color'} . '" d="M0,23.368c4.321,0.576,15.532,1.5,30.21-1.188c20.112-3.711,32.138-8.234,51.309-8.315
 			c19.902-0.103,39.072,7.08,63.754,4.057C170.117,14.889,188.203,0,240,0H0V23.368z"/>
 		</svg>';
 						break;
 
 					case 'tilt-opacity':
-						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . ' uncode-row-divider-invert" x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
+						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . ' x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
 		<path fill="' . ${'shape_'.$shape_position.'_divider_color'} . '" fill-opacity="0.33" d="M0,0v24L240,0H0z"/>
 		<path fill="' . ${'shape_'.$shape_position.'_divider_color'} . '" d="M0,0v20.279L240,0H0z"/>
 		<path fill="' . ${'shape_'.$shape_position.'_divider_color'} . '" fill-opacity="0.33" d="M0,0v22.01L240,0H0z"/>
@@ -715,19 +769,19 @@ foreach ($shape_positions as $shape_position) {
 						break;
 
 					case 'tilt':
-						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . ' uncode-row-divider-invert" x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
+						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . ' x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
 		<path fill="' . ${'shape_'.$shape_position.'_divider_color'} . '" d="M0,0v24L240,0H0z"/>
 		</svg>';
 						break;
 
 					case 'triangle':
-						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . ' uncode-row-divider-invert" x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
+						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . ' x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
 		<path fill="' . ${'shape_'.$shape_position.'_divider_color'} . '" d="M119.888,0.24L240,24V0H0v23.971L119.888,0.24z"/>
 		</svg>';
 						break;
 
 					case 'waves-opacity':
-						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . ' uncode-row-divider-invert" x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
+						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . ' x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
 		<path fill="' . ${'shape_'.$shape_position.'_divider_color'} . '" d="M0,0v14.182c3.124-1.22,6.56-2.13,10.27-2.708c17.499-2.73,24.44,5.98,43.547,11.129
 			C80.628,29.842,93.06,3.44,117.158,3.44c22.631,0,40.458,26.955,65.074,18.553c14.645-5.021,19.015-13.912,39.855-17.623
 			c7.049-1.25,12.926-1.79,17.912-1.02V0"/>
@@ -741,10 +795,39 @@ foreach ($shape_positions as $shape_position) {
 						break;
 
 					case 'waves':
-						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . ' uncode-row-divider-invert" x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
+						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . ' x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
 		<path fill="' . ${'shape_'.$shape_position.'_divider_color'} . '" d="M0,0v16.426c4.438-3.019,9.751-5.239,15.889-6.328c17.07-3.109,23.833,6.718,42.48,12.496
 			C84.502,30.713,96.484,1.02,120,1.02c22.075,0,39.648,30.363,63.652,20.895c14.277-5.64,18.574-15.616,38.877-19.845
 			c6.865-1.43,12.628-1.99,17.472-1.15V0H0L0,0z"/>
+		</svg>';
+						break;
+
+					case 'step_1_2':
+						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . '" x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
+		<path fill="' . ${'shape_'.$shape_position.'_divider_color'} . '" d="M120,0v24h120V0H120z"/>
+		</svg>';
+						break;
+
+					case 'step_2_3':
+						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . '" x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
+		<path fill="' . ${'shape_'.$shape_position.'_divider_color'} . '" d="M240,0v24h-80V0H240z"/>
+		</svg>';
+						break;
+
+					case 'step_3_4':
+						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . '" x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
+		<path fill="' . ${'shape_'.$shape_position.'_divider_color'} . '" d="M240,0v24h-60V0H240z"/>
+		</svg>';
+						break;
+
+					case 'gradient':
+						$gradient_id = 'svg-gradient-'.uncode_big_rand();
+						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . '" x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
+		<linearGradient id="' . $gradient_id . '" gradientUnits="userSpaceOnUse" x1="119.9995" y1="0" x2="119.9995" y2="24.0005">
+			<stop  offset="0" style="stop-color:' . ${'shape_'.$shape_position.'_divider_color'} . '"/>
+			<stop  offset="1" style="stop-color:' . ${'shape_'.$shape_position.'_divider_color'} . ';stop-opacity:0"/>
+		</linearGradient>
+		<path fill="url(#' . $gradient_id . ')" d="M240,24V0H0v24H240z"/>
 		</svg>';
 						break;
 
@@ -764,8 +847,9 @@ foreach ($shape_positions as $shape_position) {
 				${'shape_'.$shape_position.'_info'} = uncode_get_media_info(${'shape_'.$shape_position.'_custom'});
 				if (${'shape_'.$shape_position.'_info'}->post_mime_type === 'oembed/svg') {
 					$media_code = ${'shape_'.$shape_position.'_info'}->post_content;
-					if ( ${'shape_'.$shape_position.'_divider_color'} == '' )
+					if ( ${'shape_'.$shape_position.'_divider_color'} != '' ) {
 						$media_code = preg_replace('/ fill="(.*?)" /', ' fill="' . ${'shape_'.$shape_position.'_divider_color'} . '" ', $media_code);
+					}
 					${'divider_'.$shape_position.'_svg'} .= '<div class="uncode-divider-wrap uncode-divider-wrap-' . ${'shape_'.$shape_position.'_classes'} . '" style="height: ' . ${'style_shape_'.$shape_position.'_h'} . ${'style_shape_'.$shape_position.'_unit'} . ';' . ${'divider_'.$shape_position.'_opacity'} . '" data-height="' . ${'style_shape_'.$shape_position.'_h'} . '" data-unit="' . ${'style_shape_'.$shape_position.'_unit'} . '">'.$media_code.'</div>';
 				} else {
 					$media_code = ${'shape_'.$shape_position.'_info'}->guid;
@@ -821,44 +905,81 @@ if ($row_height_pixel !== '') {
 	$row_inline_style = ' data-minheight="' . esc_attr($min_height) . '"';
 }
 
-if (!empty($row_inner_height_percent) && $row_inner_height_percent != '0')
-{
+if (!empty($row_inner_height_percent) && $row_inner_height_percent != '0') {
 	$row_inner_height_percent = ' data-height="' . esc_attr( $row_inner_height_percent ) . '"';
-} else $row_inner_height_percent = '';
+} else {
+	$row_inner_height_percent = '';
+}
 
-if ($equal_height == 'yes') $row_classes[] = 'unequal';
+if ($equal_height == 'yes') {
+	$row_classes[] = 'unequal';
+}
 
-if ($gutter_size == '0') $row_classes[] = 'col-no-gutter';
-else if ($gutter_size == '1') $row_classes[] = 'col-one-gutter';
-else if ($gutter_size == '2') $row_classes[] = 'col-half-gutter';
-else if ($gutter_size == '4') $row_classes[] = 'col-double-gutter';
+if ($gutter_size == '0') {
+	$row_classes[] = 'col-no-gutter';
+} elseif ($gutter_size == '1') {
+	$row_classes[] = 'col-one-gutter';
+} elseif ($gutter_size == '2') {
+	$row_classes[] = 'col-half-gutter';
+} elseif ($gutter_size == '4') {
+	$row_classes[] = 'col-double-gutter';
+}
 
 if (!$with_slider) {
 	if ($override_padding == 'yes') {
-		if ($top_padding == '0') $row_classes[] = 'no-top-padding';
-		else if ($top_padding == '1') $row_classes[] = 'one-top-padding';
-		else if ($top_padding == '2') $row_classes[] = 'single-top-padding';
-		else if ($top_padding == '3') $row_classes[] = 'double-top-padding';
-		else if ($top_padding == '4') $row_classes[] = 'triple-top-padding';
-		else if ($top_padding == '5') $row_classes[] = 'quad-top-padding';
-		else if ($top_padding == '6') $row_classes[] = 'penta-top-padding';
-		else if ($top_padding == '7') $row_classes[] = 'exa-top-padding';
-		if ($bottom_padding == '0') $row_classes[] = 'no-bottom-padding';
-		else if ($bottom_padding == '1') $row_classes[] = 'one-bottom-padding';
-		else if ($bottom_padding == '2') $row_classes[] = 'single-bottom-padding';
-		else if ($bottom_padding == '3') $row_classes[] = 'double-bottom-padding';
-		else if ($bottom_padding == '4') $row_classes[] = 'triple-bottom-padding';
-		else if ($bottom_padding == '5') $row_classes[] = 'quad-bottom-padding';
-		else if ($bottom_padding == '6') $row_classes[] = 'penta-bottom-padding';
-		else if ($bottom_padding == '7') $row_classes[] = 'exa-bottom-padding';
-		if ($h_padding == '0') $row_classes[] = 'no-h-padding';
-		else if ($h_padding == '1') $row_classes[] = 'one-h-padding';
-		else if ($h_padding == '2') $row_classes[] = 'single-h-padding';
-		else if ($h_padding == '3') $row_classes[] = 'double-h-padding';
-		else if ($h_padding == '4') $row_classes[] = 'triple-h-padding';
-		else if ($h_padding == '5') $row_classes[] = 'quad-h-padding';
-		else if ($h_padding == '6') $row_classes[] = 'penta-h-padding';
-		else if ($h_padding == '7') $row_classes[] = 'exa-h-padding';
+		if ($top_padding == '0') {
+			$row_classes[] = 'no-top-padding';
+		} elseif ($top_padding == '1') {
+			$row_classes[] = 'one-top-padding';
+		} elseif ($top_padding == '2') {
+			$row_classes[] = 'single-top-padding';
+		} elseif ($top_padding == '3') {
+			$row_classes[] = 'double-top-padding';
+		} elseif ($top_padding == '4') {
+			$row_classes[] = 'triple-top-padding';
+		} elseif ($top_padding == '5') {
+			$row_classes[] = 'quad-top-padding';
+		} elseif ($top_padding == '6') {
+			$row_classes[] = 'penta-top-padding';
+		} elseif ($top_padding == '7') {
+			$row_classes[] = 'exa-top-padding';
+		}
+
+		if ($bottom_padding == '0') {
+			$row_classes[] = 'no-bottom-padding';
+		} elseif ($bottom_padding == '1') {
+			$row_classes[] = 'one-bottom-padding';
+		} elseif ($bottom_padding == '2') {
+			$row_classes[] = 'single-bottom-padding';
+		} elseif ($bottom_padding == '3') {
+			$row_classes[] = 'double-bottom-padding';
+		} elseif ($bottom_padding == '4') {
+			$row_classes[] = 'triple-bottom-padding';
+		} elseif ($bottom_padding == '5') {
+			$row_classes[] = 'quad-bottom-padding';
+		} elseif ($bottom_padding == '6') {
+			$row_classes[] = 'penta-bottom-padding';
+		} elseif ($bottom_padding == '7') {
+			$row_classes[] = 'exa-bottom-padding';
+		}
+
+		if ($h_padding == '0') {
+			$row_classes[] = 'no-h-padding';
+		} elseif ($h_padding == '1') {
+			$row_classes[] = 'one-h-padding';
+		} elseif ($h_padding == '2') {
+			$row_classes[] = 'single-h-padding';
+		} elseif ($h_padding == '3') {
+			$row_classes[] = 'double-h-padding';
+		} elseif ($h_padding == '4') {
+			$row_classes[] = 'triple-h-padding';
+		} elseif ($h_padding == '5') {
+			$row_classes[] = 'quad-h-padding';
+		} elseif ($h_padding == '6') {
+			$row_classes[] = 'penta-h-padding';
+		} elseif ($h_padding == '7'){
+			$row_classes[] = 'exa-h-padding';
+		}
 	}
 } else {
 	$row_classes[] = 'no-top-padding';
@@ -867,17 +988,23 @@ if (!$with_slider) {
 	$unlock_row = 'yes';
 }
 
-if ($css !== '') $row_cont_classes[] = trim(vc_shortcode_custom_css_class($css));
+if ($css !== '') {
+	$row_cont_classes[] = trim(vc_shortcode_custom_css_class($css));
+}
 if ($border_color !== '') {
 	$row_cont_classes[] = 'border-' . $border_color . '-color';
-	if ($border_style !== '') $row_style .= 'border-style: '.$border_style.';';
+	if ($border_style !== '') {
+		$row_style .= 'border-style: '.$border_style.';';
+	}
 }
 
 if ($z_index !== '0' && $z_index !== '') {
 	$row_style = 'z-index: '.$z_index.';';
 }
 
-if ($row_style !== '') $row_style = ' style="' . esc_attr( $row_style ) . '"';
+if ($row_style !== '') {
+	$row_style = ' style="' . esc_attr( $row_style ) . '"';
+}
 
 $row_cont_classes[] = 'row-internal';
 $row_classes[] = 'row-child';
@@ -887,34 +1014,65 @@ if ($limit_content === 'yes') {
 }
 
 $row_cont_classes[] = 'row-container';
-if ($kburns === 'yes') $row_cont_classes[] = 'with-kburns';
-if ($parallax === 'yes' && !uncode_is_full_page()) $row_cont_classes[] = 'with-parallax';
-if ($row_name !== '') $row_cont_classes[] = 'onepage-section';
+if ($kburns === 'yes') {
+	$row_cont_classes[] = 'with-kburns';
+} elseif ($kburns === 'zoom') {
+	$row_cont_classes[] = 'with-zoomout';
+}
+if ($parallax === 'yes' && !uncode_is_full_page()) {
+	$row_cont_classes[] = 'with-parallax';
+}
+if ($row_name !== '') {
+	$row_cont_classes[] = 'onepage-section';
+}
 
 $row_inner_classes[] = 'row-inner';
-if ($force_width_grid === 'yes') $row_inner_classes[] = 'row-inner-force';
+if ($force_width_grid === 'yes') {
+	$row_inner_classes[] = 'row-inner-force';
+}
 
-if ($desktop_visibility === 'yes') $row_cont_classes[] = 'desktop-hidden';
-if ($medium_visibility === 'yes') $row_cont_classes[] = 'tablet-hidden';
-if ($mobile_visibility === 'yes') $row_cont_classes[] = 'mobile-hidden';
+if ($desktop_visibility === 'yes') {
+	$row_cont_classes[] = 'desktop-hidden';
+}
+if ($medium_visibility === 'yes') {
+	$row_cont_classes[] = 'tablet-hidden';
+}
+if ($mobile_visibility === 'yes') {
+	$row_cont_classes[] = 'mobile-hidden';
+}
 
 global $uncode_row_child, $uncode_row_parent;
 $uncode_row_child = $uncode_row_parent = 12;
 
-if ( ( isset($divider_top_svg) && $divider_top_svg !== '' ) || ( isset($divider_bottom_svg) && $divider_bottom_svg !== '' ) )
+if ( ( isset($divider_top_svg) && $divider_top_svg !== '' ) || ( isset($divider_bottom_svg) && $divider_bottom_svg !== '' ) ) {
 	$row_cont_classes[] = 'has-dividers';
+}
 
 $css_class = preg_replace( '/\s+/', ' ', apply_filters( VC_SHORTCODE_CUSTOM_CSS_FILTER_TAG, implode( ' ', array_filter( $row_cont_classes ) ), $this->settings['base'], $atts ) );
 $output.= '<div class="' . esc_attr(trim($css_class)) . '"' . $row_name . $row_style . '>';
-if ($unlock_row === 'yes') $output.= $background_div;
+if ($unlock_row === 'yes') {
+	$output.= $background_div;
+}
 $output.= '<div class="' . esc_attr(trim(implode(' ', $row_classes))) . '"' . $row_inner_height_percent . $row_inline_style . '>';
-if ($unlock_row !== 'yes') $output.= $background_div;
-if ( isset($divider_top_svg) && $divider_top_svg !== '' ) $output.= $divider_top_svg;
-if ( isset($divider_bottom_svg) && $divider_bottom_svg !== '' && $shape_bottom_safe != 'yes' ) $output.= $divider_bottom_svg;
-if (!$with_slider) $output.= '<div class="' . esc_attr(trim(implode(' ', $row_inner_classes))) . '">';
+if ($unlock_row !== 'yes') {
+	$output.= $background_div;
+}
+if ( isset($divider_top_svg) && $divider_top_svg !== '' ) {
+	$output.= $divider_top_svg;
+}
+if ( isset($divider_bottom_svg) && $divider_bottom_svg !== '' && $shape_bottom_safe != 'yes' ) {
+	$output.= $divider_bottom_svg;
+}
+if (!$with_slider) {
+	$output.= '<div class="' . esc_attr(trim(implode(' ', $row_inner_classes))) . '">';
+}
 $output.= $content;
-if (!$with_slider) $output.= '</div>';
+if (!$with_slider) {
+	$output.= '</div>';
+}
 $output.= '</div>';
-if ( isset($divider_bottom_svg) && $divider_bottom_svg !== '' && $shape_bottom_safe == 'yes' ) $output.= $divider_bottom_svg;
+if ( isset($divider_bottom_svg) && $divider_bottom_svg !== '' && $shape_bottom_safe == 'yes' ) {
+	$output.= $divider_bottom_svg;
+}
 $output.= '</div>';
-echo uncode_remove_wpautop($output);
+echo uncode_remove_p_tag($output);

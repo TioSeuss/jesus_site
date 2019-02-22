@@ -25,5 +25,5 @@ if ($inside_column === 'yes') {
 	$the_content = $the_content;
 }
 
-echo uncode_remove_wpautop($the_content);
+echo uncode_remove_p_tag($the_content);
 $uncode_vc_block = false;

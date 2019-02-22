@@ -122,27 +122,6 @@ jQuery(document).ready(function($) {
 			},
 		});
 	}
-	if (vc.shortcode_view) {
-		window.UncodeTextView = vc.shortcode_view.extend({
-			changedContent: function(model) {
-				var params = model.get('params');
-				value = params['content'];
-				$.ajax({
-					type: 'POST',
-					url: window.ajaxurl,
-					data: {
-						action: 'uncode_get_html',
-						content: value
-					},
-					dataType: 'html',
-					context: this
-				}).done(function(html) {
-					this.$el.find('.textarea_html').html(html);
-				});
-				window.UncodeTextView.__super__.changedContent.call(this, model);
-			}
-		});
-	}
 	if (window.VcAccordionView) {
 		window.UncodeAccordionView = window.VcAccordionView.extend({
 			render: function() {

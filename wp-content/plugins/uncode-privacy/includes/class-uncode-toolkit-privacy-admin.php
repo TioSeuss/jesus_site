@@ -125,6 +125,7 @@ class Uncode_Toolkit_Privacy_Admin {
 			$output[ $key ] = array(
 				'name'        => sanitize_text_field( wp_unslash( $props[ 'name' ] ) ),
 				'required'    => isset( $props[ 'required' ] ) ? boolval( $props[ 'required' ] ) : 0,
+				'state'       => isset( $props[ 'state' ] ) ? boolval( $props[ 'state' ] ) : 0,
 				'description' => wp_kses( wp_unslash( $props[ 'description' ] ), $this->allowed_html ),
 			);
 		}

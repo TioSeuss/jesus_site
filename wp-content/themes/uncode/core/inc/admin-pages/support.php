@@ -95,7 +95,7 @@ class Uncode_Menu_Support_Page {
 	}
 
 	/**
-	 * Handles the display of the Reservations page in admin.
+	 * Handles the display of the Support page in admin.
 	 */
 	public function output() {
 		?>
@@ -105,7 +105,6 @@ class Uncode_Menu_Support_Page {
 			<?php echo uncode_admin_panel_page_title( 'support' ); ?>
 
 			<div class="uncode-admin-panel">
-				<?php //echo uncode_admin_panel_title(); ?>
 				<?php echo uncode_admin_panel_menu( 'support' ); ?>
 
 				<div class="uncode-admin-panel__content uncode-admin-panel__content--two-cols">
@@ -119,7 +118,7 @@ class Uncode_Menu_Support_Page {
 									$card_i = 0;
 									foreach ( $this->get_cards() as $card ) : ?>
 
-									<li class="box-card box-card--<?php echo esc_attr( $card[ 'id' ] ); ?> uncode-ui-layout__item uncode-ui-layout__item--three-cols<?php echo ( $card_i % 3 == 0 ) ? ' clear-left' : ''; ?>">
+									<li class="box-card box-card--<?php echo esc_attr( $card[ 'id' ] ); ?> uncode-ui-layout__item uncode-ui-layout__item--three-cols<?php echo esc_attr( ( $card_i % 3 == 0 ) ? ' clear-left' : '' ); ?>">
 										<a target="_blank" tabindex="-1" href="<?php echo esc_url( $card[ 'url' ] ); ?>" class="box-card__link box-card__link--<?php echo esc_attr( $card[ 'id' ] ); ?>">
 											<h3 class="box-card__title"><?php echo esc_html( $card[ 'title' ] ); ?></h3>
 											<?php /*<p class="box-card__description"><?php echo esc_html( $card[ 'description' ] ); ?></p>

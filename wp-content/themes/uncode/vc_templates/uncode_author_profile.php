@@ -60,11 +60,27 @@ extract( shortcode_atts( array(
 ***********/
 $cont_classes = array('author-profile el-author-profile');
 $cont_classes[] = 'author-profile-box-' . $avatar_position;
+$cont_classes[] = trim($this->getExtraClass( $el_class ));
+
+if ($desktop_visibility === 'yes') {
+	$cont_classes[] = 'desktop-hidden';
+}
+if ($medium_visibility === 'yes') {
+	$cont_classes[] = 'tablet-hidden';
+}
+if ($mobile_visibility === 'yes') {
+	$cont_classes[] = 'mobile-hidden';
+}
+
 $div_data = array();
 if ($css_animation !== '') {
 	$cont_classes[] = $css_animation . ' animate_when_almost_visible';
-	if ($animation_delay !== '') $div_data['data-delay'] = $animation_delay;
-	if ($animation_speed !== '') $div_data['data-speed'] = $animation_speed;
+	if ($animation_delay !== '') {
+		$div_data['data-delay'] = $animation_delay;
+	}
+	if ($animation_speed !== '') {
+		$div_data['data-speed'] = $animation_speed;
+	}
 }
 
 $user_id = $user_id === '' ? get_the_author_meta( 'ID' ) : $user_id;
@@ -159,22 +175,40 @@ $content_out = '<div class="author-profile-content">';
 $separator_classes = array();
 if ($separator !== '') {
 	$separator_classes[] = 'separator-break';
-	if ($separator_double === 'yes') $separator_classes[] = 'separator-double-padding';
+	if ($separator_double === 'yes') {
+		$separator_classes[] = 'separator-double-padding';
+	}
 }
 
-if ($separator === 'over') $content_out .= '<hr class="' . esc_attr(trim(implode( ' ', $separator_classes ))) . '" />';
+if ($separator === 'over') {
+	$content_out .= '<hr class="' . esc_attr(trim(implode( ' ', $separator_classes ))) . '" />';
+}
 
 $content_classes = array();
-if ($text_font !== '') $content_classes[] = $text_font;
+if ($text_font !== '') {
+	$content_classes[] = $text_font;
+}
 if ($text_size !== '') {
 	$content_classes[] = $text_size;
-	if ($text_size === 'bigtext') $cont_classes[] = 'heading-bigtext';
+	if ($text_size === 'bigtext') {
+		$cont_classes[] = 'heading-bigtext';
+	}
 }
-if ($text_height !== '') $content_classes[] = $text_height;
-if ($text_space !== '') $content_classes[] = $text_space;
-if ($text_weight !== '') $content_classes[] = 'font-weight-' . $text_weight;
-if ($text_color !== '') $content_classes[] = 'text-' . $text_color . '-color';
-if ($text_transform !== '') $content_classes[] = 'text-' . $text_transform;
+if ($text_height !== '') {
+	$content_classes[] = $text_height;
+}
+if ($text_space !== '') {
+	$content_classes[] = $text_space;
+}
+if ($text_weight !== '') {
+	$content_classes[] = 'font-weight-' . $text_weight;
+}
+if ($text_color !== '') {
+	$content_classes[] = 'text-' . $text_color . '-color';
+}
+if ($text_transform !== '') {
+	$content_classes[] = 'text-' . $text_transform;
+}
 
 $content_out .= '<' . $heading_semantic . ' class="' . esc_attr(trim(implode( ' ', $content_classes ))) . '">';
 if ( $author_name_linked === 'yes' ) {
@@ -182,7 +216,9 @@ if ( $author_name_linked === 'yes' ) {
 	$target = (trim($a_target) !== '') ? ' target="' . esc_attr( trim($a_target) ) . '"' : '';
 	$content_out .= '<a href="' . esc_url($a_href) . '" ' . $title . $target . '>';
 }
-if ($text_italic === 'yes') $content_out .= '<i>';
+if ($text_italic === 'yes') {
+	$content_out .= '<i>';
+}
 $content_out .= '<span>';
 $user_name = trim($user_name);
 $title_lines = explode("\n", $user_name);
@@ -191,30 +227,44 @@ if ($lines_counter > 1) {
 	foreach ($title_lines as $key => $value) {
 		$value = trim($value);
 		$content_out .= $value;
-		if ($value !== '' && ($lines_counter - 1 !== $key)) $content_out .= '</span><span>';
+		if ($value !== '' && ($lines_counter - 1 !== $key)) {
+			$content_out .= '</span><span>';
+		}
 	}
 } else {
 	$content_out .= $user_name;
 }
 $content_out .= '</span>';
-if ($text_italic === 'yes') $content_out .= '</i>';
+if ($text_italic === 'yes') {
+	$content_out .= '</i>';
+}
 if ( $author_name_linked === 'yes' ) {
 	$content_out .= '</a>';
 }
 $content_out .= '</' . $heading_semantic . '>';
 
-if ($separator === 'yes') $content_out .= '<hr class="' . esc_attr(trim(implode( ' ', $separator_classes ))) . '" />';
-
-$user_bio = $user_info->description;
-if ( $user_bio !== '' && $author_bio === 'yes' ) {
-	if ($sub_lead === 'yes') $sub_lead = ' text-lead';
-	if ($sub_reduced === 'yes') $sub_reduced = ' text-top-reduced';
-	if ($sub_lead !== '' || $sub_reduced !== '') $sub_class = esc_attr(trim($sub_lead.$sub_reduced));
-
-	$content_out .= '<div class="author-profile-bio ' . esc_attr( $sub_class ) . '">' . uncode_remove_wpautop($user_bio, true) . '</div>';
+if ($separator === 'yes') {
+	$content_out .= '<hr class="' . esc_attr(trim(implode( ' ', $separator_classes ))) . '" />';
 }
 
-if ($separator === 'under') $content_out .= '<hr class="' . esc_attr(trim(implode( ' ', $separator_classes ))) . '" />';
+$user_bio = get_the_author_meta( 'description', $user_id );
+if ( $user_bio !== '' && $author_bio === 'yes' ) {
+	if ($sub_lead === 'yes') {
+		$sub_lead = ' text-lead';
+	}
+	if ($sub_reduced === 'yes') {
+		$sub_reduced = ' text-top-reduced';
+	}
+	if ($sub_lead !== '' || $sub_reduced !== '') {
+		$sub_class = esc_attr(trim($sub_lead.$sub_reduced));
+	}
+
+	$content_out .= '<div class="author-profile-bio ' . esc_attr( $sub_class ) . '">' . uncode_remove_p_tag($user_bio, true) . '</div>';
+}
+
+if ($separator === 'under') {
+	$content_out .= '<hr class="' . esc_attr(trim(implode( ' ', $separator_classes ))) . '" />';
+}
 
 if ( $social === 'yes' ) {
 
@@ -241,31 +291,46 @@ $button_data = array();
 
 // Size class
 if ($size) {
-	if ($size === 'link') unset($btn_classes[0]);
-	else $btn_classes[] = $size;
+	if ($size === 'link') {
+		unset($btn_classes[0]);
+	} else {
+		$btn_classes[] = $size;
+	}
 }
 
 // Additional classes
-if ($btn_class) $btn_classes[] = $btn_class;
+if ($btn_class) {
+	$btn_classes[] = $btn_class;
+}
 
 // Color class
-if ($button_color === '') $button_color = 'default';
-if ($button_color !== 'default') {
-	if ($text_skin === 'yes') $btn_classes[] = 'btn-text-skin';
+if ($button_color === '') {
+	$button_color = 'default';
 }
-if ($size !== 'btn-link' && $size !== 'link') $btn_classes[] = 'btn-' . $button_color;
-else $btn_classes[] = 'text-' . $button_color . '-color';
+if ($button_color !== 'default') {
+	if ($text_skin === 'yes') {
+		$btn_classes[] = 'btn-text-skin';
+	}
+}
+if ($size !== 'btn-link' && $size !== 'link') {
+	$btn_classes[] = 'btn-' . $button_color;
+} else {
+	$btn_classes[] = 'text-' . $button_color . '-color';
+}
 
 // Radius class
-if ($radius) $btn_classes[] = $radius;
+if ($radius) {
+	$btn_classes[] = $radius;
+}
 
 // Hover effect
 $hover_fx = $hover_fx=='' ? ot_get_option('_uncode_button_hover') : $hover_fx;
 
 // Outlined and flat classes
 if ( $hover_fx == '' || $hover_fx == 'outlined' ) {
-	if ($outline === 'yes' )
+	if ($outline === 'yes' ) {
 		$btn_classes[] = 'btn-outline';
+	}
 } else {
 	$btn_classes[] = 'btn-flat';
 }
@@ -273,15 +338,15 @@ if ( $hover_fx == '' || $hover_fx == 'outlined' ) {
 // Prepare icon
 if ($icon !== '') {
 	$icon = '<i class="' . esc_attr($icon) . '"></i>';
+} else {
+	$icon = '';
 }
-else $icon = '';
 
 if ( $display_button === 'yes' ) {
 
 	$content = trim($button_content);
 
-	if ($icon_position === 'right')
-	{
+	if ($icon_position === 'right') {
 		$content = $content . $icon;
 		$btn_classes[] = 'btn-icon-right';
 	} else {
@@ -322,4 +387,4 @@ switch ($avatar_position) {
 }
 $output .= '</div>';
 
-echo uncode_remove_wpautop($output);
+echo uncode_remove_p_tag($output);

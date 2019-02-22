@@ -25,15 +25,21 @@ function uncode_posts_navigation() {
 	if (is_array($paginate_links)) {
 		$output = "<ul class='pagination'>";
 		$prev = get_previous_posts_link('<i class="fa fa-angle-left"></i>');
-		if ($prev !== NULL) $output .= '<li class="page-prev">'.$prev.'</li>';
-		else $output .= '<li class="page-prev"><span class="btn btn-link btn-icon-left btn-disable-hover"><i class="fa fa-angle-left"></i></span></li>';
+		if ($prev !== NULL) {
+			$output .= '<li class="page-prev">'.$prev.'</li>';
+		} else {
+			$output .= '<li class="page-prev"><span class="btn btn-link btn-icon-left btn-disable-hover"><i class="fa fa-angle-left"></i></span></li>';
+		}
 
 		foreach ( $paginate_links as $page ) {
 			$output .= '<li><span class="btn-container">'.$page.'</span></li>';
 		}
 		$next = get_next_posts_link('<i class="fa fa-angle-right"></i>');
-		if ($next !== NULL) $output .= '<li class="page-next">'.$next.'</li>';
-		else $output .= '<li class="page-next"><span class="btn btn-link btn-icon-right btn-disable-hover"><i class="fa fa-angle-right"></i></span></li>';
+		if ($next !== NULL) {
+			$output .= '<li class="page-next">'.$next.'</li>';
+		} else {
+			$output .= '<li class="page-next"><span class="btn btn-link btn-icon-right btn-disable-hover"><i class="fa fa-angle-right"></i></span></li>';
+		}
 
 		$output .= "</ul><!-- .pagination -->";
 	}
@@ -49,8 +55,9 @@ if ( ! function_exists( 'uncode_post_navigation' ) ) :
 	function uncode_post_navigation($index_btn = '', $nextprev_title = 'off', $navigation_index = '', $generic = true) {
 		global $metabox_data;
 
-		if ( isset($metabox_data['_uncode_specific_navigation_hide'][0]) && $metabox_data['_uncode_specific_navigation_hide'][0] == 'on' )
+		if ( isset($metabox_data['_uncode_specific_navigation_hide'][0]) && $metabox_data['_uncode_specific_navigation_hide'][0] == 'on' ) {
 			return;
+		}
 		// Don't print empty markup if there's nowhere to navigate.
 		if ($navigation_index !== '' && !$generic) {
 			global $adjacent_index;
@@ -74,12 +81,20 @@ if ( ! function_exists( 'uncode_post_navigation' ) ) :
 									<ul class="navigation">';
 
 		$prev = get_previous_post_link( '<li class="page-prev"><span class="btn-container">%link</span></li>', '<i class="fa fa-angle-left"></i><span>'. esc_html($prev_label) . '</span>');
-		if ($prev !== '') $output .= $prev;
-		else $output .= '<li class="page-prev"><span class="btn-container"><span class="btn btn-link btn-icon-left btn-disable-hover"><i class="fa fa-angle-left"></i>'.esc_html($prev_label).'</span></span></li>';
-		if ($index_btn !== '') $output .=	'<li class="nav-back"><span class="btn-container">'.$index_btn.'</span></li>';
+		if ($prev !== '') {
+			$output .= $prev;
+		} else {
+			$output .= '<li class="page-prev"><span class="btn-container"><span class="btn btn-link btn-icon-left btn-disable-hover"><i class="fa fa-angle-left"></i>'.esc_html($prev_label).'</span></span></li>';
+		}
+		if ($index_btn !== '') {
+			$output .=	'<li class="nav-back"><span class="btn-container">'.$index_btn.'</span></li>';
+		}
 		$next = get_next_post_link( '<li class="page-next"><span class="btn-container">%link</span></li>', '<span>' . esc_html($next_label) .'</span><i class="fa fa-angle-right"></i>');
-		if ($next !== '') $output .= $next;
-		else $output .= '<li class="page-next"><span class="btn-container"><span class="btn btn-link btn-icon-right btn-disable-hover">'.esc_html($next_label).'<i class="fa fa-angle-right"></i></span></span></li>';
+		if ($next !== '') {
+			$output .= $next;
+		} else {
+			$output .= '<li class="page-next"><span class="btn-container"><span class="btn btn-link btn-icon-right btn-disable-hover">'.esc_html($next_label).'<i class="fa fa-angle-right"></i></span></span></li>';
+		}
 
 		$output .=	'</ul><!-- .navigation -->
 							</nav><!-- .post-navigation -->';
@@ -130,12 +145,17 @@ function uncode_paginate_links($href) {
 	if (isset($_GET['ucat']) || is_front_page() || is_home() || is_archive() || is_single()) {
 		$url = parse_url($href);
 		if(!isset($url['query'])){
-			$page_url = parse_url($_SERVER['REQUEST_URI']);
-			if (isset($page_url['query'])) {
-				parse_str($page_url['query'], $output);
-				if (isset($output['upage'])) {
-					$output['upage'] = 1;
-					return add_query_arg( $output, $href );
+			$server_headers = uncode_get_server_headers();
+			$request_uri    = isset( $server_headers['REQUEST_URI'] ) ? $server_headers['REQUEST_URI'] : false;
+
+			if ( $request_uri ) {
+				$page_url = parse_url($request_uri);
+				if (isset($page_url['query'])) {
+					parse_str($page_url['query'], $output);
+					if (isset($output['upage'])) {
+						$output['upage'] = 1;
+						return add_query_arg( $output, $href );
+					}
 				}
 			}
 		}

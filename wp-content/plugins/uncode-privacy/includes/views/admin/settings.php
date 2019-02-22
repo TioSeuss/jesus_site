@@ -79,7 +79,7 @@
 				<tbody>
 					<tr>
 						<th scope="row">
-							<label for="uncode_privacy_fallback"><?php esc_html_e( 'Consent Notice Text', 'uncode' ) ?></label>
+							<label for="uncode_privacy_fallback"><?php esc_html_e( 'Consent Notice Text', 'uncode-privacy' ) ?></label>
 						</th>
 						<td>
 							<?php $privacy_bar_content = get_option( 'uncode_privacy_fallback', ( esc_html__('This content is blocked. Please review your [uncode_privacy_box]Privacy Settings[/uncode_privacy_box].', 'uncode-privacy' ) ) ); ?>
@@ -99,7 +99,7 @@
 
 			<div id="consent-tabs">
 				<?php
-				$consent_types = get_option( 'uncode_privacy_consent_types', array() ); ?>
+				$consent_types = uncode_toolkit_privacy_get_consent_types(); ?>
 
 				<?php if ( ! empty( $consent_types ) ) : ?>
 					<?php foreach ( $consent_types as $consent_key => $consent ) : ?>
@@ -112,7 +112,17 @@
 										<th><label for="required-<?php echo esc_attr( $consent_key ); ?>"><?php esc_html_e( 'Required', 'uncode-privacy' ); ?></label></th>
 										<td>
 											<label class="uncode-privacy-switch">
-												<input type="checkbox" name="<?php echo esc_attr( 'uncode_privacy_consent_types' ); ?>[<?php echo esc_attr( $consent_key ); ?>][required]" <?php checked( esc_attr( $consent['required'] ), 1 ); ?> id="required-<?php echo esc_attr( $consent_key ); ?>">
+												<input type="checkbox" class="uncode-privacy-switch-checkbox" name="<?php echo esc_attr( 'uncode_privacy_consent_types' ); ?>[<?php echo esc_attr( $consent_key ); ?>][required]" <?php checked( esc_attr( $consent['required'] ), 1 ); ?> id="required-<?php echo esc_attr( $consent_key ); ?>">
+												<span class="uncode-privacy-slider round"></span>
+											</label>
+										</td>
+									</tr>
+									<tr>
+										<th><label for="default-state-<?php echo esc_attr( $consent_key ); ?>"><?php esc_html_e( 'Active by default', 'uncode-privacy' ); ?></label></th>
+										<td>
+											<label class="uncode-privacy-switch">
+												<?php $state_checked = isset( $consent['state'] ) && $consent['state'] ? true : false; ?>
+												<input type="checkbox" name="<?php echo esc_attr( 'uncode_privacy_consent_types' ); ?>[<?php echo esc_attr( $consent_key ); ?>][state]" <?php checked( $state_checked, 1 ); ?> id="default-state-<?php echo esc_attr( $consent_key ); ?>">
 												<span class="uncode-privacy-slider round"></span>
 											</label>
 										</td>

@@ -1,6 +1,6 @@
 <?php
 
-$el_class = $row_name = $back_image = $back_repeat = $back_attachment = $back_position = $back_size = $back_color = $overlay_color = $overlay_alpha = $unlock_row = $unlock_row_content = $limit_content = $row_height_percent = $row_inner_height_percent = $row_height_pixel = $inner_height = $kburns = $parallax = $equal_height = $top_padding = $bottom_padding = $h_padding = $gutter_size = $override_padding = $force_width_grid = $shift_y = $shift_y_fixed = $z_index = $css = $border_color = $border_style = $output = $row_style = $background_div = $row_inline_style = $desktop_visibility = $medium_visibility = $mobile_visibility = $sticky = $column_width_use_pixel = $column_width_percent = $column_width_pixel = $enable_bottom_divider = $shape_bottom_invert = $bottom_divider = $bottom_divider_inv = $shape_bottom_color = $shape_bottom_opacity = $shape_bottom_custom = $shape_bottom_index = $shape_bottom_h_use_pixel = $shape_bottom_height = $shape_bottom_height_percent = $shape_bottom_ratio = $shape_bottom_safe = $shape_bottom_responsive = $shape_bottom_tablet_hide = $shape_bottom_mobile_hide = $enable_top_divider = $shape_top_invert = $top_divider = $top_divider_inv = $shape_top_color = $shape_top_opacity = $shape_top_index = $shape_top_h_use_pixel = $shape_top_height = $shape_top_height_percent = $shape_top_ratio = $shape_top_safe = $shape_top_responsive = $shape_top_tablet_hide = $shape_top_mobile_hide = $gdpr_consent_id = $gdpr_consent_logic = $row_custom_slug_check = $row_custom_slug = '';
+$el_class = $row_name = $back_image = $back_repeat = $back_attachment = $back_position = $back_size = $back_color = $overlay_color = $overlay_color_blend = $overlay_alpha = $unlock_row = $unlock_row_content = $limit_content = $row_height_percent = $row_inner_height_percent = $row_height_pixel = $inner_height = $kburns = $parallax = $equal_height = $top_padding = $bottom_padding = $h_padding = $gutter_size = $override_padding = $force_width_grid = $shift_y = $shift_y_fixed = $z_index = $css = $border_color = $border_style = $output = $row_style = $background_div = $row_inline_style = $desktop_visibility = $medium_visibility = $mobile_visibility = $sticky = $column_width_use_pixel = $column_width_percent = $column_width_pixel = $enable_bottom_divider = $shape_bottom_invert = $bottom_divider = $bottom_divider_inv = $shape_bottom_color = $shape_bottom_opacity = $shape_bottom_custom = $shape_bottom_index = $shape_bottom_h_use_pixel = $shape_bottom_height = $shape_bottom_height_percent = $shape_bottom_ratio = $shape_bottom_safe = $shape_bottom_responsive = $shape_bottom_tablet_hide = $shape_bottom_mobile_hide = $enable_top_divider = $shape_top_invert = $top_divider = $top_divider_inv = $shape_top_color = $shape_top_opacity = $shape_top_index = $shape_top_h_use_pixel = $shape_top_height = $shape_top_height_percent = $shape_top_ratio = $shape_top_safe = $shape_top_responsive = $shape_top_tablet_hide = $shape_top_mobile_hide = $gdpr_consent_id = $gdpr_consent_logic = $row_custom_slug_check = $row_custom_slug = '';
 
 extract(shortcode_atts(array(
 	'el_class' => '',
@@ -12,6 +12,7 @@ extract(shortcode_atts(array(
 	'back_size' => '',
 	'back_color' => '',
 	'overlay_color' => '',
+	'overlay_color_blend' => '',
 	'overlay_alpha' => '',
 	'unlock_row' => 'yes',
 	'unlock_row_content' => '',
@@ -87,12 +88,12 @@ if ( $gdpr_consent_id !== '' && uncode_privacy_check_needed($gdpr_consent_id) ) 
 	uncode_privacy_check_needed($gdpr_consent_id);
 	if ( $gdpr_consent_logic == 'include' && !uncode_privacy_has_consent($gdpr_consent_id) ) {
 		return;
-	} else if ( $gdpr_consent_logic == 'exclude' && uncode_privacy_has_consent($gdpr_consent_id) ) {
+	} elseif ( $gdpr_consent_logic == 'exclude' && uncode_privacy_has_consent($gdpr_consent_id) ) {
 		return;
 	}
 }
 
-global $row_cols_md_counter, $row_cols_sm_counter, $inner_column_style, $front_background_colors;
+global $row_cols_md_counter, $row_cols_sm_counter, $inner_column_style, $front_background_colors, $previous_blend;
 $row_cols_md_counter = $row_cols_sm_counter = 0;
 
 $inner_column_style = '';
@@ -104,8 +105,11 @@ $row_cont_classes = array('vc_row');
 //$row_inner_classes = array('wpb_row');
 $row_inner_classes = array();
 
-if (strpos($content,'[uncode_slider') !== false) $with_slider = true;
-else $with_slider = false;
+if (strpos($content,'[uncode_slider') !== false) {
+	$with_slider = true;
+} else {
+	$with_slider = false;
+}
 
 $uncodeblock_found = false;
 if (strpos($content,'[uncode_block') !== false) {
@@ -139,7 +143,9 @@ if (strpos($content,'[uncode_block') !== false) {
 
 
 $row_cont_classes[] = $this->getExtraClass($el_class);
-if ($sticky === 'yes') $row_cont_classes[] = 'sticky-element';
+if ($sticky === 'yes') {
+	$row_cont_classes[] = 'sticky-element';
+}
 
 $el_id = $data_label = $data_name = '';
 $data_label = $data_name = $row_name;
@@ -150,28 +156,36 @@ if ($row_name !== '') {
 if ( $row_custom_slug_check == 'yes' && $row_custom_slug != '' ) {
 	$data_name = $row_custom_slug;
 }
-if ($row_name !== '')
+if ($row_name !== '') {
 	$row_name = ' data-label="'. esc_attr($data_label) .'" data-name="' . sanitize_title($data_name) . '"';
+}
 
-if (!empty($back_color))
-{
+if (!empty($back_color)) {
 	$row_cont_classes[] = 'style-' . $back_color . '-bg';
 }
 
+if ( $previous_blend === true ) {
+	$row_cont_classes[] = 'row-next-to-blend';
+}
+$previous_blend = false;
+
 /** BEGIN - background construction **/
-if (!empty($back_image) || $overlay_color !== '')
-{
+if (!empty($back_image) || $overlay_color !== '') {
 
 	if ($parallax === 'yes') {
 		$back_attachment = '';
 		$back_size = 'cover';
-	} else if ($kburns === 'yes') {
+	} elseif ($kburns !== '') {
 		$back_size = 'cover';
 	} else {
-		if ($back_size === '') $back_size = 'cover';
+		if ($back_size === '') {
+			$back_size = 'cover';
+		}
 	}
 
-	if ($back_repeat === '') $back_repeat = 'no-repeat';
+	if ($back_repeat === '') {
+		$back_repeat = 'no-repeat';
+	}
 
 	if ( !empty($back_image) ) {
 		$back_array = array(
@@ -184,6 +198,11 @@ if (!empty($back_image) || $overlay_color !== '')
 		);
 	} else {
 		$back_array = array();
+	}
+
+	if ( $overlay_color_blend !== '' ) {
+		$back_array['mix-blend-mode'] = $overlay_color_blend;
+		$previous_blend = true;
 	}
 
 	$back_result_array = uncode_get_back_html($back_array, $overlay_color, $overlay_alpha, '', 'row');
@@ -512,6 +531,41 @@ foreach ($shape_positions as $shape_position) {
 		</svg>';
 						break;
 
+					case 'step':
+						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . '" x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
+		<path fill="' . ${'shape_'.$shape_position.'_divider_color'} . '" d="M240,0v24H0V0H240z"/>
+		</svg>';
+						break;
+
+					case 'step_1_2':
+						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . '" x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
+		<path fill="' . ${'shape_'.$shape_position.'_divider_color'} . '" d="M120,0v24H0V0H120z"/>
+		</svg>';
+						break;
+
+					case 'step_2_3':
+						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . '" x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
+		<path fill="' . ${'shape_'.$shape_position.'_divider_color'} . '" d="M0,0v24h160V0H0z"/>
+		</svg>';
+						break;
+
+					case 'step_3_4':
+						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . '" x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
+		<path fill="' . ${'shape_'.$shape_position.'_divider_color'} . '" d="M0,0v24h180V0H0z"/>
+		</svg>';
+						break;
+
+					case 'gradient':
+						$gradient_id = 'svg-gradient-'.uncode_big_rand();
+						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . '" x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
+		<linearGradient id="' . $gradient_id . '" gradientUnits="userSpaceOnUse" x1="119.9995" y1="0" x2="119.9995" y2="24.0005">
+			<stop  offset="0" style="stop-color:' . ${'shape_'.$shape_position.'_divider_color'} . ';stop-opacity:0"/>
+			<stop  offset="1" style="stop-color:' . ${'shape_'.$shape_position.'_divider_color'} . '"/>
+		</linearGradient>
+		<path fill="url(#' . $gradient_id . ')" d="M240,24V0H0v24H240z"/>
+		</svg>';
+						break;
+
 					default:
 						${$shape_position.'_divider_svg'} = '';
 						break;
@@ -796,6 +850,35 @@ foreach ($shape_positions as $shape_position) {
 		</svg>';
 						break;
 
+					case 'step_1_2':
+						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . '" x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
+		<path fill="' . ${'shape_'.$shape_position.'_divider_color'} . '" d="M120,0v24h120V0H120z"/>
+		</svg>';
+						break;
+
+					case 'step_2_3':
+						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . '" x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
+		<path fill="' . ${'shape_'.$shape_position.'_divider_color'} . '" d="M240,0v24h-80V0H240z"/>
+		</svg>';
+						break;
+
+					case 'step_3_4':
+						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . '" x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
+		<path fill="' . ${'shape_'.$shape_position.'_divider_color'} . '" d="M240,0v24h-60V0H240z"/>
+		</svg>';
+						break;
+
+					case 'gradient':
+						$gradient_id = 'svg-gradient-'.uncode_big_rand();
+						${$shape_position.'_divider_svg'} = '<svg version="1.1" class="uncode-row-divider uncode-row-divider-' . ${$shape_position.'_divider'} . '" x="0px" y="0px" width="240px" height="24px" viewBox="0 0 240 24" enable-background="new 0 0 240 24" xml:space="preserve" preserveAspectRatio="' . ${'preserveAspectRatio_'.$shape_position} . '">
+		<linearGradient id="' . $gradient_id . '" gradientUnits="userSpaceOnUse" x1="119.9995" y1="0" x2="119.9995" y2="24.0005">
+			<stop  offset="0" style="stop-color:' . ${'shape_'.$shape_position.'_divider_color'} . '"/>
+			<stop  offset="1" style="stop-color:' . ${'shape_'.$shape_position.'_divider_color'} . ';stop-opacity:0"/>
+		</linearGradient>
+		<path fill="url(#' . $gradient_id . ')" d="M240,24V0H0v24H240z"/>
+		</svg>';
+						break;
+
 					default:
 						${$shape_position.'_divider_svg'} = '';
 						break;
@@ -812,8 +895,9 @@ foreach ($shape_positions as $shape_position) {
 				${'shape_'.$shape_position.'_info'} = uncode_get_media_info(${'shape_'.$shape_position.'_custom'});
 				if (${'shape_'.$shape_position.'_info'}->post_mime_type === 'oembed/svg') {
 					$media_code = ${'shape_'.$shape_position.'_info'}->post_content;
-					if ( ${'shape_'.$shape_position.'_divider_color'} != '' )
+					if ( ${'shape_'.$shape_position.'_divider_color'} != '' ) {
 						$media_code = preg_replace('/ fill="(.*?)" /', ' fill="' . ${'shape_'.$shape_position.'_divider_color'} . '" ', $media_code);
+					}
 					${'divider_'.$shape_position.'_svg'} .= '<div class="uncode-divider-wrap uncode-divider-wrap-' . ${'shape_'.$shape_position.'_classes'} . '" style="height: ' . ${'style_shape_'.$shape_position.'_h'} . ${'style_shape_'.$shape_position.'_unit'} . ';' . ${'divider_'.$shape_position.'_opacity'} . '" data-height="' . ${'style_shape_'.$shape_position.'_h'} . '" data-unit="' . ${'style_shape_'.$shape_position.'_unit'} . '">'.$media_code.'</div>';
 				} else {
 					$media_code = ${'shape_'.$shape_position.'_info'}->guid;
@@ -860,7 +944,9 @@ if ($shift_y != '0' && $shift_y != '') {
             $row_inner_classes[] = 'shift_y_neg_quad';
         break;
     }
-    if ($shift_y_fixed === 'yes') $uncol_classes[] = 'shift_y_fixed';
+    if ($shift_y_fixed === 'yes') {
+    	$uncol_classes[] = 'shift_y_fixed';
+    }
 }
 /** END - shift construction **/
 
@@ -880,52 +966,90 @@ if ($row_height_pixel !== '') {
 	$row_inline_style = ' data-minheight="' . esc_attr($min_height) . '"';
 }
 
-if (!empty($row_height_percent) && $row_height_percent != '0')
-{
-	if ($row_height_percent == '100') $row_height_percent = ' data-height-ratio="full"';
-	else
-	{
+if (!empty($row_height_percent) && $row_height_percent != '0') {
+	if ($row_height_percent == '100') {
+		$row_height_percent = ' data-height-ratio="full"';
+	} else {
 		$row_height_percent = ' data-height-ratio="' . esc_attr( $row_height_percent ) . '"';
 	}
-} else $row_height_percent = '';
-if (!empty($row_inner_height_percent) && $row_inner_height_percent != '0')
-{
+} else {
+	$row_height_percent = '';
+}
+if (!empty($row_inner_height_percent) && $row_inner_height_percent != '0') {
 	$row_inner_height_percent = ' data-height="' . $row_inner_height_percent . '"';
-} else $row_inner_height_percent = '';
+} else {
+	$row_inner_height_percent = '';
+}
 
-if ($equal_height == 'yes') $row_classes[] = 'unequal';
+if ($equal_height == 'yes') {
+	$row_classes[] = 'unequal';
+}
 
-if ($gutter_size == '0') $row_classes[] = 'col-no-gutter';
-else if ($gutter_size == '1') $row_classes[] = 'col-one-gutter';
-else if ($gutter_size == '2') $row_classes[] = 'col-half-gutter';
-else if ($gutter_size == '4') $row_classes[] = 'col-double-gutter';
+if ($gutter_size == '0') {
+	$row_classes[] = 'col-no-gutter';
+} elseif ($gutter_size == '1') {
+	$row_classes[] = 'col-one-gutter';
+} elseif ($gutter_size == '2') {
+	$row_classes[] = 'col-half-gutter';
+} elseif ($gutter_size == '4') {
+	$row_classes[] = 'col-double-gutter';
+}
 
 if (!$with_slider) {
 	if ($override_padding == 'yes') {
-		if ($top_padding == '0') $row_classes[] = 'no-top-padding';
-		else if ($top_padding == '1') $row_classes[] = 'one-top-padding';
-		else if ($top_padding == '2') $row_classes[] = 'single-top-padding';
-		else if ($top_padding == '3') $row_classes[] = 'double-top-padding';
-		else if ($top_padding == '4') $row_classes[] = 'triple-top-padding';
-		else if ($top_padding == '5') $row_classes[] = 'quad-top-padding';
-		else if ($top_padding == '6') $row_classes[] = 'penta-top-padding';
-		else if ($top_padding == '7') $row_classes[] = 'exa-top-padding';
-		if ($bottom_padding == '0') $row_classes[] = 'no-bottom-padding';
-		else if ($bottom_padding == '1') $row_classes[] = 'one-bottom-padding';
-		else if ($bottom_padding == '2') $row_classes[] = 'single-bottom-padding';
-		else if ($bottom_padding == '3') $row_classes[] = 'double-bottom-padding';
-		else if ($bottom_padding == '4') $row_classes[] = 'triple-bottom-padding';
-		else if ($bottom_padding == '5') $row_classes[] = 'quad-bottom-padding';
-		else if ($bottom_padding == '6') $row_classes[] = 'penta-bottom-padding';
-		else if ($bottom_padding == '7') $row_classes[] = 'exa-bottom-padding';
-		if ($h_padding == '0') $row_classes[] = 'no-h-padding';
-		else if ($h_padding == '1') $row_classes[] = 'one-h-padding';
-		else if ($h_padding == '2') $row_classes[] = 'single-h-padding';
-		else if ($h_padding == '3') $row_classes[] = 'double-h-padding';
-		else if ($h_padding == '4') $row_classes[] = 'triple-h-padding';
-		else if ($h_padding == '5') $row_classes[] = 'quad-h-padding';
-		else if ($h_padding == '6') $row_classes[] = 'penta-h-padding';
-		else if ($h_padding == '7') $row_classes[] = 'exa-h-padding';
+		if ($top_padding == '0') {
+			$row_classes[] = 'no-top-padding';
+		} elseif ($top_padding == '1') {
+			$row_classes[] = 'one-top-padding';
+		} elseif ($top_padding == '2') {
+			$row_classes[] = 'single-top-padding';
+		} elseif ($top_padding == '3') {
+			$row_classes[] = 'double-top-padding';
+		} elseif ($top_padding == '4') {
+			$row_classes[] = 'triple-top-padding';
+		} elseif ($top_padding == '5') {
+			$row_classes[] = 'quad-top-padding';
+		} elseif ($top_padding == '6') {
+			$row_classes[] = 'penta-top-padding';
+		} elseif ($top_padding == '7') {
+			$row_classes[] = 'exa-top-padding';
+		}
+
+		if ($bottom_padding == '0') {
+			$row_classes[] = 'no-bottom-padding';
+		} elseif ($bottom_padding == '1') {
+			$row_classes[] = 'one-bottom-padding';
+		} elseif ($bottom_padding == '2') {
+			$row_classes[] = 'single-bottom-padding';
+		} elseif ($bottom_padding == '3') {
+			$row_classes[] = 'double-bottom-padding';
+		} elseif ($bottom_padding == '4') {
+			$row_classes[] = 'triple-bottom-padding';
+		} elseif ($bottom_padding == '5') {
+			$row_classes[] = 'quad-bottom-padding';
+		} elseif ($bottom_padding == '6') {
+			$row_classes[] = 'penta-bottom-padding';
+		} elseif ($bottom_padding == '7') {
+			$row_classes[] = 'exa-bottom-padding';
+		}
+
+		if ($h_padding == '0') {
+			$row_classes[] = 'no-h-padding';
+		} elseif ($h_padding == '1') {
+			$row_classes[] = 'one-h-padding';
+		} elseif ($h_padding == '2') {
+			$row_classes[] = 'single-h-padding';
+		} elseif ($h_padding == '3') {
+			$row_classes[] = 'double-h-padding';
+		} elseif ($h_padding == '4') {
+			$row_classes[] = 'triple-h-padding';
+		} elseif ($h_padding == '5') {
+			$row_classes[] = 'quad-h-padding';
+		} elseif ($h_padding == '6') {
+			$row_classes[] = 'penta-h-padding';
+		} elseif ($h_padding == '7') {
+			$row_classes[] = 'exa-h-padding';
+		}
 	}
 } else {
 	$row_classes[] = 'no-top-padding';
@@ -934,30 +1058,39 @@ if (!$with_slider) {
 	$unlock_row = 'yes';
 }
 
-if ($css !== '') $row_cont_classes[] = trim(vc_shortcode_custom_css_class($css));
+if ($css !== '') {
+	$row_cont_classes[] = trim(vc_shortcode_custom_css_class($css));
+}
 
 if ($border_color !== '') {
 	$row_cont_classes[] = 'border-' . $border_color . '-color';
-	if ($border_style !== '') $row_style .= 'border-style: '.$border_style.';';
+	if ($border_style !== '') {
+		$row_style .= 'border-style: '.$border_style.';';
+	}
 }
 
 if ($z_index !== '0' && $z_index !== '') {
 	$row_style = 'z-index: '.$z_index.';';
 }
 
-if ($row_style != '') $row_style = ' style="' . esc_attr( $row_style ) . '"';
+if ($row_style != '') {
+	$row_style = ' style="' . esc_attr( $row_style ) . '"';
+}
 
 $boxed = ot_get_option('_uncode_boxed');
 
 if ($boxed !== 'on') {
 	if ($unlock_row === 'yes') {
-		if ($unlock_row_content === 'yes') $row_classes[] = 'full-width';
-		else {
+		if ($unlock_row_content === 'yes') {
+			$row_classes[] = 'full-width';
+		} else {
 			$row_classes[] = 'limit-width';
 		}
 	} else {
 		$row_cont_classes[] = 'limit-width';
-		if ($back_color !== '' || $back_image !== '') $row_cont_classes[] = 'boxed-row';
+		if ($back_color !== '' || $back_image !== '') {
+			$row_cont_classes[] = 'boxed-row';
+		}
 	}
 }
 
@@ -968,7 +1101,9 @@ if ($with_slider) {
 		if(($key = array_search('limit-width', $row_classes)) !== false) {
 			unset($row_classes[$key]);
 		}
-	} else $limit_content_inner = '';
+	} else {
+		$limit_content_inner = '';
+	}
 
 	if ($override_padding === 'yes') {
 		$content = str_replace('[uncode_slider','[uncode_slider' . $limit_content_inner . ' slider_height="'.(($row_height_percent !== '' || $is_header === 'yes') ? 'forced' : 'auto' ).'"'.($is_header === 'yes' ? ' is_header="true"' : '').' top_padding="' . esc_attr( $top_padding ) . '" bottom_padding="' . esc_attr( $bottom_padding ) . '" h_padding="' . esc_attr( $h_padding ) . '" ', $content);
@@ -980,43 +1115,78 @@ if ($with_slider) {
 
 $row_classes[] = 'row-parent';
 $row_cont_classes[] = 'row-container';
-if ($kburns === 'yes') $row_cont_classes[] = 'with-kburns';
-if ($parallax === 'yes' && !uncode_is_full_page()) $row_cont_classes[] = 'with-parallax';
-if ($row_name !== '') $row_cont_classes[] = 'onepage-section';
-if ($is_header === 'yes') $row_classes[] = 'row-header';
+if ($kburns === 'yes') {
+	$row_cont_classes[] = 'with-kburns';
+} elseif ($kburns === 'zoom') {
+	$row_cont_classes[] = 'with-zoomout';
+}
+if ($parallax === 'yes' && !uncode_is_full_page()) {
+	$row_cont_classes[] = 'with-parallax';
+}
+if ($row_name !== '') {
+	$row_cont_classes[] = 'onepage-section';
+}
+if ($is_header === 'yes') {
+	$row_classes[] = 'row-header';
+}
 
 $row_inner_classes[] = 'row-inner';
-if ($force_width_grid === 'yes') $row_inner_classes[] = 'row-inner-force';
+if ($force_width_grid === 'yes') {
+	$row_inner_classes[] = 'row-inner-force';
+}
 
-if ($desktop_visibility === 'yes') $row_cont_classes[] = 'desktop-hidden';
-if ($medium_visibility === 'yes') $row_cont_classes[] = 'tablet-hidden';
-if ($mobile_visibility === 'yes') $row_cont_classes[] = 'mobile-hidden';
+if ($desktop_visibility === 'yes') {
+	$row_cont_classes[] = 'desktop-hidden';
+}
+if ($medium_visibility === 'yes') {
+	$row_cont_classes[] = 'tablet-hidden';
+}
+if ($mobile_visibility === 'yes') {
+	$row_cont_classes[] = 'mobile-hidden';
+}
 
-if ( $row_custom_style !== '' ) $row_custom_style = ' style="' . esc_attr( $row_custom_style )  . '"';
+if ( $row_custom_style !== '' ) {
+	$row_custom_style = ' style="' . esc_attr( $row_custom_style )  . '"';
+}
 
-if ( ( isset($divider_top_svg) && $divider_top_svg !== '' ) || ( isset($divider_bottom_svg) && $divider_bottom_svg !== '' ) )
+if ( ( isset($divider_top_svg) && $divider_top_svg !== '' ) || ( isset($divider_bottom_svg) && $divider_bottom_svg !== '' ) ) {
 	$row_cont_classes[] = 'has-dividers';
+}
 
 if (!$uncodeblock_found) :
 	global $uncode_row_parent;
 	$uncode_row_parent = 12;
 	$css_class = preg_replace( '/\s+/', ' ', apply_filters( VC_SHORTCODE_CUSTOM_CSS_FILTER_TAG, implode( ' ', array_filter( $row_cont_classes ) ), $this->settings['base'], $atts ) );
 	$output.= '<div data-parent="true" class="' . esc_attr(trim($css_class)) . '"' . $row_name . $row_style . '>';
-	if ($unlock_row === 'yes') $output.= $background_div;
-	if ( isset($divider_top_svg) && $divider_top_svg !== '' ) $output.= $divider_top_svg;
-	if ( isset($divider_bottom_svg) && $divider_bottom_svg !== '' && $shape_bottom_safe != 'yes' ) $output.= $divider_bottom_svg;
+	if ($unlock_row === 'yes') {
+		$output.= $background_div;
+	}
+	if ( isset($divider_top_svg) && $divider_top_svg !== '' ) {
+		$output.= $divider_top_svg;
+	}
+	if ( isset($divider_bottom_svg) && $divider_bottom_svg !== '' && $shape_bottom_safe != 'yes' ) {
+		$output.= $divider_bottom_svg;
+	}
 	$output.= '<div class="' . esc_attr(trim(implode(' ', $row_classes))) . '"' . $row_height_percent . $row_inline_style . $row_custom_style . '>';
-	if ($unlock_row !== 'yes') $output.= $background_div;
-	if (!$with_slider) $output.= '<div class="' . esc_attr(trim(implode(' ', $row_inner_classes))) . '">';
+	if ($unlock_row !== 'yes') {
+		$output.= $background_div;
+	}
+	if (!$with_slider) {
+		$output.= '<div class="' . esc_attr(trim(implode(' ', $row_inner_classes))) . '">';
+	}
 	$output.= $content;
-	echo uncode_remove_wpautop($output);
-	$script_id = 'script-'.big_rand();
-	echo '<script id="'.esc_attr($script_id).'" data-row="'.esc_attr($script_id).'" type="text/javascript">if ( typeof UNCODE !== "undefined" ) UNCODE.initRow(document.getElementById("'.$script_id.'"));</script>';
+	echo uncode_remove_p_tag($output);
+	$script_id = 'script-'.uncode_big_rand();
+	echo '<script id="'.esc_attr($script_id).'" data-row="'.esc_attr($script_id).'" type="text/javascript">if ( typeof UNCODE !== "undefined" ) { UNCODE.initRow(document.getElementById("'.$script_id.'")); }</script>';
 	$output = '';
-	if (!$with_slider) $output.= '</div>';
+	if (!$with_slider) {
+		$output.= '</div>';
+	}
 	$output.= '</div>';
-	if ( isset($divider_bottom_svg) && $divider_bottom_svg !== '' && $shape_bottom_safe == 'yes' ) $output.= $divider_bottom_svg;
+	if ( isset($divider_bottom_svg) && $divider_bottom_svg !== '' && $shape_bottom_safe == 'yes' ) {
+		$output.= $divider_bottom_svg;
+	}
 	$output.= '</div>';
 endif;
 
-echo uncode_remove_wpautop($output);
+echo uncode_remove_p_tag($output);

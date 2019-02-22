@@ -15,16 +15,24 @@ if ($icon !== '') {
 	$content = preg_replace('/<li>/', '<li>' . $icon, $content);
 	$ul_class .= 'icons';
 }
-if ($larger === 'yes') $ul_class = 'text-large ' . $ul_class;
-if ($ul_class !== '') $content = preg_replace('/<ul>/', '<ul class="'.esc_attr( $ul_class ).'">', $content, 1);
+if ($larger === 'yes') {
+	$ul_class = 'text-large ' . $ul_class;
+}
+if ($ul_class !== '') {
+	$content = preg_replace('/<ul>/', '<ul class="'.esc_attr( $ul_class ).'">', $content, 1);
+}
 
 $css_class = apply_filters( VC_SHORTCODE_CUSTOM_CSS_FILTER_TAG, 'uncode-list', $this->settings['base'], $atts );
 
 $div_data = array();
 if ($css_animation !== '') {
 	$css_class .= ' ' . $css_animation . ' animate_when_almost_visible';
-	if ($animation_delay !== '') $div_data['data-delay'] = $animation_delay;
-	if ($animation_speed !== '') $div_data['data-speed'] = $animation_speed;
+	if ($animation_delay !== '') {
+		$div_data['data-delay'] = $animation_delay;
+	}
+	if ($animation_speed !== '') {
+		$div_data['data-speed'] = $animation_speed;
+	}
 }
 
 $div_data_attributes = array_map(function ($v, $k) { return $k . '="' . $v . '"'; }, $div_data, array_keys($div_data));
@@ -33,4 +41,4 @@ $output .= '<div class="uncode-wrapper '.esc_attr( $css_class ).'" ' . implode( 
 $output .= $content;
 $output .= '</div>';
 
-echo uncode_remove_wpautop($output);
+echo uncode_remove_p_tag($output);

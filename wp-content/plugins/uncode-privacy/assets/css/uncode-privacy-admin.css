@@ -35,7 +35,6 @@
   right: 0;
   bottom: 0;
   background-color: #ccc;
-  -webkit-transition: .4s;
   transition: .4s;
 }
 
@@ -47,7 +46,6 @@
   left: 4px;
   bottom: 4px;
   background-color: white;
-  -webkit-transition: .4s;
   transition: .4s;
 }
 
@@ -64,13 +62,11 @@
 }
 
 .uncode-privacy-wrap .uncode-privacy-switch input:checked + .uncode-privacy-slider:before {
-  -webkit-transform: translateX(21px);
-          transform: translateX(21px);
+  transform: translateX(21px);
 }
 
 .uncode-privacy-wrap .uncode-privacy-switch input:focus + .uncode-privacy-slider {
-  -webkit-box-shadow: 0 0 1px #00b9eb;
-          box-shadow: 0 0 1px #00b9eb;
+  box-shadow: 0 0 1px #00b9eb;
 }
 
 .uncode-privacy-wrap #TB_ajaxContent pre {

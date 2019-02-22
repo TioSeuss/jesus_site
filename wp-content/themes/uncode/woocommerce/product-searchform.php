@@ -25,7 +25,7 @@ $dwls_live_search = get_option('daves-wordpress-live-search_uncode_activate_widg
 
 <form method="get" class="woocommerce-product-search" action="<?php echo esc_url( home_url( '/'  ) ); ?>">
 	<label class="screen-reader-text" for="s"><?php esc_html_e( 'Search for:', 'woocommerce' ); ?></label>
-	<input type="search" class="search-field<?php echo ($dwls_live_search) ? '' : ' no-livesearch'; ?>" placeholder="<?php echo esc_attr__( 'Search products&hellip;', 'woocommerce' ); ?>" value="<?php echo get_search_query(); ?>" name="s" title="<?php echo esc_html_x( 'Search', 'submit button', 'woocommerce' ); ?>" />
+	<input type="search" class="search-field<?php echo esc_attr( $dwls_live_search ? '' : ' no-livesearch' ); ?>" placeholder="<?php echo esc_attr__( 'Search products&hellip;', 'woocommerce' ); ?>" value="<?php echo get_search_query(); ?>" name="s" title="<?php echo esc_html_x( 'Search', 'submit button', 'woocommerce' ); ?>" />
 	<i class="fa fa-search3"></i>
 	<input type="hidden" name="post_type" value="product" />
 </form>

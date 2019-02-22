@@ -149,6 +149,11 @@ class RevSliderAdmin extends RevSliderBaseAdmin{
 		
 		//add_filter('plugin_action_links', array('RevSliderAdmin', 'plugin_action_links' ), 10, 2);
 
+		// Gutenberg
+		add_action( 'enqueue_block_editor_assets', array($this,'enqueue_block_editor_assets') );
+		add_action( 'enqueue_block_assets', array($this,'enqueue_assets') );
+		add_filter( 'block_categories', array($this,'create_block_category'),10,2);
+
 		// Privacy
 		add_action( 'admin_init', array( $this, 'add_suggested_privacy_content'), 15 );
 	}
@@ -2199,6 +2204,72 @@ class RevSliderAdmin extends RevSliderBaseAdmin{
 		}
 		exit();
 	}
+
 	
+	/**
+	 * Enqueue Gutenberg editor blocks styles and scripts
+	 */
+	public function enqueue_block_editor_assets() {
+		$block_path = '/includes/gutenberg-blocks/assets/js/editor.blocks.js';
+		$style_path = '/includes/gutenberg-blocks/assets/css/blocks.style.css';
+		// Enqueue the bundled block JS file
+		wp_enqueue_script(
+			'revslider-blocks-js',
+			RS_PLUGIN_URL . $block_path,
+			array( 'wp-i18n', 'wp-element', 'wp-blocks', 'wp-components' ),
+			filemtime( RS_PLUGIN_PATH . $block_path )
+		);
+	
+		// Enqueue optional editor only styles
+		wp_enqueue_style(
+			'revslider-blocks-editor-css',
+			RS_PLUGIN_URL . $style_path,
+			'',
+			filemtime( RS_PLUGIN_PATH . $style_path )
+		);
+	}
+
+	/**
+	 * Enqueue Gutenberg editor blocks assets
+	 */
+	public function enqueue_assets() {
+		$style_path = '/includes/gutenberg-blocks/assets/css/blocks.style.css';
+		wp_enqueue_style(
+			'revslider-blocks',
+			RS_PLUGIN_URL . $style_path,
+			'',
+			filemtime( RS_PLUGIN_PATH . $style_path )
+		);
+	}
+
+	/**
+	 * Add ThemePunch Gutenberg Block Category
+	 */
+	public function create_block_category( $categories, $post ) {
+		if($this->in_array_r('themepunch',$categories)) return $categories;
+		return array_merge(
+			$categories,
+			array(
+				array(
+					'slug' => 'themepunch',
+					'title' => __( 'ThemePunch', 'revslider' ),
+				),
+			)
+		);
+	}
+
+	/**
+	 * Check Array for Value
+	 */
+	public function in_array_r($needle, $haystack, $strict = false) {
+		foreach ($haystack as $item) {
+			if (($strict ? $item === $needle : $item == $needle) || (is_array($item) && $this->in_array_r($needle, $item, $strict))) {
+				return true;
+			}
+		}
+	
+		return false;
+	}
+
 }
 ?>

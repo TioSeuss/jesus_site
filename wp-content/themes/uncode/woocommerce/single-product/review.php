@@ -29,11 +29,30 @@ global $woocommerce;
 
 	<div id="comment-<?php comment_ID(); ?>" class="comment_container comment-content post-content" itemprop="text">
 
+		<?php
+		/**
+		 * The woocommerce_review_before hook
+		 *
+		 * @hooked woocommerce_review_display_gravatar - 10
+		 */
+		do_action( 'woocommerce_review_before', $comment );
+		?>
+
 		<figure class="gravatar"><?php echo get_avatar( $comment, apply_filters( 'woocommerce_review_gravatar_size', '256' ), '', get_comment_author_email( $comment->comment_ID ) ); ?></figure>
 
 		<div class="comment-text comment-meta post-meta" role="complementary">
 
 			<?php do_action( 'woocommerce_review_before_comment_meta', $comment ); ?>
+
+			<?php
+			/**
+			 * The woocommerce_review_meta hook.
+			 *
+			 * @hooked woocommerce_review_display_meta - 10
+			 * @hooked WC_Structured_Data::generate_review_data() - 20
+			 */
+			do_action( 'woocommerce_review_meta', $comment );
+			?>
 
 			<?php if ( $comment->comment_approved == '0' ) : ?>
 
@@ -46,9 +65,11 @@ global $woocommerce;
 				</div>
 				<?php
 
-						if ( get_option( 'woocommerce_review_rating_verification_label' ) === 'yes' )
-							if ( wc_customer_bought_product( $comment->comment_author_email, $comment->user_id, $comment->comment_post_ID ) )
+						if ( get_option( 'woocommerce_review_rating_verification_label' ) === 'yes' ) {
+							if ( wc_review_is_from_verified_owner( $comment->comment_ID ) ) {
 								echo '<em class="verified">(' . esc_html__( 'verified owner', 'woocommerce' ) . ')</em> ';
+							}
+						}
 
 					?>
 				<time class="comment-meta-item" datetime="<?php comment_date('Y-m-d') ?>T<?php comment_time('H:iP') ?>" itemprop="datePublished"><span><?php comment_date() ?></span>, <a href="#comment-<?php comment_ID() ?>" itemprop="url"><span><?php comment_time() ?></span></a></time>
@@ -56,6 +77,15 @@ global $woocommerce;
 			<?php endif; ?>
 
 			<?php do_action( 'woocommerce_review_before_comment_text', $comment ); ?>
+
+			<?php
+			/**
+			 * The woocommerce_review_comment_text hook
+			 *
+			 * @hooked woocommerce_review_display_comment_text - 10
+			 */
+			do_action( 'woocommerce_review_comment_text', $comment );
+			?>
 
 			<div itemprop="description" class="description"><?php comment_text(); ?></div>
 

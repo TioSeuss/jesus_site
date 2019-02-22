@@ -36,6 +36,8 @@ do_action( 'woocommerce_before_add_to_cart_form' ); ?>
 					setup_postdata( $post );
 					?>
 					<tr>
+						<?php do_action( 'woocommerce_grouped_product_list_before_item_total', $grouped_product ); ?>
+
 						<td class="item_total">
 							<?php
 							if ( ! $grouped_product->is_purchasable() || $grouped_product->has_options() || ! $grouped_product->is_in_stock() ) {
@@ -55,22 +57,34 @@ do_action( 'woocommerce_before_add_to_cart_form' ); ?>
 							?>
 						</td>
 
+						<?php do_action( 'woocommerce_grouped_product_list_after_item_total', $grouped_product ); ?>
+
+						<?php do_action( 'woocommerce_grouped_product_list_before_label', $grouped_product ); ?>
+
 						<td class="label">
 							<label for="product-<?php echo esc_attr($product_id); ?>">
 								<?php
-									echo ( $grouped_product->is_visible() ) ? '<a href="' . esc_url( apply_filters( 'woocommerce_grouped_product_list_link', get_permalink( $grouped_product->get_id() ), $grouped_product->get_id() ) ) . '">' . $grouped_product->get_name() . '</a>' : $grouped_product->get_name();
+								if ( $grouped_product->is_visible() ) {
+									echo '<a href="' . esc_url( apply_filters( 'woocommerce_grouped_product_list_link', get_permalink( $grouped_product->get_id() ), $grouped_product->get_id() ) ) . '">' . $grouped_product->get_name() . '</a>';
+								} else {
+									echo esc_html( $grouped_product->get_name() );
+								}
 								?>
 							</label>
 						</td>
 
-						<?php do_action ( 'woocommerce_grouped_product_list_before_price', $product ); ?>
+						<?php do_action( 'woocommerce_grouped_product_list_after_label', $grouped_product ); ?>
+
+						<?php do_action ( 'woocommerce_grouped_product_list_before_price', $grouped_product ); ?>
 
 						<td class="price">
 							<?php
-								echo ( $grouped_product->get_price_html() );
+								echo wp_kses_post( $grouped_product->get_price_html() );
 								echo wc_get_stock_html( $grouped_product );
 							?>
 						</td>
+
+						<?php do_action( 'woocommerce_grouped_product_list_after_price', $grouped_product ); ?>
 					</tr>
 					<?php
 				endforeach;

@@ -9,7 +9,9 @@
  * @version     1.6.4
  */
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly
+}
 
 get_header( 'shop' );
 
@@ -31,7 +33,9 @@ get_header( 'shop' );
 		$style = ot_get_option('_uncode_general_style');
 		if (isset($metabox_data['_uncode_specific_bg_color'][0]) && $metabox_data['_uncode_specific_bg_color'][0] !== '') {
 			$bg_color = $metabox_data['_uncode_specific_bg_color'][0];
-		} else $bg_color = ot_get_option('_uncode_general_bg_color');
+		} else {
+			$bg_color = ot_get_option('_uncode_general_bg_color');
+		}
 	}
 	$bg_color = ($bg_color == '') ? ' style-'.$style.'-bg' : ' style-'.$bg_color.'-bg';
 
@@ -42,7 +46,9 @@ get_header( 'shop' );
 		$generic_content_full = ot_get_option('_uncode_'.$post_type.'_layout_width');
 		if ($generic_content_full === '') {
 			$main_content_full = ot_get_option('_uncode_body_full');
-			if ($main_content_full === '' || $main_content_full === 'off') $limit_content_width = ' limit-width';
+			if ($main_content_full === '' || $main_content_full === 'off') {
+				$limit_content_width = ' limit-width';
+			}
 		} else {
 			if ($generic_content_full === 'limit') {
 				$generic_custom_width = ot_get_option('_uncode_'.$post_type.'_layout_width_custom');
@@ -64,7 +70,9 @@ get_header( 'shop' );
 					$page_custom_width[0] = 12 * round(($page_custom_width[0]) / 12);
 				}
 				$page_custom_width = ' style="max-width: '.implode("", $page_custom_width).'; margin: auto;"';
-			} else $page_custom_width = '';
+			} else {
+				$page_custom_width = '';
+			}
 		}
 	}
 
@@ -91,13 +99,10 @@ get_header( 'shop' );
 	/** Get breadcrumb info **/
 	$generic_breadcrumb = ot_get_option('_uncode_' . $post_type . '_breadcrumb');
 	$page_breadcrumb = (isset($metabox_data['_uncode_specific_breadcrumb'][0])) ? $metabox_data['_uncode_specific_breadcrumb'][0] : '';
-	if ($page_breadcrumb === '')
-	{
+	if ($page_breadcrumb === '') {
 		$breadcrumb_align = ot_get_option('_uncode_' . $post_type . '_breadcrumb_align');
 		$show_breadcrumb = ($generic_breadcrumb === 'off') ? false : true;
-	}
-	else
-	{
+	} else {
 		$breadcrumb_align = (isset($metabox_data['_uncode_specific_breadcrumb_align'][0])) ? $metabox_data['_uncode_specific_breadcrumb_align'][0] : '';
 		$show_breadcrumb = ($page_breadcrumb === 'off') ? false : true;
 	}
@@ -123,12 +128,12 @@ get_header( 'shop' );
 
 		/** Build header **/
 		if ($page_header_type !== '' && $page_header_type !== 'none') {
-			$page_header = new unheader($metabox_data, $post->post_title);
+			$page_header = new unheader($metabox_data, $post->post_title, $post->post_excerpt);
 
 			$header_html = $page_header->html;
 			if ($header_html !== '') {
 				echo '<div id="page-header">';
-				echo uncode_remove_wpautop( $page_header->html );
+				echo uncode_remove_p_tag( $page_header->html );
 				echo '</div>';
 			}
 
@@ -139,9 +144,10 @@ get_header( 'shop' );
 		echo '<script type="text/javascript">UNCODE.initHeader();</script>';
 		/** Build breadcrumb **/
 
-		if ($show_breadcrumb && !is_front_page() && !is_home())
-		{
-			if ($breadcrumb_align === '') $breadcrumb_align = 'right';
+		if ($show_breadcrumb && !is_front_page() && !is_home()) {
+			if ($breadcrumb_align === '') {
+				$breadcrumb_align = 'right';
+			}
 			$breadcrumb_align = ' text-' . $breadcrumb_align;
 
 			if (isset($metabox_data['_uncode_specific_navigation_index'][0]) && $metabox_data['_uncode_specific_navigation_index'][0] !== '') {
@@ -164,8 +170,12 @@ get_header( 'shop' );
 				<?php
 
 				ob_start();
-				remove_action( 'woocommerce_before_main_content', 'woocommerce_breadcrumb', 20 );
-				remove_action( 'woocommerce_before_main_content', 'woocommerce_output_content_wrapper', 10 );
+				/**
+				 * woocommerce_before_main_content hook.
+				 *
+				 * @hooked woocommerce_output_content_wrapper - 10 (outputs opening divs for the content)
+				 * @hooked woocommerce_breadcrumb - 20
+				 */
 				do_action( 'woocommerce_before_main_content' );
 				$the_content_before = ob_get_clean();
 
@@ -194,18 +204,24 @@ get_header( 'shop' );
 						$vc = new Vc_Base();
 						$vc->addShortcodesCustomCss($content_block_after);
 					}
-					if (has_shortcode($content_after_body, 'vc_row')) $content_after_body = '<div class="post-after row-container">' . $content_after_body . '</div>';
-					else $content_after_body = '<div class="post-after row-container">' . uncode_get_row_template($content_after_body, $limit_width, $limit_content_width, $style, '', false, true, 'double', $page_custom_width) . '</div>';
+					if (has_shortcode($content_after_body, 'vc_row')) {
+						$content_after_body = '<div class="post-after row-container">' . $content_after_body . '</div>';
+					} else {
+						$content_after_body = '<div class="post-after row-container">' . uncode_get_row_template($content_after_body, $limit_width, $limit_content_width, $style, '', false, true, 'double', $page_custom_width) . '</div>';
+					}
 					if (class_exists('RP4WP_Post_Link_Manager')) {
-						if ( is_array(RP4WP::get()->settings) )
+						if ( is_array(RP4WP::get()->settings) ) {
 							$automatic_linking_post_amount = RP4WP::get()->settings[ 'general_' . $post_type ]->get_option( 'automatic_linking_post_amount' );
-						else
+						} else {
 							$automatic_linking_post_amount = RP4WP::get()->settings->get_option( 'automatic_linking_post_amount' );
+						}
 						$uncode_related = new RP4WP_Post_Link_Manager();
 						$related_posts = $uncode_related->get_children($post->ID,false);
 						$related_posts_ids = array();
 						foreach ($related_posts as $key => $value) {
-							if (isset($value->ID)) $related_posts_ids[] = $value->ID;
+							if (isset($value->ID)) {
+								$related_posts_ids[] = $value->ID;
+							}
 						}
 						$archive_query = '';
 						$regex = '/\[uncode_index(.*?)\]/';
@@ -218,7 +234,9 @@ get_header( 'shop' );
 								foreach ($matches_attr as $key_attr => $value_attr) {
 									switch (trim($value_attr[1])) {
 										case 'auto_query':
-											if ($value_attr[2] === 'yes') $index_found = true;
+											if ($value_attr[2] === 'yes') {
+												$index_found = true;
+											}
 											break;
 										case 'loop':
 											$archive_query = $value_attr[2];
@@ -227,11 +245,14 @@ get_header( 'shop' );
 								}
 							}
 							if ($index_found) {
-								if ($archive_query === '') $archive_query = ' loop="size:10|by_id:' . implode(',', $related_posts_ids) .'|post_type:' . $post->post_type . '"';
-								else {
+								if ($archive_query === '') {
+									$archive_query = ' loop="size:10|by_id:' . implode(',', $related_posts_ids) .'|post_type:' . $post->post_type . '"';
+								} else {
 									$parse_query = uncode_parse_loop_data($archive_query);
 									$parse_query['by_id'] = implode(',', $related_posts_ids);
-									if (!isset($parse_query['order'])) $parse_query['order'] = 'none';
+									if (!isset($parse_query['order'])) {
+										$parse_query['order'] = 'none';
+									}
 									$archive_query = ' loop="' . uncode_unparse_loop_data($parse_query) . '"';
 								}
 								$value[1] = preg_replace('#\s(loop)="([^"]+)"#', $archive_query, $value[1], -1, $index_count);
@@ -245,14 +266,15 @@ get_header( 'shop' );
 					}
 				}
 
-				if ($content_after_body !== '') $content_after_body = uncode_remove_wpautop($content_after_body);
+				if ($content_after_body !== '') {
+					$content_after_body = uncode_remove_p_tag($content_after_body);
+				}
 
 				echo '<div class="post-body">' . do_shortcode($the_content) . $content_after_body . '</div>';
 
 				/** Build and display navigation html **/
 				$navigation_option = ot_get_option('_uncode_' . $post_type . '_navigation_activate');
-				if ($navigation_option !== 'off')
-				{
+				if ($navigation_option !== 'off') {
 					$generic_index = true;
 					if (isset($metabox_data['_uncode_specific_navigation_index'][0]) && $metabox_data['_uncode_specific_navigation_index'][0] !== '') {
 						$navigation_index = $metabox_data['_uncode_specific_navigation_index'][0];
@@ -260,21 +282,39 @@ get_header( 'shop' );
 					} else {
 						$navigation_index = ot_get_option('_uncode_' . $post_type . '_navigation_index');
 					}
-					if ($navigation_index !== '')
-					{
+					if ($navigation_index !== '') {
 						$navigation_index_label = ot_get_option('_uncode_' . $post_type . '_navigation_index_label');
 						$navigation_index_link = get_permalink($navigation_index);
 						$navigation_index_btn = '<a class="btn btn-link text-default-color" href="' . esc_url($navigation_index_link) . '">' . ($navigation_index_label === '' ? get_the_title($navigation_index) : esc_html($navigation_index_label)) . '</a>';
+					} else {
+						$navigation_index_btn = '';
 					}
-					else $navigation_index_btn = '';
 					$navigation_nextprev_title = ot_get_option('_uncode_' . $post_type . '_navigation_nextprev_title');
 					$navigation = uncode_post_navigation($navigation_index_btn, $navigation_nextprev_title, $navigation_index, $generic_index);
-					if (!empty($navigation) && $navigation !== '') echo uncode_get_row_template($navigation, '', $limit_content_width, $style, ' row-navigation row-navigation-' . $style, true, true, true);
+					if (!empty($navigation) && $navigation !== '') {
+						echo uncode_get_row_template($navigation, '', $limit_content_width, $style, ' row-navigation row-navigation-' . $style, true, true, true);
+					}
 				}
+
+				/**
+				 * woocommerce_after_main_content hook.
+				 *
+				 * @hooked woocommerce_output_content_wrapper_end - 10 (outputs closing divs for the content)
+				 */
+				do_action( 'woocommerce_after_main_content' );
 				?>
 			</div>
 		</div>
 		<meta itemprop="url" content="<?php the_permalink(); ?>" /><!-- #product-<?php the_ID(); ?> -->
 	<?php endwhile; // end of the loop. ?>
+
+	<?php
+		/**
+		 * woocommerce_sidebar hook.
+		 *
+		 * @hooked woocommerce_get_sidebar - 10
+		 */
+		do_action( 'woocommerce_sidebar' );
+	?>
 
 <?php get_footer(); ?>

@@ -36,9 +36,15 @@ switch ($empty_h) {
 $class .= $this->getExtraClass($el_class);
 $css_class = apply_filters( VC_SHORTCODE_CUSTOM_CSS_FILTER_TAG, $class, $this->settings['base'], $atts );
 
-if ($desktop_visibility === 'yes') $css_class .= ' desktop-hidden';
-if ($medium_visibility === 'yes') $css_class .= ' tablet-hidden';
-if ($mobile_visibility === 'yes') $css_class .= ' mobile-hidden';
+if ($desktop_visibility === 'yes') {
+	$css_class .= ' desktop-hidden';
+}
+if ($medium_visibility === 'yes') {
+	$css_class .= ' tablet-hidden';
+}
+if ($mobile_visibility === 'yes') {
+	$css_class .= ' mobile-hidden';
+}
 
 ?>
 <div class="<?php echo esc_attr(trim($css_class)); ?>"><span class="empty-space-inner"></span></div>

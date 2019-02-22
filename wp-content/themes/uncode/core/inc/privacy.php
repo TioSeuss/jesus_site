@@ -32,12 +32,9 @@ if ( ! function_exists( 'uncode_privacy_allow_content' ) ) :
 
 		$consent_types = is_array( get_option( 'uncode_privacy_consent_types' ) ) ? get_option( 'uncode_privacy_consent_types' ) : array();
 
-		if (
-			( !array_key_exists( $consent_id, $consent_types ) )
-			||
-			! uncode_is_uncode_privacy_active()
-		)
+		if ( ( !array_key_exists( $consent_id, $consent_types ) ) || ! uncode_is_uncode_privacy_active() ) {
 			return 'none';
+		}
 
 		$allow = uncode_privacy_has_consent( $consent_id );
 
@@ -54,8 +51,9 @@ if ( ! function_exists( 'uncode_privacy_check_needed' ) ) :
 	 */
 	function uncode_privacy_check_needed( $consent_id ) {
 
-		if ( ! uncode_is_uncode_privacy_active() )
+		if ( ! uncode_is_uncode_privacy_active() ) {
 			return false;
+		}
 
 		$consent_types = is_array( get_option( 'uncode_privacy_consent_types' ) ) ? get_option( 'uncode_privacy_consent_types' ) : array();
 		$check = array_key_exists( $consent_id, $consent_types ) && isset($consent_types[$consent_id]) && !$consent_types[$consent_id]['required'];

@@ -3,288 +3,289 @@
  * ---------------------------------------------------------- */
 
 (function(window, $) {
-	'use strict';
-	var counter = 0,
-		$headCache = $('head'),
-		oldBigText = window.BigText,
-		oldjQueryMethod = $.fn.bigtext,
-		BigText = {
-			DEBUG_MODE: false,
-			DEFAULT_MIN_FONT_SIZE_PX: null,
-			DEFAULT_MAX_FONT_SIZE_PX: 528,
-			GLOBAL_STYLE_ID: 'bigtext-style',
-			STYLE_ID: 'bigtext-id',
-			LINE_CLASS_PREFIX: 'bigtext-line',
-			EXEMPT_CLASS: 'bigtext-exempt',
-			noConflict: function(restore)
-			{
-				if(restore) {
-					$.fn.bigtext = oldjQueryMethod;
-					window.BigText = oldBigText;
-				}
-				return BigText;
-			},
-			supports: {
-				wholeNumberFontSizeOnly: (function() {
-					if( !( 'getComputedStyle' in window ) ) {
-						return true;
-					}
-					var test = $('<div/>').css({
-							position: 'absolute',
-							'font-size': '14.1px'
-						}).insertBefore( $('script').eq(0) ),
-						computedStyle = window.getComputedStyle( test[0], null );
+  'use strict';
+  var counter = 0,
+    $headCache = $('head'),
+    oldBigText = window.BigText,
+    oldjQueryMethod = $.fn.bigtext,
+    BigText = {
+      DEBUG_MODE: false,
+      DEFAULT_MIN_FONT_SIZE_PX: null,
+      DEFAULT_MAX_FONT_SIZE_PX: 528,
+      GLOBAL_STYLE_ID: 'bigtext-style',
+      STYLE_ID: 'bigtext-id',
+      LINE_CLASS_PREFIX: 'bigtext-line',
+      EXEMPT_CLASS: 'bigtext-exempt',
+      noConflict: function(restore)
+      {
+        if(restore) {
+          $.fn.bigtext = oldjQueryMethod;
+          window.BigText = oldBigText;
+        }
+        return BigText;
+      },
+      supports: {
+        wholeNumberFontSizeOnly: (function() {
+          if( !( 'getComputedStyle' in window ) ) {
+            return true;
+          }
+          var test = $('<div/>').css({
+              position: 'absolute',
+              'font-size': '14.1px'
+            }).insertBefore( $('script').eq(0) ),
+            computedStyle = window.getComputedStyle( test[0], null );
 
-					var ret = computedStyle && computedStyle.getPropertyValue( 'font-size' ) === '14px';
-					test.remove();
-					return ret;
-				})()
-			},      init: function() {
-				if(!$('#'+BigText.GLOBAL_STYLE_ID).length) {
-					$headCache.append(BigText.generateStyleTag(BigText.GLOBAL_STYLE_ID, ['.bigtext * { white-space: nowrap; } .bigtext > * { display: block; }',
-																					'.bigtext .' + BigText.EXEMPT_CLASS + ', .bigtext .' + BigText.EXEMPT_CLASS + ' * { white-space: normal; }']));
-				}
-			},
-			bindResize: function(eventName, resizeFunction) {
-				var timeoutId;
-				$(window).unbind(eventName).bind(eventName, function() {
-					if( timeoutId ) {
-						clearTimeout( timeoutId );
-					}
-					timeoutId = setTimeout( resizeFunction, 300 );
-				});
-			},
-			getStyleId: function(id)
-			{
-				return BigText.STYLE_ID + '-' + id;
-			},
-			generateStyleTag: function(id, css)
-			{
-				return $('<style>' + css.join('\n') + '</style>').attr('id', id);
-			},
-			clearCss: function(id)
-			{
-				var styleId = BigText.getStyleId(id);
-				$('#' + styleId).remove();
-			},
-			generateCss: function(id, linesFontSizes, lineWordSpacings, minFontSizes)
-			{
-				var css = [];
+          var ret = computedStyle && computedStyle.getPropertyValue( 'font-size' ) === '14px';
+          test.remove();
+          return ret;
+        })()
+      },
+      init: function() {
+        if(!$('#'+BigText.GLOBAL_STYLE_ID).length) {
+          $headCache.append(BigText.generateStyleTag(BigText.GLOBAL_STYLE_ID, ['.bigtext * { white-space: nowrap; } .bigtext > * { display: block; }',
+                                          '.bigtext .' + BigText.EXEMPT_CLASS + ', .bigtext .' + BigText.EXEMPT_CLASS + ' * { white-space: normal; }']));
+        }
+      },
+      bindResize: function(eventName, resizeFunction) {
+        var timeoutId;
+        $(window).unbind(eventName).bind(eventName, function() {
+          if( timeoutId ) {
+            clearTimeout( timeoutId );
+          }
+          timeoutId = setTimeout( resizeFunction, 300 );
+        });
+      },
+      getStyleId: function(id)
+      {
+        return BigText.STYLE_ID + '-' + id;
+      },
+      generateStyleTag: function(id, css)
+      {
+        return $('<style>' + css.join('\n') + '</style>').attr('id', id);
+      },
+      clearCss: function(id)
+      {
+        var styleId = BigText.getStyleId(id);
+        $('#' + styleId).remove();
+      },
+      generateCss: function(id, linesFontSizes, lineWordSpacings, minFontSizes)
+      {
+        var css = [];
 
-				BigText.clearCss(id);
+        BigText.clearCss(id);
 
-				for(var j=0, k=linesFontSizes.length; j<k; j++) {
-					css.push('#' + id + ' .' + BigText.LINE_CLASS_PREFIX + j + ' {' +
-						(minFontSizes[j] ? ' white-space: normal;' : '') +
-						(linesFontSizes[j] ? ' font-size: ' + linesFontSizes[j] + 'px;' : '') +
-						(lineWordSpacings[j] ? ' word-spacing: ' + lineWordSpacings[j] + 'px;' : '') +
-						'}');
-				}
+        for(var j=0, k=linesFontSizes.length; j<k; j++) {
+          css.push('#' + id + ' .' + BigText.LINE_CLASS_PREFIX + j + ' {' +
+            (minFontSizes[j] ? ' white-space: normal;' : '') +
+            (linesFontSizes[j] ? ' font-size: ' + linesFontSizes[j] + 'px;' : '') +
+            (lineWordSpacings[j] ? ' word-spacing: ' + lineWordSpacings[j] + 'px;' : '') +
+            '}');
+        }
 
-				return BigText.generateStyleTag(BigText.getStyleId(id), css);
-			},
-			jQueryMethod: function(options)
-			{
-				BigText.init();
+        return BigText.generateStyleTag(BigText.getStyleId(id), css);
+      },
+      jQueryMethod: function(options)
+      {
+        BigText.init();
 
-				options = $.extend({
-					minfontsize: BigText.DEFAULT_MIN_FONT_SIZE_PX,
-					maxfontsize: BigText.DEFAULT_MAX_FONT_SIZE_PX,
-					childSelector: '',
-					resize: true
-				}, options || {});
+        options = $.extend({
+          minfontsize: BigText.DEFAULT_MIN_FONT_SIZE_PX,
+          maxfontsize: BigText.DEFAULT_MAX_FONT_SIZE_PX,
+          childSelector: '',
+          resize: true
+        }, options || {});
 
-				this.each(function()
-				{
-					var $t = $(this).addClass('bigtext'),
-						maxWidth = $t.width(),
-						id = $t.attr('id'),
-						$children = options.childSelector ? $t.find( options.childSelector ) : $t.children();
+        this.each(function()
+        {
+          var $t = $(this).addClass('bigtext'),
+            maxWidth = $t.width(),
+            id = $t.attr('id'),
+            $children = options.childSelector ? $t.find( options.childSelector ) : $t.children();
 
-					if(!id) {
-						id = 'bigtext-id' + (counter++);
-						$t.attr('id', id);
-					}
+          if(!id) {
+            id = 'bigtext-id' + (counter++);
+            $t.attr('id', id);
+          }
 
-					if(options.resize) {
-						BigText.bindResize('resize.bigtext-event-' + id, function()
-						{
-							// TODO only call this if the width has changed.
-							BigText.jQueryMethod.call($('#' + id), options);
-						});
-					}
+          if(options.resize) {
+            BigText.bindResize('resize.bigtext-event-' + id, function()
+            {
+              // TODO only call this if the width has changed.
+              BigText.jQueryMethod.call($('#' + id), options);
+            });
+          }
 
-					BigText.clearCss(id);
+          BigText.clearCss(id);
 
-					$children.addClass(function(lineNumber, className)
-					{
-						// remove existing line classes.
-						return [className.replace(new RegExp('\\b' + BigText.LINE_CLASS_PREFIX + '\\d+\\b'), ''),
-								BigText.LINE_CLASS_PREFIX + lineNumber].join(' ');
-					});
+          $children.addClass(function(lineNumber, className)
+          {
+            // remove existing line classes.
+            return [className.replace(new RegExp('\\b' + BigText.LINE_CLASS_PREFIX + '\\d+\\b'), ''),
+                BigText.LINE_CLASS_PREFIX + lineNumber].join(' ');
+          });
 
-					var sizes = calculateSizes($t, $children, maxWidth, options.maxfontsize, options.minfontsize);
-					$headCache.append(BigText.generateCss(id, sizes.fontSizes, sizes.wordSpacings, sizes.minFontSizes));
-				});
+          var sizes = calculateSizes($t, $children, maxWidth, options.maxfontsize, options.minfontsize);
+          $headCache.append(BigText.generateCss(id, sizes.fontSizes, sizes.wordSpacings, sizes.minFontSizes));
+        });
 
-				return this.trigger('bigtext:complete');
-			}
-		};
+        return this.trigger('bigtext:complete');
+      }
+    };
 
-	function testLineDimensions($line, maxWidth, property, size, interval, units, previousWidth)
-	{
-		var width;
-		previousWidth = typeof previousWidth === 'number' ? previousWidth : 0;
-		$line.css(property, size + units);
+  function testLineDimensions($line, maxWidth, property, size, interval, units, previousWidth)
+  {
+    var width;
+    previousWidth = typeof previousWidth === 'number' ? previousWidth : 0;
+    $line.css(property, size + units);
 
-		width = $line.width();
+    width = $line.width();
 
-		if(width >= maxWidth) {
+    if(width >= maxWidth) {
 
-			$line.css(property, '');
+      $line.css(property, '');
 
-			if(width === maxWidth) {
-				return {
-					match: 'exact',
-					size: parseFloat((parseFloat(size) - 0.1).toFixed(3))
-				};
-			}
+      if(width === maxWidth) {
+        return {
+          match: 'exact',
+          size: parseFloat((parseFloat(size) - 0.1).toFixed(3))
+        };
+      }
 
-			// Since this is an estimate, we calculate how far over the width we went with the new value.
-			// If this is word-spacing (our last resort guess) and the over is less than the under, we keep the higher value.
-			// Otherwise, we revert to the underestimate.
-			var under = maxWidth - previousWidth,
-				over = width - maxWidth;
+      // Since this is an estimate, we calculate how far over the width we went with the new value.
+      // If this is word-spacing (our last resort guess) and the over is less than the under, we keep the higher value.
+      // Otherwise, we revert to the underestimate.
+      var under = maxWidth - previousWidth,
+        over = width - maxWidth;
 
-			return {
-				match: 'estimate',
-				size: parseFloat((parseFloat(size) - (property === 'word-spacing' && previousWidth && ( over < under ) ? 0 : interval)).toFixed(3))
-			};
-		}
+      return {
+        match: 'estimate',
+        size: parseFloat((parseFloat(size) - (property === 'word-spacing' && previousWidth && ( over < under ) ? 0 : interval)).toFixed(3))
+      };
+    }
 
-		return width;
-	}
+    return width;
+  }
 
-	function calculateSizes($t, $children, maxWidth, maxFontSize, minFontSize)
-	{
-		var $c = $t.clone(true)
-			.addClass('bigtext-cloned')
-			.css({
-				fontFamily: $t.css('font-family'),
-				textTransform: $t.css('text-transform'),
-				wordSpacing: $t.css('word-spacing'),
-				letterSpacing: $t.css('letter-spacing'),
-				position: 'absolute',
-				left: BigText.DEBUG_MODE ? 0 : -9999,
-				top: BigText.DEBUG_MODE ? 0 : -9999
-			})
-			.appendTo(document.body);
+  function calculateSizes($t, $children, maxWidth, maxFontSize, minFontSize)
+  {
+    var $c = $t.clone(true)
+      .addClass('bigtext-cloned')
+      .css({
+        fontFamily: $t.css('font-family'),
+        textTransform: $t.css('text-transform'),
+        wordSpacing: $t.css('word-spacing'),
+        letterSpacing: $t.css('letter-spacing'),
+        position: 'absolute',
+        left: BigText.DEBUG_MODE ? 0 : -9999,
+        top: BigText.DEBUG_MODE ? 0 : -9999
+      })
+      .appendTo(document.body);
 
-		// font-size isn't the only thing we can modify, we can also mess with:
-		// word-spacing and letter-spacing. WebKit does not respect subpixel
-		// letter-spacing, word-spacing, or font-size.
-		// TODO try -webkit-transform: scale() as a workaround.
-		var fontSizes = [],
-			wordSpacings = [],
-			minFontSizes = [],
-			ratios = [];
+    // font-size isn't the only thing we can modify, we can also mess with:
+    // word-spacing and letter-spacing. WebKit does not respect subpixel
+    // letter-spacing, word-spacing, or font-size.
+    // TODO try -webkit-transform: scale() as a workaround.
+    var fontSizes = [],
+      wordSpacings = [],
+      minFontSizes = [],
+      ratios = [];
 
-		$children.css('float', 'left').each(function() {
-			var $line = $(this),
-				// TODO replace 8, 4 with a proportional size to the calculated font-size.
-				intervals = BigText.supports.wholeNumberFontSizeOnly ? [8, 4, 1] : [8, 4, 1, 0.1],
-				lineMax,
-				newFontSize;
+    $children.css('float', 'left').each(function() {
+      var $line = $(this),
+        // TODO replace 8, 4 with a proportional size to the calculated font-size.
+        intervals = BigText.supports.wholeNumberFontSizeOnly ? [8, 4, 1] : [8, 4, 1, 0.1],
+        lineMax,
+        newFontSize;
 
-			if($line.hasClass(BigText.EXEMPT_CLASS)) {
-				fontSizes.push(null);
-				ratios.push(null);
-				minFontSizes.push(false);
-				return;
-			}
+      if($line.hasClass(BigText.EXEMPT_CLASS)) {
+        fontSizes.push(null);
+        ratios.push(null);
+        minFontSizes.push(false);
+        return;
+      }
 
-			// TODO we can cache this ratio?
-			var autoGuessSubtraction = 32, // font size in px
-				currentFontSize = parseFloat($line.css('font-size')),
-				ratio = ( $line.width() / currentFontSize ).toFixed(6);
+      // TODO we can cache this ratio?
+      var autoGuessSubtraction = 32, // font size in px
+        currentFontSize = parseFloat($line.css('font-size')),
+        ratio = ( $line.width() / currentFontSize ).toFixed(6);
 
-			newFontSize = parseInt( maxWidth / ratio, 10 ) - autoGuessSubtraction;
+      newFontSize = parseInt( maxWidth / ratio, 10 ) - autoGuessSubtraction;
 
-			outer: for(var m=0, n=intervals.length; m<n; m++) {
-				inner: for(var j=1, k=10; j<=k; j++) {
-					if(newFontSize + j*intervals[m] > maxFontSize) {
-						newFontSize = maxFontSize;
-						break outer;
-					}
+      outer: for(var m=0, n=intervals.length; m<n; m++) {
+        inner: for(var j=1, k=10; j<=k; j++) {
+          if(newFontSize + j*intervals[m] > maxFontSize) {
+            newFontSize = maxFontSize;
+            break outer;
+          }
 
-					lineMax = testLineDimensions($line, maxWidth, 'font-size', newFontSize + j*intervals[m], intervals[m], 'px', lineMax);
-					if(typeof lineMax !== 'number') {
-						newFontSize = lineMax.size;
+          lineMax = testLineDimensions($line, maxWidth, 'font-size', newFontSize + j*intervals[m], intervals[m], 'px', lineMax);
+          if(typeof lineMax !== 'number') {
+            newFontSize = lineMax.size;
 
-						if(lineMax.match === 'exact') {
-							break outer;
-						}
-						break inner;
-					}
-				}
-			}
+            if(lineMax.match === 'exact') {
+              break outer;
+            }
+            break inner;
+          }
+        }
+      }
 
-			ratios.push(maxWidth / newFontSize);
+      ratios.push(maxWidth / newFontSize);
 
-			if(newFontSize > maxFontSize) {
-				fontSizes.push(maxFontSize);
-				minFontSizes.push(false);
-			} else if(!!minFontSize && newFontSize < minFontSize) {
-				fontSizes.push(minFontSize);
-				minFontSizes.push(true);
-			} else {
-				fontSizes.push(newFontSize);
-				minFontSizes.push(false);
-			}
-		}).each(function(lineNumber) {
-			var $line = $(this),
-				wordSpacing = 0,
-				interval = 1,
-				maxWordSpacing;
+      if(newFontSize > maxFontSize) {
+        fontSizes.push(maxFontSize);
+        minFontSizes.push(false);
+      } else if(!!minFontSize && newFontSize < minFontSize) {
+        fontSizes.push(minFontSize);
+        minFontSizes.push(true);
+      } else {
+        fontSizes.push(newFontSize);
+        minFontSizes.push(false);
+      }
+    }).each(function(lineNumber) {
+      var $line = $(this),
+        wordSpacing = 0,
+        interval = 1,
+        maxWordSpacing;
 
-			if($line.hasClass(BigText.EXEMPT_CLASS)) {
-				wordSpacings.push(null);
-				return;
-			}
+      if($line.hasClass(BigText.EXEMPT_CLASS)) {
+        wordSpacings.push(null);
+        return;
+      }
 
-			// must re-use font-size, even though it was removed above.
-			$line.css('font-size', fontSizes[lineNumber] + 'px');
+      // must re-use font-size, even though it was removed above.
+      $line.css('font-size', fontSizes[lineNumber] + 'px');
 
-			for(var m=1, n=3; m<n; m+=interval) {
-				maxWordSpacing = testLineDimensions($line, maxWidth, 'word-spacing', m, interval, 'px', maxWordSpacing);
-				if(typeof maxWordSpacing !== 'number') {
-					wordSpacing = maxWordSpacing.size;
-					break;
-				}
-			}
+      for(var m=1, n=3; m<n; m+=interval) {
+        maxWordSpacing = testLineDimensions($line, maxWidth, 'word-spacing', m, interval, 'px', maxWordSpacing);
+        if(typeof maxWordSpacing !== 'number') {
+          wordSpacing = maxWordSpacing.size;
+          break;
+        }
+      }
 
-			$line.css('font-size', '');
-			wordSpacings.push(wordSpacing);
-		}).removeAttr('style');
+      $line.css('font-size', '');
+      wordSpacings.push(wordSpacing);
+    }).removeAttr('style');
 
-		if( !BigText.DEBUG_MODE ) {
-			$c.remove();
-		} else {
-			$c.css({
-				'background-color': 'rgba(255,255,255,.4)'
-			});
-		}
+    if( !BigText.DEBUG_MODE ) {
+      $c.remove();
+    } else {
+      $c.css({
+        'background-color': 'rgba(255,255,255,.4)'
+      });
+    }
 
-		return {
-			fontSizes: fontSizes,
-			wordSpacings: wordSpacings,
-			ratios: ratios,
-			minFontSizes: minFontSizes
-		};
-	}
+    return {
+      fontSizes: fontSizes,
+      wordSpacings: wordSpacings,
+      ratios: ratios,
+      minFontSizes: minFontSizes
+    };
+  }
 
-	$.fn.bigtext = BigText.jQueryMethod;
-	window.BigText = BigText;
+  $.fn.bigtext = BigText.jQueryMethod;
+  window.BigText = BigText;
 
 })(this, jQuery);
 
@@ -320,7 +321,7 @@ function defineBridget( $ ) {
 
 // bail if no jQuery
 if ( !$ ) {
-	return;
+  return;
 }
 
 // -------------------------- addOptionMethod -------------------------- //
@@ -330,19 +331,19 @@ if ( !$ ) {
  * @param {Function} PluginClass - constructor class
  */
 function addOptionMethod( PluginClass ) {
-	// don't overwrite original option method
-	if ( PluginClass.prototype.option ) {
-		return;
-	}
+  // don't overwrite original option method
+  if ( PluginClass.prototype.option ) {
+    return;
+  }
 
-	// option setter
-	PluginClass.prototype.option = function( opts ) {
-		// bail out if not an object
-		if ( !$.isPlainObject( opts ) ){
-			return;
-		}
-		this.options = $.extend( true, this.options, opts );
-	};
+  // option setter
+  PluginClass.prototype.option = function( opts ) {
+    // bail out if not an object
+    if ( !$.isPlainObject( opts ) ){
+      return;
+    }
+    this.options = $.extend( true, this.options, opts );
+  };
 }
 
 // -------------------------- plugin bridge -------------------------- //
@@ -350,9 +351,9 @@ function addOptionMethod( PluginClass ) {
 // helper function for logging errors
 // $.error breaks jQuery chaining
 var logError = typeof console === 'undefined' ? noop :
-	function( message ) {
-		console.error( message );
-	};
+  function( message ) {
+    console.error( message );
+  };
 
 /**
  * jQuery plugin bridge, access methods like $elem.plugin('method')
@@ -360,51 +361,51 @@ var logError = typeof console === 'undefined' ? noop :
  * @param {Function} PluginClass - constructor class
  */
 function bridge( namespace, PluginClass ) {
-	// add to jQuery fn namespace
-	$.fn[ namespace ] = function( options ) {
-		if ( typeof options === 'string' ) {
-			// call plugin method when first argument is a string
-			// get arguments for method
-			var args = slice.call( arguments, 1 );
+  // add to jQuery fn namespace
+  $.fn[ namespace ] = function( options ) {
+    if ( typeof options === 'string' ) {
+      // call plugin method when first argument is a string
+      // get arguments for method
+      var args = slice.call( arguments, 1 );
 
-			for ( var i=0, len = this.length; i < len; i++ ) {
-				var elem = this[i];
-				var instance = $.data( elem, namespace );
-				if ( !instance ) {
-					logError( "cannot call methods on " + namespace + " prior to initialization; " +
-						"attempted to call '" + options + "'" );
-					continue;
-				}
-				if ( !$.isFunction( instance[options] ) || options.charAt(0) === '_' ) {
-					logError( "no such method '" + options + "' for " + namespace + " instance" );
-					continue;
-				}
+      for ( var i=0, len = this.length; i < len; i++ ) {
+        var elem = this[i];
+        var instance = $.data( elem, namespace );
+        if ( !instance ) {
+          logError( "cannot call methods on " + namespace + " prior to initialization; " +
+            "attempted to call '" + options + "'" );
+          continue;
+        }
+        if ( !$.isFunction( instance[options] ) || options.charAt(0) === '_' ) {
+          logError( "no such method '" + options + "' for " + namespace + " instance" );
+          continue;
+        }
 
-				// trigger method with arguments
-				var returnValue = instance[ options ].apply( instance, args );
+        // trigger method with arguments
+        var returnValue = instance[ options ].apply( instance, args );
 
-				// break look and return first value if provided
-				if ( returnValue !== undefined ) {
-					return returnValue;
-				}
-			}
-			// return this if no return value
-			return this;
-		} else {
-			return this.each( function() {
-				var instance = $.data( this, namespace );
-				if ( instance ) {
-					// apply options & init
-					instance.option( options );
-					instance._init();
-				} else {
-					// initialize new instance
-					instance = new PluginClass( this, options );
-					$.data( this, namespace, instance );
-				}
-			});
-		}
-	};
+        // break look and return first value if provided
+        if ( returnValue !== undefined ) {
+          return returnValue;
+        }
+      }
+      // return this if no return value
+      return this;
+    } else {
+      return this.each( function() {
+        var instance = $.data( this, namespace );
+        if ( instance ) {
+          // apply options & init
+          instance.option( options );
+          instance._init();
+        } else {
+          // initialize new instance
+          instance = new PluginClass( this, options );
+          $.data( this, namespace, instance );
+        }
+      });
+    }
+  };
 
 }
 
@@ -417,8 +418,8 @@ function bridge( namespace, PluginClass ) {
  * @param {Function} PluginClass - constructor class
  */
 $.bridget = function( namespace, PluginClass ) {
-	addOptionMethod( PluginClass );
-	bridge( namespace, PluginClass );
+  addOptionMethod( PluginClass );
+  bridge( namespace, PluginClass );
 };
 
 return $.bridget;
@@ -427,13 +428,13 @@ return $.bridget;
 
 // transport
 if ( typeof define === 'function' && define.amd ) {
-	// AMD
-	define( 'jquery-bridget/jquery.bridget',[ 'jquery' ], defineBridget );
+  // AMD
+  define( 'jquery-bridget/jquery.bridget',[ 'jquery' ], defineBridget );
 } else if ( typeof exports === 'object' ) {
-	defineBridget( require('jquery') );
+  defineBridget( require('jquery') );
 } else {
-	// get jquery from browser global
-	defineBridget( window.jQuery );
+  // get jquery from browser global
+  defineBridget( window.jQuery );
 }
 
 })( window );
@@ -458,65 +459,65 @@ var docElem = document.documentElement;
 var bind = function() {};
 
 function getIEEvent( obj ) {
-	var event = window.event;
-	// add event.target
-	event.target = event.target || event.srcElement || obj;
-	return event;
+  var event = window.event;
+  // add event.target
+  event.target = event.target || event.srcElement || obj;
+  return event;
 }
 
 if ( docElem.addEventListener ) {
-	bind = function( obj, type, fn ) {
-		obj.addEventListener( type, fn, false );
-	};
+  bind = function( obj, type, fn ) {
+    obj.addEventListener( type, fn, false );
+  };
 } else if ( docElem.attachEvent ) {
-	bind = function( obj, type, fn ) {
-		obj[ type + fn ] = fn.handleEvent ?
-			function() {
-				var event = getIEEvent( obj );
-				fn.handleEvent.call( fn, event );
-			} :
-			function() {
-				var event = getIEEvent( obj );
-				fn.call( obj, event );
-			};
-		obj.attachEvent( "on" + type, obj[ type + fn ] );
-	};
+  bind = function( obj, type, fn ) {
+    obj[ type + fn ] = fn.handleEvent ?
+      function() {
+        var event = getIEEvent( obj );
+        fn.handleEvent.call( fn, event );
+      } :
+      function() {
+        var event = getIEEvent( obj );
+        fn.call( obj, event );
+      };
+    obj.attachEvent( "on" + type, obj[ type + fn ] );
+  };
 }
 
 var unbind = function() {};
 
 if ( docElem.removeEventListener ) {
-	unbind = function( obj, type, fn ) {
-		obj.removeEventListener( type, fn, false );
-	};
+  unbind = function( obj, type, fn ) {
+    obj.removeEventListener( type, fn, false );
+  };
 } else if ( docElem.detachEvent ) {
-	unbind = function( obj, type, fn ) {
-		obj.detachEvent( "on" + type, obj[ type + fn ] );
-		try {
-			delete obj[ type + fn ];
-		} catch ( err ) {
-			// can't delete window object properties
-			obj[ type + fn ] = undefined;
-		}
-	};
+  unbind = function( obj, type, fn ) {
+    obj.detachEvent( "on" + type, obj[ type + fn ] );
+    try {
+      delete obj[ type + fn ];
+    } catch ( err ) {
+      // can't delete window object properties
+      obj[ type + fn ] = undefined;
+    }
+  };
 }
 
 var eventie = {
-	bind: bind,
-	unbind: unbind
+  bind: bind,
+  unbind: unbind
 };
 
 // ----- module definition ----- //
 
 if ( typeof define === 'function' && define.amd ) {
-	// AMD
-	define( 'eventie/eventie',eventie );
+  // AMD
+  define( 'eventie/eventie',eventie );
 } else if ( typeof exports === 'object' ) {
-	// CommonJS
-	module.exports = eventie;
+  // CommonJS
+  module.exports = eventie;
 } else {
-	// browser global
-	window.eventie = eventie;
+  // browser global
+  window.eventie = eventie;
 }
 
 })( window );
@@ -529,469 +530,469 @@ if ( typeof define === 'function' && define.amd ) {
  */
 
 ;(function () {
-		'use strict';
+    'use strict';
 
-		/**
-		 * Class for managing events.
-		 * Can be extended to provide event functionality in other classes.
-		 *
-		 * @class EventEmitter Manages event registering and emitting.
-		 */
-		function EventEmitter() {}
+    /**
+     * Class for managing events.
+     * Can be extended to provide event functionality in other classes.
+     *
+     * @class EventEmitter Manages event registering and emitting.
+     */
+    function EventEmitter() {}
 
-		// Shortcuts to improve speed and size
-		var proto = EventEmitter.prototype;
-		var exports = this;
-		var originalGlobalValue = exports.EventEmitter;
+    // Shortcuts to improve speed and size
+    var proto = EventEmitter.prototype;
+    var exports = this;
+    var originalGlobalValue = exports.EventEmitter;
 
-		/**
-		 * Finds the index of the listener for the event in its storage array.
-		 *
-		 * @param {Function[]} listeners Array of listeners to search through.
-		 * @param {Function} listener Method to look for.
-		 * @return {Number} Index of the specified listener, -1 if not found
-		 * @api private
-		 */
-		function indexOfListener(listeners, listener) {
-				var i = listeners.length;
-				while (i--) {
-						if (listeners[i].listener === listener) {
-								return i;
-						}
-				}
+    /**
+     * Finds the index of the listener for the event in its storage array.
+     *
+     * @param {Function[]} listeners Array of listeners to search through.
+     * @param {Function} listener Method to look for.
+     * @return {Number} Index of the specified listener, -1 if not found
+     * @api private
+     */
+    function indexOfListener(listeners, listener) {
+        var i = listeners.length;
+        while (i--) {
+            if (listeners[i].listener === listener) {
+                return i;
+            }
+        }
 
-				return -1;
-		}
+        return -1;
+    }
 
-		/**
-		 * Alias a method while keeping the context correct, to allow for overwriting of target method.
-		 *
-		 * @param {String} name The name of the target method.
-		 * @return {Function} The aliased method
-		 * @api private
-		 */
-		function alias(name) {
-				return function aliasClosure() {
-						return this[name].apply(this, arguments);
-				};
-		}
+    /**
+     * Alias a method while keeping the context correct, to allow for overwriting of target method.
+     *
+     * @param {String} name The name of the target method.
+     * @return {Function} The aliased method
+     * @api private
+     */
+    function alias(name) {
+        return function aliasClosure() {
+            return this[name].apply(this, arguments);
+        };
+    }
 
-		/**
-		 * Returns the listener array for the specified event.
-		 * Will initialise the event object and listener arrays if required.
-		 * Will return an object if you use a regex search. The object contains keys for each matched event. So /ba[rz]/ might return an object containing bar and baz. But only if you have either defined them with defineEvent or added some listeners to them.
-		 * Each property in the object response is an array of listener functions.
-		 *
-		 * @param {String|RegExp} evt Name of the event to return the listeners from.
-		 * @return {Function[]|Object} All listener functions for the event.
-		 */
-		proto.getListeners = function getListeners(evt) {
-				var events = this._getEvents();
-				var response;
-				var key;
+    /**
+     * Returns the listener array for the specified event.
+     * Will initialise the event object and listener arrays if required.
+     * Will return an object if you use a regex search. The object contains keys for each matched event. So /ba[rz]/ might return an object containing bar and baz. But only if you have either defined them with defineEvent or added some listeners to them.
+     * Each property in the object response is an array of listener functions.
+     *
+     * @param {String|RegExp} evt Name of the event to return the listeners from.
+     * @return {Function[]|Object} All listener functions for the event.
+     */
+    proto.getListeners = function getListeners(evt) {
+        var events = this._getEvents();
+        var response;
+        var key;
 
-				// Return a concatenated array of all matching events if
-				// the selector is a regular expression.
-				if (evt instanceof RegExp) {
-						response = {};
-						for (key in events) {
-								if (events.hasOwnProperty(key) && evt.test(key)) {
-										response[key] = events[key];
-								}
-						}
-				}
-				else {
-						response = events[evt] || (events[evt] = []);
-				}
+        // Return a concatenated array of all matching events if
+        // the selector is a regular expression.
+        if (evt instanceof RegExp) {
+            response = {};
+            for (key in events) {
+                if (events.hasOwnProperty(key) && evt.test(key)) {
+                    response[key] = events[key];
+                }
+            }
+        }
+        else {
+            response = events[evt] || (events[evt] = []);
+        }
 
-				return response;
-		};
+        return response;
+    };
 
-		/**
-		 * Takes a list of listener objects and flattens it into a list of listener functions.
-		 *
-		 * @param {Object[]} listeners Raw listener objects.
-		 * @return {Function[]} Just the listener functions.
-		 */
-		proto.flattenListeners = function flattenListeners(listeners) {
-				var flatListeners = [];
-				var i;
+    /**
+     * Takes a list of listener objects and flattens it into a list of listener functions.
+     *
+     * @param {Object[]} listeners Raw listener objects.
+     * @return {Function[]} Just the listener functions.
+     */
+    proto.flattenListeners = function flattenListeners(listeners) {
+        var flatListeners = [];
+        var i;
 
-				for (i = 0; i < listeners.length; i += 1) {
-						flatListeners.push(listeners[i].listener);
-				}
+        for (i = 0; i < listeners.length; i += 1) {
+            flatListeners.push(listeners[i].listener);
+        }
 
-				return flatListeners;
-		};
+        return flatListeners;
+    };
 
-		/**
-		 * Fetches the requested listeners via getListeners but will always return the results inside an object. This is mainly for internal use but others may find it useful.
-		 *
-		 * @param {String|RegExp} evt Name of the event to return the listeners from.
-		 * @return {Object} All listener functions for an event in an object.
-		 */
-		proto.getListenersAsObject = function getListenersAsObject(evt) {
-				var listeners = this.getListeners(evt);
-				var response;
+    /**
+     * Fetches the requested listeners via getListeners but will always return the results inside an object. This is mainly for internal use but others may find it useful.
+     *
+     * @param {String|RegExp} evt Name of the event to return the listeners from.
+     * @return {Object} All listener functions for an event in an object.
+     */
+    proto.getListenersAsObject = function getListenersAsObject(evt) {
+        var listeners = this.getListeners(evt);
+        var response;
 
-				if (listeners instanceof Array) {
-						response = {};
-						response[evt] = listeners;
-				}
+        if (listeners instanceof Array) {
+            response = {};
+            response[evt] = listeners;
+        }
 
-				return response || listeners;
-		};
+        return response || listeners;
+    };
 
-		/**
-		 * Adds a listener function to the specified event.
-		 * The listener will not be added if it is a duplicate.
-		 * If the listener returns true then it will be removed after it is called.
-		 * If you pass a regular expression as the event name then the listener will be added to all events that match it.
-		 *
-		 * @param {String|RegExp} evt Name of the event to attach the listener to.
-		 * @param {Function} listener Method to be called when the event is emitted. If the function returns true then it will be removed after calling.
-		 * @return {Object} Current instance of EventEmitter for chaining.
-		 */
-		proto.addListener = function addListener(evt, listener) {
-				var listeners = this.getListenersAsObject(evt);
-				var listenerIsWrapped = typeof listener === 'object';
-				var key;
+    /**
+     * Adds a listener function to the specified event.
+     * The listener will not be added if it is a duplicate.
+     * If the listener returns true then it will be removed after it is called.
+     * If you pass a regular expression as the event name then the listener will be added to all events that match it.
+     *
+     * @param {String|RegExp} evt Name of the event to attach the listener to.
+     * @param {Function} listener Method to be called when the event is emitted. If the function returns true then it will be removed after calling.
+     * @return {Object} Current instance of EventEmitter for chaining.
+     */
+    proto.addListener = function addListener(evt, listener) {
+        var listeners = this.getListenersAsObject(evt);
+        var listenerIsWrapped = typeof listener === 'object';
+        var key;
 
-				for (key in listeners) {
-						if (listeners.hasOwnProperty(key) && indexOfListener(listeners[key], listener) === -1) {
-								listeners[key].push(listenerIsWrapped ? listener : {
-										listener: listener,
-										once: false
-								});
-						}
-				}
+        for (key in listeners) {
+            if (listeners.hasOwnProperty(key) && indexOfListener(listeners[key], listener) === -1) {
+                listeners[key].push(listenerIsWrapped ? listener : {
+                    listener: listener,
+                    once: false
+                });
+            }
+        }
 
-				return this;
-		};
+        return this;
+    };
 
-		/**
-		 * Alias of addListener
-		 */
-		proto.on = alias('addListener');
+    /**
+     * Alias of addListener
+     */
+    proto.on = alias('addListener');
 
-		/**
-		 * Semi-alias of addListener. It will add a listener that will be
-		 * automatically removed after its first execution.
-		 *
-		 * @param {String|RegExp} evt Name of the event to attach the listener to.
-		 * @param {Function} listener Method to be called when the event is emitted. If the function returns true then it will be removed after calling.
-		 * @return {Object} Current instance of EventEmitter for chaining.
-		 */
-		proto.addOnceListener = function addOnceListener(evt, listener) {
-				return this.addListener(evt, {
-						listener: listener,
-						once: true
-				});
-		};
+    /**
+     * Semi-alias of addListener. It will add a listener that will be
+     * automatically removed after its first execution.
+     *
+     * @param {String|RegExp} evt Name of the event to attach the listener to.
+     * @param {Function} listener Method to be called when the event is emitted. If the function returns true then it will be removed after calling.
+     * @return {Object} Current instance of EventEmitter for chaining.
+     */
+    proto.addOnceListener = function addOnceListener(evt, listener) {
+        return this.addListener(evt, {
+            listener: listener,
+            once: true
+        });
+    };
 
-		/**
-		 * Alias of addOnceListener.
-		 */
-		proto.once = alias('addOnceListener');
+    /**
+     * Alias of addOnceListener.
+     */
+    proto.once = alias('addOnceListener');
 
-		/**
-		 * Defines an event name. This is required if you want to use a regex to add a listener to multiple events at once. If you don't do this then how do you expect it to know what event to add to? Should it just add to every possible match for a regex? No. That is scary and bad.
-		 * You need to tell it what event names should be matched by a regex.
-		 *
-		 * @param {String} evt Name of the event to create.
-		 * @return {Object} Current instance of EventEmitter for chaining.
-		 */
-		proto.defineEvent = function defineEvent(evt) {
-				this.getListeners(evt);
-				return this;
-		};
+    /**
+     * Defines an event name. This is required if you want to use a regex to add a listener to multiple events at once. If you don't do this then how do you expect it to know what event to add to? Should it just add to every possible match for a regex? No. That is scary and bad.
+     * You need to tell it what event names should be matched by a regex.
+     *
+     * @param {String} evt Name of the event to create.
+     * @return {Object} Current instance of EventEmitter for chaining.
+     */
+    proto.defineEvent = function defineEvent(evt) {
+        this.getListeners(evt);
+        return this;
+    };
 
-		/**
-		 * Uses defineEvent to define multiple events.
-		 *
-		 * @param {String[]} evts An array of event names to define.
-		 * @return {Object} Current instance of EventEmitter for chaining.
-		 */
-		proto.defineEvents = function defineEvents(evts) {
-				for (var i = 0; i < evts.length; i += 1) {
-						this.defineEvent(evts[i]);
-				}
-				return this;
-		};
+    /**
+     * Uses defineEvent to define multiple events.
+     *
+     * @param {String[]} evts An array of event names to define.
+     * @return {Object} Current instance of EventEmitter for chaining.
+     */
+    proto.defineEvents = function defineEvents(evts) {
+        for (var i = 0; i < evts.length; i += 1) {
+            this.defineEvent(evts[i]);
+        }
+        return this;
+    };
 
-		/**
-		 * Removes a listener function from the specified event.
-		 * When passed a regular expression as the event name, it will remove the listener from all events that match it.
-		 *
-		 * @param {String|RegExp} evt Name of the event to remove the listener from.
-		 * @param {Function} listener Method to remove from the event.
-		 * @return {Object} Current instance of EventEmitter for chaining.
-		 */
-		proto.removeListener = function removeListener(evt, listener) {
-				var listeners = this.getListenersAsObject(evt);
-				var index;
-				var key;
+    /**
+     * Removes a listener function from the specified event.
+     * When passed a regular expression as the event name, it will remove the listener from all events that match it.
+     *
+     * @param {String|RegExp} evt Name of the event to remove the listener from.
+     * @param {Function} listener Method to remove from the event.
+     * @return {Object} Current instance of EventEmitter for chaining.
+     */
+    proto.removeListener = function removeListener(evt, listener) {
+        var listeners = this.getListenersAsObject(evt);
+        var index;
+        var key;
 
-				for (key in listeners) {
-						if (listeners.hasOwnProperty(key)) {
-								index = indexOfListener(listeners[key], listener);
+        for (key in listeners) {
+            if (listeners.hasOwnProperty(key)) {
+                index = indexOfListener(listeners[key], listener);
 
-								if (index !== -1) {
-										listeners[key].splice(index, 1);
-								}
-						}
-				}
+                if (index !== -1) {
+                    listeners[key].splice(index, 1);
+                }
+            }
+        }
 
-				return this;
-		};
+        return this;
+    };
 
-		/**
-		 * Alias of removeListener
-		 */
-		proto.off = alias('removeListener');
+    /**
+     * Alias of removeListener
+     */
+    proto.off = alias('removeListener');
 
-		/**
-		 * Adds listeners in bulk using the manipulateListeners method.
-		 * If you pass an object as the second argument you can add to multiple events at once. The object should contain key value pairs of events and listeners or listener arrays. You can also pass it an event name and an array of listeners to be added.
-		 * You can also pass it a regular expression to add the array of listeners to all events that match it.
-		 * Yeah, this function does quite a bit. That's probably a bad thing.
-		 *
-		 * @param {String|Object|RegExp} evt An event name if you will pass an array of listeners next. An object if you wish to add to multiple events at once.
-		 * @param {Function[]} [listeners] An optional array of listener functions to add.
-		 * @return {Object} Current instance of EventEmitter for chaining.
-		 */
-		proto.addListeners = function addListeners(evt, listeners) {
-				// Pass through to manipulateListeners
-				return this.manipulateListeners(false, evt, listeners);
-		};
+    /**
+     * Adds listeners in bulk using the manipulateListeners method.
+     * If you pass an object as the second argument you can add to multiple events at once. The object should contain key value pairs of events and listeners or listener arrays. You can also pass it an event name and an array of listeners to be added.
+     * You can also pass it a regular expression to add the array of listeners to all events that match it.
+     * Yeah, this function does quite a bit. That's probably a bad thing.
+     *
+     * @param {String|Object|RegExp} evt An event name if you will pass an array of listeners next. An object if you wish to add to multiple events at once.
+     * @param {Function[]} [listeners] An optional array of listener functions to add.
+     * @return {Object} Current instance of EventEmitter for chaining.
+     */
+    proto.addListeners = function addListeners(evt, listeners) {
+        // Pass through to manipulateListeners
+        return this.manipulateListeners(false, evt, listeners);
+    };
 
-		/**
-		 * Removes listeners in bulk using the manipulateListeners method.
-		 * If you pass an object as the second argument you can remove from multiple events at once. The object should contain key value pairs of events and listeners or listener arrays.
-		 * You can also pass it an event name and an array of listeners to be removed.
-		 * You can also pass it a regular expression to remove the listeners from all events that match it.
-		 *
-		 * @param {String|Object|RegExp} evt An event name if you will pass an array of listeners next. An object if you wish to remove from multiple events at once.
-		 * @param {Function[]} [listeners] An optional array of listener functions to remove.
-		 * @return {Object} Current instance of EventEmitter for chaining.
-		 */
-		proto.removeListeners = function removeListeners(evt, listeners) {
-				// Pass through to manipulateListeners
-				return this.manipulateListeners(true, evt, listeners);
-		};
+    /**
+     * Removes listeners in bulk using the manipulateListeners method.
+     * If you pass an object as the second argument you can remove from multiple events at once. The object should contain key value pairs of events and listeners or listener arrays.
+     * You can also pass it an event name and an array of listeners to be removed.
+     * You can also pass it a regular expression to remove the listeners from all events that match it.
+     *
+     * @param {String|Object|RegExp} evt An event name if you will pass an array of listeners next. An object if you wish to remove from multiple events at once.
+     * @param {Function[]} [listeners] An optional array of listener functions to remove.
+     * @return {Object} Current instance of EventEmitter for chaining.
+     */
+    proto.removeListeners = function removeListeners(evt, listeners) {
+        // Pass through to manipulateListeners
+        return this.manipulateListeners(true, evt, listeners);
+    };
 
-		/**
-		 * Edits listeners in bulk. The addListeners and removeListeners methods both use this to do their job. You should really use those instead, this is a little lower level.
-		 * The first argument will determine if the listeners are removed (true) or added (false).
-		 * If you pass an object as the second argument you can add/remove from multiple events at once. The object should contain key value pairs of events and listeners or listener arrays.
-		 * You can also pass it an event name and an array of listeners to be added/removed.
-		 * You can also pass it a regular expression to manipulate the listeners of all events that match it.
-		 *
-		 * @param {Boolean} remove True if you want to remove listeners, false if you want to add.
-		 * @param {String|Object|RegExp} evt An event name if you will pass an array of listeners next. An object if you wish to add/remove from multiple events at once.
-		 * @param {Function[]} [listeners] An optional array of listener functions to add/remove.
-		 * @return {Object} Current instance of EventEmitter for chaining.
-		 */
-		proto.manipulateListeners = function manipulateListeners(remove, evt, listeners) {
-				var i;
-				var value;
-				var single = remove ? this.removeListener : this.addListener;
-				var multiple = remove ? this.removeListeners : this.addListeners;
+    /**
+     * Edits listeners in bulk. The addListeners and removeListeners methods both use this to do their job. You should really use those instead, this is a little lower level.
+     * The first argument will determine if the listeners are removed (true) or added (false).
+     * If you pass an object as the second argument you can add/remove from multiple events at once. The object should contain key value pairs of events and listeners or listener arrays.
+     * You can also pass it an event name and an array of listeners to be added/removed.
+     * You can also pass it a regular expression to manipulate the listeners of all events that match it.
+     *
+     * @param {Boolean} remove True if you want to remove listeners, false if you want to add.
+     * @param {String|Object|RegExp} evt An event name if you will pass an array of listeners next. An object if you wish to add/remove from multiple events at once.
+     * @param {Function[]} [listeners] An optional array of listener functions to add/remove.
+     * @return {Object} Current instance of EventEmitter for chaining.
+     */
+    proto.manipulateListeners = function manipulateListeners(remove, evt, listeners) {
+        var i;
+        var value;
+        var single = remove ? this.removeListener : this.addListener;
+        var multiple = remove ? this.removeListeners : this.addListeners;
 
-				// If evt is an object then pass each of its properties to this method
-				if (typeof evt === 'object' && !(evt instanceof RegExp)) {
-						for (i in evt) {
-								if (evt.hasOwnProperty(i) && (value = evt[i])) {
-										// Pass the single listener straight through to the singular method
-										if (typeof value === 'function') {
-												single.call(this, i, value);
-										}
-										else {
-												// Otherwise pass back to the multiple function
-												multiple.call(this, i, value);
-										}
-								}
-						}
-				}
-				else {
-						// So evt must be a string
-						// And listeners must be an array of listeners
-						// Loop over it and pass each one to the multiple method
-						i = listeners.length;
-						while (i--) {
-								single.call(this, evt, listeners[i]);
-						}
-				}
+        // If evt is an object then pass each of its properties to this method
+        if (typeof evt === 'object' && !(evt instanceof RegExp)) {
+            for (i in evt) {
+                if (evt.hasOwnProperty(i) && (value = evt[i])) {
+                    // Pass the single listener straight through to the singular method
+                    if (typeof value === 'function') {
+                        single.call(this, i, value);
+                    }
+                    else {
+                        // Otherwise pass back to the multiple function
+                        multiple.call(this, i, value);
+                    }
+                }
+            }
+        }
+        else {
+            // So evt must be a string
+            // And listeners must be an array of listeners
+            // Loop over it and pass each one to the multiple method
+            i = listeners.length;
+            while (i--) {
+                single.call(this, evt, listeners[i]);
+            }
+        }
 
-				return this;
-		};
+        return this;
+    };
 
-		/**
-		 * Removes all listeners from a specified event.
-		 * If you do not specify an event then all listeners will be removed.
-		 * That means every event will be emptied.
-		 * You can also pass a regex to remove all events that match it.
-		 *
-		 * @param {String|RegExp} [evt] Optional name of the event to remove all listeners for. Will remove from every event if not passed.
-		 * @return {Object} Current instance of EventEmitter for chaining.
-		 */
-		proto.removeEvent = function removeEvent(evt) {
-				var type = typeof evt;
-				var events = this._getEvents();
-				var key;
+    /**
+     * Removes all listeners from a specified event.
+     * If you do not specify an event then all listeners will be removed.
+     * That means every event will be emptied.
+     * You can also pass a regex to remove all events that match it.
+     *
+     * @param {String|RegExp} [evt] Optional name of the event to remove all listeners for. Will remove from every event if not passed.
+     * @return {Object} Current instance of EventEmitter for chaining.
+     */
+    proto.removeEvent = function removeEvent(evt) {
+        var type = typeof evt;
+        var events = this._getEvents();
+        var key;
 
-				// Remove different things depending on the state of evt
-				if (type === 'string') {
-						// Remove all listeners for the specified event
-						delete events[evt];
-				}
-				else if (evt instanceof RegExp) {
-						// Remove all events matching the regex.
-						for (key in events) {
-								if (events.hasOwnProperty(key) && evt.test(key)) {
-										delete events[key];
-								}
-						}
-				}
-				else {
-						// Remove all listeners in all events
-						delete this._events;
-				}
+        // Remove different things depending on the state of evt
+        if (type === 'string') {
+            // Remove all listeners for the specified event
+            delete events[evt];
+        }
+        else if (evt instanceof RegExp) {
+            // Remove all events matching the regex.
+            for (key in events) {
+                if (events.hasOwnProperty(key) && evt.test(key)) {
+                    delete events[key];
+                }
+            }
+        }
+        else {
+            // Remove all listeners in all events
+            delete this._events;
+        }
 
-				return this;
-		};
+        return this;
+    };
 
-		/**
-		 * Alias of removeEvent.
-		 *
-		 * Added to mirror the node API.
-		 */
-		proto.removeAllListeners = alias('removeEvent');
+    /**
+     * Alias of removeEvent.
+     *
+     * Added to mirror the node API.
+     */
+    proto.removeAllListeners = alias('removeEvent');
 
-		/**
-		 * Emits an event of your choice.
-		 * When emitted, every listener attached to that event will be executed.
-		 * If you pass the optional argument array then those arguments will be passed to every listener upon execution.
-		 * Because it uses `apply`, your array of arguments will be passed as if you wrote them out separately.
-		 * So they will not arrive within the array on the other side, they will be separate.
-		 * You can also pass a regular expression to emit to all events that match it.
-		 *
-		 * @param {String|RegExp} evt Name of the event to emit and execute listeners for.
-		 * @param {Array} [args] Optional array of arguments to be passed to each listener.
-		 * @return {Object} Current instance of EventEmitter for chaining.
-		 */
-		proto.emitEvent = function emitEvent(evt, args) {
-				var listeners = this.getListenersAsObject(evt);
-				var listener;
-				var i;
-				var key;
-				var response;
+    /**
+     * Emits an event of your choice.
+     * When emitted, every listener attached to that event will be executed.
+     * If you pass the optional argument array then those arguments will be passed to every listener upon execution.
+     * Because it uses `apply`, your array of arguments will be passed as if you wrote them out separately.
+     * So they will not arrive within the array on the other side, they will be separate.
+     * You can also pass a regular expression to emit to all events that match it.
+     *
+     * @param {String|RegExp} evt Name of the event to emit and execute listeners for.
+     * @param {Array} [args] Optional array of arguments to be passed to each listener.
+     * @return {Object} Current instance of EventEmitter for chaining.
+     */
+    proto.emitEvent = function emitEvent(evt, args) {
+        var listeners = this.getListenersAsObject(evt);
+        var listener;
+        var i;
+        var key;
+        var response;
 
-				for (key in listeners) {
-						if (listeners.hasOwnProperty(key)) {
-								i = listeners[key].length;
+        for (key in listeners) {
+            if (listeners.hasOwnProperty(key)) {
+                i = listeners[key].length;
 
-								while (i--) {
-										// If the listener returns true then it shall be removed from the event
-										// The function is executed either with a basic call or an apply if there is an args array
-										listener = listeners[key][i];
+                while (i--) {
+                    // If the listener returns true then it shall be removed from the event
+                    // The function is executed either with a basic call or an apply if there is an args array
+                    listener = listeners[key][i];
 
-										if (listener.once === true) {
-												this.removeListener(evt, listener.listener);
-										}
+                    if (listener.once === true) {
+                        this.removeListener(evt, listener.listener);
+                    }
 
-										response = listener.listener.apply(this, args || []);
+                    response = listener.listener.apply(this, args || []);
 
-										if (response === this._getOnceReturnValue()) {
-												this.removeListener(evt, listener.listener);
-										}
-								}
-						}
-				}
+                    if (response === this._getOnceReturnValue()) {
+                        this.removeListener(evt, listener.listener);
+                    }
+                }
+            }
+        }
 
-				return this;
-		};
+        return this;
+    };
 
-		/**
-		 * Alias of emitEvent
-		 */
-		proto.trigger = alias('emitEvent');
+    /**
+     * Alias of emitEvent
+     */
+    proto.trigger = alias('emitEvent');
 
-		/**
-		 * Subtly different from emitEvent in that it will pass its arguments on to the listeners, as opposed to taking a single array of arguments to pass on.
-		 * As with emitEvent, you can pass a regex in place of the event name to emit to all events that match it.
-		 *
-		 * @param {String|RegExp} evt Name of the event to emit and execute listeners for.
-		 * @param {...*} Optional additional arguments to be passed to each listener.
-		 * @return {Object} Current instance of EventEmitter for chaining.
-		 */
-		proto.emit = function emit(evt) {
-				var args = Array.prototype.slice.call(arguments, 1);
-				return this.emitEvent(evt, args);
-		};
+    /**
+     * Subtly different from emitEvent in that it will pass its arguments on to the listeners, as opposed to taking a single array of arguments to pass on.
+     * As with emitEvent, you can pass a regex in place of the event name to emit to all events that match it.
+     *
+     * @param {String|RegExp} evt Name of the event to emit and execute listeners for.
+     * @param {...*} Optional additional arguments to be passed to each listener.
+     * @return {Object} Current instance of EventEmitter for chaining.
+     */
+    proto.emit = function emit(evt) {
+        var args = Array.prototype.slice.call(arguments, 1);
+        return this.emitEvent(evt, args);
+    };
 
-		/**
-		 * Sets the current value to check against when executing listeners. If a
-		 * listeners return value matches the one set here then it will be removed
-		 * after execution. This value defaults to true.
-		 *
-		 * @param {*} value The new value to check for when executing listeners.
-		 * @return {Object} Current instance of EventEmitter for chaining.
-		 */
-		proto.setOnceReturnValue = function setOnceReturnValue(value) {
-				this._onceReturnValue = value;
-				return this;
-		};
+    /**
+     * Sets the current value to check against when executing listeners. If a
+     * listeners return value matches the one set here then it will be removed
+     * after execution. This value defaults to true.
+     *
+     * @param {*} value The new value to check for when executing listeners.
+     * @return {Object} Current instance of EventEmitter for chaining.
+     */
+    proto.setOnceReturnValue = function setOnceReturnValue(value) {
+        this._onceReturnValue = value;
+        return this;
+    };
 
-		/**
-		 * Fetches the current value to check against when executing listeners. If
-		 * the listeners return value matches this one then it should be removed
-		 * automatically. It will return true by default.
-		 *
-		 * @return {*|Boolean} The current value to check for or the default, true.
-		 * @api private
-		 */
-		proto._getOnceReturnValue = function _getOnceReturnValue() {
-				if (this.hasOwnProperty('_onceReturnValue')) {
-						return this._onceReturnValue;
-				}
-				else {
-						return true;
-				}
-		};
+    /**
+     * Fetches the current value to check against when executing listeners. If
+     * the listeners return value matches this one then it should be removed
+     * automatically. It will return true by default.
+     *
+     * @return {*|Boolean} The current value to check for or the default, true.
+     * @api private
+     */
+    proto._getOnceReturnValue = function _getOnceReturnValue() {
+        if (this.hasOwnProperty('_onceReturnValue')) {
+            return this._onceReturnValue;
+        }
+        else {
+            return true;
+        }
+    };
 
-		/**
-		 * Fetches the events object and creates one if required.
-		 *
-		 * @return {Object} The events storage object.
-		 * @api private
-		 */
-		proto._getEvents = function _getEvents() {
-				return this._events || (this._events = {});
-		};
+    /**
+     * Fetches the events object and creates one if required.
+     *
+     * @return {Object} The events storage object.
+     * @api private
+     */
+    proto._getEvents = function _getEvents() {
+        return this._events || (this._events = {});
+    };
 
-		/**
-		 * Reverts the global {@link EventEmitter} to its previous value and returns a reference to this version.
-		 *
-		 * @return {Function} Non conflicting EventEmitter class.
-		 */
-		EventEmitter.noConflict = function noConflict() {
-				exports.EventEmitter = originalGlobalValue;
-				return EventEmitter;
-		};
+    /**
+     * Reverts the global {@link EventEmitter} to its previous value and returns a reference to this version.
+     *
+     * @return {Function} Non conflicting EventEmitter class.
+     */
+    EventEmitter.noConflict = function noConflict() {
+        exports.EventEmitter = originalGlobalValue;
+        return EventEmitter;
+    };
 
-		// Expose the class either via AMD, CommonJS or the global object
-		if (typeof define === 'function' && define.amd) {
-				define('eventEmitter/EventEmitter',[],function () {
-						return EventEmitter;
-				});
-		}
-		else if (typeof module === 'object' && module.exports){
-				module.exports = EventEmitter;
-		}
-		else {
-				exports.EventEmitter = EventEmitter;
-		}
+    // Expose the class either via AMD, CommonJS or the global object
+    if (typeof define === 'function' && define.amd) {
+        define('eventEmitter/EventEmitter',[],function () {
+            return EventEmitter;
+        });
+    }
+    else if (typeof module === 'object' && module.exports){
+        module.exports = EventEmitter;
+    }
+    else {
+        exports.EventEmitter = EventEmitter;
+    }
 }.call(this));
 
 /*!
@@ -1012,40 +1013,40 @@ var prefixes = 'Webkit Moz ms Ms O'.split(' ');
 var docElemStyle = document.documentElement.style;
 
 function getStyleProperty( propName ) {
-	if ( !propName ) {
-		return;
-	}
+  if ( !propName ) {
+    return;
+  }
 
-	// test standard property first
-	if ( typeof docElemStyle[ propName ] === 'string' ) {
-		return propName;
-	}
+  // test standard property first
+  if ( typeof docElemStyle[ propName ] === 'string' ) {
+    return propName;
+  }
 
-	// capitalize
-	propName = propName.charAt(0).toUpperCase() + propName.slice(1);
+  // capitalize
+  propName = propName.charAt(0).toUpperCase() + propName.slice(1);
 
-	// test vendor specific properties
-	var prefixed;
-	for ( var i=0, len = prefixes.length; i < len; i++ ) {
-		prefixed = prefixes[i] + propName;
-		if ( typeof docElemStyle[ prefixed ] === 'string' ) {
-			return prefixed;
-		}
-	}
+  // test vendor specific properties
+  var prefixed;
+  for ( var i=0, len = prefixes.length; i < len; i++ ) {
+    prefixed = prefixes[i] + propName;
+    if ( typeof docElemStyle[ prefixed ] === 'string' ) {
+      return prefixed;
+    }
+  }
 }
 
 // transport
 if ( typeof define === 'function' && define.amd ) {
-	// AMD
-	define( 'get-style-property/get-style-property',[],function() {
-		return getStyleProperty;
-	});
+  // AMD
+  define( 'get-style-property/get-style-property',[],function() {
+    return getStyleProperty;
+  });
 } else if ( typeof exports === 'object' ) {
-	// CommonJS for Component
-	module.exports = getStyleProperty;
+  // CommonJS for Component
+  module.exports = getStyleProperty;
 } else {
-	// browser global
-	window.getStyleProperty = getStyleProperty;
+  // browser global
+  window.getStyleProperty = getStyleProperty;
 }
 
 })( window );
@@ -1067,50 +1068,50 @@ if ( typeof define === 'function' && define.amd ) {
 
 // get a number from a string, not a percentage
 function getStyleSize( value ) {
-	var num = parseFloat( value );
-	// not a percent like '100%', and a number
-	var isValid = value.indexOf('%') === -1 && !isNaN( num );
-	return isValid && num;
+  var num = parseFloat( value );
+  // not a percent like '100%', and a number
+  var isValid = value.indexOf('%') === -1 && !isNaN( num );
+  return isValid && num;
 }
 
 function noop() {}
 
 var logError = typeof console === 'undefined' ? noop :
-	function( message ) {
-		console.error( message );
-	};
+  function( message ) {
+    console.error( message );
+  };
 
 // -------------------------- measurements -------------------------- //
 
 var measurements = [
-	'paddingLeft',
-	'paddingRight',
-	'paddingTop',
-	'paddingBottom',
-	'marginLeft',
-	'marginRight',
-	'marginTop',
-	'marginBottom',
-	'borderLeftWidth',
-	'borderRightWidth',
-	'borderTopWidth',
-	'borderBottomWidth'
+  'paddingLeft',
+  'paddingRight',
+  'paddingTop',
+  'paddingBottom',
+  'marginLeft',
+  'marginRight',
+  'marginTop',
+  'marginBottom',
+  'borderLeftWidth',
+  'borderRightWidth',
+  'borderTopWidth',
+  'borderBottomWidth'
 ];
 
 function getZeroSize() {
-	var size = {
-		width: 0,
-		height: 0,
-		innerWidth: 0,
-		innerHeight: 0,
-		outerWidth: 0,
-		outerHeight: 0
-	};
-	for ( var i=0, len = measurements.length; i < len; i++ ) {
-		var measurement = measurements[i];
-		size[ measurement ] = 0;
-	}
-	return size;
+  var size = {
+    width: 0,
+    height: 0,
+    innerWidth: 0,
+    innerHeight: 0,
+    outerWidth: 0,
+    outerHeight: 0
+  };
+  for ( var i=0, len = measurements.length; i < len; i++ ) {
+    var measurement = measurements[i];
+    size[ measurement ] = 0;
+  }
+  return size;
 }
 
 
@@ -1129,158 +1130,158 @@ var getStyle, boxSizingProp, isBoxSizeOuter;
  * For Firefox bug https://bugzilla.mozilla.org/show_bug.cgi?id=548397
  */
 function setup() {
-	// setup once
-	if ( isSetup ) {
-		return;
-	}
-	isSetup = true;
+  // setup once
+  if ( isSetup ) {
+    return;
+  }
+  isSetup = true;
 
-	var getComputedStyle = window.getComputedStyle;
-	getStyle = ( function() {
-		var getStyleFn = getComputedStyle ?
-			function( elem ) {
-				return getComputedStyle( elem, null );
-			} :
-			function( elem ) {
-				return elem.currentStyle;
-			};
+  var getComputedStyle = window.getComputedStyle;
+  getStyle = ( function() {
+    var getStyleFn = getComputedStyle ?
+      function( elem ) {
+        return getComputedStyle( elem, null );
+      } :
+      function( elem ) {
+        return elem.currentStyle;
+      };
 
-			return function getStyle( elem ) {
-				var style = getStyleFn( elem );
-				if ( !style ) {
-					logError( 'Style returned ' + style +
-						'. Are you running this code in a hidden iframe on Firefox? ' +
-						'See http://bit.ly/getsizebug1' );
-				}
-				return style;
-			};
-	})();
+      return function getStyle( elem ) {
+        var style = getStyleFn( elem );
+        if ( !style ) {
+          logError( 'Style returned ' + style +
+            '. Are you running this code in a hidden iframe on Firefox? ' +
+            'See http://bit.ly/getsizebug1' );
+        }
+        return style;
+      };
+  })();
 
-	// -------------------------- box sizing -------------------------- //
+  // -------------------------- box sizing -------------------------- //
 
-	boxSizingProp = getStyleProperty('boxSizing');
+  boxSizingProp = getStyleProperty('boxSizing');
 
-	/**
-	 * WebKit measures the outer-width on style.width on border-box elems
-	 * IE & Firefox measures the inner-width
-	 */
-	if ( boxSizingProp ) {
-		var div = document.createElement('div');
-		div.style.width = '200px';
-		div.style.padding = '1px 2px 3px 4px';
-		div.style.borderStyle = 'solid';
-		div.style.borderWidth = '1px 2px 3px 4px';
-		div.style[ boxSizingProp ] = 'border-box';
+  /**
+   * WebKit measures the outer-width on style.width on border-box elems
+   * IE & Firefox measures the inner-width
+   */
+  if ( boxSizingProp ) {
+    var div = document.createElement('div');
+    div.style.width = '200px';
+    div.style.padding = '1px 2px 3px 4px';
+    div.style.borderStyle = 'solid';
+    div.style.borderWidth = '1px 2px 3px 4px';
+    div.style[ boxSizingProp ] = 'border-box';
 
-		var body = document.body || document.documentElement;
-		body.appendChild( div );
-		var style = getStyle( div );
+    var body = document.body || document.documentElement;
+    body.appendChild( div );
+    var style = getStyle( div );
 
-		isBoxSizeOuter = getStyleSize( style.width ) === 200;
-		body.removeChild( div );
-	}
+    isBoxSizeOuter = getStyleSize( style.width ) === 200;
+    body.removeChild( div );
+  }
 
 }
 
 // -------------------------- getSize -------------------------- //
 
 function getSize( elem ) {
-	setup();
+  setup();
 
-	// use querySeletor if elem is string
-	if ( typeof elem === 'string' ) {
-		elem = document.querySelector( elem );
-	}
+  // use querySeletor if elem is string
+  if ( typeof elem === 'string' ) {
+    elem = document.querySelector( elem );
+  }
 
-	// do not proceed on non-objects
-	if ( !elem || typeof elem !== 'object' || !elem.nodeType ) {
-		return;
-	}
+  // do not proceed on non-objects
+  if ( !elem || typeof elem !== 'object' || !elem.nodeType ) {
+    return;
+  }
 
-	var style = getStyle( elem );
+  var style = getStyle( elem );
 
-	// if hidden, everything is 0
-	if ( style.display === 'none' ) {
-		return getZeroSize();
-	}
+  // if hidden, everything is 0
+  if ( style.display === 'none' ) {
+    return getZeroSize();
+  }
 
-	var size = {};
-	size.width = elem.offsetWidth;
-	size.height = elem.offsetHeight;
+  var size = {};
+  size.width = elem.offsetWidth;
+  size.height = elem.offsetHeight;
 
-	var isBorderBox = size.isBorderBox = !!( boxSizingProp &&
-		style[ boxSizingProp ] && style[ boxSizingProp ] === 'border-box' );
+  var isBorderBox = size.isBorderBox = !!( boxSizingProp &&
+    style[ boxSizingProp ] && style[ boxSizingProp ] === 'border-box' );
 
-	// get all measurements
-	for ( var i=0, len = measurements.length; i < len; i++ ) {
-		var measurement = measurements[i];
-		var value = style[ measurement ];
-		value = mungeNonPixel( elem, value );
-		var num = parseFloat( value );
-		// any 'auto', 'medium' value will be 0
-		size[ measurement ] = !isNaN( num ) ? num : 0;
-	}
+  // get all measurements
+  for ( var i=0, len = measurements.length; i < len; i++ ) {
+    var measurement = measurements[i];
+    var value = style[ measurement ];
+    value = mungeNonPixel( elem, value );
+    var num = parseFloat( value );
+    // any 'auto', 'medium' value will be 0
+    size[ measurement ] = !isNaN( num ) ? num : 0;
+  }
 
-	var paddingWidth = size.paddingLeft + size.paddingRight;
-	var paddingHeight = size.paddingTop + size.paddingBottom;
-	var marginWidth = size.marginLeft + size.marginRight;
-	var marginHeight = size.marginTop + size.marginBottom;
-	var borderWidth = size.borderLeftWidth + size.borderRightWidth;
-	var borderHeight = size.borderTopWidth + size.borderBottomWidth;
+  var paddingWidth = size.paddingLeft + size.paddingRight;
+  var paddingHeight = size.paddingTop + size.paddingBottom;
+  var marginWidth = size.marginLeft + size.marginRight;
+  var marginHeight = size.marginTop + size.marginBottom;
+  var borderWidth = size.borderLeftWidth + size.borderRightWidth;
+  var borderHeight = size.borderTopWidth + size.borderBottomWidth;
 
-	var isBorderBoxSizeOuter = isBorderBox && isBoxSizeOuter;
+  var isBorderBoxSizeOuter = isBorderBox && isBoxSizeOuter;
 
-	// overwrite width and height if we can get it from style
-	var styleWidth = getStyleSize( style.width );
-	if ( styleWidth !== false ) {
-		size.width = styleWidth +
-			// add padding and border unless it's already including it
-			( isBorderBoxSizeOuter ? 0 : paddingWidth + borderWidth );
-	}
+  // overwrite width and height if we can get it from style
+  var styleWidth = getStyleSize( style.width );
+  if ( styleWidth !== false ) {
+    size.width = styleWidth +
+      // add padding and border unless it's already including it
+      ( isBorderBoxSizeOuter ? 0 : paddingWidth + borderWidth );
+  }
 
-	var styleHeight = getStyleSize( style.height );
-	if ( styleHeight !== false ) {
-		size.height = styleHeight +
-			// add padding and border unless it's already including it
-			( isBorderBoxSizeOuter ? 0 : paddingHeight + borderHeight );
-	}
+  var styleHeight = getStyleSize( style.height );
+  if ( styleHeight !== false ) {
+    size.height = styleHeight +
+      // add padding and border unless it's already including it
+      ( isBorderBoxSizeOuter ? 0 : paddingHeight + borderHeight );
+  }
 
-	size.innerWidth = size.width - ( paddingWidth + borderWidth );
-	size.innerHeight = size.height - ( paddingHeight + borderHeight );
+  size.innerWidth = size.width - ( paddingWidth + borderWidth );
+  size.innerHeight = size.height - ( paddingHeight + borderHeight );
 
-	size.outerWidth = size.width + marginWidth;
-	size.outerHeight = size.height + marginHeight;
+  size.outerWidth = size.width + marginWidth;
+  size.outerHeight = size.height + marginHeight;
 
-	return size;
+  return size;
 }
 
 // IE8 returns percent values, not pixels
 // taken from jQuery's curCSS
 function mungeNonPixel( elem, value ) {
-	// IE8 and has percent value
-	if ( window.getComputedStyle || value.indexOf('%') === -1 ) {
-		return value;
-	}
-	var style = elem.style;
-	// Remember the original values
-	var left = style.left;
-	var rs = elem.runtimeStyle;
-	var rsLeft = rs && rs.left;
+  // IE8 and has percent value
+  if ( window.getComputedStyle || value.indexOf('%') === -1 ) {
+    return value;
+  }
+  var style = elem.style;
+  // Remember the original values
+  var left = style.left;
+  var rs = elem.runtimeStyle;
+  var rsLeft = rs && rs.left;
 
-	// Put in the new values to get a computed value out
-	if ( rsLeft ) {
-		rs.left = elem.currentStyle.left;
-	}
-	style.left = value;
-	value = style.pixelLeft;
+  // Put in the new values to get a computed value out
+  if ( rsLeft ) {
+    rs.left = elem.currentStyle.left;
+  }
+  style.left = value;
+  value = style.pixelLeft;
 
-	// Revert the changed values
-	style.left = left;
-	if ( rsLeft ) {
-		rs.left = rsLeft;
-	}
+  // Revert the changed values
+  style.left = left;
+  if ( rsLeft ) {
+    rs.left = rsLeft;
+  }
 
-	return value;
+  return value;
 }
 
 return getSize;
@@ -1289,14 +1290,14 @@ return getSize;
 
 // transport
 if ( typeof define === 'function' && define.amd ) {
-	// AMD for RequireJS
-	define( 'get-size/get-size',[ 'get-style-property/get-style-property' ], defineGetSize );
+  // AMD for RequireJS
+  define( 'get-size/get-size',[ 'get-style-property/get-style-property' ], defineGetSize );
 } else if ( typeof exports === 'object' ) {
-	// CommonJS for Component
-	module.exports = defineGetSize( require('desandro-get-style-property') );
+  // CommonJS for Component
+  module.exports = defineGetSize( require('desandro-get-style-property') );
 } else {
-	// browser global
-	window.getSize = defineGetSize( window.getStyleProperty );
+  // browser global
+  window.getSize = defineGetSize( window.getStyleProperty );
 }
 
 })( window );
@@ -1319,65 +1320,65 @@ var document = window.document;
 var queue = [];
 
 function docReady( fn ) {
-	// throw out non-functions
-	if ( typeof fn !== 'function' ) {
-		return;
-	}
+  // throw out non-functions
+  if ( typeof fn !== 'function' ) {
+    return;
+  }
 
-	if ( docReady.isReady ) {
-		// ready now, hit it
-		fn();
-	} else {
-		// queue function when ready
-		queue.push( fn );
-	}
+  if ( docReady.isReady ) {
+    // ready now, hit it
+    fn();
+  } else {
+    // queue function when ready
+    queue.push( fn );
+  }
 }
 
 docReady.isReady = false;
 
 // triggered on various doc ready events
 function onReady( event ) {
-	// bail if already triggered or IE8 document is not ready just yet
-	var isIE8NotReady = event.type === 'readystatechange' && document.readyState !== 'complete';
-	if ( docReady.isReady || isIE8NotReady ) {
-		return;
-	}
+  // bail if already triggered or IE8 document is not ready just yet
+  var isIE8NotReady = event.type === 'readystatechange' && document.readyState !== 'complete';
+  if ( docReady.isReady || isIE8NotReady ) {
+    return;
+  }
 
-	trigger();
+  trigger();
 }
 
 function trigger() {
-	docReady.isReady = true;
-	// process queue
-	for ( var i=0, len = queue.length; i < len; i++ ) {
-		var fn = queue[i];
-		fn();
-	}
+  docReady.isReady = true;
+  // process queue
+  for ( var i=0, len = queue.length; i < len; i++ ) {
+    var fn = queue[i];
+    fn();
+  }
 }
 
 function defineDocReady( eventie ) {
-	// trigger ready if page is ready
-	if ( document.readyState === 'complete' ) {
-		trigger();
-	} else {
-		// listen for events
-		eventie.bind( document, 'DOMContentLoaded', onReady );
-		eventie.bind( document, 'readystatechange', onReady );
-		eventie.bind( window, 'load', onReady );
-	}
+  // trigger ready if page is ready
+  if ( document.readyState === 'complete' ) {
+    trigger();
+  } else {
+    // listen for events
+    eventie.bind( document, 'DOMContentLoaded', onReady );
+    eventie.bind( document, 'readystatechange', onReady );
+    eventie.bind( window, 'load', onReady );
+  }
 
-	return docReady;
+  return docReady;
 }
 
 // transport
 if ( typeof define === 'function' && define.amd ) {
-	// AMD
-	define( 'doc-ready/doc-ready',[ 'eventie/eventie' ], defineDocReady );
+  // AMD
+  define( 'doc-ready/doc-ready',[ 'eventie/eventie' ], defineDocReady );
 } else if ( typeof exports === 'object' ) {
-	module.exports = defineDocReady( require('eventie') );
+  module.exports = defineDocReady( require('eventie') );
 } else {
-	// browser global
-	window.docReady = defineDocReady( window.eventie );
+  // browser global
+  window.docReady = defineDocReady( window.eventie );
 }
 
 })( window );
@@ -1393,100 +1394,100 @@ if ( typeof define === 'function' && define.amd ) {
 
 ( function( ElemProto ) {
 
-	'use strict';
+  'use strict';
 
-	var matchesMethod = ( function() {
-		// check for the standard method name first
-		if ( ElemProto.matches ) {
-			return 'matches';
-		}
-		// check un-prefixed
-		if ( ElemProto.matchesSelector ) {
-			return 'matchesSelector';
-		}
-		// check vendor prefixes
-		var prefixes = [ 'webkit', 'moz', 'ms', 'o' ];
+  var matchesMethod = ( function() {
+    // check for the standard method name first
+    if ( ElemProto.matches ) {
+      return 'matches';
+    }
+    // check un-prefixed
+    if ( ElemProto.matchesSelector ) {
+      return 'matchesSelector';
+    }
+    // check vendor prefixes
+    var prefixes = [ 'webkit', 'moz', 'ms', 'o' ];
 
-		for ( var i=0, len = prefixes.length; i < len; i++ ) {
-			var prefix = prefixes[i];
-			var method = prefix + 'MatchesSelector';
-			if ( ElemProto[ method ] ) {
-				return method;
-			}
-		}
-	})();
+    for ( var i=0, len = prefixes.length; i < len; i++ ) {
+      var prefix = prefixes[i];
+      var method = prefix + 'MatchesSelector';
+      if ( ElemProto[ method ] ) {
+        return method;
+      }
+    }
+  })();
 
-	// ----- match ----- //
+  // ----- match ----- //
 
-	function match( elem, selector ) {
-		return elem[ matchesMethod ]( selector );
-	}
+  function match( elem, selector ) {
+    return elem[ matchesMethod ]( selector );
+  }
 
-	// ----- appendToFragment ----- //
+  // ----- appendToFragment ----- //
 
-	function checkParent( elem ) {
-		// not needed if already has parent
-		if ( elem.parentNode ) {
-			return;
-		}
-		var fragment = document.createDocumentFragment();
-		fragment.appendChild( elem );
-	}
+  function checkParent( elem ) {
+    // not needed if already has parent
+    if ( elem.parentNode ) {
+      return;
+    }
+    var fragment = document.createDocumentFragment();
+    fragment.appendChild( elem );
+  }
 
-	// ----- query ----- //
+  // ----- query ----- //
 
-	// fall back to using QSA
-	// thx @jonathantneal https://gist.github.com/3062955
-	function query( elem, selector ) {
-		// append to fragment if no parent
-		checkParent( elem );
+  // fall back to using QSA
+  // thx @jonathantneal https://gist.github.com/3062955
+  function query( elem, selector ) {
+    // append to fragment if no parent
+    checkParent( elem );
 
-		// match elem with all selected elems of parent
-		var elems = elem.parentNode.querySelectorAll( selector );
-		for ( var i=0, len = elems.length; i < len; i++ ) {
-			// return true if match
-			if ( elems[i] === elem ) {
-				return true;
-			}
-		}
-		// otherwise return false
-		return false;
-	}
+    // match elem with all selected elems of parent
+    var elems = elem.parentNode.querySelectorAll( selector );
+    for ( var i=0, len = elems.length; i < len; i++ ) {
+      // return true if match
+      if ( elems[i] === elem ) {
+        return true;
+      }
+    }
+    // otherwise return false
+    return false;
+  }
 
-	// ----- matchChild ----- //
+  // ----- matchChild ----- //
 
-	function matchChild( elem, selector ) {
-		checkParent( elem );
-		return match( elem, selector );
-	}
+  function matchChild( elem, selector ) {
+    checkParent( elem );
+    return match( elem, selector );
+  }
 
-	// ----- matchesSelector ----- //
+  // ----- matchesSelector ----- //
 
-	var matchesSelector;
+  var matchesSelector;
 
-	if ( matchesMethod ) {
-		// IE9 supports matchesSelector, but doesn't work on orphaned elems
-		// check for that
-		var div = document.createElement('div');
-		var supportsOrphans = match( div, 'div' );
-		matchesSelector = supportsOrphans ? match : matchChild;
-	} else {
-		matchesSelector = query;
-	}
+  if ( matchesMethod ) {
+    // IE9 supports matchesSelector, but doesn't work on orphaned elems
+    // check for that
+    var div = document.createElement('div');
+    var supportsOrphans = match( div, 'div' );
+    matchesSelector = supportsOrphans ? match : matchChild;
+  } else {
+    matchesSelector = query;
+  }
 
-	// transport
-	if ( typeof define === 'function' && define.amd ) {
-		// AMD
-		define( 'matches-selector/matches-selector',[],function() {
-			return matchesSelector;
-		});
-	} else if ( typeof exports === 'object' ) {
-		module.exports = matchesSelector;
-	}
-	else {
-		// browser global
-		window.matchesSelector = matchesSelector;
-	}
+  // transport
+  if ( typeof define === 'function' && define.amd ) {
+    // AMD
+    define( 'matches-selector/matches-selector',[],function() {
+      return matchesSelector;
+    });
+  } else if ( typeof exports === 'object' ) {
+    module.exports = matchesSelector;
+  }
+  else {
+    // browser global
+    window.matchesSelector = matchesSelector;
+  }
 
 })( Element.prototype );
 
@@ -1498,33 +1499,33 @@ if ( typeof define === 'function' && define.amd ) {
 /*jshint browser: true, undef: true, unused: true, strict: true */
 
 ( function( window, factory ) {
-	/*global define: false, module: false, require: false */
-	'use strict';
-	// universal module definition
+  /*global define: false, module: false, require: false */
+  'use strict';
+  // universal module definition
 
-	if ( typeof define == 'function' && define.amd ) {
-		// AMD
-		define( 'fizzy-ui-utils/utils',[
-			'doc-ready/doc-ready',
-			'matches-selector/matches-selector'
-		], function( docReady, matchesSelector ) {
-			return factory( window, docReady, matchesSelector );
-		});
-	} else if ( typeof exports == 'object' ) {
-		// CommonJS
-		module.exports = factory(
-			window,
-			require('doc-ready'),
-			require('desandro-matches-selector')
-		);
-	} else {
-		// browser global
-		window.fizzyUIUtils = factory(
-			window,
-			window.docReady,
-			window.matchesSelector
-		);
-	}
+  if ( typeof define == 'function' && define.amd ) {
+    // AMD
+    define( 'fizzy-ui-utils/utils',[
+      'doc-ready/doc-ready',
+      'matches-selector/matches-selector'
+    ], function( docReady, matchesSelector ) {
+      return factory( window, docReady, matchesSelector );
+    });
+  } else if ( typeof exports == 'object' ) {
+    // CommonJS
+    module.exports = factory(
+      window,
+      require('doc-ready'),
+      require('desandro-matches-selector')
+    );
+  } else {
+    // browser global
+    window.fizzyUIUtils = factory(
+      window,
+      window.docReady,
+      window.matchesSelector
+    );
+  }
 
 }( window, function factory( window, docReady, matchesSelector ) {
 
@@ -1536,185 +1537,185 @@ var utils = {};
 
 // extends objects
 utils.extend = function( a, b ) {
-	for ( var prop in b ) {
-		a[ prop ] = b[ prop ];
-	}
-	return a;
+  for ( var prop in b ) {
+    a[ prop ] = b[ prop ];
+  }
+  return a;
 };
 
 // ----- modulo ----- //
 
 utils.modulo = function( num, div ) {
-	return ( ( num % div ) + div ) % div;
+  return ( ( num % div ) + div ) % div;
 };
 
 // ----- isArray ----- //
-
+  
 var objToString = Object.prototype.toString;
 utils.isArray = function( obj ) {
-	return objToString.call( obj ) == '[object Array]';
+  return objToString.call( obj ) == '[object Array]';
 };
 
 // ----- makeArray ----- //
 
 // turn element or nodeList into an array
 utils.makeArray = function( obj ) {
-	var ary = [];
-	if ( utils.isArray( obj ) ) {
-		// use object if already an array
-		ary = obj;
-	} else if ( obj && typeof obj.length == 'number' ) {
-		// convert nodeList to array
-		for ( var i=0, len = obj.length; i < len; i++ ) {
-			ary.push( obj[i] );
-		}
-	} else {
-		// array of single index
-		ary.push( obj );
-	}
-	return ary;
+  var ary = [];
+  if ( utils.isArray( obj ) ) {
+    // use object if already an array
+    ary = obj;
+  } else if ( obj && typeof obj.length == 'number' ) {
+    // convert nodeList to array
+    for ( var i=0, len = obj.length; i < len; i++ ) {
+      ary.push( obj[i] );
+    }
+  } else {
+    // array of single index
+    ary.push( obj );
+  }
+  return ary;
 };
 
 // ----- indexOf ----- //
 
 // index of helper cause IE8
 utils.indexOf = Array.prototype.indexOf ? function( ary, obj ) {
-		return ary.indexOf( obj );
-	} : function( ary, obj ) {
-		for ( var i=0, len = ary.length; i < len; i++ ) {
-			if ( ary[i] === obj ) {
-				return i;
-			}
-		}
-		return -1;
-	};
+    return ary.indexOf( obj );
+  } : function( ary, obj ) {
+    for ( var i=0, len = ary.length; i < len; i++ ) {
+      if ( ary[i] === obj ) {
+        return i;
+      }
+    }
+    return -1;
+  };
 
 // ----- removeFrom ----- //
 
 utils.removeFrom = function( ary, obj ) {
-	var index = utils.indexOf( ary, obj );
-	if ( index != -1 ) {
-		ary.splice( index, 1 );
-	}
+  var index = utils.indexOf( ary, obj );
+  if ( index != -1 ) {
+    ary.splice( index, 1 );
+  }
 };
 
 // ----- isElement ----- //
 
 // http://stackoverflow.com/a/384380/182183
 utils.isElement = ( typeof HTMLElement == 'function' || typeof HTMLElement == 'object' ) ?
-	function isElementDOM2( obj ) {
-		return obj instanceof HTMLElement;
-	} :
-	function isElementQuirky( obj ) {
-		return obj && typeof obj == 'object' &&
-			obj.nodeType == 1 && typeof obj.nodeName == 'string';
-	};
+  function isElementDOM2( obj ) {
+    return obj instanceof HTMLElement;
+  } :
+  function isElementQuirky( obj ) {
+    return obj && typeof obj == 'object' &&
+      obj.nodeType == 1 && typeof obj.nodeName == 'string';
+  };
 
 // ----- setText ----- //
 
 utils.setText = ( function() {
-	var setTextProperty;
-	function setText( elem, text ) {
-		// only check setTextProperty once
-		setTextProperty = setTextProperty || ( document.documentElement.textContent !== undefined ? 'textContent' : 'innerText' );
-		elem[ setTextProperty ] = text;
-	}
-	return setText;
+  var setTextProperty;
+  function setText( elem, text ) {
+    // only check setTextProperty once
+    setTextProperty = setTextProperty || ( document.documentElement.textContent !== undefined ? 'textContent' : 'innerText' );
+    elem[ setTextProperty ] = text;
+  }
+  return setText;
 })();
 
 // ----- getParent ----- //
 
 utils.getParent = function( elem, selector ) {
-	while ( elem != document.body ) {
-		elem = elem.parentNode;
-		if ( matchesSelector( elem, selector ) ) {
-			return elem;
-		}
-	}
+  while ( elem != document.body ) {
+    elem = elem.parentNode;
+    if ( matchesSelector( elem, selector ) ) {
+      return elem;
+    }
+  }
 };
 
 // ----- getQueryElement ----- //
 
 // use element as selector string
 utils.getQueryElement = function( elem ) {
-	if ( typeof elem == 'string' ) {
-		return document.querySelector( elem );
-	}
-	return elem;
+  if ( typeof elem == 'string' ) {
+    return document.querySelector( elem );
+  }
+  return elem;
 };
 
 // ----- handleEvent ----- //
 
 // enable .ontype to trigger from .addEventListener( elem, 'type' )
 utils.handleEvent = function( event ) {
-	var method = 'on' + event.type;
-	if ( this[ method ] ) {
-		this[ method ]( event );
-	}
+  var method = 'on' + event.type;
+  if ( this[ method ] ) {
+    this[ method ]( event );
+  }
 };
 
 // ----- filterFindElements ----- //
 
 utils.filterFindElements = function( elems, selector ) {
-	// make array of elems
-	elems = utils.makeArray( elems );
-	var ffElems = [];
+  // make array of elems
+  elems = utils.makeArray( elems );
+  var ffElems = [];
 
-	for ( var i=0, len = elems.length; i < len; i++ ) {
-		var elem = elems[i];
-		// check that elem is an actual element
-		if ( !utils.isElement( elem ) ) {
-			continue;
-		}
-		// filter & find items if we have a selector
-		if ( selector ) {
-			// filter siblings
-			if ( matchesSelector( elem, selector ) ) {
-				ffElems.push( elem );
-			}
-			// find children
-			var childElems = elem.querySelectorAll( selector );
-			// concat childElems to filterFound array
-			for ( var j=0, jLen = childElems.length; j < jLen; j++ ) {
-				ffElems.push( childElems[j] );
-			}
-		} else {
-			ffElems.push( elem );
-		}
-	}
+  for ( var i=0, len = elems.length; i < len; i++ ) {
+    var elem = elems[i];
+    // check that elem is an actual element
+    if ( !utils.isElement( elem ) ) {
+      continue;
+    }
+    // filter & find items if we have a selector
+    if ( selector ) {
+      // filter siblings
+      if ( matchesSelector( elem, selector ) ) {
+        ffElems.push( elem );
+      }
+      // find children
+      var childElems = elem.querySelectorAll( selector );
+      // concat childElems to filterFound array
+      for ( var j=0, jLen = childElems.length; j < jLen; j++ ) {
+        ffElems.push( childElems[j] );
+      }
+    } else {
+      ffElems.push( elem );
+    }
+  }
 
-	return ffElems;
+  return ffElems;
 };
 
 // ----- debounceMethod ----- //
 
 utils.debounceMethod = function( _class, methodName, threshold ) {
-	// original method
-	var method = _class.prototype[ methodName ];
-	var timeoutName = methodName + 'Timeout';
+  // original method
+  var method = _class.prototype[ methodName ];
+  var timeoutName = methodName + 'Timeout';
 
-	_class.prototype[ methodName ] = function() {
-		var timeout = this[ timeoutName ];
-		if ( timeout ) {
-			clearTimeout( timeout );
-		}
-		var args = arguments;
+  _class.prototype[ methodName ] = function() {
+    var timeout = this[ timeoutName ];
+    if ( timeout ) {
+      clearTimeout( timeout );
+    }
+    var args = arguments;
 
-		var _this = this;
-		this[ timeoutName ] = setTimeout( function() {
-			method.apply( _this, args );
-			delete _this[ timeoutName ];
-		}, threshold || 100 );
-	};
+    var _this = this;
+    this[ timeoutName ] = setTimeout( function() {
+      method.apply( _this, args );
+      delete _this[ timeoutName ];
+    }, threshold || 100 );
+  };
 };
 
 // ----- htmlInit ----- //
 
 // http://jamesroberts.name/blog/2010/02/22/string-functions-for-javascript-trim-to-camel-case-to-dashed-and-to-underscore/
 utils.toDashed = function( str ) {
-	return str.replace( /(.)([A-Z])/g, function( match, $1, $2 ) {
-		return $1 + '-' + $2;
-	}).toLowerCase();
+  return str.replace( /(.)([A-Z])/g, function( match, $1, $2 ) {
+    return $1 + '-' + $2;
+  }).toLowerCase();
 };
 
 var console = window.console;
@@ -1724,35 +1725,35 @@ var console = window.console;
  * options are parsed from data-namespace-option attribute
  */
 utils.htmlInit = function( WidgetClass, namespace ) {
-	docReady( function() {
-		var dashedNamespace = utils.toDashed( namespace );
-		var elems = document.querySelectorAll( '.js-' + dashedNamespace );
-		var dataAttr = 'data-' + dashedNamespace + '-options';
+  docReady( function() {
+    var dashedNamespace = utils.toDashed( namespace );
+    var elems = document.querySelectorAll( '.js-' + dashedNamespace );
+    var dataAttr = 'data-' + dashedNamespace + '-options';
 
-		for ( var i=0, len = elems.length; i < len; i++ ) {
-			var elem = elems[i];
-			var attr = elem.getAttribute( dataAttr );
-			var options;
-			try {
-				options = attr && JSON.parse( attr );
-			} catch ( error ) {
-				// log error, do not initialize
-				if ( console ) {
-					console.error( 'Error parsing ' + dataAttr + ' on ' +
-						elem.nodeName.toLowerCase() + ( elem.id ? '#' + elem.id : '' ) + ': ' +
-						error );
-				}
-				continue;
-			}
-			// initialize
-			var instance = new WidgetClass( elem, options );
-			// make available via $().data('layoutname')
-			var jQuery = window.jQuery;
-			if ( jQuery ) {
-				jQuery.data( elem, namespace, instance );
-			}
-		}
-	});
+    for ( var i=0, len = elems.length; i < len; i++ ) {
+      var elem = elems[i];
+      var attr = elem.getAttribute( dataAttr );
+      var options;
+      try {
+        options = attr && JSON.parse( attr );
+      } catch ( error ) {
+        // log error, do not initialize
+        if ( console ) {
+          console.error( 'Error parsing ' + dataAttr + ' on ' +
+            elem.nodeName.toLowerCase() + ( elem.id ? '#' + elem.id : '' ) + ': ' +
+            error );
+        }
+        continue;
+      }
+      // initialize
+      var instance = new WidgetClass( elem, options );
+      // make available via $().data('layoutname')
+      var jQuery = window.jQuery;
+      if ( jQuery ) {
+        jQuery.data( elem, namespace, instance );
+      }
+    }
+  });
 };
 
 // -----  ----- //
@@ -1766,40 +1767,40 @@ return utils;
  */
 
 ( function( window, factory ) {
-	'use strict';
-	// universal module definition
-	if ( typeof define === 'function' && define.amd ) {
-		// AMD
-		define( 'outlayer/item',[
-				'eventEmitter/EventEmitter',
-				'get-size/get-size',
-				'get-style-property/get-style-property',
-				'fizzy-ui-utils/utils'
-			],
-			function( EventEmitter, getSize, getStyleProperty, utils ) {
-				return factory( window, EventEmitter, getSize, getStyleProperty, utils );
-			}
-		);
-	} else if (typeof exports === 'object') {
-		// CommonJS
-		module.exports = factory(
-			window,
-			require('wolfy87-eventemitter'),
-			require('get-size'),
-			require('desandro-get-style-property'),
-			require('fizzy-ui-utils')
-		);
-	} else {
-		// browser global
-		window.Outlayer = {};
-		window.Outlayer.Item = factory(
-			window,
-			window.EventEmitter,
-			window.getSize,
-			window.getStyleProperty,
-			window.fizzyUIUtils
-		);
-	}
+  'use strict';
+  // universal module definition
+  if ( typeof define === 'function' && define.amd ) {
+    // AMD
+    define( 'outlayer/item',[
+        'eventEmitter/EventEmitter',
+        'get-size/get-size',
+        'get-style-property/get-style-property',
+        'fizzy-ui-utils/utils'
+      ],
+      function( EventEmitter, getSize, getStyleProperty, utils ) {
+        return factory( window, EventEmitter, getSize, getStyleProperty, utils );
+      }
+    );
+  } else if (typeof exports === 'object') {
+    // CommonJS
+    module.exports = factory(
+      window,
+      require('wolfy87-eventemitter'),
+      require('get-size'),
+      require('desandro-get-style-property'),
+      require('fizzy-ui-utils')
+    );
+  } else {
+    // browser global
+    window.Outlayer = {};
+    window.Outlayer.Item = factory(
+      window,
+      window.EventEmitter,
+      window.getSize,
+      window.getStyleProperty,
+      window.fizzyUIUtils
+    );
+  }
 
 }( window, function factory( window, EventEmitter, getSize, getStyleProperty, utils ) {
 'use strict';
@@ -1808,20 +1809,20 @@ return utils;
 
 var getComputedStyle = window.getComputedStyle;
 var getStyle = getComputedStyle ?
-	function( elem ) {
-		return getComputedStyle( elem, null );
-	} :
-	function( elem ) {
-		return elem.currentStyle;
-	};
+  function( elem ) {
+    return getComputedStyle( elem, null );
+  } :
+  function( elem ) {
+    return elem.currentStyle;
+  };
 
 
 function isEmptyObj( obj ) {
-	for ( var prop in obj ) {
-		return false;
-	}
-	prop = null;
-	return true;
+  for ( var prop in obj ) {
+    return false;
+  }
+  prop = null;
+  return true;
 }
 
 // -------------------------- CSS3 support -------------------------- //
@@ -1832,77 +1833,77 @@ var supportsCSS3 = transitionProperty && transformProperty;
 var is3d = !!getStyleProperty('perspective');
 
 var transitionEndEvent = {
-	WebkitTransition: 'webkitTransitionEnd',
-	MozTransition: 'transitionend',
-	OTransition: 'otransitionend',
-	transition: 'transitionend'
+  WebkitTransition: 'webkitTransitionEnd',
+  MozTransition: 'transitionend',
+  OTransition: 'otransitionend',
+  transition: 'transitionend'
 }[ transitionProperty ];
 
 // properties that could have vendor prefix
 var prefixableProperties = [
-	'transform',
-	'transition',
-	'transitionDuration',
-	'transitionProperty'
+  'transform',
+  'transition',
+  'transitionDuration',
+  'transitionProperty'
 ];
 
 // cache all vendor properties
 var vendorProperties = ( function() {
-	var cache = {};
-	for ( var i=0, len = prefixableProperties.length; i < len; i++ ) {
-		var prop = prefixableProperties[i];
-		var supportedProp = getStyleProperty( prop );
-		if ( supportedProp && supportedProp !== prop ) {
-			cache[ prop ] = supportedProp;
-		}
-	}
-	return cache;
+  var cache = {};
+  for ( var i=0, len = prefixableProperties.length; i < len; i++ ) {
+    var prop = prefixableProperties[i];
+    var supportedProp = getStyleProperty( prop );
+    if ( supportedProp && supportedProp !== prop ) {
+      cache[ prop ] = supportedProp;
+    }
+  }
+  return cache;
 })();
 
 // -------------------------- Item -------------------------- //
 
 function Item( element, layout ) {
-	if ( !element ) {
-		return;
-	}
+  if ( !element ) {
+    return;
+  }
 
-	this.element = element;
-	// parent layout class, i.e. Masonry, Isotope, or Packery
-	this.layout = layout;
-	this.position = {
-		x: 0,
-		y: 0
-	};
+  this.element = element;
+  // parent layout class, i.e. Masonry, Isotope, or Packery
+  this.layout = layout;
+  this.position = {
+    x: 0,
+    y: 0
+  };
 
-	this._create();
+  this._create();
 }
 
 // inherit EventEmitter
 utils.extend( Item.prototype, EventEmitter.prototype );
 
 Item.prototype._create = function() {
-	// transition objects
-	this._transn = {
-		ingProperties: {},
-		clean: {},
-		onEnd: {}
-	};
+  // transition objects
+  this._transn = {
+    ingProperties: {},
+    clean: {},
+    onEnd: {}
+  };
 
-	this.css({
-		position: 'absolute'
-	});
+  this.css({
+    position: 'absolute'
+  });
 };
 
 // trigger specified handler for event type
 Item.prototype.handleEvent = function( event ) {
-	var method = 'on' + event.type;
-	if ( this[ method ] ) {
-		this[ method ]( event );
-	}
+  var method = 'on' + event.type;
+  if ( this[ method ] ) {
+    this[ method ]( event );
+  }
 };
 
 Item.prototype.getSize = function() {
-	this.size = getSize( this.element );
+  this.size = getSize( this.element );
 };
 
 /**
@@ -1910,145 +1911,145 @@ Item.prototype.getSize = function() {
  * @param {Object} style
  */
 Item.prototype.css = function( style ) {
-	var elemStyle = this.element.style;
+  var elemStyle = this.element.style;
 
-	for ( var prop in style ) {
-		// use vendor property if available
-		var supportedProp = vendorProperties[ prop ] || prop;
-		elemStyle[ supportedProp ] = style[ prop ];
-	}
+  for ( var prop in style ) {
+    // use vendor property if available
+    var supportedProp = vendorProperties[ prop ] || prop;
+    elemStyle[ supportedProp ] = style[ prop ];
+  }
 };
 
  // measure position, and sets it
 Item.prototype.getPosition = function() {
-	var style = getStyle( this.element );
-	var layoutOptions = this.layout.options;
-	var isOriginLeft = layoutOptions.isOriginLeft;
-	var isOriginTop = layoutOptions.isOriginTop;
-	var xValue = style[ isOriginLeft ? 'left' : 'right' ];
-	var yValue = style[ isOriginTop ? 'top' : 'bottom' ];
-	// convert percent to pixels
-	var layoutSize = this.layout.size;
-	var x = xValue.indexOf('%') != -1 ?
-		( parseFloat( xValue ) / 100 ) * layoutSize.width : parseInt( xValue, 10 );
-	var y = yValue.indexOf('%') != -1 ?
-		( parseFloat( yValue ) / 100 ) * layoutSize.height : parseInt( yValue, 10 );
+  var style = getStyle( this.element );
+  var layoutOptions = this.layout.options;
+  var isOriginLeft = layoutOptions.isOriginLeft;
+  var isOriginTop = layoutOptions.isOriginTop;
+  var xValue = style[ isOriginLeft ? 'left' : 'right' ];
+  var yValue = style[ isOriginTop ? 'top' : 'bottom' ];
+  // convert percent to pixels
+  var layoutSize = this.layout.size;
+  var x = xValue.indexOf('%') != -1 ?
+    ( parseFloat( xValue ) / 100 ) * layoutSize.width : parseInt( xValue, 10 );
+  var y = yValue.indexOf('%') != -1 ?
+    ( parseFloat( yValue ) / 100 ) * layoutSize.height : parseInt( yValue, 10 );
 
-	// clean up 'auto' or other non-integer values
-	x = isNaN( x ) ? 0 : x;
-	y = isNaN( y ) ? 0 : y;
-	// remove padding from measurement
-	x -= isOriginLeft ? layoutSize.paddingLeft : layoutSize.paddingRight;
-	y -= isOriginTop ? layoutSize.paddingTop : layoutSize.paddingBottom;
+  // clean up 'auto' or other non-integer values
+  x = isNaN( x ) ? 0 : x;
+  y = isNaN( y ) ? 0 : y;
+  // remove padding from measurement
+  x -= isOriginLeft ? layoutSize.paddingLeft : layoutSize.paddingRight;
+  y -= isOriginTop ? layoutSize.paddingTop : layoutSize.paddingBottom;
 
-	this.position.x = x;
-	this.position.y = y;
+  this.position.x = x;
+  this.position.y = y;
 };
 
 // set settled position, apply padding
 Item.prototype.layoutPosition = function() {
-	var layoutSize = this.layout.size;
-	var layoutOptions = this.layout.options;
-	var style = {};
+  var layoutSize = this.layout.size;
+  var layoutOptions = this.layout.options;
+  var style = {};
 
-	// x
-	var xPadding = layoutOptions.isOriginLeft ? 'paddingLeft' : 'paddingRight';
-	var xProperty = layoutOptions.isOriginLeft ? 'left' : 'right';
-	var xResetProperty = layoutOptions.isOriginLeft ? 'right' : 'left';
+  // x
+  var xPadding = layoutOptions.isOriginLeft ? 'paddingLeft' : 'paddingRight';
+  var xProperty = layoutOptions.isOriginLeft ? 'left' : 'right';
+  var xResetProperty = layoutOptions.isOriginLeft ? 'right' : 'left';
 
-	var x = this.position.x + layoutSize[ xPadding ];
-	// set in percentage or pixels
-	style[ xProperty ] = this.getXValue( x );
-	// reset other property
-	style[ xResetProperty ] = '';
+  var x = this.position.x + layoutSize[ xPadding ];
+  // set in percentage or pixels
+  style[ xProperty ] = this.getXValue( x );
+  // reset other property
+  style[ xResetProperty ] = '';
 
-	// y
-	var yPadding = layoutOptions.isOriginTop ? 'paddingTop' : 'paddingBottom';
-	var yProperty = layoutOptions.isOriginTop ? 'top' : 'bottom';
-	var yResetProperty = layoutOptions.isOriginTop ? 'bottom' : 'top';
+  // y
+  var yPadding = layoutOptions.isOriginTop ? 'paddingTop' : 'paddingBottom';
+  var yProperty = layoutOptions.isOriginTop ? 'top' : 'bottom';
+  var yResetProperty = layoutOptions.isOriginTop ? 'bottom' : 'top';
 
-	var y = this.position.y + layoutSize[ yPadding ];
-	// set in percentage or pixels
-	style[ yProperty ] = this.getYValue( y );
-	// reset other property
-	style[ yResetProperty ] = '';
+  var y = this.position.y + layoutSize[ yPadding ];
+  // set in percentage or pixels
+  style[ yProperty ] = this.getYValue( y );
+  // reset other property
+  style[ yResetProperty ] = '';
 
-	this.css( style );
-	this.emitEvent( 'layout', [ this ] );
+  this.css( style );
+  this.emitEvent( 'layout', [ this ] );
 };
 
 Item.prototype.getXValue = function( x ) {
-	var layoutOptions = this.layout.options;
-	return layoutOptions.percentPosition && !layoutOptions.isHorizontal ?
-		( ( x / this.layout.size.width ) * 100 ) + '%' : x + 'px';
+  var layoutOptions = this.layout.options;
+  return layoutOptions.percentPosition && !layoutOptions.isHorizontal ?
+    ( ( x / this.layout.size.width ) * 100 ) + '%' : x + 'px';
 };
 
 Item.prototype.getYValue = function( y ) {
-	var layoutOptions = this.layout.options;
-	return layoutOptions.percentPosition && layoutOptions.isHorizontal ?
-		( ( y / this.layout.size.height ) * 100 ) + '%' : y + 'px';
+  var layoutOptions = this.layout.options;
+  return layoutOptions.percentPosition && layoutOptions.isHorizontal ?
+    ( ( y / this.layout.size.height ) * 100 ) + '%' : y + 'px';
 };
 
 
 Item.prototype._transitionTo = function( x, y ) {
-	this.getPosition();
-	// get current x & y from top/left
-	var curX = this.position.x;
-	var curY = this.position.y;
+  this.getPosition();
+  // get current x & y from top/left
+  var curX = this.position.x;
+  var curY = this.position.y;
 
-	var compareX = parseInt( x, 10 );
-	var compareY = parseInt( y, 10 );
-	var didNotMove = compareX === this.position.x && compareY === this.position.y;
+  var compareX = parseInt( x, 10 );
+  var compareY = parseInt( y, 10 );
+  var didNotMove = compareX === this.position.x && compareY === this.position.y;
 
-	// save end position
-	this.setPosition( x, y );
+  // save end position
+  this.setPosition( x, y );
 
-	// if did not move and not transitioning, just go to layout
-	if ( didNotMove && !this.isTransitioning ) {
-		this.layoutPosition();
-		return;
-	}
+  // if did not move and not transitioning, just go to layout
+  if ( didNotMove && !this.isTransitioning ) {
+    this.layoutPosition();
+    return;
+  }
 
-	var transX = x - curX;
-	var transY = y - curY;
-	var transitionStyle = {};
-	transitionStyle.transform = this.getTranslate( transX, transY );
+  var transX = x - curX;
+  var transY = y - curY;
+  var transitionStyle = {};
+  transitionStyle.transform = this.getTranslate( transX, transY );
 
-	this.transition({
-		to: transitionStyle,
-		onTransitionEnd: {
-			transform: this.layoutPosition
-		},
-		isCleaning: true
-	});
+  this.transition({
+    to: transitionStyle,
+    onTransitionEnd: {
+      transform: this.layoutPosition
+    },
+    isCleaning: true
+  });
 };
 
 Item.prototype.getTranslate = function( x, y ) {
-	// flip cooridinates if origin on right or bottom
-	var layoutOptions = this.layout.options;
-	x = layoutOptions.isOriginLeft ? x : -x;
-	y = layoutOptions.isOriginTop ? y : -y;
+  // flip cooridinates if origin on right or bottom
+  var layoutOptions = this.layout.options;
+  x = layoutOptions.isOriginLeft ? x : -x;
+  y = layoutOptions.isOriginTop ? y : -y;
 
-	if ( is3d ) {
-		return 'translate3d(' + x + 'px, ' + y + 'px, 0)';
-	}
+  if ( is3d ) {
+    return 'translate3d(' + x + 'px, ' + y + 'px, 0)';
+  }
 
-	return 'translate(' + x + 'px, ' + y + 'px)';
+  return 'translate(' + x + 'px, ' + y + 'px)';
 };
 
 // non transition + transform support
 Item.prototype.goTo = function( x, y ) {
-	this.setPosition( x, y );
-	this.layoutPosition();
+  this.setPosition( x, y );
+  this.layoutPosition();
 };
 
 // use transition and transforms if supported
 Item.prototype.moveTo = supportsCSS3 ?
-	Item.prototype._transitionTo : Item.prototype.goTo;
+  Item.prototype._transitionTo : Item.prototype.goTo;
 
 Item.prototype.setPosition = function( x, y ) {
-	this.position.x = parseInt( x, 10 );
-	this.position.y = parseInt( y, 10 );
+  this.position.x = parseInt( x, 10 );
+  this.position.y = parseInt( y, 10 );
 };
 
 // ----- transition ----- //
@@ -2060,13 +2061,13 @@ Item.prototype.setPosition = function( x, y ) {
 
 // non transition, just trigger callback
 Item.prototype._nonTransition = function( args ) {
-	this.css( args.to );
-	if ( args.isCleaning ) {
-		this._removeStyles( args.to );
-	}
-	for ( var prop in args.onTransitionEnd ) {
-		args.onTransitionEnd[ prop ].call( this );
-	}
+  this.css( args.to );
+  if ( args.isCleaning ) {
+    this._removeStyles( args.to );
+  }
+  for ( var prop in args.onTransitionEnd ) {
+    args.onTransitionEnd[ prop ].call( this );
+  }
 };
 
 /**
@@ -2078,77 +2079,77 @@ Item.prototype._nonTransition = function( args ) {
  *   @param {Function} onTransitionEnd - callback
  */
 Item.prototype._transition = function( args ) {
-	// redirect to nonTransition if no transition duration
-	if ( !parseFloat( this.layout.options.transitionDuration ) ) {
-		this._nonTransition( args );
-		return;
-	}
+  // redirect to nonTransition if no transition duration
+  if ( !parseFloat( this.layout.options.transitionDuration ) ) {
+    this._nonTransition( args );
+    return;
+  }
 
-	var _transition = this._transn;
-	// keep track of onTransitionEnd callback by css property
-	for ( var prop in args.onTransitionEnd ) {
-		_transition.onEnd[ prop ] = args.onTransitionEnd[ prop ];
-	}
-	// keep track of properties that are transitioning
-	for ( prop in args.to ) {
-		_transition.ingProperties[ prop ] = true;
-		// keep track of properties to clean up when transition is done
-		if ( args.isCleaning ) {
-			_transition.clean[ prop ] = true;
-		}
-	}
+  var _transition = this._transn;
+  // keep track of onTransitionEnd callback by css property
+  for ( var prop in args.onTransitionEnd ) {
+    _transition.onEnd[ prop ] = args.onTransitionEnd[ prop ];
+  }
+  // keep track of properties that are transitioning
+  for ( prop in args.to ) {
+    _transition.ingProperties[ prop ] = true;
+    // keep track of properties to clean up when transition is done
+    if ( args.isCleaning ) {
+      _transition.clean[ prop ] = true;
+    }
+  }
 
-	// set from styles
-	if ( args.from ) {
-		this.css( args.from );
-		// force redraw. http://blog.alexmaccaw.com/css-transitions
-		var h = this.element.offsetHeight;
-		// hack for JSHint to hush about unused var
-		h = null;
-	}
-	// enable transition
-	this.enableTransition( args.to );
-	// set styles that are transitioning
-	this.css( args.to );
+  // set from styles
+  if ( args.from ) {
+    this.css( args.from );
+    // force redraw. http://blog.alexmaccaw.com/css-transitions
+    var h = this.element.offsetHeight;
+    // hack for JSHint to hush about unused var
+    h = null;
+  }
+  // enable transition
+  this.enableTransition( args.to );
+  // set styles that are transitioning
+  this.css( args.to );
 
-	this.isTransitioning = true;
+  this.isTransitioning = true;
 
 };
 
 // dash before all cap letters, including first for
 // WebkitTransform => -webkit-transform
 function toDashedAll( str ) {
-	return str.replace( /([A-Z])/g, function( $1 ) {
-		return '-' + $1.toLowerCase();
-	});
+  return str.replace( /([A-Z])/g, function( $1 ) {
+    return '-' + $1.toLowerCase();
+  });
 }
 
 var transitionProps = 'opacity,' +
-	toDashedAll( vendorProperties.transform || 'transform' );
+  toDashedAll( vendorProperties.transform || 'transform' );
 
 Item.prototype.enableTransition = function(/* style */) {
-	// HACK changing transitionProperty during a transition
-	// will cause transition to jump
-	if ( this.isTransitioning ) {
-		return;
-	}
+  // HACK changing transitionProperty during a transition
+  // will cause transition to jump
+  if ( this.isTransitioning ) {
+    return;
+  }
 
-	// make `transition: foo, bar, baz` from style object
-	// HACK un-comment this when enableTransition can work
-	// while a transition is happening
-	// var transitionValues = [];
-	// for ( var prop in style ) {
-	//   // dash-ify camelCased properties like WebkitTransition
-	//   prop = vendorProperties[ prop ] || prop;
-	//   transitionValues.push( toDashedAll( prop ) );
-	// }
-	// enable transition styles
-	this.css({
-		transitionProperty: transitionProps,
-		transitionDuration: this.layout.options.transitionDuration
-	});
-	// listen for transition end event
-	this.element.addEventListener( transitionEndEvent, this, false );
+  // make `transition: foo, bar, baz` from style object
+  // HACK un-comment this when enableTransition can work
+  // while a transition is happening
+  // var transitionValues = [];
+  // for ( var prop in style ) {
+  //   // dash-ify camelCased properties like WebkitTransition
+  //   prop = vendorProperties[ prop ] || prop;
+  //   transitionValues.push( toDashedAll( prop ) );
+  // }
+  // enable transition styles
+  this.css({
+    transitionProperty: transitionProps,
+    transitionDuration: this.layout.options.transitionDuration
+  });
+  // listen for transition end event
+  this.element.addEventListener( transitionEndEvent, this, false );
 };
 
 Item.prototype.transition = Item.prototype[ transitionProperty ? '_transition' : '_nonTransition' ];
@@ -2156,56 +2157,56 @@ Item.prototype.transition = Item.prototype[ transitionProperty ? '_transition' :
 // ----- events ----- //
 
 Item.prototype.onwebkitTransitionEnd = function( event ) {
-	this.ontransitionend( event );
+  this.ontransitionend( event );
 };
 
 Item.prototype.onotransitionend = function( event ) {
-	this.ontransitionend( event );
+  this.ontransitionend( event );
 };
 
 // properties that I munge to make my life easier
 var dashedVendorProperties = {
-	'-webkit-transform': 'transform',
-	'-moz-transform': 'transform',
-	'-o-transform': 'transform'
+  '-webkit-transform': 'transform',
+  '-moz-transform': 'transform',
+  '-o-transform': 'transform'
 };
 
 Item.prototype.ontransitionend = function( event ) {
-	// disregard bubbled events from children
-	if ( event.target !== this.element ) {
-		return;
-	}
-	var _transition = this._transn;
-	// get property name of transitioned property, convert to prefix-free
-	var propertyName = dashedVendorProperties[ event.propertyName ] || event.propertyName;
+  // disregard bubbled events from children
+  if ( event.target !== this.element ) {
+    return;
+  }
+  var _transition = this._transn;
+  // get property name of transitioned property, convert to prefix-free
+  var propertyName = dashedVendorProperties[ event.propertyName ] || event.propertyName;
 
-	// remove property that has completed transitioning
-	delete _transition.ingProperties[ propertyName ];
-	// check if any properties are still transitioning
-	if ( isEmptyObj( _transition.ingProperties ) ) {
-		// all properties have completed transitioning
-		this.disableTransition();
-	}
-	// clean style
-	if ( propertyName in _transition.clean ) {
-		// clean up style
-		this.element.style[ event.propertyName ] = '';
-		delete _transition.clean[ propertyName ];
-	}
-	// trigger onTransitionEnd callback
-	if ( propertyName in _transition.onEnd ) {
-		var onTransitionEnd = _transition.onEnd[ propertyName ];
-		onTransitionEnd.call( this );
-		delete _transition.onEnd[ propertyName ];
-	}
+  // remove property that has completed transitioning
+  delete _transition.ingProperties[ propertyName ];
+  // check if any properties are still transitioning
+  if ( isEmptyObj( _transition.ingProperties ) ) {
+    // all properties have completed transitioning
+    this.disableTransition();
+  }
+  // clean style
+  if ( propertyName in _transition.clean ) {
+    // clean up style
+    this.element.style[ event.propertyName ] = '';
+    delete _transition.clean[ propertyName ];
+  }
+  // trigger onTransitionEnd callback
+  if ( propertyName in _transition.onEnd ) {
+    var onTransitionEnd = _transition.onEnd[ propertyName ];
+    onTransitionEnd.call( this );
+    delete _transition.onEnd[ propertyName ];
+  }
 
-	this.emitEvent( 'transitionEnd', [ this ] );
+  this.emitEvent( 'transitionEnd', [ this ] );
 };
 
 Item.prototype.disableTransition = function() {
-	this.removeTransitionStyles();
-	this.element.removeEventListener( transitionEndEvent, this, false );
-	this.isTransitioning = false;
+  this.removeTransitionStyles();
+  this.element.removeEventListener( transitionEndEvent, this, false );
+  this.isTransitioning = false;
 };
 
 /**
@@ -2213,74 +2214,74 @@ Item.prototype.disableTransition = function() {
  * @param {Object} style
 **/
 Item.prototype._removeStyles = function( style ) {
-	// clean up transition styles
-	var cleanStyle = {};
-	for ( var prop in style ) {
-		cleanStyle[ prop ] = '';
-	}
-	this.css( cleanStyle );
+  // clean up transition styles
+  var cleanStyle = {};
+  for ( var prop in style ) {
+    cleanStyle[ prop ] = '';
+  }
+  this.css( cleanStyle );
 };
 
 var cleanTransitionStyle = {
-	transitionProperty: '',
-	transitionDuration: ''
+  transitionProperty: '',
+  transitionDuration: ''
 };
 
 Item.prototype.removeTransitionStyles = function() {
-	// remove transition
-	this.css( cleanTransitionStyle );
+  // remove transition
+  this.css( cleanTransitionStyle );
 };
 
 // ----- show/hide/remove ----- //
 
 // remove element from DOM
 Item.prototype.removeElem = function() {
-	this.element.parentNode.removeChild( this.element );
-	// remove display: none
-	this.css({ display: '' });
-	this.emitEvent( 'remove', [ this ] );
+  this.element.parentNode.removeChild( this.element );
+  // remove display: none
+  this.css({ display: '' });
+  this.emitEvent( 'remove', [ this ] );
 };
 
 Item.prototype.remove = function() {
-	// just remove element if no transition support or no transition
-	if ( !transitionProperty || !parseFloat( this.layout.options.transitionDuration ) ) {
-		this.removeElem();
-		return;
-	}
+  // just remove element if no transition support or no transition
+  if ( !transitionProperty || !parseFloat( this.layout.options.transitionDuration ) ) {
+    this.removeElem();
+    return;
+  }
 
-	// start transition
-	var _this = this;
-	this.once( 'transitionEnd', function() {
-		_this.removeElem();
-	});
-	this.hide();
+  // start transition
+  var _this = this;
+  this.once( 'transitionEnd', function() {
+    _this.removeElem();
+  });
+  this.hide();
 };
 
 Item.prototype.reveal = function() {
-	delete this.isHidden;
-	// remove display: none
-	this.css({ display: '' });
+  delete this.isHidden;
+  // remove display: none
+  this.css({ display: '' });
 
-	var options = this.layout.options;
+  var options = this.layout.options;
 
-	var onTransitionEnd = {};
-	var transitionEndProperty = this.getHideRevealTransitionEndProperty('visibleStyle');
-	onTransitionEnd[ transitionEndProperty ] = this.onRevealTransitionEnd;
+  var onTransitionEnd = {};
+  var transitionEndProperty = this.getHideRevealTransitionEndProperty('visibleStyle');
+  onTransitionEnd[ transitionEndProperty ] = this.onRevealTransitionEnd;
 
-	this.transition({
-		from: options.hiddenStyle,
-		to: options.visibleStyle,
-		isCleaning: true,
-		onTransitionEnd: onTransitionEnd
-	});
+  this.transition({
+    from: options.hiddenStyle,
+    to: options.visibleStyle,
+    isCleaning: true,
+    onTransitionEnd: onTransitionEnd
+  });
 };
 
 Item.prototype.onRevealTransitionEnd = function() {
-	// check if still visible
-	// during transition, item may have been hidden
-	if ( !this.isHidden ) {
-		this.emitEvent('reveal');
-	}
+  // check if still visible
+  // during transition, item may have been hidden
+  if ( !this.isHidden ) {
+    this.emitEvent('reveal');
+  }
 };
 
 /**
@@ -2289,57 +2290,57 @@ Item.prototype.onRevealTransitionEnd = function() {
  * @returns {String}
  */
 Item.prototype.getHideRevealTransitionEndProperty = function( styleProperty ) {
-	var optionStyle = this.layout.options[ styleProperty ];
-	// use opacity
-	if ( optionStyle.opacity ) {
-		return 'opacity';
-	}
-	// get first property
-	for ( var prop in optionStyle ) {
-		return prop;
-	}
+  var optionStyle = this.layout.options[ styleProperty ];
+  // use opacity
+  if ( optionStyle.opacity ) {
+    return 'opacity';
+  }
+  // get first property
+  for ( var prop in optionStyle ) {
+    return prop;
+  }
 };
 
 Item.prototype.hide = function() {
-	// set flag
-	this.isHidden = true;
-	// remove display: none
-	this.css({ display: '' });
+  // set flag
+  this.isHidden = true;
+  // remove display: none
+  this.css({ display: '' });
 
-	var options = this.layout.options;
+  var options = this.layout.options;
 
-	var onTransitionEnd = {};
-	var transitionEndProperty = this.getHideRevealTransitionEndProperty('hiddenStyle');
-	onTransitionEnd[ transitionEndProperty ] = this.onHideTransitionEnd;
+  var onTransitionEnd = {};
+  var transitionEndProperty = this.getHideRevealTransitionEndProperty('hiddenStyle');
+  onTransitionEnd[ transitionEndProperty ] = this.onHideTransitionEnd;
 
-	this.transition({
-		from: options.visibleStyle,
-		to: options.hiddenStyle,
-		// keep hidden stuff hidden
-		isCleaning: true,
-		onTransitionEnd: onTransitionEnd
-	});
+  this.transition({
+    from: options.visibleStyle,
+    to: options.hiddenStyle,
+    // keep hidden stuff hidden
+    isCleaning: true,
+    onTransitionEnd: onTransitionEnd
+  });
 };
 
 Item.prototype.onHideTransitionEnd = function() {
-	// check if still hidden
-	// during transition, item may have been un-hidden
-	if ( this.isHidden ) {
-		this.css({ display: 'none' });
-		this.emitEvent('hide');
-	}
+  // check if still hidden
+  // during transition, item may have been un-hidden
+  if ( this.isHidden ) {
+    this.css({ display: 'none' });
+    this.emitEvent('hide');
+  }
 };
 
 Item.prototype.destroy = function() {
-	this.css({
-		position: '',
-		left: '',
-		right: '',
-		top: '',
-		bottom: '',
-		transition: '',
-		transform: ''
-	});
+  this.css({
+    position: '',
+    left: '',
+    right: '',
+    top: '',
+    bottom: '',
+    transition: '',
+    transform: ''
+  });
 };
 
 return Item;
@@ -2353,43 +2354,43 @@ return Item;
  */
 
 ( function( window, factory ) {
-	'use strict';
-	// universal module definition
+  'use strict';
+  // universal module definition
 
-	if ( typeof define == 'function' && define.amd ) {
-		// AMD
-		define( 'outlayer/outlayer',[
-				'eventie/eventie',
-				'eventEmitter/EventEmitter',
-				'get-size/get-size',
-				'fizzy-ui-utils/utils',
-				'./item'
-			],
-			function( eventie, EventEmitter, getSize, utils, Item ) {
-				return factory( window, eventie, EventEmitter, getSize, utils, Item);
-			}
-		);
-	} else if ( typeof exports == 'object' ) {
-		// CommonJS
-		module.exports = factory(
-			window,
-			require('eventie'),
-			require('wolfy87-eventemitter'),
-			require('get-size'),
-			require('fizzy-ui-utils'),
-			require('./item')
-		);
-	} else {
-		// browser global
-		window.Outlayer = factory(
-			window,
-			window.eventie,
-			window.EventEmitter,
-			window.getSize,
-			window.fizzyUIUtils,
-			window.Outlayer.Item
-		);
-	}
+  if ( typeof define == 'function' && define.amd ) {
+    // AMD
+    define( 'outlayer/outlayer',[
+        'eventie/eventie',
+        'eventEmitter/EventEmitter',
+        'get-size/get-size',
+        'fizzy-ui-utils/utils',
+        './item'
+      ],
+      function( eventie, EventEmitter, getSize, utils, Item ) {
+        return factory( window, eventie, EventEmitter, getSize, utils, Item);
+      }
+    );
+  } else if ( typeof exports == 'object' ) {
+    // CommonJS
+    module.exports = factory(
+      window,
+      require('eventie'),
+      require('wolfy87-eventemitter'),
+      require('get-size'),
+      require('fizzy-ui-utils'),
+      require('./item')
+    );
+  } else {
+    // browser global
+    window.Outlayer = factory(
+      window,
+      window.eventie,
+      window.EventEmitter,
+      window.getSize,
+      window.fizzyUIUtils,
+      window.Outlayer.Item
+    );
+  }
 
 }( window, function factory( window, eventie, EventEmitter, getSize, utils, Item ) {
 'use strict';
@@ -2414,35 +2415,35 @@ var instances = {};
  * @constructor
  */
 function Outlayer( element, options ) {
-	var queryElement = utils.getQueryElement( element );
-	if ( !queryElement ) {
-		if ( console ) {
-			console.error( 'Bad element for ' + this.constructor.namespace +
-				': ' + ( queryElement || element ) );
-		}
-		return;
-	}
-	this.element = queryElement;
-	// add jQuery
-	if ( jQuery ) {
-		this.$element = jQuery( this.element );
-	}
+  var queryElement = utils.getQueryElement( element );
+  if ( !queryElement ) {
+    if ( console ) {
+      console.error( 'Bad element for ' + this.constructor.namespace +
+        ': ' + ( queryElement || element ) );
+    }
+    return;
+  }
+  this.element = queryElement;
+  // add jQuery
+  if ( jQuery ) {
+    this.$element = jQuery( this.element );
+  }
 
-	// options
-	this.options = utils.extend( {}, this.constructor.defaults );
-	this.option( options );
+  // options
+  this.options = utils.extend( {}, this.constructor.defaults );
+  this.option( options );
 
-	// add id for Outlayer.getFromElement
-	var id = ++GUID;
-	this.element.outlayerGUID = id; // expando
-	instances[ id ] = this; // associate via id
+  // add id for Outlayer.getFromElement
+  var id = ++GUID;
+  this.element.outlayerGUID = id; // expando
+  instances[ id ] = this; // associate via id
 
-	// kick it off
-	this._create();
+  // kick it off
+  this._create();
 
-	if ( this.options.isInitLayout ) {
-		this.layout();
-	}
+  if ( this.options.isInitLayout ) {
+    this.layout();
+  }
 }
 
 // settings are for internal use only
@@ -2451,24 +2452,24 @@ Outlayer.Item = Item;
 
 // default options
 Outlayer.defaults = {
-	containerStyle: {
-		position: 'relative'
-	},
-	isInitLayout: true,
-	isOriginLeft: true,
-	isOriginTop: true,
-	isResizeBound: true,
-	isResizingContainer: true,
-	// item options
-	transitionDuration: '0.4s',
-	hiddenStyle: {
-		opacity: 0,
-		transform: 'scale(0.001)'
-	},
-	visibleStyle: {
-		opacity: 1,
-		transform: 'scale(1)'
-	}
+  containerStyle: {
+    position: 'relative'
+  },
+  isInitLayout: true,
+  isOriginLeft: true,
+  isOriginTop: true,
+  isResizeBound: true,
+  isResizingContainer: true,
+  // item options
+  transitionDuration: '0.4s',
+  hiddenStyle: {
+    opacity: 0,
+    transform: 'scale(0.001)'
+  },
+  visibleStyle: {
+    opacity: 1,
+    transform: 'scale(1)'
+  }
 };
 
 // inherit EventEmitter
@@ -2479,28 +2480,28 @@ utils.extend( Outlayer.prototype, EventEmitter.prototype );
  * @param {Object} opts
  */
 Outlayer.prototype.option = function( opts ) {
-	utils.extend( this.options, opts );
+  utils.extend( this.options, opts );
 };
 
 Outlayer.prototype._create = function() {
-	// get items from children
-	this.reloadItems();
-	// elements that affect layout, but are not laid out
-	this.stamps = [];
-	this.stamp( this.options.stamp );
-	// set container style
-	utils.extend( this.element.style, this.options.containerStyle );
+  // get items from children
+  this.reloadItems();
+  // elements that affect layout, but are not laid out
+  this.stamps = [];
+  this.stamp( this.options.stamp );
+  // set container style
+  utils.extend( this.element.style, this.options.containerStyle );
 
-	// bind resize method
-	if ( this.options.isResizeBound ) {
-		this.bindResize();
-	}
+  // bind resize method
+  if ( this.options.isResizeBound ) {
+    this.bindResize();
+  }
 };
 
 // goes through all children again and gets bricks in proper order
 Outlayer.prototype.reloadItems = function() {
-	// collection of item elements
-	this.items = this._itemize( this.element.children );
+  // collection of item elements
+  this.items = this._itemize( this.element.children );
 };
 
 
@@ -2511,18 +2512,18 @@ Outlayer.prototype.reloadItems = function() {
  */
 Outlayer.prototype._itemize = function( elems ) {
 
-	var itemElems = this._filterFindItemElements( elems );
-	var Item = this.constructor.Item;
+  var itemElems = this._filterFindItemElements( elems );
+  var Item = this.constructor.Item;
 
-	// create new Outlayer Items for collection
-	var items = [];
-	for ( var i=0, len = itemElems.length; i < len; i++ ) {
-		var elem = itemElems[i];
-		var item = new Item( elem, this );
-		items.push( item );
-	}
+  // create new Outlayer Items for collection
+  var items = [];
+  for ( var i=0, len = itemElems.length; i < len; i++ ) {
+    var elem = itemElems[i];
+    var item = new Item( elem, this );
+    items.push( item );
+  }
 
-	return items;
+  return items;
 };
 
 /**
@@ -2531,7 +2532,7 @@ Outlayer.prototype._itemize = function( elems ) {
  * @returns {Array} items - item elements
  */
 Outlayer.prototype._filterFindItemElements = function( elems ) {
-	return utils.filterFindElements( elems, this.options.itemSelector );
+  return utils.filterFindElements( elems, this.options.itemSelector );
 };
 
 /**
@@ -2539,11 +2540,11 @@ Outlayer.prototype._filterFindItemElements = function( elems ) {
  * @returns {Array} elems - collection of item elements
  */
 Outlayer.prototype.getItemElements = function() {
-	var elems = [];
-	for ( var i=0, len = this.items.length; i < len; i++ ) {
-		elems.push( this.items[i].element );
-	}
-	return elems;
+  var elems = [];
+  for ( var i=0, len = this.items.length; i < len; i++ ) {
+    elems.push( this.items[i].element );
+  }
+  return elems;
 };
 
 // ----- init & layout ----- //
@@ -2552,16 +2553,16 @@ Outlayer.prototype.getItemElements = function() {
  * lays out all items
  */
 Outlayer.prototype.layout = function() {
-	this._resetLayout();
-	this._manageStamps();
+  this._resetLayout();
+  this._manageStamps();
 
-	// don't animate first layout
-	var isInstant = this.options.isLayoutInstant !== undefined ?
-		this.options.isLayoutInstant : !this._isLayoutInited;
-	this.layoutItems( this.items, isInstant );
+  // don't animate first layout
+  var isInstant = this.options.isLayoutInstant !== undefined ?
+    this.options.isLayoutInstant : !this._isLayoutInited;
+  this.layoutItems( this.items, isInstant );
 
-	// flag for initalized
-	this._isLayoutInited = true;
+  // flag for initalized
+  this._isLayoutInited = true;
 };
 
 // _init is alias for layout
@@ -2571,12 +2572,12 @@ Outlayer.prototype._init = Outlayer.prototype.layout;
  * logic before any new layout
  */
 Outlayer.prototype._resetLayout = function() {
-	this.getSize();
+  this.getSize();
 };
 
 
 Outlayer.prototype.getSize = function() {
-	this.size = getSize( this.element );
+  this.size = getSize( this.element );
 };
 
 /**
@@ -2590,21 +2591,21 @@ Outlayer.prototype.getSize = function() {
  * @private
  */
 Outlayer.prototype._getMeasurement = function( measurement, size ) {
-	var option = this.options[ measurement ];
-	var elem;
-	if ( !option ) {
-		// default to 0
-		this[ measurement ] = 0;
-	} else {
-		// use option as an element
-		if ( typeof option === 'string' ) {
-			elem = this.element.querySelector( option );
-		} else if ( utils.isElement( option ) ) {
-			elem = option;
-		}
-		// use size of element, if element
-		this[ measurement ] = elem ? getSize( elem )[ size ] : option;
-	}
+  var option = this.options[ measurement ];
+  var elem;
+  if ( !option ) {
+    // default to 0
+    this[ measurement ] = 0;
+  } else {
+    // use option as an element
+    if ( typeof option === 'string' ) {
+      elem = this.element.querySelector( option );
+    } else if ( utils.isElement( option ) ) {
+      elem = option;
+    }
+    // use size of element, if element
+    this[ measurement ] = elem ? getSize( elem )[ size ] : option;
+  }
 };
 
 /**
@@ -2612,11 +2613,11 @@ Outlayer.prototype._getMeasurement = function( measurement, size ) {
  * @api public
  */
 Outlayer.prototype.layoutItems = function( items, isInstant ) {
-	items = this._getItemsForLayout( items );
+  items = this._getItemsForLayout( items );
 
-	this._layoutItems( items, isInstant );
+  this._layoutItems( items, isInstant );
 
-	this._postLayout();
+  this._postLayout();
 };
 
 /**
@@ -2626,14 +2627,14 @@ Outlayer.prototype.layoutItems = function( items, isInstant ) {
  * @returns {Array} items
  */
 Outlayer.prototype._getItemsForLayout = function( items ) {
-	var layoutItems = [];
-	for ( var i=0, len = items.length; i < len; i++ ) {
-		var item = items[i];
-		if ( !item.isIgnored ) {
-			layoutItems.push( item );
-		}
-	}
-	return layoutItems;
+  var layoutItems = [];
+  for ( var i=0, len = items.length; i < len; i++ ) {
+    var item = items[i];
+    if ( !item.isIgnored ) {
+      layoutItems.push( item );
+    }
+  }
+  return layoutItems;
 };
 
 /**
@@ -2642,26 +2643,26 @@ Outlayer.prototype._getItemsForLayout = function( items ) {
  * @param {Boolean} isInstant
  */
 Outlayer.prototype._layoutItems = function( items, isInstant ) {
-	this._emitCompleteOnItems( 'layout', items );
+  this._emitCompleteOnItems( 'layout', items );
 
-	if ( !items || !items.length ) {
-		// no items, emit event with empty array
-		return;
-	}
+  if ( !items || !items.length ) {
+    // no items, emit event with empty array
+    return;
+  }
 
-	var queue = [];
+  var queue = [];
 
-	for ( var i=0, len = items.length; i < len; i++ ) {
-		var item = items[i];
-		// get x/y object from method
-		var position = this._getItemLayoutPosition( item );
-		// enqueue
-		position.item = item;
-		position.isInstant = isInstant || item.isLayoutInstant;
-		queue.push( position );
-	}
+  for ( var i=0, len = items.length; i < len; i++ ) {
+    var item = items[i];
+    // get x/y object from method
+    var position = this._getItemLayoutPosition( item );
+    // enqueue
+    position.item = item;
+    position.isInstant = isInstant || item.isLayoutInstant;
+    queue.push( position );
+  }
 
-	this._processLayoutQueue( queue );
+  this._processLayoutQueue( queue );
 };
 
 /**
@@ -2670,10 +2671,10 @@ Outlayer.prototype._layoutItems = function( items, isInstant ) {
  * @returns {Object} x and y position
  */
 Outlayer.prototype._getItemLayoutPosition = function( /* item */ ) {
-	return {
-		x: 0,
-		y: 0
-	};
+  return {
+    x: 0,
+    y: 0
+  };
 };
 
 /**
@@ -2683,10 +2684,10 @@ Outlayer.prototype._getItemLayoutPosition = function( /* item */ ) {
  * @param {Array} queue
  */
 Outlayer.prototype._processLayoutQueue = function( queue ) {
-	for ( var i=0, len = queue.length; i < len; i++ ) {
-		var obj = queue[i];
-		this._positionItem( obj.item, obj.x, obj.y, obj.isInstant );
-	}
+  for ( var i=0, len = queue.length; i < len; i++ ) {
+    var obj = queue[i];
+    this._positionItem( obj.item, obj.x, obj.y, obj.isInstant );
+  }
 };
 
 /**
@@ -2697,12 +2698,12 @@ Outlayer.prototype._processLayoutQueue = function( queue ) {
  * @param {Boolean} isInstant - disables transitions
  */
 Outlayer.prototype._positionItem = function( item, x, y, isInstant ) {
-	if ( isInstant ) {
-		// if not transition, just set CSS
-		item.goTo( x, y );
-	} else {
-		item.moveTo( x, y );
-	}
+  if ( isInstant ) {
+    // if not transition, just set CSS
+    item.goTo( x, y );
+  } else {
+    item.moveTo( x, y );
+  }
 };
 
 /**
@@ -2710,18 +2711,18 @@ Outlayer.prototype._positionItem = function( item, x, y, isInstant ) {
  * i.e. size the container
  */
 Outlayer.prototype._postLayout = function() {
-	this.resizeContainer();
+  this.resizeContainer();
 };
 
 Outlayer.prototype.resizeContainer = function() {
-	if ( !this.options.isResizingContainer ) {
-		return;
-	}
-	var size = this._getContainerSize();
-	if ( size ) {
-		this._setContainerMeasure( size.width, true );
-		this._setContainerMeasure( size.height, false );
-	}
+  if ( !this.options.isResizingContainer ) {
+    return;
+  }
+  var size = this._getContainerSize();
+  if ( size ) {
+    this._setContainerMeasure( size.width, true );
+    this._setContainerMeasure( size.height, false );
+  }
 };
 
 /**
@@ -2737,21 +2738,21 @@ Outlayer.prototype._getContainerSize = noop;
  * @param {Boolean} isWidth
  */
 Outlayer.prototype._setContainerMeasure = function( measure, isWidth ) {
-	if ( measure === undefined ) {
-		return;
-	}
+  if ( measure === undefined ) {
+    return;
+  }
 
-	var elemSize = this.size;
-	// add padding and border width if border box
-	if ( elemSize.isBorderBox ) {
-		measure += isWidth ? elemSize.paddingLeft + elemSize.paddingRight +
-			elemSize.borderLeftWidth + elemSize.borderRightWidth :
-			elemSize.paddingBottom + elemSize.paddingTop +
-			elemSize.borderTopWidth + elemSize.borderBottomWidth;
-	}
+  var elemSize = this.size;
+  // add padding and border width if border box
+  if ( elemSize.isBorderBox ) {
+    measure += isWidth ? elemSize.paddingLeft + elemSize.paddingRight +
+      elemSize.borderLeftWidth + elemSize.borderRightWidth :
+      elemSize.paddingBottom + elemSize.paddingTop +
+      elemSize.borderTopWidth + elemSize.borderBottomWidth;
+  }
 
-	measure = Math.max( measure, 0 );
-	this.element.style[ isWidth ? 'width' : 'height' ] = measure + 'px';
+  measure = Math.max( measure, 0 );
+  this.element.style[ isWidth ? 'width' : 'height' ] = measure + 'px';
 };
 
 /**
@@ -2760,30 +2761,30 @@ Outlayer.prototype._setContainerMeasure = function( measure, isWidth ) {
  * @param {Array} items - Outlayer.Items
  */
 Outlayer.prototype._emitCompleteOnItems = function( eventName, items ) {
-	var _this = this;
-	function onComplete() {
-		_this.dispatchEvent( eventName + 'Complete', null, [ items ] );
-	}
+  var _this = this;
+  function onComplete() {
+    _this.dispatchEvent( eventName + 'Complete', null, [ items ] );
+  }
 
-	var count = items.length;
-	if ( !items || !count ) {
-		onComplete();
-		return;
-	}
+  var count = items.length;
+  if ( !items || !count ) {
+    onComplete();
+    return;
+  }
 
-	var doneCount = 0;
-	function tick() {
-		doneCount++;
-		if ( doneCount === count ) {
-			onComplete();
-		}
-	}
+  var doneCount = 0;
+  function tick() {
+    doneCount++;
+    if ( doneCount === count ) {
+      onComplete();
+    }
+  }
 
-	// bind callback
-	for ( var i=0, len = items.length; i < len; i++ ) {
-		var item = items[i];
-		item.once( eventName, tick );
-	}
+  // bind callback
+  for ( var i=0, len = items.length; i < len; i++ ) {
+    var item = items[i];
+    item.once( eventName, tick );
+  }
 };
 
 /**
@@ -2793,23 +2794,23 @@ Outlayer.prototype._emitCompleteOnItems = function( eventName, items ) {
  * @param {Array} args - extra arguments
  */
 Outlayer.prototype.dispatchEvent = function( type, event, args ) {
-	// add original event to arguments
-	var emitArgs = event ? [ event ].concat( args ) : args;
-	this.emitEvent( type, emitArgs );
+  // add original event to arguments
+  var emitArgs = event ? [ event ].concat( args ) : args;
+  this.emitEvent( type, emitArgs );
 
-	if ( jQuery ) {
-		// set this.$element
-		this.$element = this.$element || jQuery( this.element );
-		if ( event ) {
-			// create jQuery event
-			var $event = jQuery.Event( event );
-			$event.type = type;
-			this.$element.trigger( $event, args );
-		} else {
-			// just trigger with type if no event available
-			this.$element.trigger( type, args );
-		}
-	}
+  if ( jQuery ) {
+    // set this.$element
+    this.$element = this.$element || jQuery( this.element );
+    if ( event ) {
+      // create jQuery event
+      var $event = jQuery.Event( event );
+      $event.type = type;
+      this.$element.trigger( $event, args );
+    } else {
+      // just trigger with type if no event available
+      this.$element.trigger( type, args );
+    }
+  }
 };
 
 // -------------------------- ignore & stamps -------------------------- //
@@ -2821,10 +2822,10 @@ Outlayer.prototype.dispatchEvent = function( type, event, args ) {
  * @param {Element} elem
  */
 Outlayer.prototype.ignore = function( elem ) {
-	var item = this.getItem( elem );
-	if ( item ) {
-		item.isIgnored = true;
-	}
+  var item = this.getItem( elem );
+  if ( item ) {
+    item.isIgnored = true;
+  }
 };
 
 /**
@@ -2832,10 +2833,10 @@ Outlayer.prototype.ignore = function( elem ) {
  * @param {Element} elem
  */
 Outlayer.prototype.unignore = function( elem ) {
-	var item = this.getItem( elem );
-	if ( item ) {
-		delete item.isIgnored;
-	}
+  var item = this.getItem( elem );
+  if ( item ) {
+    delete item.isIgnored;
+  }
 };
 
 /**
@@ -2843,17 +2844,17 @@ Outlayer.prototype.unignore = function( elem ) {
  * @param {NodeList, Array, Element, or String} elems
  */
 Outlayer.prototype.stamp = function( elems ) {
-	elems = this._find( elems );
-	if ( !elems ) {
-		return;
-	}
+  elems = this._find( elems );
+  if ( !elems ) {
+    return;
+  }
 
-	this.stamps = this.stamps.concat( elems );
-	// ignore
-	for ( var i=0, len = elems.length; i < len; i++ ) {
-		var elem = elems[i];
-		this.ignore( elem );
-	}
+  this.stamps = this.stamps.concat( elems );
+  // ignore
+  for ( var i=0, len = elems.length; i < len; i++ ) {
+    var elem = elems[i];
+    this.ignore( elem );
+  }
 };
 
 /**
@@ -2861,17 +2862,17 @@ Outlayer.prototype.stamp = function( elems ) {
  * @param {NodeList, Array, or Element} elems
  */
 Outlayer.prototype.unstamp = function( elems ) {
-	elems = this._find( elems );
-	if ( !elems ){
-		return;
-	}
+  elems = this._find( elems );
+  if ( !elems ){
+    return;
+  }
 
-	for ( var i=0, len = elems.length; i < len; i++ ) {
-		var elem = elems[i];
-		// filter out removed stamp elements
-		utils.removeFrom( this.stamps, elem );
-		this.unignore( elem );
-	}
+  for ( var i=0, len = elems.length; i < len; i++ ) {
+    var elem = elems[i];
+    // filter out removed stamp elements
+    utils.removeFrom( this.stamps, elem );
+    this.unignore( elem );
+  }
 
 };
 
@@ -2881,41 +2882,41 @@ Outlayer.prototype.unstamp = function( elems ) {
  * @returns {Array} elems
  */
 Outlayer.prototype._find = function( elems ) {
-	if ( !elems ) {
-		return;
-	}
-	// if string, use argument as selector string
-	if ( typeof elems === 'string' ) {
-		elems = this.element.querySelectorAll( elems );
-	}
-	elems = utils.makeArray( elems );
-	return elems;
+  if ( !elems ) {
+    return;
+  }
+  // if string, use argument as selector string
+  if ( typeof elems === 'string' ) {
+    elems = this.element.querySelectorAll( elems );
+  }
+  elems = utils.makeArray( elems );
+  return elems;
 };
 
 Outlayer.prototype._manageStamps = function() {
-	if ( !this.stamps || !this.stamps.length ) {
-		return;
-	}
+  if ( !this.stamps || !this.stamps.length ) {
+    return;
+  }
 
-	this._getBoundingRect();
+  this._getBoundingRect();
 
-	for ( var i=0, len = this.stamps.length; i < len; i++ ) {
-		var stamp = this.stamps[i];
-		this._manageStamp( stamp );
-	}
+  for ( var i=0, len = this.stamps.length; i < len; i++ ) {
+    var stamp = this.stamps[i];
+    this._manageStamp( stamp );
+  }
 };
 
 // update boundingLeft / Top
 Outlayer.prototype._getBoundingRect = function() {
-	// get bounding rect for container element
-	var boundingRect = this.element.getBoundingClientRect();
-	var size = this.size;
-	this._boundingRect = {
-		left: boundingRect.left + size.paddingLeft + size.borderLeftWidth,
-		top: boundingRect.top + size.paddingTop + size.borderTopWidth,
-		right: boundingRect.right - ( size.paddingRight + size.borderRightWidth ),
-		bottom: boundingRect.bottom - ( size.paddingBottom + size.borderBottomWidth )
-	};
+  // get bounding rect for container element
+  var boundingRect = this.element.getBoundingClientRect();
+  var size = this.size;
+  this._boundingRect = {
+    left: boundingRect.left + size.paddingLeft + size.borderLeftWidth,
+    top: boundingRect.top + size.paddingTop + size.borderTopWidth,
+    right: boundingRect.right - ( size.paddingRight + size.borderRightWidth ),
+    bottom: boundingRect.bottom - ( size.paddingBottom + size.borderBottomWidth )
+  };
 };
 
 /**
@@ -2929,16 +2930,16 @@ Outlayer.prototype._manageStamp = noop;
  * @returns {Object} offset - has left, top, right, bottom
  */
 Outlayer.prototype._getElementOffset = function( elem ) {
-	var boundingRect = elem.getBoundingClientRect();
-	var thisRect = this._boundingRect;
-	var size = getSize( elem );
-	var offset = {
-		left: boundingRect.left - thisRect.left - size.marginLeft,
-		top: boundingRect.top - thisRect.top - size.marginTop,
-		right: thisRect.right - boundingRect.right - size.marginRight,
-		bottom: thisRect.bottom - boundingRect.bottom - size.marginBottom
-	};
-	return offset;
+  var boundingRect = elem.getBoundingClientRect();
+  var thisRect = this._boundingRect;
+  var size = getSize( elem );
+  var offset = {
+    left: boundingRect.left - thisRect.left - size.marginLeft,
+    top: boundingRect.top - thisRect.top - size.marginTop,
+    right: thisRect.right - boundingRect.right - size.marginRight,
+    bottom: thisRect.bottom - boundingRect.bottom - size.marginBottom
+  };
+  return offset;
 };
 
 // -------------------------- resize -------------------------- //
@@ -2946,32 +2947,32 @@ Outlayer.prototype._getElementOffset = function( elem ) {
 // enable event handlers for listeners
 // i.e. resize -> onresize
 Outlayer.prototype.handleEvent = function( event ) {
-	var method = 'on' + event.type;
-	if ( this[ method ] ) {
-		this[ method ]( event );
-	}
+  var method = 'on' + event.type;
+  if ( this[ method ] ) {
+    this[ method ]( event );
+  }
 };
 
 /**
  * Bind layout to window resizing
  */
 Outlayer.prototype.bindResize = function() {
-	// bind just one listener
-	if ( this.isResizeBound ) {
-		return;
-	}
-	eventie.bind( window, 'resize', this );
-	this.isResizeBound = true;
+  // bind just one listener
+  if ( this.isResizeBound ) {
+    return;
+  }
+  eventie.bind( window, 'resize', this );
+  this.isResizeBound = true;
 };
 
 /**
  * Unbind layout to window resizing
  */
 Outlayer.prototype.unbindResize = function() {
-	if ( this.isResizeBound ) {
-		eventie.unbind( window, 'resize', this );
-	}
-	this.isResizeBound = false;
+  if ( this.isResizeBound ) {
+    eventie.unbind( window, 'resize', this );
+  }
+  this.isResizeBound = false;
 };
 
 // original debounce by John Hann
@@ -2979,28 +2980,28 @@ Outlayer.prototype.unbindResize = function() {
 
 // this fires every resize
 Outlayer.prototype.onresize = function() {
-	if ( this.resizeTimeout ) {
-		clearTimeout( this.resizeTimeout );
-	}
+  if ( this.resizeTimeout ) {
+    clearTimeout( this.resizeTimeout );
+  }
 
-	var _this = this;
-	function delayed() {
-		_this.resize();
-		delete _this.resizeTimeout;
-	}
+  var _this = this;
+  function delayed() {
+    _this.resize();
+    delete _this.resizeTimeout;
+  }
 
-	this.resizeTimeout = setTimeout( delayed, 100 );
+  this.resizeTimeout = setTimeout( delayed, 100 );
 };
 
 // debounced, layout on resize
 Outlayer.prototype.resize = function() {
-	// don't trigger if size did not change
-	// or if resize was unbound. See #9
-	if ( !this.isResizeBound || !this.needsResizeLayout() ) {
-		return;
-	}
+  // don't trigger if size did not change
+  // or if resize was unbound. See #9
+  if ( !this.isResizeBound || !this.needsResizeLayout() ) {
+    return;
+  }
 
-	this.layout();
+  this.layout();
 };
 
 /**
@@ -3008,11 +3009,11 @@ Outlayer.prototype.resize = function() {
  * @returns Boolean
  */
 Outlayer.prototype.needsResizeLayout = function() {
-	var size = getSize( this.element );
-	// check that this.size and size are there
-	// IE8 triggers resize on body size change, so they might not be
-	var hasSizes = this.size && size;
-	return hasSizes && size.innerWidth !== this.size.innerWidth;
+  var size = getSize( this.element );
+  // check that this.size and size are there
+  // IE8 triggers resize on body size change, so they might not be
+  var hasSizes = this.size && size;
+  return hasSizes && size.innerWidth !== this.size.innerWidth;
 };
 
 // -------------------------- methods -------------------------- //
@@ -3023,12 +3024,12 @@ Outlayer.prototype.needsResizeLayout = function() {
  * @returns {Array} items - Outlayer.Items
 **/
 Outlayer.prototype.addItems = function( elems ) {
-	var items = this._itemize( elems );
-	// add items to collection
-	if ( items.length ) {
-		this.items = this.items.concat( items );
-	}
-	return items;
+  var items = this._itemize( elems );
+  // add items to collection
+  if ( items.length ) {
+    this.items = this.items.concat( items );
+  }
+  return items;
 };
 
 /**
@@ -3036,13 +3037,13 @@ Outlayer.prototype.addItems = function( elems ) {
  * @param {Array or NodeList or Element} elems
  */
 Outlayer.prototype.appended = function( elems ) {
-	var items = this.addItems( elems );
-	if ( !items.length ) {
-		return;
-	}
-	// layout and reveal just the new items
-	this.layoutItems( items, true );
-	this.reveal( items );
+  var items = this.addItems( elems );
+  if ( !items.length ) {
+    return;
+  }
+  // layout and reveal just the new items
+  this.layoutItems( items, true );
+  this.reveal( items );
 };
 
 /**
@@ -3050,21 +3051,21 @@ Outlayer.prototype.appended = function( elems ) {
  * @param {Array or NodeList or Element} elems
  */
 Outlayer.prototype.prepended = function( elems ) {
-	var items = this._itemize( elems );
-	if ( !items.length ) {
-		return;
-	}
-	// add items to beginning of collection
-	var previousItems = this.items.slice(0);
-	this.items = items.concat( previousItems );
-	// start new layout
-	this._resetLayout();
-	this._manageStamps();
-	// layout new stuff without transition
-	this.layoutItems( items, true );
-	this.reveal( items );
-	// layout previous items
-	this.layoutItems( previousItems );
+  var items = this._itemize( elems );
+  if ( !items.length ) {
+    return;
+  }
+  // add items to beginning of collection
+  var previousItems = this.items.slice(0);
+  this.items = items.concat( previousItems );
+  // start new layout
+  this._resetLayout();
+  this._manageStamps();
+  // layout new stuff without transition
+  this.layoutItems( items, true );
+  this.reveal( items );
+  // layout previous items
+  this.layoutItems( previousItems );
 };
 
 /**
@@ -3072,13 +3073,13 @@ Outlayer.prototype.prepended = function( elems ) {
  * @param {Array of Outlayer.Items} items
  */
 Outlayer.prototype.reveal = function( items ) {
-	this._emitCompleteOnItems( 'reveal', items );
+  this._emitCompleteOnItems( 'reveal', items );
 
-	var len = items && items.length;
-	for ( var i=0; len && i < len; i++ ) {
-		var item = items[i];
-		item.reveal();
-	}
+  var len = items && items.length;
+  for ( var i=0; len && i < len; i++ ) {
+    var item = items[i];
+    item.reveal();
+  }
 };
 
 /**
@@ -3086,13 +3087,13 @@ Outlayer.prototype.reveal = function( items ) {
  * @param {Array of Outlayer.Items} items
  */
 Outlayer.prototype.hide = function( items ) {
-	this._emitCompleteOnItems( 'hide', items );
+  this._emitCompleteOnItems( 'hide', items );
 
-	var len = items && items.length;
-	for ( var i=0; len && i < len; i++ ) {
-		var item = items[i];
-		item.hide();
-	}
+  var len = items && items.length;
+  for ( var i=0; len && i < len; i++ ) {
+    var item = items[i];
+    item.hide();
+  }
 };
 
 /**
@@ -3100,8 +3101,8 @@ Outlayer.prototype.hide = function( items ) {
  * @param {Array}, {Element}, {NodeList} items
  */
 Outlayer.prototype.revealItemElements = function( elems ) {
-	var items = this.getItems( elems );
-	this.reveal( items );
+  var items = this.getItems( elems );
+  this.reveal( items );
 };
 
 /**
@@ -3109,8 +3110,8 @@ Outlayer.prototype.revealItemElements = function( elems ) {
  * @param {Array}, {Element}, {NodeList} items
  */
 Outlayer.prototype.hideItemElements = function( elems ) {
-	var items = this.getItems( elems );
-	this.hide( items );
+  var items = this.getItems( elems );
+  this.hide( items );
 };
 
 /**
@@ -3120,14 +3121,14 @@ Outlayer.prototype.hideItemElements = function( elems ) {
  * @returns {Outlayer.Item} item
  */
 Outlayer.prototype.getItem = function( elem ) {
-	// loop through items to get the one that matches
-	for ( var i=0, len = this.items.length; i < len; i++ ) {
-		var item = this.items[i];
-		if ( item.element === elem ) {
-			// return item
-			return item;
-		}
-	}
+  // loop through items to get the one that matches
+  for ( var i=0, len = this.items.length; i < len; i++ ) {
+    var item = this.items[i];
+    if ( item.element === elem ) {
+      // return item
+      return item;
+    }
+  }
 };
 
 /**
@@ -3136,17 +3137,17 @@ Outlayer.prototype.getItem = function( elem ) {
  * @returns {Array} items - Outlayer.Items
  */
 Outlayer.prototype.getItems = function( elems ) {
-	elems = utils.makeArray( elems );
-	var items = [];
-	for ( var i=0, len = elems.length; i < len; i++ ) {
-		var elem = elems[i];
-		var item = this.getItem( elem );
-		if ( item ) {
-			items.push( item );
-		}
-	}
+  elems = utils.makeArray( elems );
+  var items = [];
+  for ( var i=0, len = elems.length; i < len; i++ ) {
+    var elem = elems[i];
+    var item = this.getItem( elem );
+    if ( item ) {
+      items.push( item );
+    }
+  }
 
-	return items;
+  return items;
 };
 
 /**
@@ -3154,47 +3155,47 @@ Outlayer.prototype.getItems = function( elems ) {
  * @param {Array or NodeList or Element} elems
  */
 Outlayer.prototype.remove = function( elems ) {
-	var removeItems = this.getItems( elems );
+  var removeItems = this.getItems( elems );
 
-	this._emitCompleteOnItems( 'remove', removeItems );
+  this._emitCompleteOnItems( 'remove', removeItems );
 
-	// bail if no items to remove
-	if ( !removeItems || !removeItems.length ) {
-		return;
-	}
+  // bail if no items to remove
+  if ( !removeItems || !removeItems.length ) {
+    return;
+  }
 
-	for ( var i=0, len = removeItems.length; i < len; i++ ) {
-		var item = removeItems[i];
-		item.remove();
-		// remove item from collection
-		utils.removeFrom( this.items, item );
-	}
+  for ( var i=0, len = removeItems.length; i < len; i++ ) {
+    var item = removeItems[i];
+    item.remove();
+    // remove item from collection
+    utils.removeFrom( this.items, item );
+  }
 };
 
 // ----- destroy ----- //
 
 // remove and disable Outlayer instance
 Outlayer.prototype.destroy = function() {
-	// clean up dynamic styles
-	var style = this.element.style;
-	style.height = '';
-	style.position = '';
-	style.width = '';
-	// destroy items
-	for ( var i=0, len = this.items.length; i < len; i++ ) {
-		var item = this.items[i];
-		item.destroy();
-	}
+  // clean up dynamic styles
+  var style = this.element.style;
+  style.height = '';
+  style.position = '';
+  style.width = '';
+  // destroy items
+  for ( var i=0, len = this.items.length; i < len; i++ ) {
+    var item = this.items[i];
+    item.destroy();
+  }
 
-	this.unbindResize();
+  this.unbindResize();
 
-	var id = this.element.outlayerGUID;
-	delete instances[ id ]; // remove reference to instance by id
-	delete this.element.outlayerGUID;
-	// remove data for jQuery
-	if ( jQuery ) {
-		jQuery.removeData( this.element, this.constructor.namespace );
-	}
+  var id = this.element.outlayerGUID;
+  delete instances[ id ]; // remove reference to instance by id
+  delete this.element.outlayerGUID;
+  // remove data for jQuery
+  if ( jQuery ) {
+    jQuery.removeData( this.element, this.constructor.namespace );
+  }
 
 };
 
@@ -3206,9 +3207,9 @@ Outlayer.prototype.destroy = function() {
  * @returns {Outlayer}
  */
 Outlayer.data = function( elem ) {
-	elem = utils.getQueryElement( elem );
-	var id = elem && elem.outlayerGUID;
-	return id && instances[ id ];
+  elem = utils.getQueryElement( elem );
+  var id = elem && elem.outlayerGUID;
+  return id && instances[ id ];
 };
 
 
@@ -3219,48 +3220,48 @@ Outlayer.data = function( elem ) {
  * @param {String} namespace
  */
 Outlayer.create = function( namespace, options ) {
-	// sub-class Outlayer
-	function Layout() {
-		Outlayer.apply( this, arguments );
-	}
-	// inherit Outlayer prototype, use Object.create if there
-	if ( Object.create ) {
-		Layout.prototype = Object.create( Outlayer.prototype );
-	} else {
-		utils.extend( Layout.prototype, Outlayer.prototype );
-	}
-	// set contructor, used for namespace and Item
-	Layout.prototype.constructor = Layout;
+  // sub-class Outlayer
+  function Layout() {
+    Outlayer.apply( this, arguments );
+  }
+  // inherit Outlayer prototype, use Object.create if there
+  if ( Object.create ) {
+    Layout.prototype = Object.create( Outlayer.prototype );
+  } else {
+    utils.extend( Layout.prototype, Outlayer.prototype );
+  }
+  // set contructor, used for namespace and Item
+  Layout.prototype.constructor = Layout;
 
-	Layout.defaults = utils.extend( {}, Outlayer.defaults );
-	// apply new options
-	utils.extend( Layout.defaults, options );
-	// keep prototype.settings for backwards compatibility (Packery v1.2.0)
-	Layout.prototype.settings = {};
+  Layout.defaults = utils.extend( {}, Outlayer.defaults );
+  // apply new options
+  utils.extend( Layout.defaults, options );
+  // keep prototype.settings for backwards compatibility (Packery v1.2.0)
+  Layout.prototype.settings = {};
 
-	Layout.namespace = namespace;
+  Layout.namespace = namespace;
 
-	Layout.data = Outlayer.data;
+  Layout.data = Outlayer.data;
 
-	// sub-class Item
-	Layout.Item = function LayoutItem() {
-		Item.apply( this, arguments );
-	};
+  // sub-class Item
+  Layout.Item = function LayoutItem() {
+    Item.apply( this, arguments );
+  };
 
-	Layout.Item.prototype = new Item();
+  Layout.Item.prototype = new Item();
 
-	// -------------------------- declarative -------------------------- //
+  // -------------------------- declarative -------------------------- //
 
-	utils.htmlInit( Layout, namespace );
+  utils.htmlInit( Layout, namespace );
 
-	// -------------------------- jQuery bridge -------------------------- //
+  // -------------------------- jQuery bridge -------------------------- //
 
-	// make into jQuery plugin
-	if ( jQuery && jQuery.bridget ) {
-		jQuery.bridget( namespace, Layout );
-	}
+  // make into jQuery plugin
+  if ( jQuery && jQuery.bridget ) {
+    jQuery.bridget( namespace, Layout );
+  }
 
-	return Layout;
+  return Layout;
 };
 
 // ----- fin ----- //
@@ -3279,25 +3280,25 @@ return Outlayer;
 
 ( function( window, factory ) {
 'use strict';
-	// universal module definition
-	if ( typeof define == 'function' && define.amd ) {
-		// AMD
-		define( 'isotope/js/item',[
-				'outlayer/outlayer'
-			],
-			factory );
-	} else if ( typeof exports == 'object' ) {
-		// CommonJS
-		module.exports = factory(
-			require('outlayer')
-		);
-	} else {
-		// browser global
-		window.Isotope = window.Isotope || {};
-		window.Isotope.Item = factory(
-			window.Outlayer
-		);
-	}
+  // universal module definition
+  if ( typeof define == 'function' && define.amd ) {
+    // AMD
+    define( 'isotope/js/item',[
+        'outlayer/outlayer'
+      ],
+      factory );
+  } else if ( typeof exports == 'object' ) {
+    // CommonJS
+    module.exports = factory(
+      require('outlayer')
+    );
+  } else {
+    // browser global
+    window.Isotope = window.Isotope || {};
+    window.Isotope.Item = factory(
+      window.Outlayer
+    );
+  }
 
 }( window, function factory( Outlayer ) {
 'use strict';
@@ -3306,44 +3307,44 @@ return Outlayer;
 
 // sub-class Outlayer Item
 function Item() {
-	Outlayer.Item.apply( this, arguments );
+  Outlayer.Item.apply( this, arguments );
 }
 
 Item.prototype = new Outlayer.Item();
 
 Item.prototype._create = function() {
-	// assign id, used for original-order sorting
-	this.id = this.layout.itemGUID++;
-	Outlayer.Item.prototype._create.call( this );
-	this.sortData = {};
+  // assign id, used for original-order sorting
+  this.id = this.layout.itemGUID++;
+  Outlayer.Item.prototype._create.call( this );
+  this.sortData = {};
 };
 
 Item.prototype.updateSortData = function() {
-	if ( this.isIgnored ) {
-		return;
-	}
-	// default sorters
-	this.sortData.id = this.id;
-	// for backward compatibility
-	this.sortData['original-order'] = this.id;
-	this.sortData.random = Math.random();
-	// go thru getSortData obj and apply the sorters
-	var getSortData = this.layout.options.getSortData;
-	var sorters = this.layout._sorters;
-	for ( var key in getSortData ) {
-		var sorter = sorters[ key ];
-		this.sortData[ key ] = sorter( this.element, this );
-	}
+  if ( this.isIgnored ) {
+    return;
+  }
+  // default sorters
+  this.sortData.id = this.id;
+  // for backward compatibility
+  this.sortData['original-order'] = this.id;
+  this.sortData.random = Math.random();
+  // go thru getSortData obj and apply the sorters
+  var getSortData = this.layout.options.getSortData;
+  var sorters = this.layout._sorters;
+  for ( var key in getSortData ) {
+    var sorter = sorters[ key ];
+    this.sortData[ key ] = sorter( this.element, this );
+  }
 };
 
 var _destroy = Item.prototype.destroy;
 Item.prototype.destroy = function() {
-	// call super
-	_destroy.apply( this, arguments );
-	// reset display, #741
-	this.css({
-		display: ''
-	});
+  // call super
+  _destroy.apply( this, arguments );
+  // reset display, #741
+  this.css({
+    display: ''
+  });
 };
 
 return Item;
@@ -3355,160 +3356,160 @@ return Item;
  */
 
 ( function( window, factory ) {
-	'use strict';
-	// universal module definition
+  'use strict';
+  // universal module definition
 
-	if ( typeof define == 'function' && define.amd ) {
-		// AMD
-		define( 'isotope/js/layout-mode',[
-				'get-size/get-size',
-				'outlayer/outlayer'
-			],
-			factory );
-	} else if ( typeof exports == 'object' ) {
-		// CommonJS
-		module.exports = factory(
-			require('get-size'),
-			require('outlayer')
-		);
-	} else {
-		// browser global
-		window.Isotope = window.Isotope || {};
-		window.Isotope.LayoutMode = factory(
-			window.getSize,
-			window.Outlayer
-		);
-	}
+  if ( typeof define == 'function' && define.amd ) {
+    // AMD
+    define( 'isotope/js/layout-mode',[
+        'get-size/get-size',
+        'outlayer/outlayer'
+      ],
+      factory );
+  } else if ( typeof exports == 'object' ) {
+    // CommonJS
+    module.exports = factory(
+      require('get-size'),
+      require('outlayer')
+    );
+  } else {
+    // browser global
+    window.Isotope = window.Isotope || {};
+    window.Isotope.LayoutMode = factory(
+      window.getSize,
+      window.Outlayer
+    );
+  }
 
 }( window, function factory( getSize, Outlayer ) {
-	'use strict';
+  'use strict';
 
-	// layout mode class
-	function LayoutMode( isotope ) {
-		this.isotope = isotope;
-		// link properties
-		if ( isotope ) {
-			this.options = isotope.options[ this.namespace ];
-			this.element = isotope.element;
-			this.items = isotope.filteredItems;
-			this.size = isotope.size;
-		}
-	}
+  // layout mode class
+  function LayoutMode( isotope ) {
+    this.isotope = isotope;
+    // link properties
+    if ( isotope ) {
+      this.options = isotope.options[ this.namespace ];
+      this.element = isotope.element;
+      this.items = isotope.filteredItems;
+      this.size = isotope.size;
+    }
+  }
 
-	/**
-	 * some methods should just defer to default Outlayer method
-	 * and reference the Isotope instance as `this`
-	**/
-	( function() {
-		var facadeMethods = [
-			'_resetLayout',
-			'_getItemLayoutPosition',
-			'_manageStamp',
-			'_getContainerSize',
-			'_getElementOffset',
-			'needsResizeLayout'
-		];
+  /**
+   * some methods should just defer to default Outlayer method
+   * and reference the Isotope instance as `this`
+  **/
+  ( function() {
+    var facadeMethods = [
+      '_resetLayout',
+      '_getItemLayoutPosition',
+      '_manageStamp',
+      '_getContainerSize',
+      '_getElementOffset',
+      'needsResizeLayout'
+    ];
 
-		for ( var i=0, len = facadeMethods.length; i < len; i++ ) {
-			var methodName = facadeMethods[i];
-			LayoutMode.prototype[ methodName ] = getOutlayerMethod( methodName );
-		}
+    for ( var i=0, len = facadeMethods.length; i < len; i++ ) {
+      var methodName = facadeMethods[i];
+      LayoutMode.prototype[ methodName ] = getOutlayerMethod( methodName );
+    }
 
-		function getOutlayerMethod( methodName ) {
-			return function() {
-				return Outlayer.prototype[ methodName ].apply( this.isotope, arguments );
-			};
-		}
-	})();
+    function getOutlayerMethod( methodName ) {
+      return function() {
+        return Outlayer.prototype[ methodName ].apply( this.isotope, arguments );
+      };
+    }
+  })();
 
-	// -----  ----- //
+  // -----  ----- //
 
-	// for horizontal layout modes, check vertical size
-	LayoutMode.prototype.needsVerticalResizeLayout = function() {
-		// don't trigger if size did not change
-		var size = getSize( this.isotope.element );
-		// check that this.size and size are there
-		// IE8 triggers resize on body size change, so they might not be
-		var hasSizes = this.isotope.size && size;
-		return hasSizes && size.innerHeight != this.isotope.size.innerHeight;
-	};
+  // for horizontal layout modes, check vertical size
+  LayoutMode.prototype.needsVerticalResizeLayout = function() {
+    // don't trigger if size did not change
+    var size = getSize( this.isotope.element );
+    // check that this.size and size are there
+    // IE8 triggers resize on body size change, so they might not be
+    var hasSizes = this.isotope.size && size;
+    return hasSizes && size.innerHeight != this.isotope.size.innerHeight;
+  };
 
-	// ----- measurements ----- //
+  // ----- measurements ----- //
 
-	LayoutMode.prototype._getMeasurement = function() {
-		this.isotope._getMeasurement.apply( this, arguments );
-	};
+  LayoutMode.prototype._getMeasurement = function() {
+    this.isotope._getMeasurement.apply( this, arguments );
+  };
 
-	LayoutMode.prototype.getColumnWidth = function() {
-		this.getSegmentSize( 'column', 'Width' );
-	};
+  LayoutMode.prototype.getColumnWidth = function() {
+    this.getSegmentSize( 'column', 'Width' );
+  };
 
-	LayoutMode.prototype.getRowHeight = function() {
-		this.getSegmentSize( 'row', 'Height' );
-	};
+  LayoutMode.prototype.getRowHeight = function() {
+    this.getSegmentSize( 'row', 'Height' );
+  };
 
-	/**
-	 * get columnWidth or rowHeight
-	 * segment: 'column' or 'row'
-	 * size 'Width' or 'Height'
-	**/
-	LayoutMode.prototype.getSegmentSize = function( segment, size ) {
-		var segmentName = segment + size;
-		var outerSize = 'outer' + size;
-		// columnWidth / outerWidth // rowHeight / outerHeight
-		this._getMeasurement( segmentName, outerSize );
-		// got rowHeight or columnWidth, we can chill
-		if ( this[ segmentName ] ) {
-			return;
-		}
-		// fall back to item of first element
-		var firstItemSize = this.getFirstItemSize();
-		this[ segmentName ] = firstItemSize && firstItemSize[ outerSize ] ||
-			// or size of container
-			this.isotope.size[ 'inner' + size ];
-	};
+  /**
+   * get columnWidth or rowHeight
+   * segment: 'column' or 'row'
+   * size 'Width' or 'Height'
+  **/
+  LayoutMode.prototype.getSegmentSize = function( segment, size ) {
+    var segmentName = segment + size;
+    var outerSize = 'outer' + size;
+    // columnWidth / outerWidth // rowHeight / outerHeight
+    this._getMeasurement( segmentName, outerSize );
+    // got rowHeight or columnWidth, we can chill
+    if ( this[ segmentName ] ) {
+      return;
+    }
+    // fall back to item of first element
+    var firstItemSize = this.getFirstItemSize();
+    this[ segmentName ] = firstItemSize && firstItemSize[ outerSize ] ||
+      // or size of container
+      this.isotope.size[ 'inner' + size ];
+  };
 
-	LayoutMode.prototype.getFirstItemSize = function() {
-		var firstItem = this.isotope.filteredItems[0];
-		return firstItem && firstItem.element && getSize( firstItem.element );
-	};
+  LayoutMode.prototype.getFirstItemSize = function() {
+    var firstItem = this.isotope.filteredItems[0];
+    return firstItem && firstItem.element && getSize( firstItem.element );
+  };
 
-	// ----- methods that should reference isotope ----- //
+  // ----- methods that should reference isotope ----- //
 
-	LayoutMode.prototype.layout = function() {
-		this.isotope.layout.apply( this.isotope, arguments );
-	};
+  LayoutMode.prototype.layout = function() {
+    this.isotope.layout.apply( this.isotope, arguments );
+  };
 
-	LayoutMode.prototype.getSize = function() {
-		this.isotope.getSize();
-		this.size = this.isotope.size;
-	};
+  LayoutMode.prototype.getSize = function() {
+    this.isotope.getSize();
+    this.size = this.isotope.size;
+  };
 
-	// -------------------------- create -------------------------- //
+  // -------------------------- create -------------------------- //
 
-	LayoutMode.modes = {};
+  LayoutMode.modes = {};
 
-	LayoutMode.create = function( namespace, options ) {
+  LayoutMode.create = function( namespace, options ) {
 
-		function Mode() {
-			LayoutMode.apply( this, arguments );
-		}
+    function Mode() {
+      LayoutMode.apply( this, arguments );
+    }
 
-		Mode.prototype = new LayoutMode();
+    Mode.prototype = new LayoutMode();
 
-		// default options
-		if ( options ) {
-			Mode.options = options;
-		}
+    // default options
+    if ( options ) {
+      Mode.options = options;
+    }
 
-		Mode.prototype.namespace = namespace;
-		// register in Isotope
-		LayoutMode.modes[ namespace ] = Mode;
+    Mode.prototype.namespace = namespace;
+    // register in Isotope
+    LayoutMode.modes[ namespace ] = Mode;
 
-		return Mode;
-	};
+    return Mode;
+  };
 
-	return LayoutMode;
+  return LayoutMode;
 
 }));
 
@@ -3521,31 +3522,31 @@ return Item;
  */
 
 ( function( window, factory ) {
-	'use strict';
-	// universal module definition
-	if ( typeof define === 'function' && define.amd ) {
-		// AMD
-		define( 'masonry/masonry',[
-				'outlayer/outlayer',
-				'get-size/get-size',
-				'fizzy-ui-utils/utils'
-			],
-			factory );
-	} else if ( typeof exports === 'object' ) {
-		// CommonJS
-		module.exports = factory(
-			require('outlayer'),
-			require('get-size'),
-			require('fizzy-ui-utils')
-		);
-	} else {
-		// browser global
-		window.Masonry = factory(
-			window.Outlayer,
-			window.getSize,
-			window.fizzyUIUtils
-		);
-	}
+  'use strict';
+  // universal module definition
+  if ( typeof define === 'function' && define.amd ) {
+    // AMD
+    define( 'masonry/masonry',[
+        'outlayer/outlayer',
+        'get-size/get-size',
+        'fizzy-ui-utils/utils'
+      ],
+      factory );
+  } else if ( typeof exports === 'object' ) {
+    // CommonJS
+    module.exports = factory(
+      require('outlayer'),
+      require('get-size'),
+      require('fizzy-ui-utils')
+    );
+  } else {
+    // browser global
+    window.Masonry = factory(
+      window.Outlayer,
+      window.getSize,
+      window.fizzyUIUtils
+    );
+  }
 
 }( window, function factory( Outlayer, getSize, utils ) {
 
@@ -3553,166 +3554,166 @@ return Item;
 
 // -------------------------- masonryDefinition -------------------------- //
 
-	// create an Outlayer layout class
-	var Masonry = Outlayer.create('masonry');
+  // create an Outlayer layout class
+  var Masonry = Outlayer.create('masonry');
 
-	Masonry.prototype._resetLayout = function() {
-		this.getSize();
-		this._getMeasurement( 'columnWidth', 'outerWidth' );
-		this._getMeasurement( 'gutter', 'outerWidth' );
-		this.measureColumns();
+  Masonry.prototype._resetLayout = function() {
+    this.getSize();
+    this._getMeasurement( 'columnWidth', 'outerWidth' );
+    this._getMeasurement( 'gutter', 'outerWidth' );
+    this.measureColumns();
 
-		// reset column Y
-		var i = this.cols;
-		this.colYs = [];
-		while (i--) {
-			this.colYs.push( 0 );
-		}
+    // reset column Y
+    var i = this.cols;
+    this.colYs = [];
+    while (i--) {
+      this.colYs.push( 0 );
+    }
 
-		this.maxY = 0;
-	};
+    this.maxY = 0;
+  };
 
-	Masonry.prototype.measureColumns = function() {
-		this.getContainerWidth();
-		// if columnWidth is 0, default to outerWidth of first item
-		if ( !this.columnWidth ) {
-			var firstItem = this.items[0];
-			var firstItemElem = firstItem && firstItem.element;
-			// columnWidth fall back to item of first element
-			this.columnWidth = firstItemElem && getSize( firstItemElem ).outerWidth ||
-				// if first elem has no width, default to size of container
-				this.containerWidth;
-		}
+  Masonry.prototype.measureColumns = function() {
+    this.getContainerWidth();
+    // if columnWidth is 0, default to outerWidth of first item
+    if ( !this.columnWidth ) {
+      var firstItem = this.items[0];
+      var firstItemElem = firstItem && firstItem.element;
+      // columnWidth fall back to item of first element
+      this.columnWidth = firstItemElem && getSize( firstItemElem ).outerWidth ||
+        // if first elem has no width, default to size of container
+        this.containerWidth;
+    }
 
-		var columnWidth = this.columnWidth += this.gutter;
+    var columnWidth = this.columnWidth += this.gutter;
 
-		// calculate columns
-		var containerWidth = this.containerWidth + this.gutter;
-		var cols = containerWidth / columnWidth;
-		// fix rounding errors, typically with gutters
-		var excess = columnWidth - containerWidth % columnWidth;
-		// if overshoot is less than a pixel, round up, otherwise floor it
-		var mathMethod = excess && excess < 1 ? 'round' : 'floor';
-		cols = Math[ mathMethod ]( cols );
-		this.cols = Math.max( cols, 1 );
-	};
+    // calculate columns
+    var containerWidth = this.containerWidth + this.gutter;
+    var cols = containerWidth / columnWidth;
+    // fix rounding errors, typically with gutters
+    var excess = columnWidth - containerWidth % columnWidth;
+    // if overshoot is less than a pixel, round up, otherwise floor it
+    var mathMethod = excess && excess < 1 ? 'round' : 'floor';
+    cols = Math[ mathMethod ]( cols );
+    this.cols = Math.max( cols, 1 );
+  };
 
-	Masonry.prototype.getContainerWidth = function() {
-		// container is parent if fit width
-		var container = this.options.isFitWidth ? this.element.parentNode : this.element;
-		// check that this.size and size are there
-		// IE8 triggers resize on body size change, so they might not be
-		var size = getSize( container );
-		this.containerWidth = size && size.innerWidth;
-	};
+  Masonry.prototype.getContainerWidth = function() {
+    // container is parent if fit width
+    var container = this.options.isFitWidth ? this.element.parentNode : this.element;
+    // check that this.size and size are there
+    // IE8 triggers resize on body size change, so they might not be
+    var size = getSize( container );
+    this.containerWidth = size && size.innerWidth;
+  };
 
-	Masonry.prototype._getItemLayoutPosition = function( item ) {
-		item.getSize();
-		// how many columns does this brick span
-		var remainder = item.size.outerWidth % this.columnWidth;
-		var mathMethod = remainder && remainder < 1 ? 'round' : 'ceil';
-		// round if off by 1 pixel, otherwise use ceil
-		var colSpan = Math[ mathMethod ]( item.size.outerWidth / this.columnWidth );
-		colSpan = Math.min( colSpan, this.cols );
+  Masonry.prototype._getItemLayoutPosition = function( item ) {
+    item.getSize();
+    // how many columns does this brick span
+    var remainder = item.size.outerWidth % this.columnWidth;
+    var mathMethod = remainder && remainder < 1 ? 'round' : 'ceil';
+    // round if off by 1 pixel, otherwise use ceil
+    var colSpan = Math[ mathMethod ]( item.size.outerWidth / this.columnWidth );
+    colSpan = Math.min( colSpan, this.cols );
 
-		var colGroup = this._getColGroup( colSpan );
-		// get the minimum Y value from the columns
-		var minimumY = Math.min.apply( Math, colGroup );
-		var shortColIndex = utils.indexOf( colGroup, minimumY );
+    var colGroup = this._getColGroup( colSpan );
+    // get the minimum Y value from the columns
+    var minimumY = Math.min.apply( Math, colGroup );
+    var shortColIndex = utils.indexOf( colGroup, minimumY );
 
-		// position the brick
-		var position = {
-			x: this.columnWidth * shortColIndex,
-			y: minimumY
-		};
+    // position the brick
+    var position = {
+      x: this.columnWidth * shortColIndex,
+      y: minimumY
+    };
 
-		// apply setHeight to necessary columns
-		var setHeight = minimumY + item.size.outerHeight;
-		var setSpan = this.cols + 1 - colGroup.length;
-		for ( var i = 0; i < setSpan; i++ ) {
-			this.colYs[ shortColIndex + i ] = setHeight;
-		}
+    // apply setHeight to necessary columns
+    var setHeight = minimumY + item.size.outerHeight;
+    var setSpan = this.cols + 1 - colGroup.length;
+    for ( var i = 0; i < setSpan; i++ ) {
+      this.colYs[ shortColIndex + i ] = setHeight;
+    }
 
-		return position;
-	};
+    return position;
+  };
 
-	/**
-	 * @param {Number} colSpan - number of columns the element spans
-	 * @returns {Array} colGroup
-	 */
-	Masonry.prototype._getColGroup = function( colSpan ) {
-		if ( colSpan < 2 ) {
-			// if brick spans only one column, use all the column Ys
-			return this.colYs;
-		}
+  /**
+   * @param {Number} colSpan - number of columns the element spans
+   * @returns {Array} colGroup
+   */
+  Masonry.prototype._getColGroup = function( colSpan ) {
+    if ( colSpan < 2 ) {
+      // if brick spans only one column, use all the column Ys
+      return this.colYs;
+    }
 
-		var colGroup = [];
-		// how many different places could this brick fit horizontally
-		var groupCount = this.cols + 1 - colSpan;
-		// for each group potential horizontal position
-		for ( var i = 0; i < groupCount; i++ ) {
-			// make an array of colY values for that one group
-			var groupColYs = this.colYs.slice( i, i + colSpan );
-			// and get the max value of the array
-			colGroup[i] = Math.max.apply( Math, groupColYs );
-		}
-		return colGroup;
-	};
+    var colGroup = [];
+    // how many different places could this brick fit horizontally
+    var groupCount = this.cols + 1 - colSpan;
+    // for each group potential horizontal position
+    for ( var i = 0; i < groupCount; i++ ) {
+      // make an array of colY values for that one group
+      var groupColYs = this.colYs.slice( i, i + colSpan );
+      // and get the max value of the array
+      colGroup[i] = Math.max.apply( Math, groupColYs );
+    }
+    return colGroup;
+  };
 
-	Masonry.prototype._manageStamp = function( stamp ) {
-		var stampSize = getSize( stamp );
-		var offset = this._getElementOffset( stamp );
-		// get the columns that this stamp affects
-		var firstX = this.options.isOriginLeft ? offset.left : offset.right;
-		var lastX = firstX + stampSize.outerWidth;
-		var firstCol = Math.floor( firstX / this.columnWidth );
-		firstCol = Math.max( 0, firstCol );
-		var lastCol = Math.floor( lastX / this.columnWidth );
-		// lastCol should not go over if multiple of columnWidth #425
-		lastCol -= lastX % this.columnWidth ? 0 : 1;
-		lastCol = Math.min( this.cols - 1, lastCol );
-		// set colYs to bottom of the stamp
-		var stampMaxY = ( this.options.isOriginTop ? offset.top : offset.bottom ) +
-			stampSize.outerHeight;
-		for ( var i = firstCol; i <= lastCol; i++ ) {
-			this.colYs[i] = Math.max( stampMaxY, this.colYs[i] );
-		}
-	};
+  Masonry.prototype._manageStamp = function( stamp ) {
+    var stampSize = getSize( stamp );
+    var offset = this._getElementOffset( stamp );
+    // get the columns that this stamp affects
+    var firstX = this.options.isOriginLeft ? offset.left : offset.right;
+    var lastX = firstX + stampSize.outerWidth;
+    var firstCol = Math.floor( firstX / this.columnWidth );
+    firstCol = Math.max( 0, firstCol );
+    var lastCol = Math.floor( lastX / this.columnWidth );
+    // lastCol should not go over if multiple of columnWidth #425
+    lastCol -= lastX % this.columnWidth ? 0 : 1;
+    lastCol = Math.min( this.cols - 1, lastCol );
+    // set colYs to bottom of the stamp
+    var stampMaxY = ( this.options.isOriginTop ? offset.top : offset.bottom ) +
+      stampSize.outerHeight;
+    for ( var i = firstCol; i <= lastCol; i++ ) {
+      this.colYs[i] = Math.max( stampMaxY, this.colYs[i] );
+    }
+  };
 
-	Masonry.prototype._getContainerSize = function() {
-		this.maxY = Math.max.apply( Math, this.colYs );
-		var size = {
-			height: this.maxY
-		};
+  Masonry.prototype._getContainerSize = function() {
+    this.maxY = Math.max.apply( Math, this.colYs );
+    var size = {
+      height: this.maxY
+    };
 
-		if ( this.options.isFitWidth ) {
-			size.width = this._getContainerFitWidth();
-		}
+    if ( this.options.isFitWidth ) {
+      size.width = this._getContainerFitWidth();
+    }
 
-		return size;
-	};
+    return size;
+  };
 
-	Masonry.prototype._getContainerFitWidth = function() {
-		var unusedCols = 0;
-		// count unused columns
-		var i = this.cols;
-		while ( --i ) {
-			if ( this.colYs[i] !== 0 ) {
-				break;
-			}
-			unusedCols++;
-		}
-		// fit container to columns that have been used
-		return ( this.cols - unusedCols ) * this.columnWidth - this.gutter;
-	};
+  Masonry.prototype._getContainerFitWidth = function() {
+    var unusedCols = 0;
+    // count unused columns
+    var i = this.cols;
+    while ( --i ) {
+      if ( this.colYs[i] !== 0 ) {
+        break;
+      }
+      unusedCols++;
+    }
+    // fit container to columns that have been used
+    return ( this.cols - unusedCols ) * this.columnWidth - this.gutter;
+  };
 
-	Masonry.prototype.needsResizeLayout = function() {
-		var previousWidth = this.containerWidth;
-		this.getContainerWidth();
-		return previousWidth !== this.containerWidth;
-	};
+  Masonry.prototype.needsResizeLayout = function() {
+    var previousWidth = this.containerWidth;
+    this.getContainerWidth();
+    return previousWidth !== this.containerWidth;
+  };
 
-	return Masonry;
+  return Masonry;
 
 }));
 
@@ -3723,28 +3724,28 @@ return Item;
  */
 
 ( function( window, factory ) {
-	'use strict';
-	// universal module definition
-	if ( typeof define == 'function' && define.amd ) {
-		// AMD
-		define( 'isotope/js/layout-modes/masonry',[
-				'../layout-mode',
-				'masonry/masonry'
-			],
-			factory );
-	} else if ( typeof exports == 'object' ) {
-		// CommonJS
-		module.exports = factory(
-			require('../layout-mode'),
-			require('masonry-layout')
-		);
-	} else {
-		// browser global
-		factory(
-			window.Isotope.LayoutMode,
-			window.Masonry
-		);
-	}
+  'use strict';
+  // universal module definition
+  if ( typeof define == 'function' && define.amd ) {
+    // AMD
+    define( 'isotope/js/layout-modes/masonry',[
+        '../layout-mode',
+        'masonry/masonry'
+      ],
+      factory );
+  } else if ( typeof exports == 'object' ) {
+    // CommonJS
+    module.exports = factory(
+      require('../layout-mode'),
+      require('masonry-layout')
+    );
+  } else {
+    // browser global
+    factory(
+      window.Isotope.LayoutMode,
+      window.Masonry
+    );
+  }
 
 }( window, function factory( LayoutMode, Masonry ) {
 'use strict';
@@ -3753,46 +3754,46 @@ return Item;
 
 // extend objects
 function extend( a, b ) {
-	for ( var prop in b ) {
-		a[ prop ] = b[ prop ];
-	}
-	return a;
+  for ( var prop in b ) {
+    a[ prop ] = b[ prop ];
+  }
+  return a;
 }
 
 // -------------------------- masonryDefinition -------------------------- //
 
-	// create an Outlayer layout class
-	var MasonryMode = LayoutMode.create('masonry');
+  // create an Outlayer layout class
+  var MasonryMode = LayoutMode.create('masonry');
 
-	// save on to these methods
-	var _getElementOffset = MasonryMode.prototype._getElementOffset;
-	var layout = MasonryMode.prototype.layout;
-	var _getMeasurement = MasonryMode.prototype._getMeasurement;
+  // save on to these methods
+  var _getElementOffset = MasonryMode.prototype._getElementOffset;
+  var layout = MasonryMode.prototype.layout;
+  var _getMeasurement = MasonryMode.prototype._getMeasurement;
 
-	// sub-class Masonry
-	extend( MasonryMode.prototype, Masonry.prototype );
+  // sub-class Masonry
+  extend( MasonryMode.prototype, Masonry.prototype );
 
-	// set back, as it was overwritten by Masonry
-	MasonryMode.prototype._getElementOffset = _getElementOffset;
-	MasonryMode.prototype.layout = layout;
-	MasonryMode.prototype._getMeasurement = _getMeasurement;
+  // set back, as it was overwritten by Masonry
+  MasonryMode.prototype._getElementOffset = _getElementOffset;
+  MasonryMode.prototype.layout = layout;
+  MasonryMode.prototype._getMeasurement = _getMeasurement;
 
-	var measureColumns = MasonryMode.prototype.measureColumns;
-	MasonryMode.prototype.measureColumns = function() {
-		// set items, used if measuring first item
-		this.items = this.isotope.filteredItems;
-		measureColumns.call( this );
-	};
+  var measureColumns = MasonryMode.prototype.measureColumns;
+  MasonryMode.prototype.measureColumns = function() {
+    // set items, used if measuring first item
+    this.items = this.isotope.filteredItems;
+    measureColumns.call( this );
+  };
 
-	// HACK copy over isOriginLeft/Top options
-	var _manageStamp = MasonryMode.prototype._manageStamp;
-	MasonryMode.prototype._manageStamp = function() {
-		this.options.isOriginLeft = this.isotope.options.isOriginLeft;
-		this.options.isOriginTop = this.isotope.options.isOriginTop;
-		_manageStamp.apply( this, arguments );
-	};
+  // HACK copy over isOriginLeft/Top options
+  var _manageStamp = MasonryMode.prototype._manageStamp;
+  MasonryMode.prototype._manageStamp = function() {
+    this.options.isOriginLeft = this.isotope.options.isOriginLeft;
+    this.options.isOriginTop = this.isotope.options.isOriginTop;
+    _manageStamp.apply( this, arguments );
+  };
 
-	return MasonryMode;
+  return MasonryMode;
 
 }));
 
@@ -3801,25 +3802,25 @@ function extend( a, b ) {
  */
 
 ( function( window, factory ) {
-	'use strict';
-	// universal module definition
-	if ( typeof define == 'function' && define.amd ) {
-		// AMD
-		define( 'isotope/js/layout-modes/fit-rows',[
-				'../layout-mode'
-			],
-			factory );
-	} else if ( typeof exports == 'object' ) {
-		// CommonJS
-		module.exports = factory(
-			require('../layout-mode')
-		);
-	} else {
-		// browser global
-		factory(
-			window.Isotope.LayoutMode
-		);
-	}
+  'use strict';
+  // universal module definition
+  if ( typeof define == 'function' && define.amd ) {
+    // AMD
+    define( 'isotope/js/layout-modes/fit-rows',[
+        '../layout-mode'
+      ],
+      factory );
+  } else if ( typeof exports == 'object' ) {
+    // CommonJS
+    module.exports = factory(
+      require('../layout-mode')
+    );
+  } else {
+    // browser global
+    factory(
+      window.Isotope.LayoutMode
+    );
+  }
 
 }( window, function factory( LayoutMode ) {
 'use strict';
@@ -3827,36 +3828,36 @@ function extend( a, b ) {
 var FitRows = LayoutMode.create('fitRows');
 
 FitRows.prototype._resetLayout = function() {
-	this.x = 0;
-	this.y = 0;
-	this.maxY = 0;
-	this._getMeasurement( 'gutter', 'outerWidth' );
+  this.x = 0;
+  this.y = 0;
+  this.maxY = 0;
+  this._getMeasurement( 'gutter', 'outerWidth' );
 };
 
 FitRows.prototype._getItemLayoutPosition = function( item ) {
-	item.getSize();
+  item.getSize();
 
-	var itemWidth = item.size.outerWidth + this.gutter;
-	// if this element cannot fit in the current row
-	var containerWidth = this.isotope.size.innerWidth + this.gutter;
-	if ( this.x !== 0 && itemWidth + this.x > containerWidth ) {
-		this.x = 0;
-		this.y = this.maxY;
-	}
+  var itemWidth = item.size.outerWidth + this.gutter;
+  // if this element cannot fit in the current row
+  var containerWidth = this.isotope.size.innerWidth + this.gutter;
+  if ( this.x !== 0 && itemWidth + this.x > containerWidth ) {
+    this.x = 0;
+    this.y = this.maxY;
+  }
 
-	var position = {
-		x: this.x,
-		y: this.y
-	};
+  var position = {
+    x: this.x,
+    y: this.y
+  };
 
-	this.maxY = Math.max( this.maxY, this.y + item.size.outerHeight );
-	this.x += itemWidth;
+  this.maxY = Math.max( this.maxY, this.y + item.size.outerHeight );
+  this.x += itemWidth;
 
-	return position;
+  return position;
 };
 
 FitRows.prototype._getContainerSize = function() {
-	return { height: this.maxY };
+  return { height: this.maxY };
 };
 
 return FitRows;
@@ -3868,48 +3869,48 @@ return FitRows;
  */
 
 ( function( window, factory ) {
-	'use strict';
-	// universal module definition
-	if ( typeof define == 'function' && define.amd ) {
-		// AMD
-		define( 'isotope/js/layout-modes/vertical',[
-				'../layout-mode'
-			],
-			factory );
-	} else if ( typeof exports == 'object' ) {
-		// CommonJS
-		module.exports = factory(
-			require('../layout-mode')
-		);
-	} else {
-		// browser global
-		factory(
-			window.Isotope.LayoutMode
-		);
-	}
+  'use strict';
+  // universal module definition
+  if ( typeof define == 'function' && define.amd ) {
+    // AMD
+    define( 'isotope/js/layout-modes/vertical',[
+        '../layout-mode'
+      ],
+      factory );
+  } else if ( typeof exports == 'object' ) {
+    // CommonJS
+    module.exports = factory(
+      require('../layout-mode')
+    );
+  } else {
+    // browser global
+    factory(
+      window.Isotope.LayoutMode
+    );
+  }
 
 }( window, function factory( LayoutMode ) {
 'use strict';
 
 var Vertical = LayoutMode.create( 'vertical', {
-	horizontalAlignment: 0
+  horizontalAlignment: 0
 });
 
 Vertical.prototype._resetLayout = function() {
-	this.y = 0;
+  this.y = 0;
 };
 
 Vertical.prototype._getItemLayoutPosition = function( item ) {
-	item.getSize();
-	var x = ( this.isotope.size.innerWidth - item.size.outerWidth ) *
-		this.options.horizontalAlignment;
-	var y = this.y;
-	this.y += item.size.outerHeight;
-	return { x: x, y: y };
+  item.getSize();
+  var x = ( this.isotope.size.innerWidth - item.size.outerWidth ) *
+    this.options.horizontalAlignment;
+  var y = this.y;
+  this.y += item.size.outerHeight;
+  return { x: x, y: y };
 };
 
 Vertical.prototype._getContainerSize = function() {
-	return { height: this.y };
+  return { height: this.y };
 };
 
 return Vertical;
@@ -3927,56 +3928,56 @@ return Vertical;
  */
 
 ( function( window, factory ) {
-	'use strict';
-	// universal module definition
+  'use strict';
+  // universal module definition
 
-	if ( typeof define == 'function' && define.amd ) {
-		// AMD
-		define( [
-				'outlayer/outlayer',
-				'get-size/get-size',
-				'matches-selector/matches-selector',
-				'fizzy-ui-utils/utils',
-				'isotope/js/item',
-				'isotope/js/layout-mode',
-				// include default layout modes
-				'isotope/js/layout-modes/masonry',
-				'isotope/js/layout-modes/fit-rows',
-				'isotope/js/layout-modes/vertical'
-			],
-			function( Outlayer, getSize, matchesSelector, utils, Item, LayoutMode ) {
-				return factory( window, Outlayer, getSize, matchesSelector, utils, Item, LayoutMode );
-			});
-	} else if ( typeof exports == 'object' ) {
-		// CommonJS
-		module.exports = factory(
-			window,
-			require('outlayer'),
-			require('get-size'),
-			require('desandro-matches-selector'),
-			require('fizzy-ui-utils'),
-			require('./item'),
-			require('./layout-mode'),
-			// include default layout modes
-			require('./layout-modes/masonry'),
-			require('./layout-modes/fit-rows'),
-			require('./layout-modes/vertical')
-		);
-	} else {
-		// browser global
-		window.Isotope = factory(
-			window,
-			window.Outlayer,
-			window.getSize,
-			window.matchesSelector,
-			window.fizzyUIUtils,
-			window.Isotope.Item,
-			window.Isotope.LayoutMode
-		);
-	}
+  if ( typeof define == 'function' && define.amd ) {
+    // AMD
+    define( [
+        'outlayer/outlayer',
+        'get-size/get-size',
+        'matches-selector/matches-selector',
+        'fizzy-ui-utils/utils',
+        'isotope/js/item',
+        'isotope/js/layout-mode',
+        // include default layout modes
+        'isotope/js/layout-modes/masonry',
+        'isotope/js/layout-modes/fit-rows',
+        'isotope/js/layout-modes/vertical'
+      ],
+      function( Outlayer, getSize, matchesSelector, utils, Item, LayoutMode ) {
+        return factory( window, Outlayer, getSize, matchesSelector, utils, Item, LayoutMode );
+      });
+  } else if ( typeof exports == 'object' ) {
+    // CommonJS
+    module.exports = factory(
+      window,
+      require('outlayer'),
+      require('get-size'),
+      require('desandro-matches-selector'),
+      require('fizzy-ui-utils'),
+      require('./item'),
+      require('./layout-mode'),
+      // include default layout modes
+      require('./layout-modes/masonry'),
+      require('./layout-modes/fit-rows'),
+      require('./layout-modes/vertical')
+    );
+  } else {
+    // browser global
+    window.Isotope = factory(
+      window,
+      window.Outlayer,
+      window.getSize,
+      window.matchesSelector,
+      window.fizzyUIUtils,
+      window.Isotope.Item,
+      window.Isotope.LayoutMode
+    );
+  }
 
 }( window, function factory( window, Outlayer, getSize, matchesSelector, utils,
-	Item, LayoutMode ) {
+  Item, LayoutMode ) {
 
 
 
@@ -3987,561 +3988,561 @@ var jQuery = window.jQuery;
 // -------------------------- helpers -------------------------- //
 
 var trim = String.prototype.trim ?
-	function( str ) {
-		return str.trim();
-	} :
-	function( str ) {
-		return str.replace( /^\s+|\s+$/g, '' );
-	};
+  function( str ) {
+    return str.trim();
+  } :
+  function( str ) {
+    return str.replace( /^\s+|\s+$/g, '' );
+  };
 
 var docElem = document.documentElement;
 
 var getText = docElem.textContent ?
-	function( elem ) {
-		return elem.textContent;
-	} :
-	function( elem ) {
-		return elem.innerText;
-	};
+  function( elem ) {
+    return elem.textContent;
+  } :
+  function( elem ) {
+    return elem.innerText;
+  };
 
 // -------------------------- isotopeDefinition -------------------------- //
 
-	// create an Outlayer layout class
-	var Isotope = Outlayer.create( 'isotope', {
-		layoutMode: "masonry",
-		isJQueryFiltering: true,
-		sortAscending: true
-	});
+  // create an Outlayer layout class
+  var Isotope = Outlayer.create( 'isotope', {
+    layoutMode: "masonry",
+    isJQueryFiltering: true,
+    sortAscending: true
+  });
 
-	Isotope.Item = Item;
-	Isotope.LayoutMode = LayoutMode;
+  Isotope.Item = Item;
+  Isotope.LayoutMode = LayoutMode;
 
-	Isotope.prototype._create = function() {
-		this.itemGUID = 0;
-		// functions that sort items
-		this._sorters = {};
-		this._getSorters();
-		// call super
-		Outlayer.prototype._create.call( this );
+  Isotope.prototype._create = function() {
+    this.itemGUID = 0;
+    // functions that sort items
+    this._sorters = {};
+    this._getSorters();
+    // call super
+    Outlayer.prototype._create.call( this );
 
-		// create layout modes
-		this.modes = {};
-		// start filteredItems with all items
-		this.filteredItems = this.items;
-		// keep of track of sortBys
-		this.sortHistory = [ 'original-order' ];
-		// create from registered layout modes
-		for ( var name in LayoutMode.modes ) {
-			this._initLayoutMode( name );
-		}
-	};
+    // create layout modes
+    this.modes = {};
+    // start filteredItems with all items
+    this.filteredItems = this.items;
+    // keep of track of sortBys
+    this.sortHistory = [ 'original-order' ];
+    // create from registered layout modes
+    for ( var name in LayoutMode.modes ) {
+      this._initLayoutMode( name );
+    }
+  };
 
-	Isotope.prototype.reloadItems = function() {
-		// reset item ID counter
-		this.itemGUID = 0;
-		// call super
-		Outlayer.prototype.reloadItems.call( this );
-	};
+  Isotope.prototype.reloadItems = function() {
+    // reset item ID counter
+    this.itemGUID = 0;
+    // call super
+    Outlayer.prototype.reloadItems.call( this );
+  };
 
-	Isotope.prototype._itemize = function() {
-		var items = Outlayer.prototype._itemize.apply( this, arguments );
-		// assign ID for original-order
-		for ( var i=0, len = items.length; i < len; i++ ) {
-			var item = items[i];
-			item.id = this.itemGUID++;
-		}
-		this._updateItemsSortData( items );
-		return items;
-	};
-
-
-	// -------------------------- layout -------------------------- //
-
-	Isotope.prototype._initLayoutMode = function( name ) {
-		var Mode = LayoutMode.modes[ name ];
-		// set mode options
-		// HACK extend initial options, back-fill in default options
-		var initialOpts = this.options[ name ] || {};
-		this.options[ name ] = Mode.options ?
-			utils.extend( Mode.options, initialOpts ) : initialOpts;
-		// init layout mode instance
-		this.modes[ name ] = new Mode( this );
-	};
+  Isotope.prototype._itemize = function() {
+    var items = Outlayer.prototype._itemize.apply( this, arguments );
+    // assign ID for original-order
+    for ( var i=0, len = items.length; i < len; i++ ) {
+      var item = items[i];
+      item.id = this.itemGUID++;
+    }
+    this._updateItemsSortData( items );
+    return items;
+  };
 
 
-	Isotope.prototype.layout = function() {
-		// if first time doing layout, do all magic
-		if ( !this._isLayoutInited && this.options.isInitLayout ) {
-			this.arrange();
-			return;
-		}
-		this._layout();
-	};
+  // -------------------------- layout -------------------------- //
 
-	// private method to be used in layout() & magic()
-	Isotope.prototype._layout = function() {
-		// don't animate first layout
-		var isInstant = this._getIsInstant();
-		// layout flow
-		this._resetLayout();
-		this._manageStamps();
-		this.layoutItems( this.filteredItems, isInstant );
+  Isotope.prototype._initLayoutMode = function( name ) {
+    var Mode = LayoutMode.modes[ name ];
+    // set mode options
+    // HACK extend initial options, back-fill in default options
+    var initialOpts = this.options[ name ] || {};
+    this.options[ name ] = Mode.options ?
+      utils.extend( Mode.options, initialOpts ) : initialOpts;
+    // init layout mode instance
+    this.modes[ name ] = new Mode( this );
+  };
 
-		// flag for initalized
-		this._isLayoutInited = true;
-	};
 
-	// filter + sort + layout
-	Isotope.prototype.arrange = function( opts ) {
-		// set any options pass
-		this.option( opts );
-		this._getIsInstant();
-		// filter, sort, and layout
+  Isotope.prototype.layout = function() {
+    // if first time doing layout, do all magic
+    if ( !this._isLayoutInited && this.options.isInitLayout ) {
+      this.arrange();
+      return;
+    }
+    this._layout();
+  };
 
-		// filter
-		var filtered = this._filter( this.items );
-		this.filteredItems = filtered.matches;
+  // private method to be used in layout() & magic()
+  Isotope.prototype._layout = function() {
+    // don't animate first layout
+    var isInstant = this._getIsInstant();
+    // layout flow
+    this._resetLayout();
+    this._manageStamps();
+    this.layoutItems( this.filteredItems, isInstant );
 
-		var _this = this;
-		function hideReveal() {
-			_this.reveal( filtered.needReveal );
-			_this.hide( filtered.needHide );
-		}
+    // flag for initalized
+    this._isLayoutInited = true;
+  };
 
-		this._bindArrangeComplete();
+  // filter + sort + layout
+  Isotope.prototype.arrange = function( opts ) {
+    // set any options pass
+    this.option( opts );
+    this._getIsInstant();
+    // filter, sort, and layout
 
-		if ( this._isInstant ) {
-			this._noTransition( hideReveal );
-		} else {
-			hideReveal();
-		}
+    // filter
+    var filtered = this._filter( this.items );
+    this.filteredItems = filtered.matches;
 
-		this._sort();
-		this._layout();
-	};
-	// alias to _init for main plugin method
-	Isotope.prototype._init = Isotope.prototype.arrange;
+    var _this = this;
+    function hideReveal() {
+      _this.reveal( filtered.needReveal );
+      _this.hide( filtered.needHide );
+    }
 
-	// HACK
-	// Don't animate/transition first layout
-	// Or don't animate/transition other layouts
-	Isotope.prototype._getIsInstant = function() {
-		var isInstant = this.options.isLayoutInstant !== undefined ?
-			this.options.isLayoutInstant : !this._isLayoutInited;
-		this._isInstant = isInstant;
-		return isInstant;
-	};
+    this._bindArrangeComplete();
 
-	// listen for layoutComplete, hideComplete and revealComplete
-	// to trigger arrangeComplete
-	Isotope.prototype._bindArrangeComplete = function() {
-		// listen for 3 events to trigger arrangeComplete
-		var isLayoutComplete, isHideComplete, isRevealComplete;
-		var _this = this;
-		function arrangeParallelCallback() {
-			if ( isLayoutComplete && isHideComplete && isRevealComplete ) {
-				_this.dispatchEvent( 'arrangeComplete', null, [ _this.filteredItems ] );
-			}
-		}
-		this.once( 'layoutComplete', function() {
-			isLayoutComplete = true;
-			arrangeParallelCallback();
-		});
-		this.once( 'hideComplete', function() {
-			isHideComplete = true;
-			arrangeParallelCallback();
-		});
-		this.once( 'revealComplete', function() {
-			isRevealComplete = true;
-			arrangeParallelCallback();
-		});
-	};
+    if ( this._isInstant ) {
+      this._noTransition( hideReveal );
+    } else {
+      hideReveal();
+    }
 
-	// -------------------------- filter -------------------------- //
+    this._sort();
+    this._layout();
+  };
+  // alias to _init for main plugin method
+  Isotope.prototype._init = Isotope.prototype.arrange;
 
-	Isotope.prototype._filter = function( items ) {
-		var filter = this.options.filter;
-		filter = filter || '*';
-		var matches = [];
-		var hiddenMatched = [];
-		var visibleUnmatched = [];
+  // HACK
+  // Don't animate/transition first layout
+  // Or don't animate/transition other layouts
+  Isotope.prototype._getIsInstant = function() {
+    var isInstant = this.options.isLayoutInstant !== undefined ?
+      this.options.isLayoutInstant : !this._isLayoutInited;
+    this._isInstant = isInstant;
+    return isInstant;
+  };
 
-		var test = this._getFilterTest( filter );
+  // listen for layoutComplete, hideComplete and revealComplete
+  // to trigger arrangeComplete
+  Isotope.prototype._bindArrangeComplete = function() {
+    // listen for 3 events to trigger arrangeComplete
+    var isLayoutComplete, isHideComplete, isRevealComplete;
+    var _this = this;
+    function arrangeParallelCallback() {
+      if ( isLayoutComplete && isHideComplete && isRevealComplete ) {
+        _this.dispatchEvent( 'arrangeComplete', null, [ _this.filteredItems ] );
+      }
+    }
+    this.once( 'layoutComplete', function() {
+      isLayoutComplete = true;
+      arrangeParallelCallback();
+    });
+    this.once( 'hideComplete', function() {
+      isHideComplete = true;
+      arrangeParallelCallback();
+    });
+    this.once( 'revealComplete', function() {
+      isRevealComplete = true;
+      arrangeParallelCallback();
+    });
+  };
 
-		// test each item
-		for ( var i=0, len = items.length; i < len; i++ ) {
-			var item = items[i];
-			if ( item.isIgnored ) {
-				continue;
-			}
-			// add item to either matched or unmatched group
-			var isMatched = test( item );
-			// item.isFilterMatched = isMatched;
-			// add to matches if its a match
-			if ( isMatched ) {
-				matches.push( item );
-			}
-			// add to additional group if item needs to be hidden or revealed
-			if ( isMatched && item.isHidden ) {
-				hiddenMatched.push( item );
-			} else if ( !isMatched && !item.isHidden ) {
-				visibleUnmatched.push( item );
-			}
-		}
+  // -------------------------- filter -------------------------- //
 
-		// return collections of items to be manipulated
-		return {
-			matches: matches,
-			needReveal: hiddenMatched,
-			needHide: visibleUnmatched
-		};
-	};
+  Isotope.prototype._filter = function( items ) {
+    var filter = this.options.filter;
+    filter = filter || '*';
+    var matches = [];
+    var hiddenMatched = [];
+    var visibleUnmatched = [];
 
-	// get a jQuery, function, or a matchesSelector test given the filter
-	Isotope.prototype._getFilterTest = function( filter ) {
-		if ( jQuery && this.options.isJQueryFiltering ) {
-			// use jQuery
-			return function( item ) {
-				return jQuery( item.element ).is( filter );
-			};
-		}
-		if ( typeof filter == 'function' ) {
-			// use filter as function
-			return function( item ) {
-				return filter( item.element );
-			};
-		}
-		// default, use filter as selector string
-		return function( item ) {
-			return matchesSelector( item.element, filter );
-		};
-	};
+    var test = this._getFilterTest( filter );
 
-	// -------------------------- sorting -------------------------- //
+    // test each item
+    for ( var i=0, len = items.length; i < len; i++ ) {
+      var item = items[i];
+      if ( item.isIgnored ) {
+        continue;
+      }
+      // add item to either matched or unmatched group
+      var isMatched = test( item );
+      // item.isFilterMatched = isMatched;
+      // add to matches if its a match
+      if ( isMatched ) {
+        matches.push( item );
+      }
+      // add to additional group if item needs to be hidden or revealed
+      if ( isMatched && item.isHidden ) {
+        hiddenMatched.push( item );
+      } else if ( !isMatched && !item.isHidden ) {
+        visibleUnmatched.push( item );
+      }
+    }
 
-	/**
-	 * @params {Array} elems
-	 * @public
-	 */
-	Isotope.prototype.updateSortData = function( elems ) {
-		// get items
-		var items;
-		if ( elems ) {
-			elems = utils.makeArray( elems );
-			items = this.getItems( elems );
-		} else {
-			// update all items if no elems provided
-			items = this.items;
-		}
+    // return collections of items to be manipulated
+    return {
+      matches: matches,
+      needReveal: hiddenMatched,
+      needHide: visibleUnmatched
+    };
+  };
 
-		this._getSorters();
-		this._updateItemsSortData( items );
-	};
+  // get a jQuery, function, or a matchesSelector test given the filter
+  Isotope.prototype._getFilterTest = function( filter ) {
+    if ( jQuery && this.options.isJQueryFiltering ) {
+      // use jQuery
+      return function( item ) {
+        return jQuery( item.element ).is( filter );
+      };
+    }
+    if ( typeof filter == 'function' ) {
+      // use filter as function
+      return function( item ) {
+        return filter( item.element );
+      };
+    }
+    // default, use filter as selector string
+    return function( item ) {
+      return matchesSelector( item.element, filter );
+    };
+  };
 
-	Isotope.prototype._getSorters = function() {
-		var getSortData = this.options.getSortData;
-		for ( var key in getSortData ) {
-			var sorter = getSortData[ key ];
-			this._sorters[ key ] = mungeSorter( sorter );
-		}
-	};
+  // -------------------------- sorting -------------------------- //
 
-	/**
-	 * @params {Array} items - of Isotope.Items
-	 * @private
-	 */
-	Isotope.prototype._updateItemsSortData = function( items ) {
-		// do not update if no items
-		var len = items && items.length;
+  /**
+   * @params {Array} elems
+   * @public
+   */
+  Isotope.prototype.updateSortData = function( elems ) {
+    // get items
+    var items;
+    if ( elems ) {
+      elems = utils.makeArray( elems );
+      items = this.getItems( elems );
+    } else {
+      // update all items if no elems provided
+      items = this.items;
+    }
 
-		for ( var i=0; len && i < len; i++ ) {
-			var item = items[i];
-			item.updateSortData();
-		}
-	};
+    this._getSorters();
+    this._updateItemsSortData( items );
+  };
 
-	// ----- munge sorter ----- //
+  Isotope.prototype._getSorters = function() {
+    var getSortData = this.options.getSortData;
+    for ( var key in getSortData ) {
+      var sorter = getSortData[ key ];
+      this._sorters[ key ] = mungeSorter( sorter );
+    }
+  };
 
-	// encapsulate this, as we just need mungeSorter
-	// other functions in here are just for munging
-	var mungeSorter = ( function() {
-		// add a magic layer to sorters for convienent shorthands
-		// `.foo-bar` will use the text of .foo-bar querySelector
-		// `[foo-bar]` will use attribute
-		// you can also add parser
-		// `.foo-bar parseInt` will parse that as a number
-		function mungeSorter( sorter ) {
-			// if not a string, return function or whatever it is
-			if ( typeof sorter != 'string' ) {
-				return sorter;
-			}
-			// parse the sorter string
-			var args = trim( sorter ).split(' ');
-			var query = args[0];
-			// check if query looks like [an-attribute]
-			var attrMatch = query.match( /^\[(.+)\]$/ );
-			var attr = attrMatch && attrMatch[1];
-			var getValue = getValueGetter( attr, query );
-			// use second argument as a parser
-			var parser = Isotope.sortDataParsers[ args[1] ];
-			// parse the value, if there was a parser
-			sorter = parser ? function( elem ) {
-				return elem && parser( getValue( elem ) );
-			} :
-			// otherwise just return value
-			function( elem ) {
-				return elem && getValue( elem );
-			};
+  /**
+   * @params {Array} items - of Isotope.Items
+   * @private
+   */
+  Isotope.prototype._updateItemsSortData = function( items ) {
+    // do not update if no items
+    var len = items && items.length;
 
-			return sorter;
-		}
+    for ( var i=0; len && i < len; i++ ) {
+      var item = items[i];
+      item.updateSortData();
+    }
+  };
 
-		// get an attribute getter, or get text of the querySelector
-		function getValueGetter( attr, query ) {
-			var getValue;
-			// if query looks like [foo-bar], get attribute
-			if ( attr ) {
-				getValue = function( elem ) {
-					return elem.getAttribute( attr );
-				};
-			} else {
-				// otherwise, assume its a querySelector, and get its text
-				getValue = function( elem ) {
-					var child = elem.querySelector( query );
-					return child && getText( child );
-				};
-			}
-			return getValue;
-		}
+  // ----- munge sorter ----- //
 
-		return mungeSorter;
-	})();
+  // encapsulate this, as we just need mungeSorter
+  // other functions in here are just for munging
+  var mungeSorter = ( function() {
+    // add a magic layer to sorters for convienent shorthands
+    // `.foo-bar` will use the text of .foo-bar querySelector
+    // `[foo-bar]` will use attribute
+    // you can also add parser
+    // `.foo-bar parseInt` will parse that as a number
+    function mungeSorter( sorter ) {
+      // if not a string, return function or whatever it is
+      if ( typeof sorter != 'string' ) {
+        return sorter;
+      }
+      // parse the sorter string
+      var args = trim( sorter ).split(' ');
+      var query = args[0];
+      // check if query looks like [an-attribute]
+      var attrMatch = query.match( /^\[(.+)\]$/ );
+      var attr = attrMatch && attrMatch[1];
+      var getValue = getValueGetter( attr, query );
+      // use second argument as a parser
+      var parser = Isotope.sortDataParsers[ args[1] ];
+      // parse the value, if there was a parser
+      sorter = parser ? function( elem ) {
+        return elem && parser( getValue( elem ) );
+      } :
+      // otherwise just return value
+      function( elem ) {
+        return elem && getValue( elem );
+      };
 
-	// parsers used in getSortData shortcut strings
-	Isotope.sortDataParsers = {
-		'parseInt': function( val ) {
-			return parseInt( val, 10 );
-		},
-		'parseFloat': function( val ) {
-			return parseFloat( val );
-		}
-	};
+      return sorter;
+    }
 
-	// ----- sort method ----- //
+    // get an attribute getter, or get text of the querySelector
+    function getValueGetter( attr, query ) {
+      var getValue;
+      // if query looks like [foo-bar], get attribute
+      if ( attr ) {
+        getValue = function( elem ) {
+          return elem.getAttribute( attr );
+        };
+      } else {
+        // otherwise, assume its a querySelector, and get its text
+        getValue = function( elem ) {
+          var child = elem.querySelector( query );
+          return child && getText( child );
+        };
+      }
+      return getValue;
+    }
 
-	// sort filteredItem order
-	Isotope.prototype._sort = function() {
-		var sortByOpt = this.options.sortBy;
-		if ( !sortByOpt ) {
-			return;
-		}
-		// concat all sortBy and sortHistory
-		var sortBys = [].concat.apply( sortByOpt, this.sortHistory );
-		// sort magic
-		var itemSorter = getItemSorter( sortBys, this.options.sortAscending );
-		this.filteredItems.sort( itemSorter );
-		// keep track of sortBy History
-		if ( sortByOpt != this.sortHistory[0] ) {
-			// add to front, oldest goes in last
-			this.sortHistory.unshift( sortByOpt );
-		}
-	};
+    return mungeSorter;
+  })();
 
-	// returns a function used for sorting
-	function getItemSorter( sortBys, sortAsc ) {
-		return function sorter( itemA, itemB ) {
-			// cycle through all sortKeys
-			for ( var i = 0, len = sortBys.length; i < len; i++ ) {
-				var sortBy = sortBys[i];
-				var a = itemA.sortData[ sortBy ];
-				var b = itemB.sortData[ sortBy ];
-				if ( a > b || a < b ) {
-					// if sortAsc is an object, use the value given the sortBy key
-					var isAscending = sortAsc[ sortBy ] !== undefined ? sortAsc[ sortBy ] : sortAsc;
-					var direction = isAscending ? 1 : -1;
-					return ( a > b ? 1 : -1 ) * direction;
-				}
-			}
-			return 0;
-		};
-	}
+  // parsers used in getSortData shortcut strings
+  Isotope.sortDataParsers = {
+    'parseInt': function( val ) {
+      return parseInt( val, 10 );
+    },
+    'parseFloat': function( val ) {
+      return parseFloat( val );
+    }
+  };
 
-	// -------------------------- methods -------------------------- //
+  // ----- sort method ----- //
 
-	// get layout mode
-	Isotope.prototype._mode = function() {
-		var layoutMode = this.options.layoutMode;
-		var mode = this.modes[ layoutMode ];
-		if ( !mode ) {
-			// TODO console.error
-			throw new Error( 'No layout mode: ' + layoutMode );
-		}
-		// HACK sync mode's options
-		// any options set after init for layout mode need to be synced
-		mode.options = this.options[ layoutMode ];
-		return mode;
-	};
+  // sort filteredItem order
+  Isotope.prototype._sort = function() {
+    var sortByOpt = this.options.sortBy;
+    if ( !sortByOpt ) {
+      return;
+    }
+    // concat all sortBy and sortHistory
+    var sortBys = [].concat.apply( sortByOpt, this.sortHistory );
+    // sort magic
+    var itemSorter = getItemSorter( sortBys, this.options.sortAscending );
+    this.filteredItems.sort( itemSorter );
+    // keep track of sortBy History
+    if ( sortByOpt != this.sortHistory[0] ) {
+      // add to front, oldest goes in last
+      this.sortHistory.unshift( sortByOpt );
+    }
+  };
 
-	Isotope.prototype._resetLayout = function() {
-		// trigger original reset layout
-		Outlayer.prototype._resetLayout.call( this );
-		this._mode()._resetLayout();
-	};
+  // returns a function used for sorting
+  function getItemSorter( sortBys, sortAsc ) {
+    return function sorter( itemA, itemB ) {
+      // cycle through all sortKeys
+      for ( var i = 0, len = sortBys.length; i < len; i++ ) {
+        var sortBy = sortBys[i];
+        var a = itemA.sortData[ sortBy ];
+        var b = itemB.sortData[ sortBy ];
+        if ( a > b || a < b ) {
+          // if sortAsc is an object, use the value given the sortBy key
+          var isAscending = sortAsc[ sortBy ] !== undefined ? sortAsc[ sortBy ] : sortAsc;
+          var direction = isAscending ? 1 : -1;
+          return ( a > b ? 1 : -1 ) * direction;
+        }
+      }
+      return 0;
+    };
+  }
 
-	Isotope.prototype._getItemLayoutPosition = function( item  ) {
-		return this._mode()._getItemLayoutPosition( item );
-	};
+  // -------------------------- methods -------------------------- //
 
-	Isotope.prototype._manageStamp = function( stamp ) {
-		this._mode()._manageStamp( stamp );
-	};
+  // get layout mode
+  Isotope.prototype._mode = function() {
+    var layoutMode = this.options.layoutMode;
+    var mode = this.modes[ layoutMode ];
+    if ( !mode ) {
+      // TODO console.error
+      throw new Error( 'No layout mode: ' + layoutMode );
+    }
+    // HACK sync mode's options
+    // any options set after init for layout mode need to be synced
+    mode.options = this.options[ layoutMode ];
+    return mode;
+  };
 
-	Isotope.prototype._getContainerSize = function() {
-		return this._mode()._getContainerSize();
-	};
+  Isotope.prototype._resetLayout = function() {
+    // trigger original reset layout
+    Outlayer.prototype._resetLayout.call( this );
+    this._mode()._resetLayout();
+  };
 
-	Isotope.prototype.needsResizeLayout = function() {
-		return this._mode().needsResizeLayout();
-	};
+  Isotope.prototype._getItemLayoutPosition = function( item  ) {
+    return this._mode()._getItemLayoutPosition( item );
+  };
 
-	// -------------------------- adding & removing -------------------------- //
+  Isotope.prototype._manageStamp = function( stamp ) {
+    this._mode()._manageStamp( stamp );
+  };
 
-	// HEADS UP overwrites default Outlayer appended
-	Isotope.prototype.appended = function( elems ) {
-		var items = this.addItems( elems );
-		if ( !items.length ) {
-			return;
-		}
-		// filter, layout, reveal new items
-		var filteredItems = this._filterRevealAdded( items );
-		// add to filteredItems
-		this.filteredItems = this.filteredItems.concat( filteredItems );
-	};
+  Isotope.prototype._getContainerSize = function() {
+    return this._mode()._getContainerSize();
+  };
 
-	// HEADS UP overwrites default Outlayer prepended
-	Isotope.prototype.prepended = function( elems ) {
-		var items = this._itemize( elems );
-		if ( !items.length ) {
-			return;
-		}
-		// start new layout
-		this._resetLayout();
-		this._manageStamps();
-		// filter, layout, reveal new items
-		var filteredItems = this._filterRevealAdded( items );
-		// layout previous items
-		this.layoutItems( this.filteredItems );
-		// add to items and filteredItems
-		this.filteredItems = filteredItems.concat( this.filteredItems );
-		this.items = items.concat( this.items );
-	};
+  Isotope.prototype.needsResizeLayout = function() {
+    return this._mode().needsResizeLayout();
+  };
 
-	Isotope.prototype._filterRevealAdded = function( items ) {
-		var filtered = this._filter( items );
-		this.hide( filtered.needHide );
-		// reveal all new items
-		this.reveal( filtered.matches );
-		// layout new items, no transition
-		this.layoutItems( filtered.matches, true );
-		return filtered.matches;
-	};
+  // -------------------------- adding & removing -------------------------- //
 
-	/**
-	 * Filter, sort, and layout newly-appended item elements
-	 * @param {Array or NodeList or Element} elems
-	 */
-	Isotope.prototype.insert = function( elems ) {
-		var items = this.addItems( elems );
-		if ( !items.length ) {
-			return;
-		}
-		// append item elements
-		var i, item;
-		var len = items.length;
-		for ( i=0; i < len; i++ ) {
-			item = items[i];
-			this.element.appendChild( item.element );
-		}
-		// filter new stuff
-		var filteredInsertItems = this._filter( items ).matches;
-		// set flag
-		for ( i=0; i < len; i++ ) {
-			items[i].isLayoutInstant = true;
-		}
-		this.arrange();
-		// reset flag
-		for ( i=0; i < len; i++ ) {
-			delete items[i].isLayoutInstant;
-		}
-		this.reveal( filteredInsertItems );
-	};
+  // HEADS UP overwrites default Outlayer appended
+  Isotope.prototype.appended = function( elems ) {
+    var items = this.addItems( elems );
+    if ( !items.length ) {
+      return;
+    }
+    // filter, layout, reveal new items
+    var filteredItems = this._filterRevealAdded( items );
+    // add to filteredItems
+    this.filteredItems = this.filteredItems.concat( filteredItems );
+  };
 
-	var _remove = Isotope.prototype.remove;
-	Isotope.prototype.remove = function( elems ) {
-		elems = utils.makeArray( elems );
-		var removeItems = this.getItems( elems );
-		// do regular thing
-		_remove.call( this, elems );
-		// bail if no items to remove
-		var len = removeItems && removeItems.length;
-		if ( !len ) {
-			return;
-		}
-		// remove elems from filteredItems
-		for ( var i=0; i < len; i++ ) {
-			var item = removeItems[i];
-			// remove item from collection
-			utils.removeFrom( this.filteredItems, item );
-		}
-	};
+  // HEADS UP overwrites default Outlayer prepended
+  Isotope.prototype.prepended = function( elems ) {
+    var items = this._itemize( elems );
+    if ( !items.length ) {
+      return;
+    }
+    // start new layout
+    this._resetLayout();
+    this._manageStamps();
+    // filter, layout, reveal new items
+    var filteredItems = this._filterRevealAdded( items );
+    // layout previous items
+    this.layoutItems( this.filteredItems );
+    // add to items and filteredItems
+    this.filteredItems = filteredItems.concat( this.filteredItems );
+    this.items = items.concat( this.items );
+  };
 
-	Isotope.prototype.shuffle = function() {
-		// update random sortData
-		for ( var i=0, len = this.items.length; i < len; i++ ) {
-			var item = this.items[i];
-			item.sortData.random = Math.random();
-		}
-		this.options.sortBy = 'random';
-		this._sort();
-		this._layout();
-	};
+  Isotope.prototype._filterRevealAdded = function( items ) {
+    var filtered = this._filter( items );
+    this.hide( filtered.needHide );
+    // reveal all new items
+    this.reveal( filtered.matches );
+    // layout new items, no transition
+    this.layoutItems( filtered.matches, true );
+    return filtered.matches;
+  };
 
-	/**
-	 * trigger fn without transition
-	 * kind of hacky to have this in the first place
-	 * @param {Function} fn
-	 * @returns ret
-	 * @private
-	 */
-	Isotope.prototype._noTransition = function( fn ) {
-		// save transitionDuration before disabling
-		var transitionDuration = this.options.transitionDuration;
-		// disable transition
-		this.options.transitionDuration = 0;
-		// do it
-		var returnValue = fn.call( this );
-		// re-enable transition for reveal
-		this.options.transitionDuration = transitionDuration;
-		return returnValue;
-	};
+  /**
+   * Filter, sort, and layout newly-appended item elements
+   * @param {Array or NodeList or Element} elems
+   */
+  Isotope.prototype.insert = function( elems ) {
+    var items = this.addItems( elems );
+    if ( !items.length ) {
+      return;
+    }
+    // append item elements
+    var i, item;
+    var len = items.length;
+    for ( i=0; i < len; i++ ) {
+      item = items[i];
+      this.element.appendChild( item.element );
+    }
+    // filter new stuff
+    var filteredInsertItems = this._filter( items ).matches;
+    // set flag
+    for ( i=0; i < len; i++ ) {
+      items[i].isLayoutInstant = true;
+    }
+    this.arrange();
+    // reset flag
+    for ( i=0; i < len; i++ ) {
+      delete items[i].isLayoutInstant;
+    }
+    this.reveal( filteredInsertItems );
+  };
 
-	// ----- helper methods ----- //
+  var _remove = Isotope.prototype.remove;
+  Isotope.prototype.remove = function( elems ) {
+    elems = utils.makeArray( elems );
+    var removeItems = this.getItems( elems );
+    // do regular thing
+    _remove.call( this, elems );
+    // bail if no items to remove
+    var len = removeItems && removeItems.length;
+    if ( !len ) {
+      return;
+    }
+    // remove elems from filteredItems
+    for ( var i=0; i < len; i++ ) {
+      var item = removeItems[i];
+      // remove item from collection
+      utils.removeFrom( this.filteredItems, item );
+    }
+  };
 
-	/**
-	 * getter method for getting filtered item elements
-	 * @returns {Array} elems - collection of item elements
-	 */
-	Isotope.prototype.getFilteredItemElements = function() {
-		var elems = [];
-		for ( var i=0, len = this.filteredItems.length; i < len; i++ ) {
-			elems.push( this.filteredItems[i].element );
-		}
-		return elems;
-	};
+  Isotope.prototype.shuffle = function() {
+    // update random sortData
+    for ( var i=0, len = this.items.length; i < len; i++ ) {
+      var item = this.items[i];
+      item.sortData.random = Math.random();
+    }
+    this.options.sortBy = 'random';
+    this._sort();
+    this._layout();
+  };
 
-	// -----  ----- //
+  /**
+   * trigger fn without transition
+   * kind of hacky to have this in the first place
+   * @param {Function} fn
+   * @returns ret
+   * @private
+   */
+  Isotope.prototype._noTransition = function( fn ) {
+    // save transitionDuration before disabling
+    var transitionDuration = this.options.transitionDuration;
+    // disable transition
+    this.options.transitionDuration = 0;
+    // do it
+    var returnValue = fn.call( this );
+    // re-enable transition for reveal
+    this.options.transitionDuration = transitionDuration;
+    return returnValue;
+  };
 
-	return Isotope;
+  // ----- helper methods ----- //
+
+  /**
+   * getter method for getting filtered item elements
+   * @returns {Array} elems - collection of item elements
+   */
+  Isotope.prototype.getFilteredItemElements = function() {
+    var elems = [];
+    for ( var i=0, len = this.filteredItems.length; i < len; i++ ) {
+      elems.push( this.filteredItems[i].element );
+    }
+    return elems;
+  };
+
+  // -----  ----- //
+
+  return Isotope;
 
 }));
 
@@ -4562,74 +4563,74 @@ var getText = docElem.textContent ?
 /*jshint browser: true, devel: false, strict: true, undef: true, unused: true */
 
 ( function( window, factory ) {
-	// universal module definition
-	/* jshint strict: false */ /*globals define, module, require */
-	if ( typeof define === 'function' && define.amd ) {
-		// AMD
-		define( [
-				'isotope/js/layout-mode'
-			],
-			factory );
-	} else if ( typeof exports === 'object' ) {
-		// CommonJS
-		module.exports = factory(
-			require('isotope-layout/js/layout-mode')
-		);
-	} else {
-		// browser global
-		factory(
-			window.Isotope.LayoutMode
-		);
-	}
+  // universal module definition
+  /* jshint strict: false */ /*globals define, module, require */
+  if ( typeof define === 'function' && define.amd ) {
+    // AMD
+    define( [
+        'isotope/js/layout-mode'
+      ],
+      factory );
+  } else if ( typeof exports === 'object' ) {
+    // CommonJS
+    module.exports = factory(
+      require('isotope-layout/js/layout-mode')
+    );
+  } else {
+    // browser global
+    factory(
+      window.Isotope.LayoutMode
+    );
+  }
 
 }( window, function factory( LayoutMode ) {
-	'use strict';
+  'use strict';
 
-	var CellsByRow = LayoutMode.create( 'cellsByRow' );
-	var proto = CellsByRow.prototype;
+  var CellsByRow = LayoutMode.create( 'cellsByRow' );
+  var proto = CellsByRow.prototype;
 
-	proto._resetLayout = function() {
-		// reset properties
-		this.itemIndex = 0;
-		// measurements
-		this.getColumnWidth();
-		this.getRowHeight();
-		// set cols
-		this.cols = Math.floor( this.isotope.size.innerWidth / this.columnWidth );
-		this.cols = Math.max( this.cols, 1 );
-	};
+  proto._resetLayout = function() {
+    // reset properties
+    this.itemIndex = 0;
+    // measurements
+    this.getColumnWidth();
+    this.getRowHeight();
+    // set cols
+    this.cols = Math.floor( this.isotope.size.innerWidth / this.columnWidth );
+    this.cols = Math.max( this.cols, 1 );
+  };
 
-	proto._getItemLayoutPosition = function( item ) {
-		item.getSize();
-		var col = this.itemIndex % this.cols;
-		var row = Math.floor( this.itemIndex / this.cols );
-		// center item within cell
-		var x = ( col + 0.5 ) * this.columnWidth - item.size.outerWidth / 2;
-		var y = ( row + 0.5 ) * this.rowHeight - item.size.outerHeight / 2;
-		this.itemIndex++;
-		return { x: x, y: y };
-	};
+  proto._getItemLayoutPosition = function( item ) {
+    item.getSize();
+    var col = this.itemIndex % this.cols;
+    var row = Math.floor( this.itemIndex / this.cols );
+    // center item within cell
+    var x = ( col + 0.5 ) * this.columnWidth - item.size.outerWidth / 2;
+    var y = ( row + 0.5 ) * this.rowHeight - item.size.outerHeight / 2;
+    this.itemIndex++;
+    return { x: x, y: y };
+  };
 
-	proto._getContainerSize = function() {
-		return {
-			height: Math.ceil( this.itemIndex / this.cols ) * this.rowHeight
-		};
-	};
+  proto._getContainerSize = function() {
+    return {
+      height: Math.ceil( this.itemIndex / this.cols ) * this.rowHeight
+    };
+  };
 
-	return CellsByRow;
+  return CellsByRow;
 
 }));
 
 /*!
-	 --------------------------------
-	 Infinite Scroll
-	 --------------------------------
-	 + https://github.com/paulirish/infinite-scroll
-	 + version 2.1.0
-	 + Copyright 2011/12 Paul Irish & Luke Shumard
-	 + Licensed under the MIT license
+   --------------------------------
+   Infinite Scroll
+   --------------------------------
+   + https://github.com/paulirish/infinite-scroll
+   + version 2.1.0
+   + Copyright 2011/12 Paul Irish & Luke Shumard
+   + Licensed under the MIT license
 
-	 + Documentation: http://infinite-scroll.com/
+   + Documentation: http://infinite-scroll.com/
 */
 ;(function(e){if(typeof define==="function"&&define.amd){define(["jquery"],e)}else{e(jQuery)}})(function(e,t){"use strict";e.infinitescroll=function(n,r,i){this.element=e(i);if(!this._create(n,r)){this.failed=true}};e.infinitescroll.defaults={loading:{finished:t,finishedMsg:"<em>Congratulations, you've reached the end of the internet.</em>",img:"data:image/gif;base64,R0lGODlh3AATAPQeAPDy+MnQ6LW/4N3h8MzT6rjC4sTM5r/I5NHX7N7j8c7U6tvg8OLl8uXo9Ojr9b3G5MfP6Ovu9tPZ7PT1+vX2+tbb7vf4+8/W69jd7rC73vn5/O/x+K243ai02////wAAACH/C05FVFNDQVBFMi4wAwEAAAAh+QQECgD/ACwAAAAA3AATAAAF/6AnjmRpnmiqrmzrvnAsz3Rt33iu73zv/8CgcEj0BAScpHLJbDqf0Kh0Sq1ar9isdioItAKGw+MAKYMFhbF63CW438f0mg1R2O8EuXj/aOPtaHx7fn96goR4hmuId4qDdX95c4+RBIGCB4yAjpmQhZN0YGYGXitdZBIVGAsLoq4BBKQDswm1CQRkcG6ytrYKubq8vbfAcMK9v7q7EMO1ycrHvsW6zcTKsczNz8HZw9vG3cjTsMIYqQkCLBwHCgsMDQ4RDAYIqfYSFxDxEfz88/X38Onr16+Bp4ADCco7eC8hQYMAEe57yNCew4IVBU7EGNDiRn8Z831cGLHhSIgdFf9chIeBg7oA7gjaWUWTVQAGE3LqBDCTlc9WOHfm7PkTqNCh54rePDqB6M+lR536hCpUqs2gVZM+xbrTqtGoWqdy1emValeXKzggYBBB5y1acFNZmEvXAoN2cGfJrTv3bl69Ffj2xZt3L1+/fw3XRVw4sGDGcR0fJhxZsF3KtBTThZxZ8mLMgC3fRatCbYMNFCzwLEqLgE4NsDWs/tvqdezZf13Hvk2A9Szdu2X3pg18N+68xXn7rh1c+PLksI/Dhe6cuO3ow3NfV92bdArTqC2Ebd3A8vjf5QWfH6Bg7Nz17c2fj69+fnq+8N2Lty+fuP78/eV2X13neIcCeBRwxorbZrA1ANoCDGrgoG8RTshahQ9iSKEEzUmYIYfNWViUhheCGJyIP5E4oom7WWjgCeBFAJNv1DVV01MAdJhhjdkplWNzO/5oXI846njjVEIqR2OS2B1pE5PVscajkxhMycqLJghQSwT40PgfAl4GqNSXYdZXJn5gSkmmmmJu1aZYb14V51do+pTOCmA40AqVCIhG5IJ9PvYnhIFOxmdqhpaI6GeHCtpooisuutmg+Eg62KOMKuqoTaXgicQWoIYq6qiklmoqFV0UoeqqrLbq6quwxirrrLTWauutJ4QAACH5BAUKABwALAcABADOAAsAAAX/IPd0D2dyRCoUp/k8gpHOKtseR9yiSmGbuBykler9XLAhkbDavXTL5k2oqFqNOxzUZPU5YYZd1XsD72rZpBjbeh52mSNnMSC8lwblKZGwi+0QfIJ8CncnCoCDgoVnBHmKfByGJimPkIwtiAeBkH6ZHJaKmCeVnKKTHIihg5KNq4uoqmEtcRUtEREMBggtEr4QDrjCuRC8h7/BwxENeicSF8DKy82pyNLMOxzWygzFmdvD2L3P0dze4+Xh1Arkyepi7dfFvvTtLQkZBC0T/FX3CRgCMOBHsJ+EHYQY7OinAGECgQsB+Lu3AOK+CewcWjwxQeJBihtNGHSoQOE+iQ3//4XkwBBhRZMcUS6YSXOAwIL8PGqEaSJCiYt9SNoCmnJPAgUVLChdaoFBURN8MAzl2PQphwQLfDFd6lTowglHve6rKpbjhK7/pG5VinZP1qkiz1rl4+tr2LRwWU64cFEihwEtZgbgR1UiHaMVvxpOSwBA37kzGz9e8G+B5MIEKLutOGEsAH2ATQwYfTmuX8aETWdGPZmiZcccNSzeTCA1Sw0bdiitC7LBWgu8jQr8HRzqgpK6gX88QbrB14z/kF+ELpwB8eVQj/JkqdylAudji/+ts3039vEEfK8Vz2dlvxZKG0CmbkKDBvllRd6fCzDvBLKBDSCeffhRJEFebFk1k/Mv9jVIoIJZSeBggwUaNeB+Qk34IE0cXlihcfRxkOAJFFhwGmKlmWDiakZhUJtnLBpnWWcnKaAZcxI0piFGGLBm1mc90kajSCveeBVWKeYEoU2wqeaQi0PetoE+rr14EpVC7oAbAUHqhYExbn2XHHsVqbcVew9tx8+XJKk5AZsqqdlddGpqAKdbAYBn1pcczmSTdWvdmZ17c1b3FZ99vnTdCRFM8OEcAhLwm1NdXnWcBBSMRWmfkWZqVlsmLIiAp/o1gGV2vpS4lalGYsUOqXrddcKCmK61aZ8SjEpUpVFVoCpTj4r661Km7kBHjrDyc1RAIQAAIfkEBQoAGwAsBwAEAM4ACwAABf/gtmUCd4goQQgFKj6PYKi0yrrbc8i4ohQt12EHcal+MNSQiCP8gigdz7iCioaCIvUmZLp8QBzW0EN2vSlCuDtFKaq4RyHzQLEKZNdiQDhRDVooCwkbfm59EAmKi4SGIm+AjIsKjhsqB4mSjT2IOIOUnICeCaB/mZKFNTSRmqVpmJqklSqskq6PfYYCDwYHDC4REQwGCBLGxxIQDsHMwhAIX8bKzcENgSLGF9PU1j3Sy9zX2NrgzQziChLk1BHWxcjf7N046tvN82715czn9Pryz6Ilc4ACj4EBOCZM8KEnAYYADBRKnACAYUMFv1wotIhCEcaJCisqwJFgAUSQGyX/kCSVUUTIdKMwJlyo0oXHlhskwrTJciZHEXsgaqS4s6PJiCAr1uzYU8kBBSgnWFqpoMJMUjGtDmUwkmfVmVypakWhEKvXsS4nhLW5wNjVroJIoc05wSzTr0PtiigpYe4EC2vj4iWrFu5euWIMRBhacaVJhYQBEFjA9jHjyQ0xEABwGceGAZYjY0YBOrRLCxUp29QM+bRkx5s7ZyYgVbTqwwti2ybJ+vLtDYpycyZbYOlptxdx0kV+V7lC5iJAyyRrwYKxAdiz82ng0/jnAdMJFz0cPi104Ec1Vj9/M6F173vKL/feXv156dw11tlqeMMnv4V5Ap53GmjQQH97nFfg+IFiucfgRX5Z8KAgbUlQ4IULIlghhhdOSB6AgX0IVn8eReghen3NRIBsRgnH4l4LuEidZBjwRpt6NM5WGwoW0KSjCwX6yJSMab2GwwAPDXfaBCtWpluRTQqC5JM5oUZAjUNS+VeOLWpJEQ7VYQANW0INJSZVDFSnZphjSikfmzE5N4EEbQI1QJmnWXCmHulRp2edwDXF43txukenJwvI9xyg9Q26Z3MzGUcBYFEChZh6DVTq34AU8Iflh51Sd+CnKFYQ6mmZkhqfBKfSxZWqA9DZanWjxmhrWwi0qtCrt/43K6WqVjjpmhIqgEGvculaGKklKstAACEAACH5BAUKABwALAcABADOAAsAAAX/ICdyQmaMYyAUqPgIBiHPxNpy79kqRXH8wAPsRmDdXpAWgWdEIYm2llCHqjVHU+jjJkwqBTecwItShMXkEfNWSh8e1NGAcLgpDGlRgk7EJ/6Ae3VKfoF/fDuFhohVeDeCfXkcCQqDVQcQhn+VNDOYmpSWaoqBlUSfmowjEA+iEAEGDRGztAwGCDcXEA60tXEiCrq8vREMEBLIyRLCxMWSHMzExnbRvQ2Sy7vN0zvVtNfU2tLY3rPgLdnDvca4VQS/Cpk3ABwSLQkYAQwT/P309vcI7OvXr94jBQMJ/nskkGA/BQBRLNDncAIAiDcG6LsxAWOLiQzmeURBKWSLCQbv/1F0eDGinJUKR47YY1IEgQASKk7Yc7ACRwZm7mHweRJoz59BJUogisKCUaFMR0x4SlJBVBFTk8pZivTR0K73rN5wqlXEAq5Fy3IYgHbEzQ0nLy4QSoCjXLoom96VOJEeCosK5n4kkFfqXjl94wa+l1gvAcGICbewAOAxY8l/Ky/QhAGz4cUkGxu2HNozhwMGBnCUqUdBg9UuW9eUynqSwLHIBujePef1ZGQZXcM+OFuEBeBhi3OYgLyqcuaxbT9vLkf4SeqyWxSQpKGB2gQpm1KdWbu72rPRzR9Ne2Nu9Kzr/1Jqj0yD/fvqP4aXOt5sW/5qsXXVcv1Nsp8IBUAmgswGF3llGgeU1YVXXKTN1FlhWFXW3gIE+DVChApysACHHo7Q4A35lLichh+ROBmLKAzgYmYEYDAhCgxKGOOMn4WR4kkDaoBBOxJtdNKQxFmg5JIWIBnQc07GaORfUY4AEkdV6jHlCEISSZ5yTXpp1pbGZbkWmcuZmQCaE6iJ0FhjMaDjTMsgZaNEHFRAQVp3bqXnZED1qYcECOz5V6BhSWCoVJQIKuKQi2KFKEkEFAqoAo7uYSmO3jk61wUUMKmknJ4SGimBmAa0qVQBhAAAIfkEBQoAGwAsBwAEAM4ACwAABf/gJm5FmRlEqhJC+bywgK5pO4rHI0D3pii22+Mg6/0Ej96weCMAk7cDkXf7lZTTnrMl7eaYoy10JN0ZFdco0XAuvKI6qkgVFJXYNwjkIBcNBgR8TQoGfRsJCRuCYYQQiI+ICosiCoGOkIiKfSl8mJkHZ4U9kZMbKaI3pKGXmJKrngmug4WwkhA0lrCBWgYFCCMQFwoQDRHGxwwGCBLMzRLEx8iGzMMO0cYNeCMKzBDW19lnF9DXDIY/48Xg093f0Q3s1dcR8OLe8+Y91OTv5wrj7o7B+7VNQqABIoRVCMBggsOHE36kSoCBIcSH3EbFangxogJYFi8CkJhqQciLJEf/LDDJEeJIBT0GsOwYUYJGBS0fjpQAMidGmyVP6sx4Y6VQhzs9VUwkwqaCCh0tmKoFtSMDmBOf9phg4SrVrROuasRQAaxXpVUhdsU6IsECZlvX3kwLUWzRt0BHOLTbNlbZG3vZinArge5Dvn7wbqtQkSYAAgtKmnSsYKVKo2AfW048uaPmG386i4Q8EQMBAIAnfB7xBxBqvapJ9zX9WgRS2YMpnvYMGdPK3aMjt/3dUcNI4blpj7iwkMFWDXDvSmgAlijrt9RTR78+PS6z1uAJZIe93Q8g5zcsWCi/4Y+C8bah5zUv3vv89uft30QP23punGCx5954oBBwnwYaNCDY/wYrsYeggnM9B2Fpf8GG2CEUVWhbWAtGouEGDy7Y4IEJVrbSiXghqGKIo7z1IVcXIkKWWR361QOLWWnIhwERpLaaCCee5iMBGJQmJGyPFTnbkfHVZGRtIGrg5HALEJAZbu39BuUEUmq1JJQIPtZilY5hGeSWsSk52G9XqsmgljdIcABytq13HyIM6RcUA+r1qZ4EBF3WHWB29tBgAzRhEGhig8KmqKFv8SeCeo+mgsF7YFXa1qWSbkDpom/mqR1PmHCqJ3fwNRVXjC7S6CZhFVCQ2lWvZiirhQq42SACt25IK2hv8TprriUV1usGgeka7LFcNmCldMLi6qZMgFLgpw16Cipb7bC1knXsBiEAACH5BAUKABsALAcABADOAAsAAAX/4FZsJPkUmUGsLCEUTywXglFuSg7fW1xAvNWLF6sFFcPb42C8EZCj24EJdCp2yoegWsolS0Uu6fmamg8n8YYcLU2bXSiRaXMGvqV6/KAeJAh8VgZqCX+BexCFioWAYgqNi4qAR4ORhRuHY408jAeUhAmYYiuVlpiflqGZa5CWkzc5fKmbbhIpsAoQDRG8vQwQCBLCwxK6vb5qwhfGxxENahvCEA7NzskSy7vNzzzK09W/PNHF1NvX2dXcN8K55cfh69Luveol3vO8zwi4Yhj+AQwmCBw4IYclDAAJDlQggVOChAoLKkgFkSCAHDwWLKhIEOONARsDKryogFPIiAUb/95gJNIiw4wnI778GFPhzBKFOAq8qLJEhQpiNArjMcHCmlTCUDIouTKBhApELSxFWiGiVKY4E2CAekPgUphDu0742nRrVLJZnyrFSqKQ2ohoSYAMW6IoDpNJ4bLdILTnAj8KUF7UeENjAKuDyxIgOuGiOI0EBBMgLNew5AUrDTMGsFixwBIaNCQuAXJB57qNJ2OWm2Aj4skwCQCIyNkhhtMkdsIuodE0AN4LJDRgfLPtn5YDLdBlraAByuUbBgxQwICxMOnYpVOPej074OFdlfc0TqC62OIbcppHjV4o+LrieWhfT8JC/I/T6W8oCl29vQ0XjLdBaA3s1RcPBO7lFvpX8BVoG4O5jTXRQRDuJ6FDTzEWF1/BCZhgbyAKE9qICYLloQYOFtahVRsWYlZ4KQJHlwHS/IYaZ6sZd9tmu5HQm2xi1UaTbzxYwJk/wBF5g5EEYOBZeEfGZmNdFyFZmZIR4jikbLThlh5kUUVJGmRT7sekkziRWUIACABk3T4qCsedgO4xhgGcY7q5pHJ4klBBTQRJ0CeHcoYHHUh6wgfdn9uJdSdMiebGJ0zUPTcoS286FCkrZxnYoYYKWLkBowhQoBeaOlZAgVhLidrXqg2GiqpQpZ4apwSwRtjqrB3muoF9BboaXKmshlqWqsWiGt2wphJkQbAU5hoCACH5BAUKABsALAcABADOAAsAAAX/oGFw2WZuT5oZROsSQnGaKjRvilI893MItlNOJ5v5gDcFrHhKIWcEYu/xFEqNv6B1N62aclysF7fsZYe5aOx2yL5aAUGSaT1oTYMBwQ5VGCAJgYIJCnx1gIOBhXdwiIl7d0p2iYGQUAQBjoOFSQR/lIQHnZ+Ue6OagqYzSqSJi5eTpTxGcjcSChANEbu8DBAIEsHBChe5vL13G7fFuscRDcnKuM3H0La3EA7Oz8kKEsXazr7Cw9/Gztar5uHHvte47MjktznZ2w0G1+D3BgirAqJmJMAQgMGEgwgn5Ei0gKDBhBMALGRYEOJBb5QcWlQo4cbAihZz3GgIMqFEBSM1/4ZEOWPAgpIIJXYU+PIhRG8ja1qU6VHlzZknJNQ6UanCjQkWCIGSUGEjAwVLjc44+DTqUQtPPS5gejUrTa5TJ3g9sWCr1BNUWZI161StiQUDmLYdGfesibQ3XMq1OPYthrwuA2yU2LBs2cBHIypYQPPlYAKFD5cVvNPtW8eVGbdcQADATsiNO4cFAPkvHpedPzc8kUcPgNGgZ5RNDZG05reoE9s2vSEP79MEGiQGy1qP8LA4ZcdtsJE48ONoLTBtTV0B9LsTnPceoIDBDQvS7W7vfjVY3q3eZ4A339J4eaAmKqU/sV58HvJh2RcnIBsDUw0ABqhBA5aV5V9XUFGiHfVeAiWwoFgJJrIXRH1tEMiDFV4oHoAEGlaWhgIGSGBO2nFomYY3mKjVglidaNYJGJDkWW2xxTfbjCbVaOGNqoX2GloR8ZeTaECS9pthRGJH2g0b3Agbk6hNANtteHD2GJUucfajCQBy5OOTQ25ZgUPvaVVQmbKh9510/qQpwXx3SQdfk8tZJOd5b6JJFplT3ZnmmX3qd5l1eg5q00HrtUkUn0AKaiGjClSAgKLYZcgWXwocGRcCFGCKwSB6ceqphwmYRUFYT/1WKlOdUpipmxW0mlCqHjYkAaeoZlqrqZ4qd+upQKaapn/AmgAegZ8KUtYtFAQQAgAh+QQFCgAbACwHAAQAzgALAAAF/+C2PUcmiCiZGUTrEkKBis8jQEquKwU5HyXIbEPgyX7BYa5wTNmEMwWsSXsqFbEh8DYs9mrgGjdK6GkPY5GOeU6ryz7UFopSQEzygOGhJBjoIgMDBAcBM0V/CYqLCQqFOwobiYyKjn2TlI6GKC2YjJZknouaZAcQlJUHl6eooJwKooobqoewrJSEmyKdt59NhRKFMxLEEA4RyMkMEAjDEhfGycqAG8TQx9IRDRDE3d3R2ctD1RLg0ttKEnbY5wZD3+zJ6M7X2RHi9Oby7u/r9g38UFjTh2xZJBEBMDAboogAgwkQI07IMUORwocSJwCgWDFBAIwZOaJIsOBjRogKJP8wTODw5ESVHVtm3AhzpEeQElOuNDlTZ0ycEUWKWFASqEahGwYUPbnxoAgEdlYSqDBkgoUNClAlIHbSAoOsqCRQnQHxq1axVb06FWFxLIqyaze0Tft1JVqyE+pWXMD1pF6bYl3+HTqAWNW8cRUFzmih0ZAAB2oGKukSAAGGRHWJgLiR6AylBLpuHKKUMlMCngMpDSAa9QIUggZVVvDaJobLeC3XZpvgNgCmtPcuwP3WgmXSq4do0DC6o2/guzcseECtUoO0hmcsGKDgOt7ssBd07wqesAIGZC1YIBa7PQHvb1+SFo+++HrJSQfB33xfav3i5eX3Hnb4CTJgegEq8tH/YQEOcIJzbm2G2EoYRLgBXFpVmFYDcREV4HIcnmUhiGBRouEMJGJGzHIspqgdXxK0yCKHRNXoIX4uorCdTyjkyNtdPWrA4Up82EbAbzMRxxZRR54WXVLDIRmRcag5d2R6ugl3ZXzNhTecchpMhIGVAKAYpgJjjsSklBEd99maZoo535ZvdamjBEpusJyctg3h4X8XqodBMx0tiNeg/oGJaKGABpogS40KSqiaEgBqlQWLUtqoVQnytekEjzo0hHqhRorppOZt2p923M2AAV+oBtpAnnPNoB6HaU6mAAIU+IXmi3j2mtFXuUoHKwXpzVrsjcgGOauKEjQrwq157hitGq2NoWmjh7z6Wmxb0m5w66+2VRAuXN/yFUAIACH5BAUKABsALAcABADOAAsAAAX/4CZuRiaM45MZqBgIRbs9AqTcuFLE7VHLOh7KB5ERdjJaEaU4ClO/lgKWjKKcMiJQ8KgumcieVdQMD8cbBeuAkkC6LYLhOxoQ2PF5Ys9PKPBMen17f0CCg4VSh32JV4t8jSNqEIOEgJKPlkYBlJWRInKdiJdkmQlvKAsLBxdABA4RsbIMBggtEhcQsLKxDBC2TAS6vLENdJLDxMZAubu8vjIbzcQRtMzJz79S08oQEt/guNiyy7fcvMbh4OezdAvGrakLAQwyABsELQkY9BP+//ckyPDD4J9BfAMh1GsBoImMeQUN+lMgUJ9CiRMa5msxoB9Gh/o8GmxYMZXIgxtR/yQ46S/gQAURR0pDwYDfywoyLPip5AdnCwsMFPBU4BPFhKBDi444quCmDKZOfwZ9KEGpCKgcN1jdALSpPqIYsabS+nSqvqplvYqQYAeDPgwKwjaMtiDl0oaqUAyo+3TuWwUAMPpVCfee0cEjVBGQq2ABx7oTWmQk4FglZMGN9fGVDMCuiH2AOVOu/PmyxM630gwM0CCn6q8LjVJ8GXvpa5Uwn95OTC/nNxkda1/dLSK475IjCD6dHbK1ZOa4hXP9DXs5chJ00UpVm5xo2qRpoxptwF2E4/IbJpB/SDz9+q9b1aNfQH08+p4a8uvX8B53fLP+ycAfemjsRUBgp1H20K+BghHgVgt1GXZXZpZ5lt4ECjxYR4ScUWiShEtZqBiIInRGWnERNnjiBglw+JyGnxUmGowsyiiZg189lNtPGACjV2+S9UjbU0JWF6SPvEk3QZEqsZYTk3UAaRSUnznJI5LmESCdBVSyaOWUWLK4I5gDUYVeV1T9l+FZClCAUVA09uSmRHBCKAECFEhW51ht6rnmWBXkaR+NjuHpJ40D3DmnQXt2F+ihZxlqVKOfQRACACH5BAUKABwALAcABADOAAsAAAX/ICdyUCkUo/g8mUG8MCGkKgspeC6j6XEIEBpBUeCNfECaglBcOVfJFK7YQwZHQ6JRZBUqTrSuVEuD3nI45pYjFuWKvjjSkCoRaBUMWxkwBGgJCXspQ36Bh4EEB0oKhoiBgyNLjo8Ki4QElIiWfJqHnISNEI+Ql5J9o6SgkqKkgqYihamPkW6oNBgSfiMMDQkGCBLCwxIQDhHIyQwQCGMKxsnKVyPCF9DREQ3MxMPX0cu4wt7J2uHWx9jlKd3o39MiuefYEcvNkuLt5O8c1ePI2tyELXGQwoGDAQf+iEC2xByDCRAjTlAgIUWCBRgCPJQ4AQBFXAs0coT40WLIjRxL/47AcHLkxIomRXL0CHPERZkpa4q4iVKiyp0tR/7kwHMkTUBBJR5dOCEBAVcKKtCAyOHpowXCpk7goABqBZdcvWploACpBKkpIJI1q5OD2rIWE0R1uTZu1LFwbWL9OlKuWb4c6+o9i3dEgw0RCGDUG9KlRw56gDY2qmCByZBaASi+TACA0TucAaTteCcy0ZuOK3N2vJlx58+LRQyY3Xm0ZsgjZg+oPQLi7dUcNXi0LOJw1pgNtB7XG6CBy+U75SYfPTSQAgZTNUDnQHt67wnbZyvwLgKiMN3oCZB3C76tdewpLFgIP2C88rbi4Y+QT3+8S5USMICZXWj1pkEDeUU3lOYGB3alSoEiMIjgX4WlgNF2EibIwQIXauWXSRg2SAOHIU5IIIMoZkhhWiJaiFVbKo6AQEgQXrTAazO1JhkBrBG3Y2Y6EsUhaGn95hprSN0oWpFE7rhkeaQBchGOEWnwEmc0uKWZj0LeuNV3W4Y2lZHFlQCSRjTIl8uZ+kG5HU/3sRlnTG2ytyadytnD3HrmuRcSn+0h1dycexIK1KCjYaCnjCCVqOFFJTZ5GkUUjESWaUIKU2lgCmAKKQIUjHapXRKE+t2og1VgankNYnohqKJ2CmKplso6GKz7WYCgqxeuyoF8u9IQAgA7",msg:null,msgText:"<em>Loading the next set of posts...</em>",selector:null,speed:"fast",start:t},state:{isDuringAjax:false,isInvalidPage:false,isDestroyed:false,isDone:false,isPaused:false,isBeyondMaxPage:false,currPage:1},debug:false,behavior:t,binder:e(window),nextSelector:"div.navigation a:first",navSelector:"div.navigation",contentSelector:null,extraScrollPx:150,itemSelector:"div.post",animate:false,pathParse:t,dataType:"html",appendCallback:true,bufferPx:40,errorCallback:function(){},infid:0,pixelsFromNavToBottom:t,path:t,prefill:false,maxPage:t};e.infinitescroll.prototype={_binding:function(n){var r=this,i=r.options;i.v="2.0b2.120520";if(!!i.behavior&&this["_binding_"+i.behavior]!==t){this["_binding_"+i.behavior].call(this);return}if(n!=="bind"&&n!=="unbind"){this._debug("Binding value  "+n+" not valid");return false}if(n==="unbind"){this.options.binder.unbind("smartscroll.infscr."+r.options.infid)}else{this.options.binder[n]("smartscroll.infscr."+r.options.infid,function(){r.scroll()})}this._debug("Binding",n)},_create:function(r,i){var s=e.extend(true,{},e.infinitescroll.defaults,r);this.options=s;var o=e(window);var u=this;if(!u._validate(r)){return false}var a=e(s.nextSelector).attr("href");if(!a){this._debug("Navigation selector not found");return false}s.path=s.path||this._determinepath(a);s.contentSelector=s.contentSelector||this.element;s.loading.selector=s.loading.selector||s.contentSelector;s.loading.msg=s.loading.msg||e('<div id="infscr-loading"><img alt="Loading..." src="'+s.loading.img+'" /><div>'+s.loading.msgText+"</div></div>");(new Image).src=s.loading.img;if(s.pixelsFromNavToBottom===t){s.pixelsFromNavToBottom=e(document).height()-e(s.navSelector).offset().top;this._debug("pixelsFromNavToBottom: "+s.pixelsFromNavToBottom)}var f=this;s.loading.start=s.loading.start||function(){e(s.navSelector).hide();s.loading.msg.appendTo(s.loading.selector).show(s.loading.speed,e.proxy(function(){this.beginAjax(s)},f))};s.loading.finished=s.loading.finished||function(){if(!s.state.isBeyondMaxPage)s.loading.msg.fadeOut(s.loading.speed)};s.callback=function(n,r,u){if(!!s.behavior&&n["_callback_"+s.behavior]!==t){n["_callback_"+s.behavior].call(e(s.contentSelector)[0],r,u)}if(i){i.call(e(s.contentSelector)[0],r,s,u)}if(s.prefill){o.bind("resize.infinite-scroll",n._prefill)}};if(r.debug){if(Function.prototype.bind&&(typeof console==="object"||typeof console==="function")&&typeof console.log==="object"){["log","info","warn","error","assert","dir","clear","profile","profileEnd"].forEach(function(e){console[e]=this.call(console[e],console)},Function.prototype.bind)}}this._setup();if(s.prefill){this._prefill()}return true},_prefill:function(){function i(){return e(n.options.contentSelector).height()<=r.height()}var n=this;var r=e(window);this._prefill=function(){if(i()){n.scroll()}r.bind("resize.infinite-scroll",function(){if(i()){r.unbind("resize.infinite-scroll");n.scroll()}})};this._prefill()},_debug:function(){if(true!==this.options.debug){return}if(typeof console!=="undefined"&&typeof console.log==="function"){if(Array.prototype.slice.call(arguments).length===1&&typeof Array.prototype.slice.call(arguments)[0]==="string"){console.log(Array.prototype.slice.call(arguments).toString())}else{console.log(Array.prototype.slice.call(arguments))}}else if(!Function.prototype.bind&&typeof console!=="undefined"&&typeof console.log==="object"){Function.prototype.call.call(console.log,console,Array.prototype.slice.call(arguments))}},_determinepath:function(n){var r=this.options;if(!!r.behavior&&this["_determinepath_"+r.behavior]!==t){return this["_determinepath_"+r.behavior].call(this,n)}if(!!r.pathParse){this._debug("pathParse manual");return r.pathParse(n,this.options.state.currPage+1)}else if(n.match(/^(.*?)\b2\b(.*?$)/)){n=n.match(/^(.*?)\b2\b(.*?$)/).slice(1)}else if(n.match(/^(.*?)2(.*?$)/)){if(n.match(/^(.*?page=)2(\/.*|$)/)){n=n.match(/^(.*?page=)2(\/.*|$)/).slice(1);return n}n=n.match(/^(.*?)2(.*?$)/).slice(1)}else{if(n.match(/^(.*?page=)1(\/.*|$)/)){n=n.match(/^(.*?page=)1(\/.*|$)/).slice(1);return n}else{this._debug("Sorry, we couldn't parse your Next (Previous Posts) URL. Verify your the css selector points to the correct A tag. If you still get this error: yell, scream, and kindly ask for help at infinite-scroll.com.");r.state.isInvalidPage=true}}this._debug("determinePath",n);return n},_error:function(n){var r=this.options;if(!!r.behavior&&this["_error_"+r.behavior]!==t){this["_error_"+r.behavior].call(this,n);return}if(n!=="destroy"&&n!=="end"){n="unknown"}this._debug("Error",n);if(n==="end"||r.state.isBeyondMaxPage){this._showdonemsg()}r.state.isDone=true;r.state.currPage=1;r.state.isPaused=false;r.state.isBeyondMaxPage=false;this._binding("unbind")},_loadcallback:function(r,i,s){var o=this.options,u=this.options.callback,a=o.state.isDone?"done":!o.appendCallback?"no-append":"append",f;if(!!o.behavior&&this["_loadcallback_"+o.behavior]!==t){this["_loadcallback_"+o.behavior].call(this,r,i);return}switch(a){case"done":this._showdonemsg();return false;case"no-append":if(o.dataType==="html"){i="<div>"+i+"</div>";i=e(i).find(o.itemSelector)}if(i.length===0){return this._error("end")}break;case"append":var l=r.children();if(l.length===0){return this._error("end")}f=document.createDocumentFragment();while(r[0].firstChild){f.appendChild(r[0].firstChild)}this._debug("contentSelector",e(o.contentSelector)[0]);e(o.contentSelector)[0].appendChild(f);i=l.get();break}o.loading.finished.call(e(o.contentSelector)[0],o);if(o.animate){var c=e(window).scrollTop()+e(o.loading.msg).height()+o.extraScrollPx+"px";e("html,body").animate({scrollTop:c},800,function(){o.state.isDuringAjax=false})}if(!o.animate){o.state.isDuringAjax=false}u(this,i,s);if(o.prefill){this._prefill()}},_nearbottom:function(){var r=this.options,i=0+e(document).height()-r.binder.scrollTop()-e(window).height();if(!!r.behavior&&this["_nearbottom_"+r.behavior]!==t){return this["_nearbottom_"+r.behavior].call(this)}this._debug("math:",i,r.pixelsFromNavToBottom);return i-r.bufferPx<r.pixelsFromNavToBottom},_pausing:function(n){var r=this.options;if(!!r.behavior&&this["_pausing_"+r.behavior]!==t){this["_pausing_"+r.behavior].call(this,n);return}if(n!=="pause"&&n!=="resume"&&n!==null){this._debug("Invalid argument. Toggling pause value instead")}n=n&&(n==="pause"||n==="resume")?n:"toggle";switch(n){case"pause":r.state.isPaused=true;break;case"resume":r.state.isPaused=false;break;case"toggle":r.state.isPaused=!r.state.isPaused;break}this._debug("Paused",r.state.isPaused);return false},_setup:function(){var n=this.options;if(!!n.behavior&&this["_setup_"+n.behavior]!==t){this["_setup_"+n.behavior].call(this);return}this._binding("bind");return false},_showdonemsg:function(){var r=this.options;if(!!r.behavior&&this["_showdonemsg_"+r.behavior]!==t){this["_showdonemsg_"+r.behavior].call(this);return}r.loading.msg.find("img").hide().parent().find("div").html(r.loading.finishedMsg).animate({opacity:1},2e3,function(){e(this).parent().fadeOut(r.loading.speed)});r.errorCallback.call(e(r.contentSelector)[0],"done")},_validate:function(n){for(var r in n){if(r.indexOf&&r.indexOf("Selector")>-1&&e(n[r]).length===0){this._debug("Your "+r+" found no elements.");return false}}return true},bind:function(){this._binding("bind")},destroy:function(){this.options.state.isDestroyed=true;this.options.loading.finished();return this._error("destroy")},pause:function(){this._pausing("pause")},resume:function(){this._pausing("resume")},beginAjax:function(r){var i=this,s=r.path,o,u,a,f;r.state.currPage++;if(r.maxPage!==t&&r.state.currPage>r.maxPage){r.state.isBeyondMaxPage=true;this.destroy();return}o=e(r.contentSelector).is("table, tbody")?e("<tbody/>"):e("<div/>");u=typeof s==="function"?s(r.state.currPage):s.join(r.state.currPage);i._debug("heading into ajax",u);a=r.dataType==="html"||r.dataType==="json"?r.dataType:"html+callback";if(r.appendCallback&&r.dataType==="html"){a+="+callback"}switch(a){case"html+callback":i._debug("Using HTML via .load() method");o.load(u+" "+r.itemSelector,t,function(t){i._loadcallback(o,t,u)});break;case"html":i._debug("Using "+a.toUpperCase()+" via $.ajax() method");e.ajax({url:u,dataType:r.dataType,complete:function(t,n){f=typeof t.isResolved!=="undefined"?t.isResolved():n==="success"||n==="notmodified";if(f){i._loadcallback(o,t.responseText,u)}else{i._error("end")}}});break;case"json":i._debug("Using "+a.toUpperCase()+" via $.ajax() method");e.ajax({dataType:"json",type:"GET",url:u,success:function(e,n,s){f=typeof s.isResolved!=="undefined"?s.isResolved():n==="success"||n==="notmodified";if(r.appendCallback){if(r.template!==t){var a=r.template(e);o.append(a);if(f){i._loadcallback(o,a)}else{i._error("end")}}else{i._debug("template must be defined.");i._error("end")}}else{if(f){i._loadcallback(o,e,u)}else{i._error("end")}}},error:function(){i._debug("JSON ajax request failed.");i._error("end")}});break}},retrieve:function(r){r=r||null;var i=this,s=i.options;if(!!s.behavior&&this["retrieve_"+s.behavior]!==t){this["retrieve_"+s.behavior].call(this,r);return}if(s.state.isDestroyed){this._debug("Instance is destroyed");return false}s.state.isDuringAjax=true;s.loading.start.call(e(s.contentSelector)[0],s)},scroll:function(){var n=this.options,r=n.state;if(!!n.behavior&&this["scroll_"+n.behavior]!==t){this["scroll_"+n.behavior].call(this);return}if(r.isDuringAjax||r.isInvalidPage||r.isDone||r.isDestroyed||r.isPaused){return}if(!this._nearbottom()){return}this.retrieve()},toggle:function(){this._pausing()},unbind:function(){this._binding("unbind")},update:function(n){if(e.isPlainObject(n)){this.options=e.extend(true,this.options,n)}}};e.fn.infinitescroll=function(n,r){var i=typeof n;switch(i){case"string":var s=Array.prototype.slice.call(arguments,1);this.each(function(){var t=e.data(this,"infinitescroll");if(!t){return false}if(!e.isFunction(t[n])||n.charAt(0)==="_"){return false}t[n].apply(t,s)});break;case"object":this.each(function(){var t=e.data(this,"infinitescroll");if(t){t.update(n)}else{t=new e.infinitescroll(n,r,this);if(!t.failed){e.data(this,"infinitescroll",t)}}});break}return this};var n=e.event,r;n.special.smartscroll={setup:function(){e(this).bind("scroll",n.special.smartscroll.handler)},teardown:function(){e(this).unbind("scroll",n.special.smartscroll.handler)},handler:function(t,n){var i=this,s=arguments;t.type="smartscroll";if(r){clearTimeout(r)}r=setTimeout(function(){e(i).trigger("smartscroll",s)},n==="execAsap"?0:100)}};e.fn.smartscroll=function(e){return e?this.bind("smartscroll",e):this.trigger("smartscroll",["execAsap"])}});
 
@@ -4640,659 +4641,659 @@ Licensed under the MIT license.
 https://github.com/imakewebthings/waypoints/blob/master/licenses.txt
 */
 (function() {
-	'use strict'
+  'use strict'
 
-	var keyCounter = 0
-	var allWaypoints = {}
+  var keyCounter = 0
+  var allWaypoints = {}
 
-	/* http://imakewebthings.com/waypoints/api/waypoint */
-	function Waypoint(options) {
-		if (!options) {
-			throw new Error('No options passed to Waypoint constructor')
-		}
-		if (!options.element) {
-			throw new Error('No element option passed to Waypoint constructor')
-		}
-		if (!options.handler) {
-			throw new Error('No handler option passed to Waypoint constructor')
-		}
+  /* http://imakewebthings.com/waypoints/api/waypoint */
+  function Waypoint(options) {
+    if (!options) {
+      throw new Error('No options passed to Waypoint constructor')
+    }
+    if (!options.element) {
+      throw new Error('No element option passed to Waypoint constructor')
+    }
+    if (!options.handler) {
+      throw new Error('No handler option passed to Waypoint constructor')
+    }
 
-		this.key = 'waypoint-' + keyCounter
-		this.options = Waypoint.Adapter.extend({}, Waypoint.defaults, options)
-		this.element = this.options.element
-		this.adapter = new Waypoint.Adapter(this.element)
-		this.callback = options.handler
-		this.axis = this.options.horizontal ? 'horizontal' : 'vertical'
-		this.enabled = this.options.enabled
-		this.triggerPoint = null
-		this.group = Waypoint.Group.findOrCreate({
-			name: this.options.group,
-			axis: this.axis
-		})
-		this.context = Waypoint.Context.findOrCreateByElement(this.options.context)
+    this.key = 'waypoint-' + keyCounter
+    this.options = Waypoint.Adapter.extend({}, Waypoint.defaults, options)
+    this.element = this.options.element
+    this.adapter = new Waypoint.Adapter(this.element)
+    this.callback = options.handler
+    this.axis = this.options.horizontal ? 'horizontal' : 'vertical'
+    this.enabled = this.options.enabled
+    this.triggerPoint = null
+    this.group = Waypoint.Group.findOrCreate({
+      name: this.options.group,
+      axis: this.axis
+    })
+    this.context = Waypoint.Context.findOrCreateByElement(this.options.context)
 
-		if (Waypoint.offsetAliases[this.options.offset]) {
-			this.options.offset = Waypoint.offsetAliases[this.options.offset]
-		}
-		this.group.add(this)
-		this.context.add(this)
-		allWaypoints[this.key] = this
-		keyCounter += 1
-	}
+    if (Waypoint.offsetAliases[this.options.offset]) {
+      this.options.offset = Waypoint.offsetAliases[this.options.offset]
+    }
+    this.group.add(this)
+    this.context.add(this)
+    allWaypoints[this.key] = this
+    keyCounter += 1
+  }
 
-	/* Private */
-	Waypoint.prototype.queueTrigger = function(direction) {
-		this.group.queueTrigger(this, direction)
-	}
+  /* Private */
+  Waypoint.prototype.queueTrigger = function(direction) {
+    this.group.queueTrigger(this, direction)
+  }
 
-	/* Private */
-	Waypoint.prototype.trigger = function(args) {
-		if (!this.enabled) {
-			return
-		}
-		if (this.callback) {
-			this.callback.apply(this, args)
-		}
-	}
+  /* Private */
+  Waypoint.prototype.trigger = function(args) {
+    if (!this.enabled) {
+      return
+    }
+    if (this.callback) {
+      this.callback.apply(this, args)
+    }
+  }
 
-	/* Public */
-	/* http://imakewebthings.com/waypoints/api/destroy */
-	Waypoint.prototype.destroy = function() {
-		this.context.remove(this)
-		this.group.remove(this)
-		delete allWaypoints[this.key]
-	}
+  /* Public */
+  /* http://imakewebthings.com/waypoints/api/destroy */
+  Waypoint.prototype.destroy = function() {
+    this.context.remove(this)
+    this.group.remove(this)
+    delete allWaypoints[this.key]
+  }
 
-	/* Public */
-	/* http://imakewebthings.com/waypoints/api/disable */
-	Waypoint.prototype.disable = function() {
-		this.enabled = false
-		return this
-	}
+  /* Public */
+  /* http://imakewebthings.com/waypoints/api/disable */
+  Waypoint.prototype.disable = function() {
+    this.enabled = false
+    return this
+  }
 
-	/* Public */
-	/* http://imakewebthings.com/waypoints/api/enable */
-	Waypoint.prototype.enable = function() {
-		this.context.refresh()
-		this.enabled = true
-		return this
-	}
+  /* Public */
+  /* http://imakewebthings.com/waypoints/api/enable */
+  Waypoint.prototype.enable = function() {
+    this.context.refresh()
+    this.enabled = true
+    return this
+  }
 
-	/* Public */
-	/* http://imakewebthings.com/waypoints/api/next */
-	Waypoint.prototype.next = function() {
-		return this.group.next(this)
-	}
+  /* Public */
+  /* http://imakewebthings.com/waypoints/api/next */
+  Waypoint.prototype.next = function() {
+    return this.group.next(this)
+  }
 
-	/* Public */
-	/* http://imakewebthings.com/waypoints/api/previous */
-	Waypoint.prototype.previous = function() {
-		return this.group.previous(this)
-	}
+  /* Public */
+  /* http://imakewebthings.com/waypoints/api/previous */
+  Waypoint.prototype.previous = function() {
+    return this.group.previous(this)
+  }
 
-	/* Private */
-	Waypoint.invokeAll = function(method) {
-		var allWaypointsArray = []
-		for (var waypointKey in allWaypoints) {
-			allWaypointsArray.push(allWaypoints[waypointKey])
-		}
-		for (var i = 0, end = allWaypointsArray.length; i < end; i++) {
-			allWaypointsArray[i][method]()
-		}
-	}
+  /* Private */
+  Waypoint.invokeAll = function(method) {
+    var allWaypointsArray = []
+    for (var waypointKey in allWaypoints) {
+      allWaypointsArray.push(allWaypoints[waypointKey])
+    }
+    for (var i = 0, end = allWaypointsArray.length; i < end; i++) {
+      allWaypointsArray[i][method]()
+    }
+  }
 
-	/* Public */
-	/* http://imakewebthings.com/waypoints/api/destroy-all */
-	Waypoint.destroyAll = function() {
-		Waypoint.invokeAll('destroy')
-	}
+  /* Public */
+  /* http://imakewebthings.com/waypoints/api/destroy-all */
+  Waypoint.destroyAll = function() {
+    Waypoint.invokeAll('destroy')
+  }
 
-	/* Public */
-	/* http://imakewebthings.com/waypoints/api/disable-all */
-	Waypoint.disableAll = function() {
-		Waypoint.invokeAll('disable')
-	}
+  /* Public */
+  /* http://imakewebthings.com/waypoints/api/disable-all */
+  Waypoint.disableAll = function() {
+    Waypoint.invokeAll('disable')
+  }
 
-	/* Public */
-	/* http://imakewebthings.com/waypoints/api/enable-all */
-	Waypoint.enableAll = function() {
-		Waypoint.Context.refreshAll()
-		for (var waypointKey in allWaypoints) {
-			allWaypoints[waypointKey].enabled = true
-		}
-		return this
-	}
+  /* Public */
+  /* http://imakewebthings.com/waypoints/api/enable-all */
+  Waypoint.enableAll = function() {
+    Waypoint.Context.refreshAll()
+    for (var waypointKey in allWaypoints) {
+      allWaypoints[waypointKey].enabled = true
+    }
+    return this
+  }
 
-	/* Public */
-	/* http://imakewebthings.com/waypoints/api/refresh-all */
-	Waypoint.refreshAll = function() {
-		Waypoint.Context.refreshAll()
-	}
+  /* Public */
+  /* http://imakewebthings.com/waypoints/api/refresh-all */
+  Waypoint.refreshAll = function() {
+    Waypoint.Context.refreshAll()
+  }
 
-	/* Public */
-	/* http://imakewebthings.com/waypoints/api/viewport-height */
-	Waypoint.viewportHeight = function() {
-		return window.innerHeight || document.documentElement.clientHeight
-	}
+  /* Public */
+  /* http://imakewebthings.com/waypoints/api/viewport-height */
+  Waypoint.viewportHeight = function() {
+    return window.innerHeight || document.documentElement.clientHeight
+  }
 
-	/* Public */
-	/* http://imakewebthings.com/waypoints/api/viewport-width */
-	Waypoint.viewportWidth = function() {
-		return document.documentElement.clientWidth
-	}
+  /* Public */
+  /* http://imakewebthings.com/waypoints/api/viewport-width */
+  Waypoint.viewportWidth = function() {
+    return document.documentElement.clientWidth
+  }
 
-	Waypoint.adapters = []
+  Waypoint.adapters = []
 
-	Waypoint.defaults = {
-		context: window,
-		continuous: true,
-		enabled: true,
-		group: 'default',
-		horizontal: false,
-		offset: 0
-	}
+  Waypoint.defaults = {
+    context: window,
+    continuous: true,
+    enabled: true,
+    group: 'default',
+    horizontal: false,
+    offset: 0
+  }
 
-	Waypoint.offsetAliases = {
-		'bottom-in-view': function() {
-			return this.context.innerHeight() - this.adapter.outerHeight()
-		},
-		'right-in-view': function() {
-			return this.context.innerWidth() - this.adapter.outerWidth()
-		}
-	}
+  Waypoint.offsetAliases = {
+    'bottom-in-view': function() {
+      return this.context.innerHeight() - this.adapter.outerHeight()
+    },
+    'right-in-view': function() {
+      return this.context.innerWidth() - this.adapter.outerWidth()
+    }
+  }
 
-	window.Waypoint = Waypoint
+  window.Waypoint = Waypoint
 }())
 ;(function() {
-	'use strict'
+  'use strict'
 
-	function requestAnimationFrameShim(callback) {
-		window.setTimeout(callback, 1000 / 60)
-	}
+  function requestAnimationFrameShim(callback) {
+    window.setTimeout(callback, 1000 / 60)
+  }
 
-	var keyCounter = 0
-	var contexts = {}
-	var Waypoint = window.Waypoint
-	var oldWindowLoad = window.onload
+  var keyCounter = 0
+  var contexts = {}
+  var Waypoint = window.Waypoint
+  var oldWindowLoad = window.onload
 
-	/* http://imakewebthings.com/waypoints/api/context */
-	function Context(element) {
-		this.element = element
-		this.Adapter = Waypoint.Adapter
-		this.adapter = new this.Adapter(element)
-		this.key = 'waypoint-context-' + keyCounter
-		this.didScroll = false
-		this.didResize = false
-		this.oldScroll = {
-			x: this.adapter.scrollLeft(),
-			y: this.adapter.scrollTop()
-		}
-		this.waypoints = {
-			vertical: {},
-			horizontal: {}
-		}
+  /* http://imakewebthings.com/waypoints/api/context */
+  function Context(element) {
+    this.element = element
+    this.Adapter = Waypoint.Adapter
+    this.adapter = new this.Adapter(element)
+    this.key = 'waypoint-context-' + keyCounter
+    this.didScroll = false
+    this.didResize = false
+    this.oldScroll = {
+      x: this.adapter.scrollLeft(),
+      y: this.adapter.scrollTop()
+    }
+    this.waypoints = {
+      vertical: {},
+      horizontal: {}
+    }
 
-		element.waypointContextKey = this.key
-		contexts[element.waypointContextKey] = this
-		keyCounter += 1
-		if (!Waypoint.windowContext) {
-			Waypoint.windowContext = true
-			Waypoint.windowContext = new Context(window)
-		}
+    element.waypointContextKey = this.key
+    contexts[element.waypointContextKey] = this
+    keyCounter += 1
+    if (!Waypoint.windowContext) {
+      Waypoint.windowContext = true
+      Waypoint.windowContext = new Context(window)
+    }
 
-		this.createThrottledScrollHandler()
-		this.createThrottledResizeHandler()
-	}
+    this.createThrottledScrollHandler()
+    this.createThrottledResizeHandler()
+  }
 
-	/* Private */
-	Context.prototype.add = function(waypoint) {
-		var axis = waypoint.options.horizontal ? 'horizontal' : 'vertical'
-		this.waypoints[axis][waypoint.key] = waypoint
-		this.refresh()
-	}
+  /* Private */
+  Context.prototype.add = function(waypoint) {
+    var axis = waypoint.options.horizontal ? 'horizontal' : 'vertical'
+    this.waypoints[axis][waypoint.key] = waypoint
+    this.refresh()
+  }
 
-	/* Private */
-	Context.prototype.checkEmpty = function() {
-		var horizontalEmpty = this.Adapter.isEmptyObject(this.waypoints.horizontal)
-		var verticalEmpty = this.Adapter.isEmptyObject(this.waypoints.vertical)
-		var isWindow = this.element == this.element.window
-		if (horizontalEmpty && verticalEmpty && !isWindow) {
-			this.adapter.off('.waypoints')
-			delete contexts[this.key]
-		}
-	}
+  /* Private */
+  Context.prototype.checkEmpty = function() {
+    var horizontalEmpty = this.Adapter.isEmptyObject(this.waypoints.horizontal)
+    var verticalEmpty = this.Adapter.isEmptyObject(this.waypoints.vertical)
+    var isWindow = this.element == this.element.window
+    if (horizontalEmpty && verticalEmpty && !isWindow) {
+      this.adapter.off('.waypoints')
+      delete contexts[this.key]
+    }
+  }
 
-	/* Private */
-	Context.prototype.createThrottledResizeHandler = function() {
-		var self = this
+  /* Private */
+  Context.prototype.createThrottledResizeHandler = function() {
+    var self = this
 
-		function resizeHandler() {
-			self.handleResize()
-			self.didResize = false
-		}
+    function resizeHandler() {
+      self.handleResize()
+      self.didResize = false
+    }
 
-		this.adapter.on('resize.waypoints', function() {
-			if (!self.didResize) {
-				self.didResize = true
-				Waypoint.requestAnimationFrame(resizeHandler)
-			}
-		})
-	}
+    this.adapter.on('resize.waypoints', function() {
+      if (!self.didResize) {
+        self.didResize = true
+        Waypoint.requestAnimationFrame(resizeHandler)
+      }
+    })
+  }
 
-	/* Private */
-	Context.prototype.createThrottledScrollHandler = function() {
-		var self = this
-		function scrollHandler() {
-			self.handleScroll()
-			self.didScroll = false
-		}
+  /* Private */
+  Context.prototype.createThrottledScrollHandler = function() {
+    var self = this
+    function scrollHandler() {
+      self.handleScroll()
+      self.didScroll = false
+    }
 
-		this.adapter.on('scroll.waypoints', function() {
-			if (!self.didScroll || Waypoint.isTouch) {
-				self.didScroll = true
-				Waypoint.requestAnimationFrame(scrollHandler)
-			}
-		})
-	}
+    this.adapter.on('scroll.waypoints', function() {
+      if (!self.didScroll || Waypoint.isTouch) {
+        self.didScroll = true
+        Waypoint.requestAnimationFrame(scrollHandler)
+      }
+    })
+  }
 
-	/* Private */
-	Context.prototype.handleResize = function() {
-		Waypoint.Context.refreshAll()
-	}
+  /* Private */
+  Context.prototype.handleResize = function() {
+    Waypoint.Context.refreshAll()
+  }
 
-	/* Private */
-	Context.prototype.handleScroll = function() {
-		var triggeredGroups = {}
-		var axes = {
-			horizontal: {
-				newScroll: this.adapter.scrollLeft(),
-				oldScroll: this.oldScroll.x,
-				forward: 'right',
-				backward: 'left'
-			},
-			vertical: {
-				newScroll: this.adapter.scrollTop(),
-				oldScroll: this.oldScroll.y,
-				forward: 'down',
-				backward: 'up'
-			}
-		}
+  /* Private */
+  Context.prototype.handleScroll = function() {
+    var triggeredGroups = {}
+    var axes = {
+      horizontal: {
+        newScroll: this.adapter.scrollLeft(),
+        oldScroll: this.oldScroll.x,
+        forward: 'right',
+        backward: 'left'
+      },
+      vertical: {
+        newScroll: this.adapter.scrollTop(),
+        oldScroll: this.oldScroll.y,
+        forward: 'down',
+        backward: 'up'
+      }
+    }
 
-		for (var axisKey in axes) {
-			var axis = axes[axisKey]
-			var isForward = axis.newScroll > axis.oldScroll
-			var direction = isForward ? axis.forward : axis.backward
+    for (var axisKey in axes) {
+      var axis = axes[axisKey]
+      var isForward = axis.newScroll > axis.oldScroll
+      var direction = isForward ? axis.forward : axis.backward
 
-			for (var waypointKey in this.waypoints[axisKey]) {
-				var waypoint = this.waypoints[axisKey][waypointKey]
-				if (waypoint.triggerPoint === null) {
-					continue
-				}
-				var wasBeforeTriggerPoint = axis.oldScroll < waypoint.triggerPoint
-				var nowAfterTriggerPoint = axis.newScroll >= waypoint.triggerPoint
-				var crossedForward = wasBeforeTriggerPoint && nowAfterTriggerPoint
-				var crossedBackward = !wasBeforeTriggerPoint && !nowAfterTriggerPoint
-				if (crossedForward || crossedBackward) {
-					waypoint.queueTrigger(direction)
-					triggeredGroups[waypoint.group.id] = waypoint.group
-				}
-			}
-		}
+      for (var waypointKey in this.waypoints[axisKey]) {
+        var waypoint = this.waypoints[axisKey][waypointKey]
+        if (waypoint.triggerPoint === null) {
+          continue
+        }
+        var wasBeforeTriggerPoint = axis.oldScroll < waypoint.triggerPoint
+        var nowAfterTriggerPoint = axis.newScroll >= waypoint.triggerPoint
+        var crossedForward = wasBeforeTriggerPoint && nowAfterTriggerPoint
+        var crossedBackward = !wasBeforeTriggerPoint && !nowAfterTriggerPoint
+        if (crossedForward || crossedBackward) {
+          waypoint.queueTrigger(direction)
+          triggeredGroups[waypoint.group.id] = waypoint.group
+        }
+      }
+    }
 
-		for (var groupKey in triggeredGroups) {
-			triggeredGroups[groupKey].flushTriggers()
-		}
+    for (var groupKey in triggeredGroups) {
+      triggeredGroups[groupKey].flushTriggers()
+    }
 
-		this.oldScroll = {
-			x: axes.horizontal.newScroll,
-			y: axes.vertical.newScroll
-		}
-	}
+    this.oldScroll = {
+      x: axes.horizontal.newScroll,
+      y: axes.vertical.newScroll
+    }
+  }
 
-	/* Private */
-	Context.prototype.innerHeight = function() {
-		/*eslint-disable eqeqeq */
-		if (this.element == this.element.window) {
-			return Waypoint.viewportHeight()
-		}
-		/*eslint-enable eqeqeq */
-		return this.adapter.innerHeight()
-	}
+  /* Private */
+  Context.prototype.innerHeight = function() {
+    /*eslint-disable eqeqeq */
+    if (this.element == this.element.window) {
+      return Waypoint.viewportHeight()
+    }
+    /*eslint-enable eqeqeq */
+    return this.adapter.innerHeight()
+  }
 
-	/* Private */
-	Context.prototype.remove = function(waypoint) {
-		delete this.waypoints[waypoint.axis][waypoint.key]
-		this.checkEmpty()
-	}
+  /* Private */
+  Context.prototype.remove = function(waypoint) {
+    delete this.waypoints[waypoint.axis][waypoint.key]
+    this.checkEmpty()
+  }
 
-	/* Private */
-	Context.prototype.innerWidth = function() {
-		/*eslint-disable eqeqeq */
-		if (this.element == this.element.window) {
-			return Waypoint.viewportWidth()
-		}
-		/*eslint-enable eqeqeq */
-		return this.adapter.innerWidth()
-	}
+  /* Private */
+  Context.prototype.innerWidth = function() {
+    /*eslint-disable eqeqeq */
+    if (this.element == this.element.window) {
+      return Waypoint.viewportWidth()
+    }
+    /*eslint-enable eqeqeq */
+    return this.adapter.innerWidth()
+  }
 
-	/* Public */
-	/* http://imakewebthings.com/waypoints/api/context-destroy */
-	Context.prototype.destroy = function() {
-		var allWaypoints = []
-		for (var axis in this.waypoints) {
-			for (var waypointKey in this.waypoints[axis]) {
-				allWaypoints.push(this.waypoints[axis][waypointKey])
-			}
-		}
-		for (var i = 0, end = allWaypoints.length; i < end; i++) {
-			allWaypoints[i].destroy()
-		}
-	}
+  /* Public */
+  /* http://imakewebthings.com/waypoints/api/context-destroy */
+  Context.prototype.destroy = function() {
+    var allWaypoints = []
+    for (var axis in this.waypoints) {
+      for (var waypointKey in this.waypoints[axis]) {
+        allWaypoints.push(this.waypoints[axis][waypointKey])
+      }
+    }
+    for (var i = 0, end = allWaypoints.length; i < end; i++) {
+      allWaypoints[i].destroy()
+    }
+  }
 
-	/* Public */
-	/* http://imakewebthings.com/waypoints/api/context-refresh */
-	Context.prototype.refresh = function() {
-		/*eslint-disable eqeqeq */
-		var isWindow = this.element == this.element.window
-		/*eslint-enable eqeqeq */
-		var contextOffset = isWindow ? undefined : this.adapter.offset()
-		var triggeredGroups = {}
-		var axes
+  /* Public */
+  /* http://imakewebthings.com/waypoints/api/context-refresh */
+  Context.prototype.refresh = function() {
+    /*eslint-disable eqeqeq */
+    var isWindow = this.element == this.element.window
+    /*eslint-enable eqeqeq */
+    var contextOffset = isWindow ? undefined : this.adapter.offset()
+    var triggeredGroups = {}
+    var axes
 
-		this.handleScroll()
-		axes = {
-			horizontal: {
-				contextOffset: isWindow ? 0 : contextOffset.left,
-				contextScroll: isWindow ? 0 : this.oldScroll.x,
-				contextDimension: this.innerWidth(),
-				oldScroll: this.oldScroll.x,
-				forward: 'right',
-				backward: 'left',
-				offsetProp: 'left'
-			},
-			vertical: {
-				contextOffset: isWindow ? 0 : contextOffset.top,
-				contextScroll: isWindow ? 0 : this.oldScroll.y,
-				contextDimension: this.innerHeight(),
-				oldScroll: this.oldScroll.y,
-				forward: 'down',
-				backward: 'up',
-				offsetProp: 'top'
-			}
-		}
+    this.handleScroll()
+    axes = {
+      horizontal: {
+        contextOffset: isWindow ? 0 : contextOffset.left,
+        contextScroll: isWindow ? 0 : this.oldScroll.x,
+        contextDimension: this.innerWidth(),
+        oldScroll: this.oldScroll.x,
+        forward: 'right',
+        backward: 'left',
+        offsetProp: 'left'
+      },
+      vertical: {
+        contextOffset: isWindow ? 0 : contextOffset.top,
+        contextScroll: isWindow ? 0 : this.oldScroll.y,
+        contextDimension: this.innerHeight(),
+        oldScroll: this.oldScroll.y,
+        forward: 'down',
+        backward: 'up',
+        offsetProp: 'top'
+      }
+    }
 
-		for (var axisKey in axes) {
-			var axis = axes[axisKey]
-			for (var waypointKey in this.waypoints[axisKey]) {
-				var waypoint = this.waypoints[axisKey][waypointKey]
-				var adjustment = waypoint.options.offset
-				var oldTriggerPoint = waypoint.triggerPoint
-				var elementOffset = 0
-				var freshWaypoint = oldTriggerPoint == null
-				var contextModifier, wasBeforeScroll, nowAfterScroll
-				var triggeredBackward, triggeredForward
+    for (var axisKey in axes) {
+      var axis = axes[axisKey]
+      for (var waypointKey in this.waypoints[axisKey]) {
+        var waypoint = this.waypoints[axisKey][waypointKey]
+        var adjustment = waypoint.options.offset
+        var oldTriggerPoint = waypoint.triggerPoint
+        var elementOffset = 0
+        var freshWaypoint = oldTriggerPoint == null
+        var contextModifier, wasBeforeScroll, nowAfterScroll
+        var triggeredBackward, triggeredForward
 
-				if (waypoint.element !== waypoint.element.window) {
-					elementOffset = waypoint.adapter.offset()[axis.offsetProp]
-				}
+        if (waypoint.element !== waypoint.element.window) {
+          elementOffset = waypoint.adapter.offset()[axis.offsetProp]
+        }
 
-				if (typeof adjustment === 'function') {
-					adjustment = adjustment.apply(waypoint)
-				}
-				else if (typeof adjustment === 'string') {
-					adjustment = parseFloat(adjustment)
-					if (waypoint.options.offset.indexOf('%') > - 1) {
-						adjustment = Math.ceil(axis.contextDimension * adjustment / 100)
-					}
-				}
+        if (typeof adjustment === 'function') {
+          adjustment = adjustment.apply(waypoint)
+        }
+        else if (typeof adjustment === 'string') {
+          adjustment = parseFloat(adjustment)
+          if (waypoint.options.offset.indexOf('%') > - 1) {
+            adjustment = Math.ceil(axis.contextDimension * adjustment / 100)
+          }
+        }
 
-				contextModifier = axis.contextScroll - axis.contextOffset
-				waypoint.triggerPoint = Math.floor(elementOffset + contextModifier - adjustment)
-				wasBeforeScroll = oldTriggerPoint < axis.oldScroll
-				nowAfterScroll = waypoint.triggerPoint >= axis.oldScroll
-				triggeredBackward = wasBeforeScroll && nowAfterScroll
-				triggeredForward = !wasBeforeScroll && !nowAfterScroll
+        contextModifier = axis.contextScroll - axis.contextOffset
+        waypoint.triggerPoint = Math.floor(elementOffset + contextModifier - adjustment)
+        wasBeforeScroll = oldTriggerPoint < axis.oldScroll
+        nowAfterScroll = waypoint.triggerPoint >= axis.oldScroll
+        triggeredBackward = wasBeforeScroll && nowAfterScroll
+        triggeredForward = !wasBeforeScroll && !nowAfterScroll
 
-				if (!freshWaypoint && triggeredBackward) {
-					waypoint.queueTrigger(axis.backward)
-					triggeredGroups[waypoint.group.id] = waypoint.group
-				}
-				else if (!freshWaypoint && triggeredForward) {
-					waypoint.queueTrigger(axis.forward)
-					triggeredGroups[waypoint.group.id] = waypoint.group
-				}
-				else if (freshWaypoint && axis.oldScroll >= waypoint.triggerPoint) {
-					waypoint.queueTrigger(axis.forward)
-					triggeredGroups[waypoint.group.id] = waypoint.group
-				}
-			}
-		}
+        if (!freshWaypoint && triggeredBackward) {
+          waypoint.queueTrigger(axis.backward)
+          triggeredGroups[waypoint.group.id] = waypoint.group
+        }
+        else if (!freshWaypoint && triggeredForward) {
+          waypoint.queueTrigger(axis.forward)
+          triggeredGroups[waypoint.group.id] = waypoint.group
+        }
+        else if (freshWaypoint && axis.oldScroll >= waypoint.triggerPoint) {
+          waypoint.queueTrigger(axis.forward)
+          triggeredGroups[waypoint.group.id] = waypoint.group
+        }
+      }
+    }
 
-		Waypoint.requestAnimationFrame(function() {
-			for (var groupKey in triggeredGroups) {
-				triggeredGroups[groupKey].flushTriggers()
-			}
-		})
+    Waypoint.requestAnimationFrame(function() {
+      for (var groupKey in triggeredGroups) {
+        triggeredGroups[groupKey].flushTriggers()
+      }
+    })
 
-		return this
-	}
+    return this
+  }
 
-	/* Private */
-	Context.findOrCreateByElement = function(element) {
-		return Context.findByElement(element) || new Context(element)
-	}
+  /* Private */
+  Context.findOrCreateByElement = function(element) {
+    return Context.findByElement(element) || new Context(element)
+  }
 
-	/* Private */
-	Context.refreshAll = function() {
-		for (var contextId in contexts) {
-			contexts[contextId].refresh()
-		}
-	}
+  /* Private */
+  Context.refreshAll = function() {
+    for (var contextId in contexts) {
+      contexts[contextId].refresh()
+    }
+  }
 
-	/* Public */
-	/* http://imakewebthings.com/waypoints/api/context-find-by-element */
-	Context.findByElement = function(element) {
-		return contexts[element.waypointContextKey]
-	}
+  /* Public */
+  /* http://imakewebthings.com/waypoints/api/context-find-by-element */
+  Context.findByElement = function(element) {
+    return contexts[element.waypointContextKey]
+  }
 
-	window.onload = function() {
-		if (oldWindowLoad) {
-			oldWindowLoad()
-		}
-		Context.refreshAll()
-	}
+  window.onload = function() {
+    if (oldWindowLoad) {
+      oldWindowLoad()
+    }
+    Context.refreshAll()
+  }
 
 
-	Waypoint.requestAnimationFrame = function(callback) {
-		var requestFn = window.requestAnimationFrame ||
-			window.mozRequestAnimationFrame ||
-			window.webkitRequestAnimationFrame ||
-			requestAnimationFrameShim
-		requestFn.call(window, callback)
-	}
-	Waypoint.Context = Context
+  Waypoint.requestAnimationFrame = function(callback) {
+    var requestFn = window.requestAnimationFrame ||
+      window.mozRequestAnimationFrame ||
+      window.webkitRequestAnimationFrame ||
+      requestAnimationFrameShim
+    requestFn.call(window, callback)
+  }
+  Waypoint.Context = Context
 }())
 ;(function() {
-	'use strict'
+  'use strict'
 
-	function byTriggerPoint(a, b) {
-		return a.triggerPoint - b.triggerPoint
-	}
+  function byTriggerPoint(a, b) {
+    return a.triggerPoint - b.triggerPoint
+  }
 
-	function byReverseTriggerPoint(a, b) {
-		return b.triggerPoint - a.triggerPoint
-	}
+  function byReverseTriggerPoint(a, b) {
+    return b.triggerPoint - a.triggerPoint
+  }
 
-	var groups = {
-		vertical: {},
-		horizontal: {}
-	}
-	var Waypoint = window.Waypoint
+  var groups = {
+    vertical: {},
+    horizontal: {}
+  }
+  var Waypoint = window.Waypoint
 
-	/* http://imakewebthings.com/waypoints/api/group */
-	function Group(options) {
-		this.name = options.name
-		this.axis = options.axis
-		this.id = this.name + '-' + this.axis
-		this.waypoints = []
-		this.clearTriggerQueues()
-		groups[this.axis][this.name] = this
-	}
+  /* http://imakewebthings.com/waypoints/api/group */
+  function Group(options) {
+    this.name = options.name
+    this.axis = options.axis
+    this.id = this.name + '-' + this.axis
+    this.waypoints = []
+    this.clearTriggerQueues()
+    groups[this.axis][this.name] = this
+  }
 
-	/* Private */
-	Group.prototype.add = function(waypoint) {
-		this.waypoints.push(waypoint)
-	}
+  /* Private */
+  Group.prototype.add = function(waypoint) {
+    this.waypoints.push(waypoint)
+  }
 
-	/* Private */
-	Group.prototype.clearTriggerQueues = function() {
-		this.triggerQueues = {
-			up: [],
-			down: [],
-			left: [],
-			right: []
-		}
-	}
+  /* Private */
+  Group.prototype.clearTriggerQueues = function() {
+    this.triggerQueues = {
+      up: [],
+      down: [],
+      left: [],
+      right: []
+    }
+  }
 
-	/* Private */
-	Group.prototype.flushTriggers = function() {
-		for (var direction in this.triggerQueues) {
-			var waypoints = this.triggerQueues[direction]
-			var reverse = direction === 'up' || direction === 'left'
-			waypoints.sort(reverse ? byReverseTriggerPoint : byTriggerPoint)
-			for (var i = 0, end = waypoints.length; i < end; i += 1) {
-				var waypoint = waypoints[i]
-				if (waypoint.options.continuous || i === waypoints.length - 1) {
-					waypoint.trigger([direction])
-				}
-			}
-		}
-		this.clearTriggerQueues()
-	}
+  /* Private */
+  Group.prototype.flushTriggers = function() {
+    for (var direction in this.triggerQueues) {
+      var waypoints = this.triggerQueues[direction]
+      var reverse = direction === 'up' || direction === 'left'
+      waypoints.sort(reverse ? byReverseTriggerPoint : byTriggerPoint)
+      for (var i = 0, end = waypoints.length; i < end; i += 1) {
+        var waypoint = waypoints[i]
+        if (waypoint.options.continuous || i === waypoints.length - 1) {
+          waypoint.trigger([direction])
+        }
+      }
+    }
+    this.clearTriggerQueues()
+  }
 
-	/* Private */
-	Group.prototype.next = function(waypoint) {
-		this.waypoints.sort(byTriggerPoint)
-		var index = Waypoint.Adapter.inArray(waypoint, this.waypoints)
-		var isLast = index === this.waypoints.length - 1
-		return isLast ? null : this.waypoints[index + 1]
-	}
+  /* Private */
+  Group.prototype.next = function(waypoint) {
+    this.waypoints.sort(byTriggerPoint)
+    var index = Waypoint.Adapter.inArray(waypoint, this.waypoints)
+    var isLast = index === this.waypoints.length - 1
+    return isLast ? null : this.waypoints[index + 1]
+  }
 
-	/* Private */
-	Group.prototype.previous = function(waypoint) {
-		this.waypoints.sort(byTriggerPoint)
-		var index = Waypoint.Adapter.inArray(waypoint, this.waypoints)
-		return index ? this.waypoints[index - 1] : null
-	}
+  /* Private */
+  Group.prototype.previous = function(waypoint) {
+    this.waypoints.sort(byTriggerPoint)
+    var index = Waypoint.Adapter.inArray(waypoint, this.waypoints)
+    return index ? this.waypoints[index - 1] : null
+  }
 
-	/* Private */
-	Group.prototype.queueTrigger = function(waypoint, direction) {
-		this.triggerQueues[direction].push(waypoint)
-	}
+  /* Private */
+  Group.prototype.queueTrigger = function(waypoint, direction) {
+    this.triggerQueues[direction].push(waypoint)
+  }
 
-	/* Private */
-	Group.prototype.remove = function(waypoint) {
-		var index = Waypoint.Adapter.inArray(waypoint, this.waypoints)
-		if (index > -1) {
-			this.waypoints.splice(index, 1)
-		}
-	}
+  /* Private */
+  Group.prototype.remove = function(waypoint) {
+    var index = Waypoint.Adapter.inArray(waypoint, this.waypoints)
+    if (index > -1) {
+      this.waypoints.splice(index, 1)
+    }
+  }
 
-	/* Public */
-	/* http://imakewebthings.com/waypoints/api/first */
-	Group.prototype.first = function() {
-		return this.waypoints[0]
-	}
+  /* Public */
+  /* http://imakewebthings.com/waypoints/api/first */
+  Group.prototype.first = function() {
+    return this.waypoints[0]
+  }
 
-	/* Public */
-	/* http://imakewebthings.com/waypoints/api/last */
-	Group.prototype.last = function() {
-		return this.waypoints[this.waypoints.length - 1]
-	}
+  /* Public */
+  /* http://imakewebthings.com/waypoints/api/last */
+  Group.prototype.last = function() {
+    return this.waypoints[this.waypoints.length - 1]
+  }
 
-	/* Private */
-	Group.findOrCreate = function(options) {
-		return groups[options.axis][options.name] || new Group(options)
-	}
+  /* Private */
+  Group.findOrCreate = function(options) {
+    return groups[options.axis][options.name] || new Group(options)
+  }
 
-	Waypoint.Group = Group
+  Waypoint.Group = Group
 }())
 ;(function() {
-	'use strict'
+  'use strict'
 
-	var $ = window.jQuery
-	var Waypoint = window.Waypoint
+  var $ = window.jQuery
+  var Waypoint = window.Waypoint
 
-	function JQueryAdapter(element) {
-		this.$element = $(element)
-	}
+  function JQueryAdapter(element) {
+    this.$element = $(element)
+  }
 
-	$.each([
-		'innerHeight',
-		'innerWidth',
-		'off',
-		'offset',
-		'on',
-		'outerHeight',
-		'outerWidth',
-		'scrollLeft',
-		'scrollTop'
-	], function(i, method) {
-		JQueryAdapter.prototype[method] = function() {
-			var args = Array.prototype.slice.call(arguments)
-			return this.$element[method].apply(this.$element, args)
-		}
-	})
+  $.each([
+    'innerHeight',
+    'innerWidth',
+    'off',
+    'offset',
+    'on',
+    'outerHeight',
+    'outerWidth',
+    'scrollLeft',
+    'scrollTop'
+  ], function(i, method) {
+    JQueryAdapter.prototype[method] = function() {
+      var args = Array.prototype.slice.call(arguments)
+      return this.$element[method].apply(this.$element, args)
+    }
+  })
 
-	$.each([
-		'extend',
-		'inArray',
-		'isEmptyObject'
-	], function(i, method) {
-		JQueryAdapter[method] = $[method]
-	})
+  $.each([
+    'extend',
+    'inArray',
+    'isEmptyObject'
+  ], function(i, method) {
+    JQueryAdapter[method] = $[method]
+  })
 
-	Waypoint.adapters.push({
-		name: 'jquery',
-		Adapter: JQueryAdapter
-	})
-	Waypoint.Adapter = JQueryAdapter
+  Waypoint.adapters.push({
+    name: 'jquery',
+    Adapter: JQueryAdapter
+  })
+  Waypoint.Adapter = JQueryAdapter
 }())
 ;(function() {
-	'use strict'
+  'use strict'
 
-	var Waypoint = window.Waypoint
+  var Waypoint = window.Waypoint
 
-	function createExtension(framework) {
-		return function() {
-			var waypoints = []
-			var overrides = arguments[0]
+  function createExtension(framework) {
+    return function() {
+      var waypoints = []
+      var overrides = arguments[0]
 
-			if (framework.isFunction(arguments[0])) {
-				overrides = framework.extend({}, arguments[1])
-				overrides.handler = arguments[0]
-			}
+      if (framework.isFunction(arguments[0])) {
+        overrides = framework.extend({}, arguments[1])
+        overrides.handler = arguments[0]
+      }
 
-			this.each(function() {
-				var options = framework.extend({}, overrides, {
-					element: this
-				})
-				if (typeof options.context === 'string') {
-					options.context = framework(this).closest(options.context)[0]
-				}
-				waypoints.push(new Waypoint(options))
-			})
+      this.each(function() {
+        var options = framework.extend({}, overrides, {
+          element: this
+        })
+        if (typeof options.context === 'string') {
+          options.context = framework(this).closest(options.context)[0]
+        }
+        waypoints.push(new Waypoint(options))
+      })
 
-			return waypoints
-		}
-	}
+      return waypoints
+    }
+  }
 
-	if (window.jQuery) {
-		window.jQuery.fn.waypoint = createExtension(window.jQuery)
-	}
-	if (window.Zepto) {
-		window.Zepto.fn.waypoint = createExtension(window.Zepto)
-	}
+  if (window.jQuery) {
+    window.jQuery.fn.waypoint = createExtension(window.jQuery)
+  }
+  if (window.Zepto) {
+    window.Zepto.fn.waypoint = createExtension(window.Zepto)
+  }
 }())
 ;
 
@@ -5303,117 +5304,117 @@ Licensed under the MIT license.
 https://github.com/imakewebthings/waypoints/blob/master/licenses.txt
 */
 (function() {
-	'use strict'
+  'use strict'
 
-	function noop() {}
+  function noop() {}
 
-	var Waypoint = window.Waypoint
+  var Waypoint = window.Waypoint
 
-	/* http://imakewebthings.com/waypoints/shortcuts/inview */
-	function Inview(options) {
-		this.options = Waypoint.Adapter.extend({}, Inview.defaults, options)
-		this.axis = this.options.horizontal ? 'horizontal' : 'vertical'
-		this.waypoints = []
-		this.element = this.options.element
-		this.createWaypoints()
-	}
+  /* http://imakewebthings.com/waypoints/shortcuts/inview */
+  function Inview(options) {
+    this.options = Waypoint.Adapter.extend({}, Inview.defaults, options)
+    this.axis = this.options.horizontal ? 'horizontal' : 'vertical'
+    this.waypoints = []
+    this.element = this.options.element
+    this.createWaypoints()
+  }
 
-	/* Private */
-	Inview.prototype.createWaypoints = function() {
-		var configs = {
-			vertical: [{
-				down: 'enter',
-				up: 'exited',
-				offset: '100%'
-			}, {
-				down: 'entered',
-				up: 'exit',
-				offset: 'bottom-in-view'
-			}, {
-				down: 'exit',
-				up: 'entered',
-				offset: 0
-			}, {
-				down: 'exited',
-				up: 'enter',
-				offset: function() {
-					return -this.adapter.outerHeight()
-				}
-			}],
-			horizontal: [{
-				right: 'enter',
-				left: 'exited',
-				offset: '100%'
-			}, {
-				right: 'entered',
-				left: 'exit',
-				offset: 'right-in-view'
-			}, {
-				right: 'exit',
-				left: 'entered',
-				offset: 0
-			}, {
-				right: 'exited',
-				left: 'enter',
-				offset: function() {
-					return -this.adapter.outerWidth()
-				}
-			}]
-		}
+  /* Private */
+  Inview.prototype.createWaypoints = function() {
+    var configs = {
+      vertical: [{
+        down: 'enter',
+        up: 'exited',
+        offset: '100%'
+      }, {
+        down: 'entered',
+        up: 'exit',
+        offset: 'bottom-in-view'
+      }, {
+        down: 'exit',
+        up: 'entered',
+        offset: 0
+      }, {
+        down: 'exited',
+        up: 'enter',
+        offset: function() {
+          return -this.adapter.outerHeight()
+        }
+      }],
+      horizontal: [{
+        right: 'enter',
+        left: 'exited',
+        offset: '100%'
+      }, {
+        right: 'entered',
+        left: 'exit',
+        offset: 'right-in-view'
+      }, {
+        right: 'exit',
+        left: 'entered',
+        offset: 0
+      }, {
+        right: 'exited',
+        left: 'enter',
+        offset: function() {
+          return -this.adapter.outerWidth()
+        }
+      }]
+    }
 
-		for (var i = 0, end = configs[this.axis].length; i < end; i++) {
-			var config = configs[this.axis][i]
-			this.createWaypoint(config)
-		}
-	}
+    for (var i = 0, end = configs[this.axis].length; i < end; i++) {
+      var config = configs[this.axis][i]
+      this.createWaypoint(config)
+    }
+  }
 
-	/* Private */
-	Inview.prototype.createWaypoint = function(config) {
-		var self = this
-		this.waypoints.push(new Waypoint({
-			context: this.options.context,
-			element: this.options.element,
-			enabled: this.options.enabled,
-			handler: (function(config) {
-				return function(direction) {
-					self.options[config[direction]].call(self, direction)
-				}
-			}(config)),
-			offset: config.offset,
-			horizontal: this.options.horizontal
-		}))
-	}
+  /* Private */
+  Inview.prototype.createWaypoint = function(config) {
+    var self = this
+    this.waypoints.push(new Waypoint({
+      context: this.options.context,
+      element: this.options.element,
+      enabled: this.options.enabled,
+      handler: (function(config) {
+        return function(direction) {
+          self.options[config[direction]].call(self, direction)
+        }
+      }(config)),
+      offset: config.offset,
+      horizontal: this.options.horizontal
+    }))
+  }
 
-	/* Public */
-	Inview.prototype.destroy = function() {
-		for (var i = 0, end = this.waypoints.length; i < end; i++) {
-			this.waypoints[i].destroy()
-		}
-		this.waypoints = []
-	}
+  /* Public */
+  Inview.prototype.destroy = function() {
+    for (var i = 0, end = this.waypoints.length; i < end; i++) {
+      this.waypoints[i].destroy()
+    }
+    this.waypoints = []
+  }
 
-	Inview.prototype.disable = function() {
-		for (var i = 0, end = this.waypoints.length; i < end; i++) {
-			this.waypoints[i].disable()
-		}
-	}
+  Inview.prototype.disable = function() {
+    for (var i = 0, end = this.waypoints.length; i < end; i++) {
+      this.waypoints[i].disable()
+    }
+  }
 
-	Inview.prototype.enable = function() {
-		for (var i = 0, end = this.waypoints.length; i < end; i++) {
-			this.waypoints[i].enable()
-		}
-	}
+  Inview.prototype.enable = function() {
+    for (var i = 0, end = this.waypoints.length; i < end; i++) {
+      this.waypoints[i].enable()
+    }
+  }
 
-	Inview.defaults = {
-		context: window,
-		enabled: true,
-		enter: noop,
-		entered: noop,
-		exit: noop,
-		exited: noop
-	}
+  Inview.defaults = {
+    context: window,
+    enabled: true,
+    enter: noop,
+    entered: noop,
+    exit: noop,
+    exited: noop
+  }
 
-	Waypoint.Inview = Inview
+  Waypoint.Inview = Inview
 }())
 ;
 
@@ -5451,7 +5452,7 @@ https://github.com/imakewebthings/waypoints/blob/master/licenses.txt
 					if (lastMove) {
 						var deltaX = Math.abs(lastMove.x - thisMove.x),
 							deltaY = Math.abs(lastMove.y - thisMove.y);
-						if ((deltaX > 0 || deltaY > 0) && deltaX <= 2 && deltaY <= 2 && thisMove.timeStamp - lastMove.timeStamp <= 300) {
+	 					if ((deltaX > 0 || deltaY > 0) && deltaX <= 2 && deltaY <= 2 && thisMove.timeStamp - lastMove.timeStamp <= 300) {
 							mouse = true;
 							// if this is the first check after page load, check if we are not over some item by chance and call the mouseenter handler if yes
 							if (firstTime) {
@@ -5734,9 +5735,9 @@ https://github.com/imakewebthings/waypoints/blob/master/licenses.txt
 					val = compStyle && parseFloat(compStyle[height ? 'height' : 'width']);
 				if (val) {
 					val += parseFloat(compStyle[height ? 'paddingTop' : 'paddingLeft'])
-						+ parseFloat(compStyle[height ? 'paddingBottom' : 'paddingRight'])
-						+ parseInt(compStyle[height ? 'borderTopWidth' : 'borderLeftWidth'])
-						+ parseInt(compStyle[height ? 'borderBottomWidth' : 'borderRightWidth']);
+	 					+ parseFloat(compStyle[height ? 'paddingBottom' : 'paddingRight'])
+	 					+ parseInt(compStyle[height ? 'borderTopWidth' : 'borderLeftWidth'])
+	 					+ parseInt(compStyle[height ? 'borderBottomWidth' : 'borderRightWidth']);
 				} else {
 					val = height ? $elm[0].offsetHeight : $elm[0].offsetWidth;
 				}
@@ -6134,15 +6135,19 @@ https://github.com/imakewebthings/waypoints/blob/master/licenses.txt
 				// }
 				if ($sub.hasClass('mega-menu-inner')) {
 					$sub.css({ width: containerW});
-					if ($('body.hmenu-center-split').length > 0 && !$sub.closest('.navbar-cta').length ) {
-						leftPos = - ($sub.closest('.menu-primary-inner')[0].offsetLeft) + 'px';
+					if ( $('body.hmenu-center-double').length ) {
+						leftPos = '0px';
 					} else {
-						if ( $sub.closest('.navbar-cta').length && !$('body.hmenu').length && !$('body.hmenu-center').length ) {
-							leftPos = - ( parseFloat($sub.closest('.navbar-cta').offset().left) - parseFloat($sub.closest('.row-menu-inner').find('.logo-container').offset().left) ) + 'px';
-						} else if ($sub.closest('.row-menu-inner').find('.logo-container').length > 0 && !$('body.hmenu-center-split').length) {
-							leftPos = - (parseFloat($sub.closest('.row-menu-inner').find('.logo-container').css('paddingRight')) + ($sub.closest('.row-menu-inner').find('.logo-container').width())) + 'px';
+						if ( $('body.hmenu-center-split').length > 0 && !$sub.closest('.navbar-cta').length && ! $('body.hormenu-position-right').length ) {
+							leftPos = - ($sub.closest('.menu-primary-inner')[0].offsetLeft) + 'px';
 						} else {
-							leftPos = '0px';
+							if ( $sub.closest('.navbar-cta').length && !$('body.hmenu').length && !$('body.hmenu-center').length ) {
+								leftPos = - ( parseFloat($sub.closest('.navbar-cta').offset().left) - parseFloat($sub.closest('.row-menu-inner').find('.logo-container').offset().left) ) + 'px';
+							} else if ($sub.closest('.row-menu-inner').find('.logo-container').length > 0 && !$('body.hmenu-center-split').length) {
+								leftPos = - (parseFloat($sub.closest('.row-menu-inner').find('.logo-container').css('paddingRight')) + ($sub.closest('.row-menu-inner').find('.logo-container').width())) + 'px';
+							} else {
+								leftPos = '0px';
+							}
 						}
 					}
 				} else {
@@ -6251,17 +6256,17 @@ https://github.com/imakewebthings/waypoints/blob/master/licenses.txt
 						if (!IElt8) {
 							$sub.css({ width: ($sub.hasClass('mega-menu-inner')) ? $('.box-container').outerWidth() + 'px' : 'auto', minWidth: '', maxWidth: '' }).addClass('sm-nowrap');
 							if (this.opts.subMenusMinWidth) {
-								$sub.css('min-width', this.opts.subMenusMinWidth);
+							 	$sub.css('min-width', this.opts.subMenusMinWidth);
 							}
 							if (this.opts.subMenusMaxWidth) {
-								var noMaxWidth = this.getWidth($sub);
-								$sub.css('max-width', this.opts.subMenusMaxWidth);
+							 	var noMaxWidth = this.getWidth($sub);
+							 	$sub.css('max-width', this.opts.subMenusMaxWidth);
 								if (noMaxWidth > this.getWidth($sub)) {
 									$sub.removeClass('sm-nowrap').css('width', this.opts.subMenusMaxWidth);
 								}
 							}
 						// IE6,7
-						} else {
+ 						} else {
 							$sub.children().css('styleFloat', 'none');
 							if (IE6) {
 								$sub.width(this.opts.subMenusMinWidth ? this.opts.subMenusMinWidth : 1)
@@ -6269,13 +6274,13 @@ https://github.com/imakewebthings/waypoints/blob/master/licenses.txt
 							} else { // IE7
 								$sub.css({ width: ($sub.hasClass('mega-menu-inner')) ? $('.box-container').outerWidth() + 'px' : 'auto', minWidth: '', maxWidth: '' }).addClass('sm-nowrap');
 								if (this.opts.subMenusMinWidth) {
-									$sub.css('min-width', this.opts.subMenusMinWidth);
+							    $sub.css('min-width', this.opts.subMenusMinWidth);
 								}
 							}
 							if (this.opts.subMenusMaxWidth) {
 								var noMaxWidth = $sub.width();
 								if (IE6) {
-									var maxWidth = $sub.css({ width: this.opts.subMenusMaxWidth, overflowX: 'hidden', overflowY: 'hidden' }).width();
+							 		var maxWidth = $sub.css({ width: this.opts.subMenusMaxWidth, overflowX: 'hidden', overflowY: 'hidden' }).width();
 									if (noMaxWidth > maxWidth) {
 										$sub.css({ width: maxWidth, overflowX: 'visible', overflowY: 'visible' }).children().children('a').css('white-space', '');
 									} else {
@@ -6290,7 +6295,7 @@ https://github.com/imakewebthings/waypoints/blob/master/licenses.txt
 									}
 								}
 							} else {
-								$sub.width($sub.width());
+							 	$sub.width($sub.width());
 							}
 							$sub.children().css('styleFloat', 'left');
 						}
@@ -6413,7 +6418,7 @@ https://github.com/imakewebthings/waypoints/blob/master/licenses.txt
 					// we still need to resize the disable overlay if it's visible
 					if (this.$disableOverlay) {
 						var pos = this.$root.offset();
-						this.$disableOverlay.css({
+	 					this.$disableOverlay.css({
 							top: pos.top,
 							left: pos.left,
 							width: this.$root.outerWidth(),
@@ -6513,33 +6518,33 @@ https://github.com/imakewebthings/waypoints/blob/master/licenses.txt
  * to offer multiple easing options
  *
  * TERMS OF USE - jQuery Easing
- *
+ * 
  * Open source under the BSD License.
- *
+ * 
  * Copyright © 2008 George McGinley Smith
  * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without modification,
+ * 
+ * Redistribution and use in source and binary forms, with or without modification, 
  * are permitted provided that the following conditions are met:
- *
- * Redistributions of source code must retain the above copyright notice, this list of
+ * 
+ * Redistributions of source code must retain the above copyright notice, this list of 
  * conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright notice, this list
- * of conditions and the following disclaimer in the documentation and/or other materials
+ * Redistributions in binary form must reproduce the above copyright notice, this list 
+ * of conditions and the following disclaimer in the documentation and/or other materials 
  * provided with the distribution.
- *
- * Neither the name of the author nor the names of contributors may be used to endorse
+ * 
+ * Neither the name of the author nor the names of contributors may be used to endorse 
  * or promote products derived from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY 
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
  *  COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  *  EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
- *  GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
+ *  GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED 
  * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
- *  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- * OF THE POSSIBILITY OF SUCH DAMAGE.
+ *  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED 
+ * OF THE POSSIBILITY OF SUCH DAMAGE. 
  *
 */
 
@@ -6655,7 +6660,7 @@ jQuery.extend( jQuery.easing,
 		return c*((t=t/d-1)*t*((s+1)*t + s) + 1) + b;
 	},
 	easeInOutBack: function (x, t, b, c, d, s) {
-		if (s == undefined) s = 1.70158;
+		if (s == undefined) s = 1.70158; 
 		if ((t/=d/2) < 1) return c/2*(t*t*(((s*=(1.525))+1)*t - s)) + b;
 		return c/2*((t-=2)*t*(((s*=(1.525))+1)*t + s) + 2) + b;
 	},
@@ -6682,93 +6687,93 @@ jQuery.extend( jQuery.easing,
 /*
  *
  * TERMS OF USE - EASING EQUATIONS
- *
- * Open source under the BSD License.
- *
+ * 
+ * Open source under the BSD License. 
+ * 
  * Copyright © 2001 Robert Penner
  * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without modification,
+ * 
+ * Redistribution and use in source and binary forms, with or without modification, 
  * are permitted provided that the following conditions are met:
- *
- * Redistributions of source code must retain the above copyright notice, this list of
+ * 
+ * Redistributions of source code must retain the above copyright notice, this list of 
  * conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright notice, this list
- * of conditions and the following disclaimer in the documentation and/or other materials
+ * Redistributions in binary form must reproduce the above copyright notice, this list 
+ * of conditions and the following disclaimer in the documentation and/or other materials 
  * provided with the distribution.
- *
- * Neither the name of the author nor the names of contributors may be used to endorse
+ * 
+ * Neither the name of the author nor the names of contributors may be used to endorse 
  * or promote products derived from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY 
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
  *  COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  *  EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
- *  GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
+ *  GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED 
  * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
- *  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- * OF THE POSSIBILITY OF SUCH DAMAGE.
+ *  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED 
+ * OF THE POSSIBILITY OF SUCH DAMAGE. 
  *
  */
 
 (function($, window, undefined) {
-		// http://paulirish.com/2011/requestanimationframe-for-smart-animating/
-		// http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
-
-		// requestAnimationFrame polyfill by Erik Möller
-		// fixes from Paul Irish and Tino Zijdel
-
-		var lastTime = 0,
-				running,
-				animate = function (elem) {
-						if (running) {
-								window.requestAnimationFrame(animate, elem);
-								jQuery.fx.tick();
-						}
-				},
-				vendors = ['ms', 'moz', 'webkit', 'o'];
-
-		for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
-				window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
-				window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame']
-						|| window[vendors[x]+'CancelRequestAnimationFrame'];
-		}
-
-		if (!window.requestAnimationFrame)
-				window.requestAnimationFrame = function(fn, element) {
-						var currTime = new Date().getTime(),
-								delta = currTime - lastTime,
-								timeToCall = Math.max(0, 16 - delta);
-
-						var id = window.setTimeout(function() {
-										fn(currTime + timeToCall);
-								},
-								timeToCall
-						);
-
-						lastTime = currTime + timeToCall;
-
-						return id;
-				};
-
-		if (!window.cancelAnimationFrame) {
-				window.cancelAnimationFrame = function(id) {
-						clearTimeout(id);
-				};
-		}
-
-		jQuery.fx.timer = function (timer) {
-				if (timer() && jQuery.timers.push(timer) && !running) {
-						running = true;
-						animate(timer.elem);
-				}
-		};
-
-		jQuery.fx.stop = function() {
-				running = false;
-		};
-
+    // http://paulirish.com/2011/requestanimationframe-for-smart-animating/
+    // http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
+ 
+    // requestAnimationFrame polyfill by Erik Möller
+    // fixes from Paul Irish and Tino Zijdel
+ 
+    var lastTime = 0,
+        running,
+        animate = function (elem) {
+            if (running) {
+                window.requestAnimationFrame(animate, elem);
+                jQuery.fx.tick();
+            }
+        },
+        vendors = ['ms', 'moz', 'webkit', 'o'];
+ 
+    for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+        window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
+        window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame']
+            || window[vendors[x]+'CancelRequestAnimationFrame'];
+    }
+ 
+    if (!window.requestAnimationFrame)
+        window.requestAnimationFrame = function(fn, element) {
+            var currTime = new Date().getTime(),
+                delta = currTime - lastTime,
+                timeToCall = Math.max(0, 16 - delta);
+ 
+            var id = window.setTimeout(function() {
+                    fn(currTime + timeToCall);
+                },
+                timeToCall
+            );
+ 
+            lastTime = currTime + timeToCall;
+ 
+            return id;
+        };
+ 
+    if (!window.cancelAnimationFrame) {
+        window.cancelAnimationFrame = function(id) {
+            clearTimeout(id);
+        };
+    }
+ 
+    jQuery.fx.timer = function (timer) {
+        if (timer() && jQuery.timers.push(timer) && !running) {
+            running = true;
+            animate(timer.elem);
+        }
+    };
+ 
+    jQuery.fx.stop = function() {
+        running = false;
+    };
+ 
 }(jQuery, this));
 
 /*! Copyright (c) 2011 Brandon Aaron (http://brandonaaron.net)
@@ -6783,75 +6788,75 @@ jQuery.extend( jQuery.easing,
  * Requires: 1.2.2+
  */
 (function($) {
-		var types = ['DOMMouseScroll', 'mousewheel'];
-		if ($.event.fixHooks) {
-				for (var i = types.length; i;) {
-						$.event.fixHooks[types[--i]] = $.event.mouseHooks;
-				}
-		}
-		$.event.special.mousewheel = {
-				setup: function() {
-						if (this.addEventListener) {
-								for (var i = types.length; i;) {
-										this.addEventListener(types[--i], handler, false);
-								}
-						} else {
-								this.onmousewheel = handler;
-						}
-				},
-				teardown: function() {
-						if (this.removeEventListener) {
-								for (var i = types.length; i;) {
-										this.removeEventListener(types[--i], handler, false);
-								}
-						} else {
-								this.onmousewheel = null;
-						}
-				}
-		};
-		$.fn.extend({
-				mousewheel: function(fn) {
-						return fn ? this.bind("mousewheel", fn) : this.trigger("mousewheel");
-				},
-				unmousewheel: function(fn) {
-						return this.unbind("mousewheel", fn);
-				}
-		});
+    var types = ['DOMMouseScroll', 'mousewheel'];
+    if ($.event.fixHooks) {
+        for (var i = types.length; i;) {
+            $.event.fixHooks[types[--i]] = $.event.mouseHooks;
+        }
+    }
+    $.event.special.mousewheel = {
+        setup: function() {
+            if (this.addEventListener) {
+                for (var i = types.length; i;) {
+                    this.addEventListener(types[--i], handler, false);
+                }
+            } else {
+                this.onmousewheel = handler;
+            }
+        },
+        teardown: function() {
+            if (this.removeEventListener) {
+                for (var i = types.length; i;) {
+                    this.removeEventListener(types[--i], handler, false);
+                }
+            } else {
+                this.onmousewheel = null;
+            }
+        }
+    };
+    $.fn.extend({
+        mousewheel: function(fn) {
+            return fn ? this.bind("mousewheel", fn) : this.trigger("mousewheel");
+        },
+        unmousewheel: function(fn) {
+            return this.unbind("mousewheel", fn);
+        }
+    });
 
-		function handler(event) {
-				var orgEvent = event || window.event,
-						args = [].slice.call(arguments, 1),
-						delta = 0,
-						returnValue = true,
-						deltaX = 0,
-						deltaY = 0;
-				event = $.event.fix(orgEvent);
-				event.type = "mousewheel";
-				// Old school scrollwheel delta
-				if (orgEvent.wheelDelta) {
-						delta = orgEvent.wheelDelta / 120;
-				}
-				if (orgEvent.detail) {
-						delta = -orgEvent.detail / 3;
-				}
-				// New school multidimensional scroll (touchpads) deltas
-				deltaY = delta;
-				// Gecko
-				if (orgEvent.axis !== undefined && orgEvent.axis === orgEvent.HORIZONTAL_AXIS) {
-						deltaY = 0;
-						deltaX = -1 * delta;
-				}
-				// Webkit
-				if (orgEvent.wheelDeltaY !== undefined) {
-						deltaY = orgEvent.wheelDeltaY / 120;
-				}
-				if (orgEvent.wheelDeltaX !== undefined) {
-						deltaX = -1 * orgEvent.wheelDeltaX / 120;
-				}
-				// Add event and delta to the front of the arguments
-				args.unshift(event, delta, deltaX, deltaY);
-				return ($.event.dispatch || $.event.handle).apply(this, args);
-		}
+    function handler(event) {
+        var orgEvent = event || window.event,
+            args = [].slice.call(arguments, 1),
+            delta = 0,
+            returnValue = true,
+            deltaX = 0,
+            deltaY = 0;
+        event = $.event.fix(orgEvent);
+        event.type = "mousewheel";
+        // Old school scrollwheel delta
+        if (orgEvent.wheelDelta) {
+            delta = orgEvent.wheelDelta / 120;
+        }
+        if (orgEvent.detail) {
+            delta = -orgEvent.detail / 3;
+        }
+        // New school multidimensional scroll (touchpads) deltas
+        deltaY = delta;
+        // Gecko
+        if (orgEvent.axis !== undefined && orgEvent.axis === orgEvent.HORIZONTAL_AXIS) {
+            deltaY = 0;
+            deltaX = -1 * delta;
+        }
+        // Webkit
+        if (orgEvent.wheelDeltaY !== undefined) {
+            deltaY = orgEvent.wheelDeltaY / 120;
+        }
+        if (orgEvent.wheelDeltaX !== undefined) {
+            deltaX = -1 * orgEvent.wheelDeltaX / 120;
+        }
+        // Add event and delta to the front of the arguments
+        args.unshift(event, delta, deltaX, deltaY);
+        return ($.event.dispatch || $.event.handle).apply(this, args);
+    }
 })(jQuery);
 
 /**
@@ -7147,6 +7152,8 @@ jQuery.extend( jQuery.easing,
 					options.html5video.controls = (typeof options.html5video.controls != 'undefined') ? options.html5video.controls : "controls";
 					options.html5video.preload = options.html5video.preload || "metadata";
 					options.html5video.autoplay = (typeof options.html5video.autoplay != 'undefined') ? options.html5video.autoplay : false;
+					//UNCODE addition		
+					options.html5video.loop = (typeof options.html5video.loop != 'undefined') ? options.html5video.loop : false;
 				}
 
 				if (!options.width || !options.height) {
@@ -7766,7 +7773,7 @@ jQuery.extend( jQuery.easing,
 				if (vars.current == 0) vars.prev = vars.total - 1;
 			} else opts.infinite = false;
 
-			//UNCODE addition
+			//UNCODE addition		
 			if ( typeof iL.items[vars.current] == 'undefined' )
 				vars.current = 0;
 
@@ -9008,7 +9015,7 @@ jQuery.extend( jQuery.easing,
 
 			if (obj.animate > 0 && opts.effects.reposition) {
 				holder.css(transform, gpuAcceleration).stop().animate(
-					opacityMobile,
+					opacityMobile, 
 					opts.effects.repositionSpeed, 'easeOutCirc', function() {
 					holder.css(transform, '');
 				});
@@ -9155,8 +9162,10 @@ jQuery.extend( jQuery.easing,
 							"height": "100%",
 							"preload": html5video.preload,
 							"autoplay": html5video.autoplay,
+							"loop": html5video.loop,
 							"poster": html5video.poster,
-							"controls": html5video.controls
+							"controls": html5video.controls,
+							"controlslist": "nodownload"
 						}).append($('<source />', {
 							"src": obj.URL,
 							"type": videoType
@@ -9402,7 +9411,7 @@ jQuery.extend( jQuery.easing,
 	function removeHash() {
 		var scroll = getScrollXY();
 
-		//UNCODE change
+		//UNCODE change		
 		//window.location.hash = "";
 		history.pushState("", document.title, window.location.pathname + window.location.search);
 
@@ -9509,7 +9518,7 @@ jQuery.extend( jQuery.easing,
 		else if (extensions.video.indexOf(ext) !== -1) type = 'video';
 		else if (ext.substring(0, 1) == "#") type = 'inline'; //Uncode addition
 		else type = 'iframe';
-
+		
 		return type;
 	}
 
@@ -10193,7 +10202,7 @@ jQuery.extend( jQuery.easing,
 		 * @public
 		 */
 		this.options = $.extend({}, Owl.Defaults, options);
-
+ 
 		/**
 		 * Plugin element.
 		 * @public
@@ -10455,7 +10464,8 @@ jQuery.extend( jQuery.easing,
 	}, {
 		filter: [ 'width', 'items', 'settings' ],
 		run: function(cache) {
-			var width = (this.width() / this.settings.items).toFixed(3) - this.settings.margin,
+			//UNCODE edit to fix Chrome stage padding issue
+			var width = Math.round((this.width() / this.settings.items).toFixed(3) - this.settings.margin),
 				merge = null,
 				iterator = this._items.length,
 				grid = !this.settings.autoWidth,
@@ -13325,299 +13335,299 @@ jQuery.extend( jQuery.easing,
 
 (function(window, document, undefined) {
 
-		/**
-		 * Find the absolute position of an element
-		 */
-		var absPos = function(element) {
-				var offsetLeft, offsetTop;
-				offsetLeft = offsetTop = 0;
-				if (element.offsetParent) {
-						do {
-								offsetLeft += element.offsetLeft;
-								offsetTop += element.offsetTop;
-						} while (element = element.offsetParent);
-				}
-				return [offsetLeft, offsetTop];
-		};
+    /**
+     * Find the absolute position of an element
+     */
+    var absPos = function(element) {
+        var offsetLeft, offsetTop;
+        offsetLeft = offsetTop = 0;
+        if (element.offsetParent) {
+            do {
+                offsetLeft += element.offsetLeft;
+                offsetTop += element.offsetTop;
+            } while (element = element.offsetParent);
+        }
+        return [offsetLeft, offsetTop];
+    };
 
-		/**
-		 * @constructor Progress Circle class
-		 * @param params.canvas Canvas on which the circles will be drawn.
-		 * @param params.minRadius Inner radius of the innermost circle, in px.
-		 * @param params.arcWidth Width of each circle(to be more accurate, ring).
-		 * @param params.gapWidth Space between each circle.
-		 * @param params.centerX X coordinate of the center of circles.
-		 * @param params.centerY Y coordinate of the center of circles.
-		 * @param params.infoLineBaseAngle Base angle of the info line.
-		 * @param params.infoLineAngleInterval Angles between the info lines.
-		 */
-		var ProgressCircle = function(params) {
-				this.canvas = params.canvas;
-				this.minRadius = params.minRadius || 15;
-				this.arcWidth = params.arcWidth || 5;
-				this.gapWidth = params.gapWidth || 3;
-				this.centerX = params.centerX || this.canvas.width / 2;
-				this.centerY = params.centerY || this.canvas.height / 2;
-				this.infoLineLength = params.infoLineLength || 60;
-				this.horizLineLength = params.horizLineLength || 10;
-				this.infoLineAngleInterval = params.infoLineAngleInterval || Math.PI / 8;
-				this.infoLineBaseAngle = params.infoLineBaseAngle || Math.PI / 6;
+    /**
+     * @constructor Progress Circle class
+     * @param params.canvas Canvas on which the circles will be drawn.
+     * @param params.minRadius Inner radius of the innermost circle, in px.
+     * @param params.arcWidth Width of each circle(to be more accurate, ring).
+     * @param params.gapWidth Space between each circle.
+     * @param params.centerX X coordinate of the center of circles.
+     * @param params.centerY Y coordinate of the center of circles.
+     * @param params.infoLineBaseAngle Base angle of the info line.
+     * @param params.infoLineAngleInterval Angles between the info lines.
+     */
+    var ProgressCircle = function(params) {
+        this.canvas = params.canvas;
+        this.minRadius = params.minRadius || 15;
+        this.arcWidth = params.arcWidth || 5;
+        this.gapWidth = params.gapWidth || 3;
+        this.centerX = params.centerX || this.canvas.width / 2;
+        this.centerY = params.centerY || this.canvas.height / 2;
+        this.infoLineLength = params.infoLineLength || 60;
+        this.horizLineLength = params.horizLineLength || 10;
+        this.infoLineAngleInterval = params.infoLineAngleInterval || Math.PI / 8;
+        this.infoLineBaseAngle = params.infoLineBaseAngle || Math.PI / 6;
 
-				this.context = this.canvas.getContext('2d');
+        this.context = this.canvas.getContext('2d');
 
-				this.width = this.canvas.width;
-				this.height = this.canvas.height;
+        this.width = this.canvas.width;
+        this.height = this.canvas.height;
 
-				this.circles = [];
-				this.runningCount = 0;
-		};
+        this.circles = [];
+        this.runningCount = 0;
+    };
 
-		ProgressCircle.prototype = {
-				constructor: ProgressCircle,
+    ProgressCircle.prototype = {
+        constructor: ProgressCircle,
 
-				/**
-				 * @method Adds an progress monitor entry.
-				 * @param params.fillColor Color to fill in the circle.
-				 * @param params.outlineColor Color to outline the circle.
-				 * @param params.progressListener Callback function to fetch the progress.
-				 * @param params.infoListener Callback function to fetch the info.
-				 * @returns this
-				 */
-				addEntry: function(params) {
-						this.circles.push(new Circle({
-								canvas: this.canvas,
-								context: this.context,
-								centerX: this.centerX,
-								centerY: this.centerY,
-								innerRadius: this.minRadius + this.circles.length *
-										(this.gapWidth + this.arcWidth),
-								arcWidth: this.arcWidth,
-								infoLineLength: this.infoLineLength,
-								horizLineLength: this.horizLineLength,
+        /**
+         * @method Adds an progress monitor entry.
+         * @param params.fillColor Color to fill in the circle.
+         * @param params.outlineColor Color to outline the circle.
+         * @param params.progressListener Callback function to fetch the progress.
+         * @param params.infoListener Callback function to fetch the info.
+         * @returns this
+         */
+        addEntry: function(params) {
+            this.circles.push(new Circle({
+                canvas: this.canvas,
+                context: this.context,
+                centerX: this.centerX,
+                centerY: this.centerY,
+                innerRadius: this.minRadius + this.circles.length *
+                    (this.gapWidth + this.arcWidth),
+                arcWidth: this.arcWidth,
+                infoLineLength: this.infoLineLength,
+                horizLineLength: this.horizLineLength,
 
-								id: this.circles.length,
-								fillColor: params.fillColor,
-								outlineColor: params.outlineColor,
-								progressListener: params.progressListener,
-								infoListener: params.infoListener,
-								infoLineAngle: this.infoLineBaseAngle +
-										this.circles.length * this.infoLineAngleInterval,
-						}));
+                id: this.circles.length,
+                fillColor: params.fillColor,
+                outlineColor: params.outlineColor,
+                progressListener: params.progressListener,
+                infoListener: params.infoListener,
+                infoLineAngle: this.infoLineBaseAngle +
+                    this.circles.length * this.infoLineAngleInterval,
+            }));
 
-						return this;
-				},
+            return this;
+        },
 
-				/**
-				 * @method Starts the monitor and updates with the given interval.
-				 * @param interval Interval between updates, in millisecond.
-				 * @returns this
-				 */
-				start: function(interval) {
-						var self = this;
-						this.timer = setInterval(function() {
-								self._update();
-						}, interval || 33);
+        /**
+         * @method Starts the monitor and updates with the given interval.
+         * @param interval Interval between updates, in millisecond.
+         * @returns this
+         */
+        start: function(interval) {
+            var self = this;
+            this.timer = setInterval(function() {
+                self._update();
+            }, interval || 33);
 
-						return this;
-				},
+            return this;
+        },
 
-				/**
-				 * @method Stop the animation.
-				 */
-				stop: function() {
-						clearTimeout(this.timer);
-				},
+        /**
+         * @method Stop the animation.
+         */
+        stop: function() {
+            clearTimeout(this.timer);
+        },
 
-				/**
-				 * @private
-				 * @method Call update on each circle and redraw them.
-				 * @returns this
-				 */
-				_update: function() {
-						this._clear();
-						this.circles.forEach(function(circle, idx, array) {
-								circle.update();
-						});
+        /**
+         * @private
+         * @method Call update on each circle and redraw them.
+         * @returns this
+         */
+        _update: function() {
+            this._clear();
+            this.circles.forEach(function(circle, idx, array) {
+                circle.update();
+            });
 
-						return this;
-				},
+            return this;
+        },
 
-				/**
-				 * @private
-				 * @method Clear the canvas.
-				 * @returns this
-				 */
-				_clear: function() {
-						this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        /**
+         * @private
+         * @method Clear the canvas.
+         * @returns this
+         */
+        _clear: function() {
+            this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-						return this;
-				},
+            return this;
+        },
 
-		};
+    };
 
-		/**
-		 * @private
-		 * @class Individual progress circle.
-		 * @param params.canvas Canvas on which the circle will be drawn.
-		 * @param params.context Context of the canvas.
-		 * @param params.innerRadius Inner radius of the circle, in px.
-		 * @param params.arcWidth Width of each arc(circle).
-		 * @param params.gapWidth Distance between each arc.
-		 * @param params.centerX X coordinate of the center of circles.
-		 * @param params.centerY Y coordinate of the center of circles.
-		 * @param params.fillColor Color to fill in the circle.
-		 * @param params.outlineColor Color to outline the circle.
-		 * @param params.progressListener Callback function to fetch the progress.
-		 * @param params.infoListener Callback function to fetch the info.
-		 * @param params.infoLineAngle Angle of info line.
-		 */
-		var Circle = function(params) {
-				this.id = params.id;
-				this.canvas = params.canvas;
-				this.context = params.context;
-				this.centerX = params.centerX;
-				this.centerY = params.centerY;
-				this.arcWidth = params.arcWidth;
-				this.innerRadius = params.innerRadius || 0;
-				this.fillColor = params.fillColor || '#fff';
-				this.outlineColor = params.outlineColor || this.fillColor;
-				this.progressListener = params.progressListener;
-				this.infoLineLength = params.infoLineLength || 250;
-				this.horizLineLength = params.horizLineLength || 50;
-				this.infoListener = params.infoListener;
-				this.infoLineAngle = params.infoLineAngle;
+    /**
+     * @private
+     * @class Individual progress circle.
+     * @param params.canvas Canvas on which the circle will be drawn.
+     * @param params.context Context of the canvas.
+     * @param params.innerRadius Inner radius of the circle, in px.
+     * @param params.arcWidth Width of each arc(circle).
+     * @param params.gapWidth Distance between each arc.
+     * @param params.centerX X coordinate of the center of circles.
+     * @param params.centerY Y coordinate of the center of circles.
+     * @param params.fillColor Color to fill in the circle.
+     * @param params.outlineColor Color to outline the circle.
+     * @param params.progressListener Callback function to fetch the progress.
+     * @param params.infoListener Callback function to fetch the info.
+     * @param params.infoLineAngle Angle of info line.
+     */
+    var Circle = function(params) {
+        this.id = params.id;
+        this.canvas = params.canvas;
+        this.context = params.context;
+        this.centerX = params.centerX;
+        this.centerY = params.centerY;
+        this.arcWidth = params.arcWidth;
+        this.innerRadius = params.innerRadius || 0;
+        this.fillColor = params.fillColor || '#fff';
+        this.outlineColor = params.outlineColor || this.fillColor;
+        this.progressListener = params.progressListener;
+        this.infoLineLength = params.infoLineLength || 250;
+        this.horizLineLength = params.horizLineLength || 50;
+        this.infoListener = params.infoListener;
+        this.infoLineAngle = params.infoLineAngle;
 
-				this.outerRadius = this.innerRadius + this.arcWidth;
+        this.outerRadius = this.innerRadius + this.arcWidth;
 
-				// If the info listener is not registered, then don't calculate
-				// the related coordinates
-				if (!this.infoListener) return;
+        // If the info listener is not registered, then don't calculate
+        // the related coordinates
+        if (!this.infoListener) return;
 
-				// calculate the info-line turning points
-				var angle = this.infoLineAngle,
-						arcDistance = (this.innerRadius + this.outerRadius) / 2,
+        // calculate the info-line turning points
+        var angle = this.infoLineAngle,
+            arcDistance = (this.innerRadius + this.outerRadius) / 2,
 
-						sinA = Math.sin(angle),
-						cosA = Math.cos(angle);
+            sinA = Math.sin(angle),
+            cosA = Math.cos(angle);
 
-				this.infoLineStartX = this.centerX + sinA * arcDistance;
-				this.infoLineStartY = this.centerY - cosA * arcDistance;
+        this.infoLineStartX = this.centerX + sinA * arcDistance;
+        this.infoLineStartY = this.centerY - cosA * arcDistance;
 
-				this.infoLineMidX = this.centerX + sinA * this.infoLineLength;
-				this.infoLineMidY = this.centerY - cosA * this.infoLineLength;
+        this.infoLineMidX = this.centerX + sinA * this.infoLineLength;
+        this.infoLineMidY = this.centerY - cosA * this.infoLineLength;
 
-				this.infoLineEndX = this.infoLineMidX +
-						 (sinA < 0 ? -this.horizLineLength : this.horizLineLength);
-				this.infoLineEndY = this.infoLineMidY;
+        this.infoLineEndX = this.infoLineMidX +
+             (sinA < 0 ? -this.horizLineLength : this.horizLineLength);
+        this.infoLineEndY = this.infoLineMidY;
 
-				var infoText = document.createElement('div'),
-						style = infoText.style;
+        var infoText = document.createElement('div'),
+            style = infoText.style;
 
-				style.color = this.fillColor;
-				style.position = 'absolute';
-				style.left = this.infoLineEndX + absPos(this.canvas)[0] + 'px';
-				// style.top will be calculated in the `drawInfo` method. Since
-				// user may want to change the size of the font, so the top offset
-				// must be updated in each loop.
-				infoText.className = 'ProgressCircleInfo'; // For css styling
-				infoText.id = 'progress_circle_info_' + this.id;
-				document.body.appendChild(infoText);
-				this.infoText = infoText;
-		};
+        style.color = this.fillColor;
+        style.position = 'absolute';
+        style.left = this.infoLineEndX + absPos(this.canvas)[0] + 'px';
+        // style.top will be calculated in the `drawInfo` method. Since
+        // user may want to change the size of the font, so the top offset
+        // must be updated in each loop.
+        infoText.className = 'ProgressCircleInfo'; // For css styling
+        infoText.id = 'progress_circle_info_' + this.id;
+        document.body.appendChild(infoText);
+        this.infoText = infoText;
+    };
 
-		Circle.prototype = {
-				constructor: Circle,
+    Circle.prototype = {
+        constructor: Circle,
 
-				update: function() {
-						this.progress = this.progressListener();
-						this._draw();
+        update: function() {
+            this.progress = this.progressListener();
+            this._draw();
 
-						if (this.infoListener) {
-								this.info = this.infoListener();
-								this._drawInfo();
-						}
-				},
+            if (this.infoListener) {
+                this.info = this.infoListener();
+                this._drawInfo();
+            }
+        },
 
-				/**
-				 * @private
-				 * @method Draw the circle on the canvas.
-				 * @returns this
-				 */
-				_draw: function() {
-						var ctx = this.context,
+        /**
+         * @private
+         * @method Draw the circle on the canvas.
+         * @returns this
+         */
+        _draw: function() {
+            var ctx = this.context,
 
-								ANGLE_OFFSET = -Math.PI / 2,
+                ANGLE_OFFSET = -Math.PI / 2,
 
-								startAngle = 0 + ANGLE_OFFSET,
-								endAngle= startAngle + this.progress * Math.PI * 2,
+                startAngle = 0 + ANGLE_OFFSET,
+                endAngle= startAngle + this.progress * Math.PI * 2,
 
-								x = this.centerX,
-								y = this.centerY,
+                x = this.centerX,
+                y = this.centerY,
 
-								innerRadius = this.innerRadius - this.arcWidth - 1,
-								outerRadius = this.outerRadius - this.arcWidth - 1;
+                innerRadius = this.innerRadius - this.arcWidth - 1,
+                outerRadius = this.outerRadius - this.arcWidth - 1;
 
-						ctx.fillStyle = this.fillColor;
-						ctx.strokeStyle = this.outlineColor;
+            ctx.fillStyle = this.fillColor;
+            ctx.strokeStyle = this.outlineColor;
 
-						ctx.beginPath();
-						ctx.arc(x, y, innerRadius, startAngle, endAngle, false);
-						ctx.arc(x, y, outerRadius, endAngle, startAngle, true);
-						ctx.closePath();
-						ctx.stroke();
-						ctx.fill();
+            ctx.beginPath();
+            ctx.arc(x, y, innerRadius, startAngle, endAngle, false);
+            ctx.arc(x, y, outerRadius, endAngle, startAngle, true);
+            ctx.closePath();
+            ctx.stroke();
+            ctx.fill();
 
-						return this;
-				},
+            return this;
+        },
 
-				/**
-				 * @private
-				 * @method Draw the info lines and info text.
-				 * @returns this
-				 */
-				_drawInfo: function() {
+        /**
+         * @private
+         * @method Draw the info lines and info text.
+         * @returns this
+         */
+        _drawInfo: function() {
 
-						var pointList, lineHeight;
+            var pointList, lineHeight;
 
-						pointList = [
-								[this.infoLineStartX, this.infoLineStartY],
-								[this.infoLineMidX, this.infoLineMidY],
-								[this.infoLineEndX, this.infoLineEndY],
-						];
-						this._drawSegments(pointList, false);
+            pointList = [
+                [this.infoLineStartX, this.infoLineStartY],
+                [this.infoLineMidX, this.infoLineMidY],
+                [this.infoLineEndX, this.infoLineEndY],
+            ];
+            this._drawSegments(pointList, false);
 
-						this.infoText.innerHTML = this.info;
+            this.infoText.innerHTML = this.info;
 
-						lineHeight = this.infoText.offsetHeight;
-						this.infoText.style.top = this.infoLineEndY +
-								absPos(this.canvas)[1] - lineHeight / 2 + 'px';
+            lineHeight = this.infoText.offsetHeight;
+            this.infoText.style.top = this.infoLineEndY +
+                absPos(this.canvas)[1] - lineHeight / 2 + 'px';
 
-						return this;
-				},
+            return this;
+        },
 
-				/**
-				 * @private
-				 * @method Helper function to draw the segments
-				 * @param pointList An array of points in the form of [x, y].
-				 * @param close Whether to connect the first and last point.
-				 */
-				_drawSegments: function(pointList, close) {
-						var ctx = this.context;
+        /**
+         * @private
+         * @method Helper function to draw the segments
+         * @param pointList An array of points in the form of [x, y].
+         * @param close Whether to connect the first and last point.
+         */
+        _drawSegments: function(pointList, close) {
+            var ctx = this.context;
 
-						ctx.beginPath();
-						ctx.moveTo(pointList[0][0], pointList[0][1]);
-						for (var i = 1; i < pointList.length; ++i) {
-								ctx.lineTo(pointList[i][0], pointList[i][1]);
-						}
+            ctx.beginPath();
+            ctx.moveTo(pointList[0][0], pointList[0][1]);
+            for (var i = 1; i < pointList.length; ++i) {
+                ctx.lineTo(pointList[i][0], pointList[i][1]);
+            }
 
-						if (close) {
-								ctx.closePath();
-						}
-						ctx.stroke();
-				},
-		};
+            if (close) {
+                ctx.closePath();
+            }
+            ctx.stroke();
+        },
+    };
 
-		window.ProgressCircle = ProgressCircle;
+    window.ProgressCircle = ProgressCircle;
 
 })(window, document);
 
@@ -13632,159 +13642,159 @@ jQuery.extend( jQuery.easing,
  * Jquery chart plugin for the Visual Composer.
  * ========================================================= */
 (function($){
-		/**
-		 * Pie chart animated.
-		 * @param element - DOM element
-		 * @param options - settings object.
-		 * @constructor
-		 */
-		var VcChart = function(element, options) {
-				this.el = element;
-				this.$el = $(this.el);
-				this.options = $.extend({
-						color: 'wpb_button',
-						units: '',
-						width: '',
-						label_selector: '.vc_pie_chart_value',
-						back_selector: '.vc_pie_chart_back',
-						responsive: true
-				}, options);
-				this.init();
-		};
-		VcChart.prototype = {
-				constructor: VcChart,
-				_progress_v: 0,
-				animated: false,
-				colors: {
-						'wpb_button': 'rgba(247, 247, 247, 1)',
-						'btn-primary': 'rgba(0, 136, 204, 1)',
-						'btn-info': 'rgba(88, 185, 218, 1)',
-						'btn-success': 'rgba(106, 177, 101, 1)',
-						'btn-warning': 'rgba(255, 153, 0, 1)',
-						'btn-danger': 'rgba(255, 103, 91, 1)',
-						'btn-inverse': 'rgba(85, 85, 85, 1)'
-				},
-				init: function() {
-						this.setupColor();
-						this.value = this.$el.data('pie-value')/100;
-						this.label_value = this.$el.data('pie-label-value') || this.$el.data('pie-value');
-						this.$wrapper = $('.vc_pie_wrapper', this.$el);
-						this.$label = $(this.options.label_selector, this.$el);
-						this.$back = $(this.options.back_selector, this.$el);
-						this.$canvas = this.$el.find('canvas');
-						this.arcWidth = this.$el.data('pie-width') * 2;
-						this.draw();
-						this.setWayPoint();
-						if(this.options.responsive === true) this.setResponsive();
-						if (UNCODE.isMobile) this._progress_v = this.value;
-				},
-				setupColor: function() {
-						// if(typeof this.colors[this.options.color] !== 'undefined') {
-						//     this.color = this.colors[this.options.color];
-						// } else if(typeof this.options.color === 'string' && this.options.color.match(/^rgba?\([^\)]+\)/)) {
-						//     this.color = this.options.color;
-						// } else {
-						//     this.color = 'rgba(247, 247, 247, 0.2)';
-						// }
-						if(typeof this.options.color !== 'undefined') {
-								this.color = this.options.color;
-						} else this.color = 'rgba(247, 247, 247, 0.2)';
+    /**
+     * Pie chart animated.
+     * @param element - DOM element
+     * @param options - settings object.
+     * @constructor
+     */
+    var VcChart = function(element, options) {
+        this.el = element;
+        this.$el = $(this.el);
+        this.options = $.extend({
+            color: 'wpb_button',
+            units: '',
+            width: '',
+            label_selector: '.vc_pie_chart_value',
+            back_selector: '.vc_pie_chart_back',
+            responsive: true
+        }, options);
+        this.init();
+    };
+    VcChart.prototype = {
+        constructor: VcChart,
+        _progress_v: 0,
+        animated: false,
+        colors: {
+            'wpb_button': 'rgba(247, 247, 247, 1)',
+            'btn-primary': 'rgba(0, 136, 204, 1)',
+            'btn-info': 'rgba(88, 185, 218, 1)',
+            'btn-success': 'rgba(106, 177, 101, 1)',
+            'btn-warning': 'rgba(255, 153, 0, 1)',
+            'btn-danger': 'rgba(255, 103, 91, 1)',
+            'btn-inverse': 'rgba(85, 85, 85, 1)'
+        },
+        init: function() {
+            this.setupColor();
+            this.value = this.$el.data('pie-value')/100;
+            this.label_value = this.$el.data('pie-label-value') || this.$el.data('pie-value');
+            this.$wrapper = $('.vc_pie_wrapper', this.$el);
+            this.$label = $(this.options.label_selector, this.$el);
+            this.$back = $(this.options.back_selector, this.$el);
+            this.$canvas = this.$el.find('canvas');
+            this.arcWidth = this.$el.data('pie-width') * 2;
+            this.draw();
+            this.setWayPoint();
+            if(this.options.responsive === true) this.setResponsive();
+            if (UNCODE.isMobile) this._progress_v = this.value;
+        },
+        setupColor: function() {
+            // if(typeof this.colors[this.options.color] !== 'undefined') {
+            //     this.color = this.colors[this.options.color];
+            // } else if(typeof this.options.color === 'string' && this.options.color.match(/^rgba?\([^\)]+\)/)) {
+            //     this.color = this.options.color;
+            // } else {
+            //     this.color = 'rgba(247, 247, 247, 0.2)';
+            // }
+            if(typeof this.options.color !== 'undefined') {
+                this.color = this.options.color;
+            } else this.color = 'rgba(247, 247, 247, 0.2)';
 
-				},
-				setResponsive: function() {
-						var that = this;
-						if (!UNCODE.isMobile) {
-								$(window).resize(function(){
-										if(that.animated === true) that.circle.stop();
-										that.draw(true);
-								});
-						}
-				},
-					draw: function(redraw) {
-						var w = this.$el.addClass('vc_ready').width() * 2,
-								border_w = this.arcWidth,
-								radius;
-						if(!w) w = this.$el.parents(':visible').first().width()-2;
-						//w = Math.round(w/100*80);
-						//if (w < 250) w = 250;
-						radius = w/2;
-						this.$wrapper.css({"width" : (w / 2) + "px"});
-						this.$label.css({"width" : (w / 2), "height" : (w / 2), "line-height" : (w / 2)+"px"});
-						this.$back.css({"width" : (w / 2), "height" : (w / 2)});
-						this.$canvas.attr({"width" : w + "px", "height" : w + "px"});
-						this.$el.addClass('vc_ready');
-						this.circle = new ProgressCircle({
-								canvas: this.$canvas.get(0),
-								minRadius: radius,
-								arcWidth: border_w
-						});
-						if(redraw === true && this.animated === true) {
-								this._progress_v = this.value;
-								this.circle.addEntry({
-										fillColor: this.color,
-										progressListener: $.proxy(this.setProgress, this)
-								}).start();
-						}
-				},
-				setProgress: function() {
-						if (this._progress_v >= this.value) {
-								this.circle.stop();
-								this.$label.html(this.label_value + this.options.units);
-								return this._progress_v;
-						}
-						this._progress_v += 0.01;
-						if (!isNaN(this.label_value)) {
-								var label_value = this._progress_v/this.value*this.label_value;
-								var val = Math.round(label_value) + this.options.units;
-								this.$label.html(val);
-						} else this.$label.html(this.label_value + this.options.units);
-						return this._progress_v;
-				},
-				animate: function() {
-						if(this.animated !== true) {
-								this.animated = true;
-								this.circle.addEntry({
-										fillColor: this.color,
-										progressListener: $.proxy(this.setProgress, this)
-								}).start(5);
-						}
-				},
-				setWayPoint: function() {
-						if (typeof $.fn.waypoint !== 'undefined' && !UNCODE.isMobile) {
-								this.$el.waypoint($.proxy(this.animate, this), { offset: '85%' });
-						} else {
-								this.animate();
-						}
-				}
-		};
-		/**
-		 * jQuery plugin
-		 * @param option - object with settings
-		 * @return {*}
-		 */
-		$.fn.vcChat = function(option, value) {
-				return this.each(function () {
-						var $this = $(this),
-								data = $this.data('vc_chart'),
-								options = typeof option === 'object' ? option : {
-										color: $this.data('pie-color'),
-										units: $this.data('pie-units')
-								};
-						if (typeof option == 'undefined') $this.data('vc_chart', (data = new VcChart(this, options)));
-						if (typeof option == 'string') data[option](value);
-				});
-		};
-		/**
-		 * Allows users to rewrite function inside theme.
-		 */
-		if ( typeof window['vc_pieChart'] !== 'function' ) {
-				window.vc_pieChart = function() {
-						$('.vc_pie_chart:visible').vcChat();
-				}
-		}
-		$(document).ready(function(){
-				!window.vc_iframe && vc_pieChart();
-		});
+        },
+        setResponsive: function() {
+            var that = this;
+            if (!UNCODE.isMobile) {
+                $(window).resize(function(){
+                    if(that.animated === true) that.circle.stop();
+                    that.draw(true);
+                });
+            }
+        },
+          draw: function(redraw) {
+            var w = this.$el.addClass('vc_ready').width() * 2,
+                border_w = this.arcWidth,
+                radius;
+            if(!w) w = this.$el.parents(':visible').first().width()-2;
+            //w = Math.round(w/100*80);
+            //if (w < 250) w = 250;
+            radius = w/2;
+            this.$wrapper.css({"width" : (w / 2) + "px"});
+            this.$label.css({"width" : (w / 2), "height" : (w / 2), "line-height" : (w / 2)+"px"});
+            this.$back.css({"width" : (w / 2), "height" : (w / 2)});
+            this.$canvas.attr({"width" : w + "px", "height" : w + "px"});
+            this.$el.addClass('vc_ready');
+            this.circle = new ProgressCircle({
+                canvas: this.$canvas.get(0),
+                minRadius: radius,
+                arcWidth: border_w
+            });
+            if(redraw === true && this.animated === true) {
+                this._progress_v = this.value;
+                this.circle.addEntry({
+                    fillColor: this.color,
+                    progressListener: $.proxy(this.setProgress, this)
+                }).start();
+            }
+        },
+        setProgress: function() {
+            if (this._progress_v >= this.value) {
+                this.circle.stop();
+                this.$label.html(this.label_value + this.options.units);
+                return this._progress_v;
+            }
+            this._progress_v += 0.01;
+            if (!isNaN(this.label_value)) {
+                var label_value = this._progress_v/this.value*this.label_value;
+                var val = Math.round(label_value) + this.options.units;
+                this.$label.html(val);
+            } else this.$label.html(this.label_value + this.options.units);
+            return this._progress_v;
+        },
+        animate: function() {
+            if(this.animated !== true) {
+                this.animated = true;
+                this.circle.addEntry({
+                    fillColor: this.color,
+                    progressListener: $.proxy(this.setProgress, this)
+                }).start(5);
+            }
+        },
+        setWayPoint: function() {
+            if (typeof $.fn.waypoint !== 'undefined' && !UNCODE.isMobile) {
+                this.$el.waypoint($.proxy(this.animate, this), { offset: '85%' });
+            } else {
+                this.animate();
+            }
+        }
+    };
+    /**
+     * jQuery plugin
+     * @param option - object with settings
+     * @return {*}
+     */
+    $.fn.vcChat = function(option, value) {
+        return this.each(function () {
+            var $this = $(this),
+                data = $this.data('vc_chart'),
+                options = typeof option === 'object' ? option : {
+                    color: $this.data('pie-color'),
+                    units: $this.data('pie-units')
+                };
+            if (typeof option == 'undefined') $this.data('vc_chart', (data = new VcChart(this, options)));
+            if (typeof option == 'string') data[option](value);
+        });
+    };
+    /**
+     * Allows users to rewrite function inside theme.
+     */
+    if ( typeof window['vc_pieChart'] !== 'function' ) {
+        window.vc_pieChart = function() {
+            $('.vc_pie_chart:visible').vcChat();
+        }
+    }
+    $(document).ready(function(){
+        !window.vc_iframe && vc_pieChart();
+    });
 
 })(window.jQuery);
 
@@ -13800,8 +13810,8 @@ function uncode_progress_bar() {    
 					var element = jQuery(this.element);
 					element.find('.vc_single_bar').each(function(index) {          
 						var $this = jQuery(this),
-													bar = $this.find('.vc_bar'),
-													val = bar.data('percentage-value');          
+							            bar = $this.find('.vc_bar'),
+							            val = bar.data('percentage-value');          
 						setTimeout(function() {            
 							bar.css({
 								"width": val + '%'
@@ -13815,8 +13825,8 @@ function uncode_progress_bar() {    
 			var element = jQuery(val);
 			element.find('.vc_single_bar').each(function(index) {          
 				var $this = jQuery(this),
-											bar = $this.find('.vc_bar'),
-											val = bar.data('percentage-value');          
+					            bar = $this.find('.vc_bar'),
+					            val = bar.data('percentage-value');          
 				setTimeout(function() {            
 					bar.css({
 						"width": val + '%'
@@ -13901,7 +13911,7 @@ uncode_progress_bar();
 					counterUpper();
 					this.destroy();
 				},
-				offset: '80%'
+				offset: '100%'
 			});
 		});
 	};
@@ -13910,17 +13920,17 @@ uncode_progress_bar();
 /*!
  * The Final Countdown for jQuery v2.0.4 (http://hilios.github.io/jQuery.countdown/)
  * Copyright (c) 2014 Edson Hilios
- *
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
  * the Software without restriction, including without limitation the rights to
  * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
  * the Software, and to permit persons to whom the Software is furnished to do so,
  * subject to the following conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
  * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
@@ -13934,216 +13944,216 @@ uncode_progress_bar();
 * https://github.com/alexanderdickson/waitForImages
 * Copyright (c) 2015 Alex Dickson; Licensed MIT */
 ;(function (factory) {
-		if (typeof define === 'function' && define.amd) {
-				// AMD. Register as an anonymous module.
-				define(['jquery'], factory);
-		} else if (typeof exports === 'object') {
-				// CommonJS / nodejs module
-				module.exports = factory(require('jquery'));
-		} else {
-				// Browser globals
-				factory(jQuery);
-		}
+    if (typeof define === 'function' && define.amd) {
+        // AMD. Register as an anonymous module.
+        define(['jquery'], factory);
+    } else if (typeof exports === 'object') {
+        // CommonJS / nodejs module
+        module.exports = factory(require('jquery'));
+    } else {
+        // Browser globals
+        factory(jQuery);
+    }
 }(function ($) {
-		// Namespace all events.
-		var eventNamespace = 'waitForImages';
+    // Namespace all events.
+    var eventNamespace = 'waitForImages';
 
-		// CSS properties which contain references to images.
-		$.waitForImages = {
-				hasImageProperties: [
-						'backgroundImage',
-						'listStyleImage',
-						'borderImage',
-						'borderCornerImage',
-						'cursor'
-				],
-				hasImageAttributes: ['srcset']
-		};
+    // CSS properties which contain references to images.
+    $.waitForImages = {
+        hasImageProperties: [
+            'backgroundImage',
+            'listStyleImage',
+            'borderImage',
+            'borderCornerImage',
+            'cursor'
+        ],
+        hasImageAttributes: ['srcset']
+    };
 
-		// Custom selector to find `img` elements that have a valid `src`
-		// attribute and have not already loaded.
-		$.expr[':'].uncached = function (obj) {
-				// Ensure we are dealing with an `img` element with a valid
-				// `src` attribute.
-				if (!$(obj).is('img[src][src!=""]')) {
-						return false;
-				}
+    // Custom selector to find `img` elements that have a valid `src`
+    // attribute and have not already loaded.
+    $.expr[':'].uncached = function (obj) {
+        // Ensure we are dealing with an `img` element with a valid
+        // `src` attribute.
+        if (!$(obj).is('img[src][src!=""]')) {
+            return false;
+        }
 
-				return !obj.complete;
-		};
+        return !obj.complete;
+    };
 
-		$.fn.waitForImages = function () {
+    $.fn.waitForImages = function () {
 
-				var allImgsLength = 0;
-				var allImgsLoaded = 0;
-				var deferred = $.Deferred();
+        var allImgsLength = 0;
+        var allImgsLoaded = 0;
+        var deferred = $.Deferred();
 
-				var finishedCallback;
-				var eachCallback;
-				var waitForAll;
+        var finishedCallback;
+        var eachCallback;
+        var waitForAll;
 
-				// Handle options object (if passed).
-				if ($.isPlainObject(arguments[0])) {
+        // Handle options object (if passed).
+        if ($.isPlainObject(arguments[0])) {
 
-						waitForAll = arguments[0].waitForAll;
-						eachCallback = arguments[0].each;
-						finishedCallback = arguments[0].finished;
+            waitForAll = arguments[0].waitForAll;
+            eachCallback = arguments[0].each;
+            finishedCallback = arguments[0].finished;
 
-				} else {
+        } else {
 
-						// Handle if using deferred object and only one param was passed in.
-						if (arguments.length === 1 && $.type(arguments[0]) === 'boolean') {
-								waitForAll = arguments[0];
-						} else {
-								finishedCallback = arguments[0];
-								eachCallback = arguments[1];
-								waitForAll = arguments[2];
-						}
+            // Handle if using deferred object and only one param was passed in.
+            if (arguments.length === 1 && $.type(arguments[0]) === 'boolean') {
+                waitForAll = arguments[0];
+            } else {
+                finishedCallback = arguments[0];
+                eachCallback = arguments[1];
+                waitForAll = arguments[2];
+            }
 
-				}
+        }
 
-				// Handle missing callbacks.
-				finishedCallback = finishedCallback || $.noop;
-				eachCallback = eachCallback || $.noop;
+        // Handle missing callbacks.
+        finishedCallback = finishedCallback || $.noop;
+        eachCallback = eachCallback || $.noop;
 
-				// Convert waitForAll to Boolean
-				waitForAll = !! waitForAll;
+        // Convert waitForAll to Boolean
+        waitForAll = !! waitForAll;
 
-				// Ensure callbacks are functions.
-				if (!$.isFunction(finishedCallback) || !$.isFunction(eachCallback)) {
-						throw new TypeError('An invalid callback was supplied.');
-				}
+        // Ensure callbacks are functions.
+        if (!$.isFunction(finishedCallback) || !$.isFunction(eachCallback)) {
+            throw new TypeError('An invalid callback was supplied.');
+        }
 
-				this.each(function () {
-						// Build a list of all imgs, dependent on what images will
-						// be considered.
-						var obj = $(this);
-						var allImgs = [];
-						// CSS properties which may contain an image.
-						var hasImgProperties = $.waitForImages.hasImageProperties || [];
-						// Element attributes which may contain an image.
-						var hasImageAttributes = $.waitForImages.hasImageAttributes || [];
-						// To match `url()` references.
-						// Spec: http://www.w3.org/TR/CSS2/syndata.html#value-def-uri
-						var matchUrl = /url\(\s*(['"]?)(.*?)\1\s*\)/g;
+        this.each(function () {
+            // Build a list of all imgs, dependent on what images will
+            // be considered.
+            var obj = $(this);
+            var allImgs = [];
+            // CSS properties which may contain an image.
+            var hasImgProperties = $.waitForImages.hasImageProperties || [];
+            // Element attributes which may contain an image.
+            var hasImageAttributes = $.waitForImages.hasImageAttributes || [];
+            // To match `url()` references.
+            // Spec: http://www.w3.org/TR/CSS2/syndata.html#value-def-uri
+            var matchUrl = /url\(\s*(['"]?)(.*?)\1\s*\)/g;
 
-						if (waitForAll) {
+            if (waitForAll) {
 
-								// Get all elements (including the original), as any one of
-								// them could have a background image.
-								obj.find('*').addBack().each(function () {
-										var element = $(this);
+                // Get all elements (including the original), as any one of
+                // them could have a background image.
+                obj.find('*').addBack().each(function () {
+                    var element = $(this);
 
-										// If an `img` element, add it. But keep iterating in
-										// case it has a background image too.
-										if (element.is('img:uncached')) {
-												allImgs.push({
-														src: element.attr('src'),
-														element: element[0]
-												});
-										}
+                    // If an `img` element, add it. But keep iterating in
+                    // case it has a background image too.
+                    if (element.is('img:uncached')) {
+                        allImgs.push({
+                            src: element.attr('src'),
+                            element: element[0]
+                        });
+                    }
 
-										$.each(hasImgProperties, function (i, property) {
-												var propertyValue = element.css(property);
-												var match;
+                    $.each(hasImgProperties, function (i, property) {
+                        var propertyValue = element.css(property);
+                        var match;
 
-												// If it doesn't contain this property, skip.
-												if (!propertyValue) {
-														return true;
-												}
+                        // If it doesn't contain this property, skip.
+                        if (!propertyValue) {
+                            return true;
+                        }
 
-												// Get all url() of this element.
-												while (match = matchUrl.exec(propertyValue)) {
-														allImgs.push({
-																src: match[2],
-																element: element[0]
-														});
-												}
-										});
+                        // Get all url() of this element.
+                        while (match = matchUrl.exec(propertyValue)) {
+                            allImgs.push({
+                                src: match[2],
+                                element: element[0]
+                            });
+                        }
+                    });
 
-										$.each(hasImageAttributes, function (i, attribute) {
-												var attributeValue = element.attr(attribute);
-												var attributeValues;
+                    $.each(hasImageAttributes, function (i, attribute) {
+                        var attributeValue = element.attr(attribute);
+                        var attributeValues;
 
-												// If it doesn't contain this property, skip.
-												if (!attributeValue) {
-														return true;
-												}
+                        // If it doesn't contain this property, skip.
+                        if (!attributeValue) {
+                            return true;
+                        }
 
-												// Check for multiple comma separated images
-												attributeValues = attributeValue.split(',');
+                        // Check for multiple comma separated images
+                        attributeValues = attributeValue.split(',');
 
-												$.each(attributeValues, function(i, value) {
-														// Trim value and get string before first
-														// whitespace (for use with srcset).
-														value = $.trim(value).split(' ')[0];
-														allImgs.push({
-																src: value,
-																element: element[0]
-														});
-												});
-										});
-								});
-						} else {
-								// For images only, the task is simpler.
-								obj.find('img:uncached')
-										.each(function () {
-										allImgs.push({
-												src: this.src,
-												element: this
-										});
-								});
-						}
+                        $.each(attributeValues, function(i, value) {
+                            // Trim value and get string before first
+                            // whitespace (for use with srcset).
+                            value = $.trim(value).split(' ')[0];
+                            allImgs.push({
+                                src: value,
+                                element: element[0]
+                            });
+                        });
+                    });
+                });
+            } else {
+                // For images only, the task is simpler.
+                obj.find('img:uncached')
+                    .each(function () {
+                    allImgs.push({
+                        src: this.src,
+                        element: this
+                    });
+                });
+            }
 
-						allImgsLength = allImgs.length;
-						allImgsLoaded = 0;
+            allImgsLength = allImgs.length;
+            allImgsLoaded = 0;
 
-						// If no images found, don't bother.
-						if (allImgsLength === 0) {
-								finishedCallback.call(obj[0]);
-								deferred.resolveWith(obj[0]);
-						}
+            // If no images found, don't bother.
+            if (allImgsLength === 0) {
+                finishedCallback.call(obj[0]);
+                deferred.resolveWith(obj[0]);
+            }
 
-						$.each(allImgs, function (i, img) {
+            $.each(allImgs, function (i, img) {
 
-								var image = new Image();
-								var events =
-									'load.' + eventNamespace + ' error.' + eventNamespace;
+                var image = new Image();
+                var events =
+                  'load.' + eventNamespace + ' error.' + eventNamespace;
 
-								// Handle the image loading and error with the same callback.
-								$(image).one(events, function me (event) {
-										// If an error occurred with loading the image, set the
-										// third argument accordingly.
-										var eachArguments = [
-												allImgsLoaded,
-												allImgsLength,
-												event.type == 'load'
-										];
-										allImgsLoaded++;
+                // Handle the image loading and error with the same callback.
+                $(image).one(events, function me (event) {
+                    // If an error occurred with loading the image, set the
+                    // third argument accordingly.
+                    var eachArguments = [
+                        allImgsLoaded,
+                        allImgsLength,
+                        event.type == 'load'
+                    ];
+                    allImgsLoaded++;
 
-										eachCallback.apply(img.element, eachArguments);
-										deferred.notifyWith(img.element, eachArguments);
+                    eachCallback.apply(img.element, eachArguments);
+                    deferred.notifyWith(img.element, eachArguments);
 
-										// Unbind the event listeners. I use this in addition to
-										// `one` as one of those events won't be called (either
-										// 'load' or 'error' will be called).
-										$(this).off(events, me);
+                    // Unbind the event listeners. I use this in addition to
+                    // `one` as one of those events won't be called (either
+                    // 'load' or 'error' will be called).
+                    $(this).off(events, me);
 
-										if (allImgsLoaded == allImgsLength) {
-												finishedCallback.call(obj[0]);
-												deferred.resolveWith(obj[0]);
-												return false;
-										}
+                    if (allImgsLoaded == allImgsLength) {
+                        finishedCallback.call(obj[0]);
+                        deferred.resolveWith(obj[0]);
+                        return false;
+                    }
 
-								});
+                });
 
-								image.src = img.src;
-						});
-				});
+                image.src = img.src;
+            });
+        });
 
-				return deferred.promise();
+        return deferred.promise();
 
-		};
+    };
 }));
 
 /**
@@ -14178,7 +14188,7 @@ uncode_progress_bar();
 		// ______  _______ _______ _______ _     _        _______ _______
 		// |     \ |______ |______ |_____| |     | |         |    |______
 		// |_____/ |______ |       |     | |_____| |_____    |    ______|
-				//
+        //
 		// Merging user options with the default values
 
 		var defaults = {
@@ -14336,7 +14346,7 @@ uncode_progress_bar();
 		// _______ _______ _______  ______ _______
 		// |______    |    |_____| |_____/    |
 		// ______|    |    |     | |    \_    |
-				//
+        //
 		// Let's get it started (yeah)!
 
 		_debug('[TextFill] Start Debug');
@@ -14359,9 +14369,9 @@ uncode_progress_bar();
 			_debug('[TextFill] Inner text: ' + ourText.text());
 			_debug('[TextFill] All options: ', Opts);
 			_debug('[TextFill] Maximum sizes: { ' +
-					 'Height: ' + maxHeight + 'px, ' +
-					 'Width: '  + maxWidth  + 'px' + ' }'
-					);
+				   'Height: ' + maxHeight + 'px, ' +
+				   'Width: '  + maxWidth  + 'px' + ' }'
+				  );
 
 			var minFontPixels = Opts.minFontPixels;
 
@@ -14473,537 +14483,538 @@ uncode_progress_bar();
 
 !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.Share=e()}}(function(){var define,module,exports;
 function getStyles(config){
-	// return ""+config.selector+"{width:92px;height:20px;-webkit-touch-callout:none;-khtml-user-select:none;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}"+config.selector+" [class*=social-]:before{font-family:'uncodeicon'}"+config.selector+" label{font-size:16px;cursor:pointer;margin:0;padding:5px 10px;border-radius:5px;background:#a29baa;-webkit-transition:all .3s ease-in-out;transition:all .3s ease-in-out}"+config.selector+" label:hover{opacity:.8}"+config.selector+" label span{text-transform:uppercase;font-size:.9em;font-family:Lato,sans-serif;font-weight:700;-webkit-font-smoothing:antialiased;padding-left:6px}"+config.selector+" .social{opacity:0;-webkit-transition:all .2s ease-in-out;transition:all .2s ease-in-out;margin-left:-15px;visibility:hidden}"+config.selector+" .social.top{-webkit-transform-origin:0 0;-ms-transform-origin:0 0;transform-origin:0 0;margin-top:-80px}"+config.selector+" .social.bottom{-webkit-transform-origin:0 0;-ms-transform-origin:0 0;transform-origin:0 0;margin-top:5px}"+config.selector+" .social.middle{margin-top:-34px}"+config.selector+" .social.middle.right{-webkit-transform-origin:5% 50%;-ms-transform-origin:5% 50%;transform-origin:5% 50%;margin-left:105px}"+config.selector+" .social.middle.left{-webkit-transform-origin:5% 50%;-ms-transform-origin:5% 50%;transform-origin:5% 50%}"+config.selector+" .social.right{margin-left:14px}"+config.selector+" .social.load{-webkit-transition:none!important;transition:none!important}"+config.selector+" .social.networks-1{width:60px}"+config.selector+" .social.networks-1.center,"+config.selector+" .social.networks-1.left{margin-left:14px}"+config.selector+" .social.networks-1.middle.left{margin-left:-70px}"+config.selector+" .social.networks-1 ul{width:60px}"+config.selector+" .social.networks-2{width:120px}"+config.selector+" .social.networks-2.center{margin-left:-13px}"+config.selector+" .social.networks-2.left{margin-left:-44px}"+config.selector+" .social.networks-2.middle.left{margin-left:-130px}"+config.selector+" .social.networks-2 ul{width:120px}"+config.selector+" .social.networks-3{width:180px}"+config.selector+" .social.networks-3.center{margin-left:-45px}"+config.selector+" .social.networks-3.left{margin-left:-102px}"+config.selector+" .social.networks-3.middle.left{margin-left:-190px}"+config.selector+" .social.networks-3 ul{width:180px}"+config.selector+" .social.networks-4{width:240px}"+config.selector+" .social.networks-4.center{margin-left:-75px}"+config.selector+" .social.networks-4.left{margin-left:162px}"+config.selector+" .social.networks-4.middle.left{margin-left:-250px}"+config.selector+" .social.networks-4 ul{width:240px}"+config.selector+" .social.networks-5{width:300px}"+config.selector+" .social.networks-5.center{margin-left:-105px}"+config.selector+" .social.networks-5.left{margin-left:-225px}"+config.selector+" .social.networks-5.middle.left{margin-left:-320px}"+config.selector+" .social.networks-5 ul{width:300px}"+config.selector+" .social.active{opacity:1;-webkit-transition:all .2s ease-in-out;transition:all .2s ease-in-out;visibility:visible}"+config.selector+" .social.active.top{-webkit-transform:scale(1) translateY(-20px);-ms-transform:scale(1) translateY(-20px);transform:scale(1) translateY(-20px)}"+config.selector+" .social.active.bottom{-webkit-transform:scale(1) translateY(15px);-ms-transform:scale(1) translateY(15px);transform:scale(1) translateY(15px)}"+config.selector+" .social.active.middle.right{-webkit-transform:scale(1) translateX(10px);-ms-transform:scale(1) translateX(10px);transform:scale(1) translateX(10px)}"+config.selector+" .social.active.middle.left{-webkit-transform:scale(1) translateX(-20px);-ms-transform:scale(1) translateX(-20px);transform:scale(1) translateX(-20px)}"+config.selector+" .social ul{position:relative;left:0;right:0;height:46px;color:#fff;margin:auto;padding:0;list-style:none}"+config.selector+" .social ul li{font-size:20px;cursor:pointer;width:60px;margin:0;padding:12px 0;text-align:center;float:left;display:none;height:22px;position:relative;z-index:2;-webkit-box-sizing:content-box;-moz-box-sizing:content-box;box-sizing:content-box;-webkit-transition:all .3s ease-in-out;transition:all .3s ease-in-out}"+config.selector+" .social ul li:hover{}"+config.selector+" .social li[class*=facebook]{display:"+config.networks.facebook.display+"}"+config.selector+" .social li[class*=twitter]{display:"+config.networks.twitter.display+"}"+config.selector+" .social li[class*=gplus]{display:"+config.networks.google_plus.display+"}"+config.selector+" .social li[class*=pinterest]{display:"+config.networks.pinterest.display+"}"+config.selector+" .social li[class*=paper-plane]{display:"+config.networks.email.display+"}"
+  // return ""+config.selector+"{width:92px;height:20px;-webkit-touch-callout:none;-khtml-user-select:none;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}"+config.selector+" [class*=social-]:before{font-family:'uncodeicon'}"+config.selector+" label{font-size:16px;cursor:pointer;margin:0;padding:5px 10px;border-radius:5px;background:#a29baa;-webkit-transition:all .3s ease-in-out;transition:all .3s ease-in-out}"+config.selector+" label:hover{opacity:.8}"+config.selector+" label span{text-transform:uppercase;font-size:.9em;font-family:Lato,sans-serif;font-weight:700;-webkit-font-smoothing:antialiased;padding-left:6px}"+config.selector+" .social{opacity:0;-webkit-transition:all .2s ease-in-out;transition:all .2s ease-in-out;margin-left:-15px;visibility:hidden}"+config.selector+" .social.top{-webkit-transform-origin:0 0;-ms-transform-origin:0 0;transform-origin:0 0;margin-top:-80px}"+config.selector+" .social.bottom{-webkit-transform-origin:0 0;-ms-transform-origin:0 0;transform-origin:0 0;margin-top:5px}"+config.selector+" .social.middle{margin-top:-34px}"+config.selector+" .social.middle.right{-webkit-transform-origin:5% 50%;-ms-transform-origin:5% 50%;transform-origin:5% 50%;margin-left:105px}"+config.selector+" .social.middle.left{-webkit-transform-origin:5% 50%;-ms-transform-origin:5% 50%;transform-origin:5% 50%}"+config.selector+" .social.right{margin-left:14px}"+config.selector+" .social.load{-webkit-transition:none!important;transition:none!important}"+config.selector+" .social.networks-1{width:60px}"+config.selector+" .social.networks-1.center,"+config.selector+" .social.networks-1.left{margin-left:14px}"+config.selector+" .social.networks-1.middle.left{margin-left:-70px}"+config.selector+" .social.networks-1 ul{width:60px}"+config.selector+" .social.networks-2{width:120px}"+config.selector+" .social.networks-2.center{margin-left:-13px}"+config.selector+" .social.networks-2.left{margin-left:-44px}"+config.selector+" .social.networks-2.middle.left{margin-left:-130px}"+config.selector+" .social.networks-2 ul{width:120px}"+config.selector+" .social.networks-3{width:180px}"+config.selector+" .social.networks-3.center{margin-left:-45px}"+config.selector+" .social.networks-3.left{margin-left:-102px}"+config.selector+" .social.networks-3.middle.left{margin-left:-190px}"+config.selector+" .social.networks-3 ul{width:180px}"+config.selector+" .social.networks-4{width:240px}"+config.selector+" .social.networks-4.center{margin-left:-75px}"+config.selector+" .social.networks-4.left{margin-left:162px}"+config.selector+" .social.networks-4.middle.left{margin-left:-250px}"+config.selector+" .social.networks-4 ul{width:240px}"+config.selector+" .social.networks-5{width:300px}"+config.selector+" .social.networks-5.center{margin-left:-105px}"+config.selector+" .social.networks-5.left{margin-left:-225px}"+config.selector+" .social.networks-5.middle.left{margin-left:-320px}"+config.selector+" .social.networks-5 ul{width:300px}"+config.selector+" .social.active{opacity:1;-webkit-transition:all .2s ease-in-out;transition:all .2s ease-in-out;visibility:visible}"+config.selector+" .social.active.top{-webkit-transform:scale(1) translateY(-20px);-ms-transform:scale(1) translateY(-20px);transform:scale(1) translateY(-20px)}"+config.selector+" .social.active.bottom{-webkit-transform:scale(1) translateY(15px);-ms-transform:scale(1) translateY(15px);transform:scale(1) translateY(15px)}"+config.selector+" .social.active.middle.right{-webkit-transform:scale(1) translateX(10px);-ms-transform:scale(1) translateX(10px);transform:scale(1) translateX(10px)}"+config.selector+" .social.active.middle.left{-webkit-transform:scale(1) translateX(-20px);-ms-transform:scale(1) translateX(-20px);transform:scale(1) translateX(-20px)}"+config.selector+" .social ul{position:relative;left:0;right:0;height:46px;color:#fff;margin:auto;padding:0;list-style:none}"+config.selector+" .social ul li{font-size:20px;cursor:pointer;width:60px;margin:0;padding:12px 0;text-align:center;float:left;display:none;height:22px;position:relative;z-index:2;-webkit-box-sizing:content-box;-moz-box-sizing:content-box;box-sizing:content-box;-webkit-transition:all .3s ease-in-out;transition:all .3s ease-in-out}"+config.selector+" .social ul li:hover{}"+config.selector+" .social li[class*=facebook]{display:"+config.networks.facebook.display+"}"+config.selector+" .social li[class*=twitter]{display:"+config.networks.twitter.display+"}"+config.selector+" .social li[class*=gplus]{display:"+config.networks.google_plus.display+"}"+config.selector+" .social li[class*=pinterest]{display:"+config.networks.pinterest.display+"}"+config.selector+" .social li[class*=paper-plane]{display:"+config.networks.email.display+"}"
 };
-	var ShareUtils;
+  var ShareUtils;
 
 if ((!("classList" in document.documentElement)) && Object.defineProperty && typeof HTMLElement !== "undefined") {
-	Object.defineProperty(HTMLElement.prototype, "classList", {
-		get: function() {
-			var ret, self, update;
-			update = function(fn) {
-				return function(value) {
-					var classes, index;
-					classes = self.className.split(/\s+/);
-					index = classes.indexOf(value);
-					fn(classes, index, value);
-					self.className = classes.join(" ");
-				};
-			};
-			self = this;
-			ret = {
-				add: update(function(classes, index, value) {
-					~index || classes.push(value);
-				}),
-				remove: update(function(classes, index) {
-					~index && classes.splice(index, 1);
-				}),
-				toggle: update(function(classes, index, value) {
-					if (~index) {
-						classes.splice(index, 1);
-					} else {
-						classes.push(value);
-					}
-				}),
-				contains: function(value) {
-					return !!~self.className.split(/\s+/).indexOf(value);
-				},
-				item: function(i) {
-					return self.className.split(/\s+/)[i] || null;
-				}
-			};
-			Object.defineProperty(ret, "length", {
-				get: function() {
-					return self.className.split(/\s+/).length;
-				}
-			});
-			return ret;
-		}
-	});
+  Object.defineProperty(HTMLElement.prototype, "classList", {
+    get: function() {
+      var ret, self, update;
+      update = function(fn) {
+        return function(value) {
+          var classes, index;
+          classes = self.className.split(/\s+/);
+          index = classes.indexOf(value);
+          fn(classes, index, value);
+          self.className = classes.join(" ");
+        };
+      };
+      self = this;
+      ret = {
+        add: update(function(classes, index, value) {
+          ~index || classes.push(value);
+        }),
+        remove: update(function(classes, index) {
+          ~index && classes.splice(index, 1);
+        }),
+        toggle: update(function(classes, index, value) {
+          if (~index) {
+            classes.splice(index, 1);
+          } else {
+            classes.push(value);
+          }
+        }),
+        contains: function(value) {
+          return !!~self.className.split(/\s+/).indexOf(value);
+        },
+        item: function(i) {
+          return self.className.split(/\s+/)[i] || null;
+        }
+      };
+      Object.defineProperty(ret, "length", {
+        get: function() {
+          return self.className.split(/\s+/).length;
+        }
+      });
+      return ret;
+    }
+  });
 }
 
 String.prototype.to_rfc3986 = function() {
-	var tmp;
-	tmp = encodeURIComponent(this);
-	return tmp.replace(/[!'()*]/g, function(c) {
-		return "%" + c.charCodeAt(0).toString(16);
-	});
+  var tmp;
+  tmp = encodeURIComponent(this);
+  return tmp.replace(/[!'()*]/g, function(c) {
+    return "%" + c.charCodeAt(0).toString(16);
+  });
 };
 
 ShareUtils = (function() {
-	function ShareUtils() {}
+  function ShareUtils() {}
 
-	ShareUtils.prototype.extend = function(to, from, overwrite) {
-		var hasProp, prop;
-		for (prop in from) {
-			hasProp = to[prop] !== undefined;
-			if (hasProp && typeof from[prop] === "object") {
-				this.extend(to[prop], from[prop], overwrite);
-			} else {
-				if (overwrite || !hasProp) {
-					to[prop] = from[prop];
-				}
-			}
-		}
-	};
+  ShareUtils.prototype.extend = function(to, from, overwrite) {
+    var hasProp, prop;
+    for (prop in from) {
+      hasProp = to[prop] !== undefined;
+      if (hasProp && typeof from[prop] === "object") {
+        this.extend(to[prop], from[prop], overwrite);
+      } else {
+        if (overwrite || !hasProp) {
+          to[prop] = from[prop];
+        }
+      }
+    }
+  };
 
-	ShareUtils.prototype.hide = function(el) {
-		return el.style.display = "none";
-	};
+  ShareUtils.prototype.hide = function(el) {
+    return el.style.display = "none";
+  };
 
-	ShareUtils.prototype.show = function(el) {
-		return el.style.display = "block";
-	};
+  ShareUtils.prototype.show = function(el) {
+    return el.style.display = "block";
+  };
 
-	ShareUtils.prototype.has_class = function(el, class_name) {
-		return el.classList.contains(class_name);
-	};
+  ShareUtils.prototype.has_class = function(el, class_name) {
+    return el.classList.contains(class_name);
+  };
 
-	ShareUtils.prototype.add_class = function(el, class_name) {
-		return el.classList.add(class_name);
-	};
+  ShareUtils.prototype.add_class = function(el, class_name) {
+    return el.classList.add(class_name);
+  };
 
-	ShareUtils.prototype.remove_class = function(el, class_name) {
-		return el.classList.remove(class_name);
-	};
+  ShareUtils.prototype.remove_class = function(el, class_name) {
+    return el.classList.remove(class_name);
+  };
 
-	ShareUtils.prototype.is_encoded = function(str) {
-		str = str.to_rfc3986();
-		return decodeURIComponent(str) !== str;
-	};
+  ShareUtils.prototype.is_encoded = function(str) {
+    str = str.to_rfc3986();
+    return decodeURIComponent(str) !== str;
+  };
 
-	ShareUtils.prototype.encode = function(str) {
-		if (typeof str === "undefined" || this.is_encoded(str)) {
-			return str;
-		} else {
-			return str.to_rfc3986();
-		}
-	};
+  ShareUtils.prototype.encode = function(str) {
+    if (typeof str === "undefined" || this.is_encoded(str)) {
+      return str;
+    } else {
+      return str.to_rfc3986();
+    }
+  };
 
-	ShareUtils.prototype.popup = function(url, params) {
-		var k, popup, qs, v;
-		if (params == null) {
-			params = {};
-		}
-		popup = {
-			width: 500,
-			height: 350
-		};
-		popup.top = (screen.height / 2) - (popup.height / 2);
-		popup.left = (screen.width / 2) - (popup.width / 2);
-		qs = ((function() {
-			var _results;
-			_results = [];
-			for (k in params) {
-				v = params[k];
-				_results.push("" + k + "=" + (this.encode(v)));
-			}
-			return _results;
-		}).call(this)).join('&');
-		if (qs) {
-			qs = "?" + qs;
-		}
-		return window.open(url + qs, 'targetWindow', "toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes,left=" + popup.left + ",top=" + popup.top + ",width=" + popup.width + ",height=" + popup.height);
-	};
+  ShareUtils.prototype.popup = function(url, params) {
+    var k, popup, qs, v;
+    if (params == null) {
+      params = {};
+    }
+    popup = {
+      width: 500,
+      height: 350
+    };
+    popup.top = (screen.height / 2) - (popup.height / 2);
+    popup.left = (screen.width / 2) - (popup.width / 2);
+    qs = ((function() {
+      var _results;
+      _results = [];
+      for (k in params) {
+        v = params[k];
+        _results.push("" + k + "=" + (this.encode(v)));
+      }
+      return _results;
+    }).call(this)).join('&');
+    if (qs) {
+      qs = "?" + qs;
+    }
+    return window.open(url + qs, 'targetWindow', "toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes,left=" + popup.left + ",top=" + popup.top + ",width=" + popup.width + ",height=" + popup.height);
+  };
 
-	return ShareUtils;
+  return ShareUtils;
 
 })();
 var Share,
-	__hasProp = {}.hasOwnProperty,
-	__extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
 Share = (function(_super) {
-	__extends(Share, _super);
+  __extends(Share, _super);
 
-	function Share(element, options) {
-		this.element = element;
-		this.el = {
-			head: document.getElementsByTagName('head')[0],
-			body: document.getElementsByTagName('body')[0]
-		};
-		this.config = {
-			enabled_networks: 0,
-			protocol: ['http', 'https'].indexOf(window.location.href.split(':')[0]) === -1 ? 'https://' : '//',
-			url: window.location.href.replace("&", "%26"),
-			caption: null,
-			title: this.default_title(),
-			image: this.default_image(),
-			description: this.default_description(),
-			ui: {
-				flyout: 'top center',
-				button_text: 'Share',
-				button_font: true,
-				icon_font: true
-			},
-			networks: {
-				google_plus: {
-					enabled: true,
-					url: null
-				},
-				twitter: {
-					enabled: true,
-					url: null,
-					title: null,
-					description: null
-				},
-				facebook: {
-					enabled: true,
-					load_sdk: true,
-					url: null,
-					app_id: null,
-					title: null,
-					caption: null,
-					description: null,
-					image: null
-				},
-				pinterest: {
-					enabled: true,
-					url: null,
-					image: null,
-					description: null
-				},
-				reddit: {
-					enabled: true,
-					url: null,
-					title: null
-				},
-				linkedin: {
-					enabled: true,
-					url: null,
-					title: null,
-					description: null
-				},
-				xing: {
-					enabled: true,
-					url: null,
-					title: null,
-					image: null,
-					description: null
-				},
-				whatsapp: {
-					enabled: true,
-					description: null,
-					url: null
-				},
-				email: {
-					enabled: true,
-					title: null,
-					description: null,
-					url: null
-				}
-			}
-		};
-		this.setup(element, options);
-		return this;
-	}
+  function Share(element, options) {
+    this.element = element;
+    this.el = {
+      head: document.getElementsByTagName('head')[0],
+      body: document.getElementsByTagName('body')[0]
+    };
+    this.config = {
+      enabled_networks: 0,
+      protocol: ['http', 'https'].indexOf(window.location.href.split(':')[0]) === -1 ? 'https://' : '//',
+      url: window.location.href.replace("&", "%26"),
+      caption: null,
+      title: this.default_title(),
+      image: this.default_image(),
+      description: this.default_description(),
+      ui: {
+        flyout: 'top center',
+        button_text: 'Share',
+        button_font: true,
+        icon_font: true
+      },
+      networks: {
+        google_plus: {
+          enabled: true,
+          url: null
+        },
+        twitter: {
+          enabled: true,
+          url: null,
+          title: null,
+          description: null
+        },
+        facebook: {
+          enabled: true,
+          load_sdk: true,
+          url: null,
+          app_id: null,
+          title: null,
+          caption: null,
+          description: null,
+          image: null
+        },
+        pinterest: {
+          enabled: true,
+          url: null,
+          image: null,
+          description: null
+        },
+        reddit: {
+          enabled: true,
+          url: null,
+          title: null
+        },
+        linkedin: {
+          enabled: true,
+          url: null,
+          title: null,
+          description: null
+        },
+        xing: {
+          enabled: true,
+          url: null,
+          title: null,
+          image: null,
+          description: null
+        },
+        whatsapp: {
+          enabled: true,
+          description: null,
+          url: null
+        },
+        email: {
+          enabled: true,
+          title: null,
+          description: null,
+          url: null
+        }
+      }
+    };
+    this.setup(element, options);
+    return this;
+  }
 
-	Share.prototype.setup = function(element, opts) {
-		var index, instance, instances, _i, _len;
-		instances = document.querySelectorAll(element);
-		this.extend(this.config, opts, true);
-		this.set_global_configuration();
-		this.normalize_network_configuration();
-		if (this.config.ui.icon_font) {
-			this.inject_icons();
-		}
-		if (this.config.ui.button_font) {
-			this.inject_fonts();
-		}
-		if (this.config.networks.facebook.enabled && this.config.networks.facebook.load_sdk) {
-			this.inject_facebook_sdk();
-		}
-		for (index = _i = 0, _len = instances.length; _i < _len; index = ++_i) {
-			instance = instances[index];
-			this.setup_instance(element, index);
-		}
-	};
+  Share.prototype.setup = function(element, opts) {
+    var index, instance, instances, _i, _len;
+    instances = document.querySelectorAll(element);
+    this.extend(this.config, opts, true);
+    this.set_global_configuration();
+    this.normalize_network_configuration();
+    if (this.config.ui.icon_font) {
+      this.inject_icons();
+    }
+    if (this.config.ui.button_font) {
+      this.inject_fonts();
+    }
+    if (this.config.networks.facebook.enabled && this.config.networks.facebook.load_sdk) {
+      this.inject_facebook_sdk();
+    }
+    for (index = _i = 0, _len = instances.length; _i < _len; index = ++_i) {
+      instance = instances[index];
+      this.setup_instance(element, index);
+    }
+  };
 
-	Share.prototype.setup_instance = function(element, index) {
-		var button, instance, label, network, networks, _i, _len, _results,
-			_this = this;
-		instance = document.querySelectorAll(element)[index];
-		this.hide(instance);
-		this.add_class(instance, "sharer-" + index);
-		instance = document.querySelectorAll(element)[index];
-		this.inject_css(instance);
-		this.inject_html(instance);
-		this.show(instance);
-		label = instance.getElementsByTagName("label")[0];
-		button = instance.getElementsByClassName("social")[0];
-		networks = instance.getElementsByTagName('li');
-		this.add_class(button, "networks-" + this.config.enabled_networks);
-		label.addEventListener("click", function() {
-			return _this.event_toggle(button);
-		});
-		_this = this;
-		_results = [];
-		for (index = _i = 0, _len = networks.length; _i < _len; index = ++_i) {
-			network = networks[index];
-			_results.push(network.addEventListener("click", function() {
-				_this.event_network(instance, this);
-				return _this.event_close(button);
-			}));
-		}
-		return _results;
-	};
+  Share.prototype.setup_instance = function(element, index) {
+    var button, instance, label, network, networks, _i, _len, _results,
+      _this = this;
+    instance = document.querySelectorAll(element)[index];
+    this.hide(instance);
+    this.add_class(instance, "sharer-" + index);
+    instance = document.querySelectorAll(element)[index];
+    this.inject_css(instance);
+    this.inject_html(instance);
+    this.show(instance);
+    label = instance.getElementsByTagName("label")[0];
+    button = instance.getElementsByClassName("social")[0];
+    networks = instance.getElementsByTagName('li');
+    this.add_class(button, "networks-" + this.config.enabled_networks);
+    label.addEventListener("click", function() {
+      return _this.event_toggle(button);
+    });
+    _this = this;
+    _results = [];
+    for (index = _i = 0, _len = networks.length; _i < _len; index = ++_i) {
+      network = networks[index];
+      _results.push(network.addEventListener("click", function() {
+        _this.event_network(instance, this);
+        return _this.event_close(button);
+      }));
+    }
+    return _results;
+  };
 
-	Share.prototype.event_toggle = function(button) {
-		if (this.has_class(button, "active")) {
-			return this.event_close(button);
-		} else {
-			return this.event_open(button);
-		}
-	};
+  Share.prototype.event_toggle = function(button) {
+    if (this.has_class(button, "active")) {
+      return this.event_close(button);
+    } else {
+      return this.event_open(button);
+    }
+  };
 
-	Share.prototype.event_open = function(button) {
-		if (this.has_class(button, "load")) {
-			this.remove_class(button, "load");
-		}
-		return this.add_class(button, "active");
-	};
+  Share.prototype.event_open = function(button) {
+    if (this.has_class(button, "load")) {
+      this.remove_class(button, "load");
+    }
+    return this.add_class(button, "active");
+  };
 
-	Share.prototype.event_close = function(button) {
-		return this.remove_class(button, "active");
-	};
+  Share.prototype.event_close = function(button) {
+    return this.remove_class(button, "active");
+  };
 
-	Share.prototype.event_network = function(instance, network) {
-		var name;
-		name = network.getAttribute("data-network");
-		this.hook("before", name, instance);
-		this["network_" + name]();
-		return this.hook("after", name, instance);
-	};
+  Share.prototype.event_network = function(instance, network) {
+    var name;
+    name = network.getAttribute("data-network");
+    this.hook("before", name, instance);
+    this["network_" + name]();
+    return this.hook("after", name, instance);
+  };
 
-	Share.prototype.open = function() {
-		return this["public"]("open");
-	};
+  Share.prototype.open = function() {
+    return this["public"]("open");
+  };
 
-	Share.prototype.close = function() {
-		return this["public"]("close");
-	};
+  Share.prototype.close = function() {
+    return this["public"]("close");
+  };
 
-	Share.prototype.toggle = function() {
-		return this["public"]("toggle");
-	};
+  Share.prototype.toggle = function() {
+    return this["public"]("toggle");
+  };
 
-	Share.prototype["public"] = function(action) {
-		var button, index, instance, _i, _len, _ref, _results;
-		_ref = document.querySelectorAll(this.element);
-		_results = [];
-		for (index = _i = 0, _len = _ref.length; _i < _len; index = ++_i) {
-			instance = _ref[index];
-			button = instance.getElementsByClassName("social")[0];
-			_results.push(this["event_" + action](button));
-		}
-		return _results;
-	};
+  Share.prototype["public"] = function(action) {
+    var button, index, instance, _i, _len, _ref, _results;
+    _ref = document.querySelectorAll(this.element);
+    _results = [];
+    for (index = _i = 0, _len = _ref.length; _i < _len; index = ++_i) {
+      instance = _ref[index];
+      button = instance.getElementsByClassName("social")[0];
+      _results.push(this["event_" + action](button));
+    }
+    return _results;
+  };
 
-	Share.prototype.network_facebook = function() {
-		if (this.config.networks.facebook.load_sdk) {
-			if (!window.FB) {
-				return console.error("The Facebook JS SDK hasn't loaded yet.");
-			}
-			return FB.ui({
-				method: 'feed',
-				name: this.config.networks.facebook.title,
-				link: this.config.networks.facebook.url,
-				picture: this.config.networks.facebook.image,
-				caption: this.config.networks.facebook.caption,
-				description: this.config.networks.facebook.description
-			});
-		} else {
-			return this.popup('https://www.facebook.com/sharer/sharer.php', {
-				u: this.config.networks.facebook.url
-			});
-		}
-	};
+  Share.prototype.network_facebook = function() {
+    if (this.config.networks.facebook.load_sdk) {
+      if (!window.FB) {
+        return console.error("The Facebook JS SDK hasn't loaded yet.");
+      }
+      return FB.ui({
+        method: 'feed',
+        name: this.config.networks.facebook.title,
+        link: this.config.networks.facebook.url,
+        picture: this.config.networks.facebook.image,
+        caption: this.config.networks.facebook.caption,
+        description: this.config.networks.facebook.description
+      });
+    } else {
+      return this.popup('https://www.facebook.com/sharer/sharer.php', {
+        u: this.config.networks.facebook.url
+      });
+    }
+  };
 
-	Share.prototype.network_twitter = function() {
-		return this.popup('https://twitter.com/intent/tweet', {
-			text: this.config.networks.twitter.title,
-			url: this.config.networks.twitter.url
-		});
-	};
+  Share.prototype.network_twitter = function() {
+    return this.popup('https://twitter.com/intent/tweet', {
+      text: this.config.networks.twitter.title,
+      url: this.config.networks.twitter.url
+    });
+  };
 
-	Share.prototype.network_google_plus = function() {
-		return this.popup('https://plus.google.com/share', {
-			url: this.config.networks.google_plus.url
-		});
-	};
+  Share.prototype.network_google_plus = function() {
+    return this.popup('https://plus.google.com/share', {
+      url: this.config.networks.google_plus.url
+    });
+  };
 
-	Share.prototype.network_pinterest = function() {
-		return this.popup('https://www.pinterest.com/pin/create/button', {
-			url: this.config.networks.pinterest.url,
-			media: this.config.networks.pinterest.image,
-			description: this.config.networks.pinterest.description
-		});
-	};
+  Share.prototype.network_pinterest = function() {
+    return this.popup('https://www.pinterest.com/pin/create/button', {
+      url: this.config.networks.pinterest.url,
+      media: this.config.networks.pinterest.image,
+      description: this.config.networks.pinterest.description
+    });
+  };
 
-	Share.prototype.network_linkedin = function() {
-		return this.popup('https://www.linkedin.com/shareArticle', {
-			url: this.config.networks.linkedin.url,
-			title: this.config.networks.linkedin.title,
-			summary: this.config.networks.linkedin.description
-		});
-	}
+  Share.prototype.network_linkedin = function() {
+    return this.popup('https://www.linkedin.com/shareArticle', {
+      url: this.config.networks.linkedin.url,
+      title: this.config.networks.linkedin.title,
+      summary: this.config.networks.linkedin.description
+    });
+  }
 
-	Share.prototype.network_xing = function() {
-		return this.popup('https://www.xing.com/spi/shares/new', {
-			url: this.config.networks.xing.url,
-			image: this.config.networks.xing.image,
-			title: this.config.networks.xing.title,
-			summary: this.config.networks.xing.description
-		});
-	}
+  Share.prototype.network_xing = function() {
+    return this.popup('https://www.xing.com/spi/shares/new', {
+      url: this.config.networks.xing.url,
+      image: this.config.networks.xing.image,
+      title: this.config.networks.xing.title,
+      summary: this.config.networks.xing.description
+    });
+  }
 
-	Share.prototype.network_email = function() {
-		return this.popup('mailto:', {
-			subject: this.config.networks.email.title,
-			body: this.config.networks.email.url + '%0A%0A' + this.config.networks.email.description,
-		});
-	};
+  Share.prototype.network_email = function() {
+    return this.popup('mailto:', {
+      subject: this.config.networks.email.title,
+      body: this.config.networks.email.url + '%0A%0A' + this.config.networks.email.description,
+    });
+  };
 
-	Share.prototype.inject_icons = function() {
-	//  return this.inject_stylesheet("https://www.sharebutton.co/fonts/v2/entypo.min.css");
-	};
+  Share.prototype.inject_icons = function() {
+  //  return this.inject_stylesheet("https://www.sharebutton.co/fonts/v2/entypo.min.css");
+  };
 
-	Share.prototype.inject_fonts = function() {
-	 // return this.inject_stylesheet("http://fonts.googleapis.com/css?family=Lato:900&text=" + this.config.ui.button_text);
-	};
+  Share.prototype.inject_fonts = function() {
+   // return this.inject_stylesheet("http://fonts.googleapis.com/css?family=Lato:900&text=" + this.config.ui.button_text);
+  };
 
-	Share.prototype.inject_stylesheet = function(url) {
-		var link;
-		if (!this.el.head.querySelector("link[href=\"" + url + "\"]")) {
-			link = document.createElement("link");
-			link.setAttribute("rel", "stylesheet");
-			link.setAttribute("href", url);
-			return this.el.head.appendChild(link);
-		}
-	};
+  Share.prototype.inject_stylesheet = function(url) {
+    var link;
+    if (!this.el.head.querySelector("link[href=\"" + url + "\"]")) {
+      link = document.createElement("link");
+      link.setAttribute("rel", "stylesheet");
+      link.setAttribute("href", url);
+      return this.el.head.appendChild(link);
+    }
+  };
 
-	Share.prototype.inject_css = function(instance) {
-		var css, meta, selector, style;
-		selector = "." + (instance.getAttribute('class').split(" ").join("."));
-		if (!this.el.head.querySelector("meta[name='sharer" + selector + "']")) {
-			this.config.selector = selector;
-			css = getStyles(this.config);
-			style = document.createElement("style");
-			style.type = "text/css";
-			if (style.styleSheet) {
-				style.styleSheet.cssText = css;
-			} else {
-				style.appendChild(document.createTextNode(css));
-			}
-			this.el.head.appendChild(style);
-			delete this.config.selector;
-			meta = document.createElement("meta");
-			meta.setAttribute("name", "sharer" + selector);
-			return this.el.head.appendChild(meta);
-		}
-	};
+  Share.prototype.inject_css = function(instance) {
+    var css, meta, selector, style;
+    selector = "." + (instance.getAttribute('class').split(" ").join("."));
+    if (!this.el.head.querySelector("meta[name='sharer" + selector + "']")) {
+      this.config.selector = selector;
+      css = getStyles(this.config);
+      style = document.createElement("style");
+      style.type = "text/css";
+      if (style.styleSheet) {
+        style.styleSheet.cssText = css;
+      } else {
+        style.appendChild(document.createTextNode(css));
+      }
+      this.el.head.appendChild(style);
+      delete this.config.selector;
+      meta = document.createElement("meta");
+      meta.setAttribute("name", "sharer" + selector);
+      return this.el.head.appendChild(meta);
+    }
+  };
 
-	Share.prototype.inject_html = function(instance) {
-		return instance.innerHTML = "<label class='social-export'><span>" + this.config.ui.button_text + "</span></label><div class='social load " + this.config.ui.flyout + "'><ul><li class='social-facebook' data-network='facebook' tabindex='0'></li><li class='social-twitter' data-network='twitter' tabindex='0'></li><li class='social-gplus' data-network='google_plus' tabindex='0'></li><li class='social-pinterest' data-network='pinterest' tabindex='0'></li><li class='social-linkedin' data-network='linkedin' tabindex='0'></li><li class='social-xing' data-network='xing' tabindex='0'></li><li class='social-paper-plane' data-network='email' tabindex='0'></li></ul></div>";
-	};
+  Share.prototype.inject_html = function(instance) {
+    //return instance.innerHTML = "<label class='social-export'><span>" + this.config.ui.button_text + "</span></label><div class='social load " + this.config.ui.flyout + "'><ul><li class='social-facebook' data-network='facebook' tabindex='0'></li><li class='social-twitter' data-network='twitter' tabindex='0'></li><li class='social-gplus' data-network='google_plus' tabindex='0'></li><li class='social-pinterest' data-network='pinterest' tabindex='0'></li><li class='social-linkedin' data-network='linkedin' tabindex='0'></li><li class='social-xing' data-network='xing' tabindex='0'></li><li class='social-paper-plane' data-network='email' tabindex='0'></li></ul></div>";
+    return instance.innerHTML = "<label class='social-export'><span>" + this.config.ui.button_text + "</span></label><div class='social load " + this.config.ui.flyout + "'><ul><li class='social-facebook' data-network='facebook' tabindex='0'></li><li class='social-twitter' data-network='twitter' tabindex='0'></li><li class='social-pinterest' data-network='pinterest' tabindex='0'></li><li class='social-linkedin' data-network='linkedin' tabindex='0'></li><li class='social-xing' data-network='xing' tabindex='0'></li><li class='social-paper-plane' data-network='email' tabindex='0'></li></ul></div>";
+  };
 
-	Share.prototype.inject_facebook_sdk = function() {
-		var fb_root, script;
-		if (!window.FB && this.config.networks.facebook.app_id && !this.el.body.querySelector('#fb-root')) {
-			script = document.createElement("script");
-			script.text = "window.fbAsyncInit=function(){FB.init({appId:'" + this.config.networks.facebook.app_id + "',status:true,xfbml:true})};(function(e,t,n){var r,i=e.getElementsByTagName(t)[0];if(e.getElementById(n)){return}r=e.createElement(t);r.id=n;r.src='" + this.config.protocol + "connect.facebook.net/en_US/all.js';i.parentNode.insertBefore(r,i)})(document,'script','facebook-jssdk')";
-			fb_root = document.createElement("div");
-			fb_root.id = "fb-root";
-			this.el.body.appendChild(fb_root);
-			return this.el.body.appendChild(script);
-		}
-	};
+  Share.prototype.inject_facebook_sdk = function() {
+    var fb_root, script;
+    if (!window.FB && this.config.networks.facebook.app_id && !this.el.body.querySelector('#fb-root')) {
+      script = document.createElement("script");
+      script.text = "window.fbAsyncInit=function(){FB.init({appId:'" + this.config.networks.facebook.app_id + "',status:true,xfbml:true})};(function(e,t,n){var r,i=e.getElementsByTagName(t)[0];if(e.getElementById(n)){return}r=e.createElement(t);r.id=n;r.src='" + this.config.protocol + "connect.facebook.net/en_US/all.js';i.parentNode.insertBefore(r,i)})(document,'script','facebook-jssdk')";
+      fb_root = document.createElement("div");
+      fb_root.id = "fb-root";
+      this.el.body.appendChild(fb_root);
+      return this.el.body.appendChild(script);
+    }
+  };
 
-	Share.prototype.hook = function(type, network, instance) {
-		var fn, opts;
-		fn = this.config.networks[network][type];
-		if (typeof fn === "function") {
-			opts = fn.call(this.config.networks[network], instance);
-			if (opts !== void 0) {
-				opts = this.normalize_filter_config_updates(opts);
-				this.extend(this.config.networks[network], opts, true);
-				this.normalize_network_configuration();
-			}
-		}
-	};
+  Share.prototype.hook = function(type, network, instance) {
+    var fn, opts;
+    fn = this.config.networks[network][type];
+    if (typeof fn === "function") {
+      opts = fn.call(this.config.networks[network], instance);
+      if (opts !== void 0) {
+        opts = this.normalize_filter_config_updates(opts);
+        this.extend(this.config.networks[network], opts, true);
+        this.normalize_network_configuration();
+      }
+    }
+  };
 
-	Share.prototype.default_title = function() {
-		var content;
-		if (content = document.querySelector('meta[property="og:title"]') || document.querySelector('meta[name="twitter:title"]')) {
-			return encodeURIComponent(content.getAttribute('content'));
-		} else if (content = document.querySelector('title')) {
-			return encodeURIComponent(content.innerText);
-		}
-	};
+  Share.prototype.default_title = function() {
+    var content;
+    if (content = document.querySelector('meta[property="og:title"]') || document.querySelector('meta[name="twitter:title"]')) {
+      return encodeURIComponent(content.getAttribute('content'));
+    } else if (content = document.querySelector('title')) {
+      return encodeURIComponent(content.innerText);
+    }
+  };
 
-	Share.prototype.default_image = function() {
-		var content;
-		if (content = document.querySelector('meta[property="og:image"]') || document.querySelector('meta[name="twitter:image"]')) {
-			return content.getAttribute('content');
-		}
-	};
+  Share.prototype.default_image = function() {
+    var content;
+    if (content = document.querySelector('meta[property="og:image"]') || document.querySelector('meta[name="twitter:image"]')) {
+      return content.getAttribute('content');
+    }
+  };
 
-	Share.prototype.default_description = function() {
-		var content;
-		if (content = document.querySelector('meta[property="og:description"]') || document.querySelector('meta[name="twitter:description"]') || document.querySelector('meta[name="description"]')) {
-			return encodeURIComponent(content.getAttribute('content'));
-		} else {
-			return '';
-		}
-	};
+  Share.prototype.default_description = function() {
+    var content;
+    if (content = document.querySelector('meta[property="og:description"]') || document.querySelector('meta[name="twitter:description"]') || document.querySelector('meta[name="description"]')) {
+      return encodeURIComponent(content.getAttribute('content'));
+    } else {
+      return '';
+    }
+  };
 
-	Share.prototype.set_global_configuration = function() {
-		var display, network, option, options, _ref, _results;
-		_ref = this.config.networks;
-		_results = [];
-		for (network in _ref) {
-			options = _ref[network];
-			for (option in options) {
-				if (this.config.networks[network][option] == null) {
-					this.config.networks[network][option] = this.config[option];
-				}
-			}
-			if (this.config.networks[network].enabled) {
-				display = 'block';
-				this.config.enabled_networks += 1;
-			} else {
-				display = 'none';
-			}
-			_results.push(this.config.networks[network].display = display);
-		}
-		return _results;
-	};
+  Share.prototype.set_global_configuration = function() {
+    var display, network, option, options, _ref, _results;
+    _ref = this.config.networks;
+    _results = [];
+    for (network in _ref) {
+      options = _ref[network];
+      for (option in options) {
+        if (this.config.networks[network][option] == null) {
+          this.config.networks[network][option] = this.config[option];
+        }
+      }
+      if (this.config.networks[network].enabled) {
+        display = 'block';
+        this.config.enabled_networks += 1;
+      } else {
+        display = 'none';
+      }
+      _results.push(this.config.networks[network].display = display);
+    }
+    return _results;
+  };
 
-	Share.prototype.normalize_network_configuration = function() {
-		if (!this.config.networks.facebook.app_id) {
-			this.config.networks.facebook.load_sdk = false;
-		}
-		if (!this.is_encoded(this.config.networks.twitter.description)) {
-			this.config.networks.twitter.description = encodeURIComponent(this.config.networks.twitter.description);
-		}
-		if (typeof this.config.networks.facebook.app_id === 'number') {
-			return this.config.networks.facebook.app_id = this.config.networks.facebook.app_id.toString();
-		}
-	};
+  Share.prototype.normalize_network_configuration = function() {
+    if (!this.config.networks.facebook.app_id) {
+      this.config.networks.facebook.load_sdk = false;
+    }
+    if (!this.is_encoded(this.config.networks.twitter.description)) {
+      this.config.networks.twitter.description = encodeURIComponent(this.config.networks.twitter.description);
+    }
+    if (typeof this.config.networks.facebook.app_id === 'number') {
+      return this.config.networks.facebook.app_id = this.config.networks.facebook.app_id.toString();
+    }
+  };
 
-	Share.prototype.normalize_filter_config_updates = function(opts) {
-		if (this.config.networks.facebook.app_id !== opts.app_id) {
-			console.warn("You are unable to change the Facebook app_id after the button has been initialized. Please-in-out update your Facebook filters accordingly.");
-			delete opts.app_id;
-		}
-		if (this.config.networks.facebook.load_sdk !== opts.load_sdk) {
-			console.warn("You are unable to change the Facebook load_sdk option after the button has been initialized. Please-in-out update your Facebook filters accordingly.");
-			delete opts.app_id;
-		}
-		return opts;
-	};
+  Share.prototype.normalize_filter_config_updates = function(opts) {
+    if (this.config.networks.facebook.app_id !== opts.app_id) {
+      console.warn("You are unable to change the Facebook app_id after the button has been initialized. Please-in-out update your Facebook filters accordingly.");
+      delete opts.app_id;
+    }
+    if (this.config.networks.facebook.load_sdk !== opts.load_sdk) {
+      console.warn("You are unable to change the Facebook load_sdk option after the button has been initialized. Please-in-out update your Facebook filters accordingly.");
+      delete opts.app_id;
+    }
+    return opts;
+  };
 
-	return Share;
+  return Share;
 
 })(ShareUtils);
  return Share;
@@ -15015,262 +15026,262 @@ Share = (function(_super) {
 // @license Sticky-kit v1.1.2 | WTFPL | Leaf Corcoran 2015 | http://leafo.net
 
 (function() {
-	var $, win;
+  var $, win;
 
-	$ = this.jQuery || window.jQuery;
+  $ = this.jQuery || window.jQuery;
 
-	win = $(window);
+  win = $(window);
 
-	$.fn.stick_in_parent = function(opts) {
-		var doc, elm, enable_bottoming, fn, i, inner_scrolling, len, manual_spacer, offset_top, outer_width, parent_selector, recalc_every, sticky_class;
-		if (opts == null) {
-			opts = {};
-		}
-		sticky_class = opts.sticky_class, inner_scrolling = opts.inner_scrolling, recalc_every = opts.recalc_every, parent_selector = opts.parent, offset_top = opts.offset_top, manual_spacer = opts.spacer, enable_bottoming = opts.bottoming;
-		if (offset_top == null) {
-			offset_top = 0;
-		}
-		if (parent_selector == null) {
-			parent_selector = void 0;
-		}
-		if (inner_scrolling == null) {
-			inner_scrolling = true;
-		}
-		if (sticky_class == null) {
-			sticky_class = "is_stuck";
-		}
-		doc = $(document);
-		if (enable_bottoming == null) {
-			enable_bottoming = true;
-		}
-		outer_width = function(el) {
-			var _el, computed, w;
-			if (window.getComputedStyle) {
-				_el = el[0];
-				computed = window.getComputedStyle(el[0]);
-				w = parseFloat(computed.getPropertyValue("width")) + parseFloat(computed.getPropertyValue("margin-left")) + parseFloat(computed.getPropertyValue("margin-right"));
-				if (computed.getPropertyValue("box-sizing") !== "border-box") {
-					w += parseFloat(computed.getPropertyValue("border-left-width")) + parseFloat(computed.getPropertyValue("border-right-width")) + parseFloat(computed.getPropertyValue("padding-left")) + parseFloat(computed.getPropertyValue("padding-right"));
-				}
-				return w;
-			} else {
-				return el.outerWidth(true);
-			}
-		};
-		fn = function(elm, padding_bottom, parent_top, parent_height, top, height, el_float, detached) {
-			var bottomed, detach, fixed, last_pos, last_scroll_height, offset, parent, recalc, recalc_and_tick, recalc_counter, spacer, tick;
-			if (elm.data("sticky_kit")) {
-				return;
-			}
-			elm.data("sticky_kit", true);
-			last_scroll_height = doc.height();
-			parent = elm.parent();
-			if (parent_selector != null) {
-				parent = parent.closest(parent_selector);
-			}
-			if (!parent.length) {
-				throw "failed to find stick parent";
-			}
-			fixed = false;
-			bottomed = false;
-			spacer = manual_spacer != null ? manual_spacer && elm.closest(manual_spacer) : $("<div />");
-			if (spacer) {
-				spacer.css('position', elm.css('position'));
-			}
-			recalc = function() {
-				var border_top, padding_top, restore;
-				if (detached) {
-					return;
-				}
-				last_scroll_height = doc.height();
-				border_top = parseInt(parent.css("border-top-width"), 10);
-				padding_top = parseInt(parent.css("padding-top"), 10);
-				padding_bottom = parseInt(parent.css("padding-bottom"), 10);
-				parent_top = parent.offset().top + border_top + padding_top;
-				parent_height = parent.height();
-				if (fixed) {
-					fixed = false;
-					bottomed = false;
-					if (manual_spacer == null) {
-						elm.insertAfter(spacer);
-						spacer.detach();
-					}
-					elm.css({
-						position: "",
-						top: "",
-						width: "",
-						bottom: ""
-					}).removeClass(sticky_class);
-					restore = true;
-				}
-				top = elm.offset().top - (parseInt(elm.css("margin-top"), 10) || 0) - offset_top;
-				height = elm.outerHeight(true);
-				el_float = elm.css("float");
-				if (spacer) {
-					spacer.css({
-						width: outer_width(elm),
-						height: height,
-						display: elm.css("display"),
-						"vertical-align": elm.css("vertical-align"),
-						"float": el_float
-					});
-				}
-				if (restore) {
-					return tick();
-				}
-			};
-			recalc();
-			if (height === parent_height) {
-				return;
-			}
-			last_pos = void 0;
-			offset = offset_top;
-			recalc_counter = recalc_every;
-			tick = function() {
-				var css, delta, recalced, scroll, will_bottom, win_height;
-				if (detached) {
-					return;
-				}
-				recalced = false;
-				if (recalc_counter != null) {
-					recalc_counter -= 1;
-					if (recalc_counter <= 0) {
-						recalc_counter = recalc_every;
-						recalc();
-						recalced = true;
-					}
-				}
-				if (!recalced && doc.height() !== last_scroll_height) {
-					recalc();
-					recalced = true;
-				}
-				scroll = win.scrollTop();
-				if (last_pos != null) {
-					delta = scroll - last_pos;
-				}
-				last_pos = scroll;
-				if (fixed) {
-					if (enable_bottoming) {
-						will_bottom = scroll + height + offset > parent_height + parent_top;
-						if (bottomed && !will_bottom) {
-							bottomed = false;
-							elm.css({
-								position: "fixed",
-								bottom: "",
-								top: offset
-							}).trigger("sticky_kit:unbottom");
-						}
-					}
-					if (scroll < top) {
-						fixed = false;
-						offset = offset_top;
-						if (manual_spacer == null) {
-							if (el_float === "left" || el_float === "right") {
-								elm.insertAfter(spacer);
-							}
-							spacer.detach();
-						}
-						css = {
-							position: "",
-							width: "",
-							top: ""
-						};
-						elm.css(css).removeClass(sticky_class).trigger("sticky_kit:unstick");
-					}
-					if (inner_scrolling) {
-						win_height = win.height();
-						if (height + offset_top > win_height) {
-							if (!bottomed) {
-								offset -= delta;
-								offset = Math.max(win_height - height, offset);
-								offset = Math.min(offset_top, offset);
-								if (fixed) {
-									elm.css({
-										top: offset + "px"
-									});
-								}
-							}
-						}
-					}
-				} else {
-					if (scroll > top) {
-						fixed = true;
-						css = {
-							position: "fixed",
-							top: offset
-						};
-						css.width = elm.css("box-sizing") === "border-box" ? elm.outerWidth() + "px" : elm.width() + "px";
-						elm.css(css).addClass(sticky_class);
-						if (manual_spacer == null) {
-							elm.after(spacer);
-							if (el_float === "left" || el_float === "right") {
-								spacer.append(elm);
-							}
-						}
-						elm.trigger("sticky_kit:stick");
-					}
-				}
-				if (fixed && enable_bottoming) {
-					if (will_bottom == null) {
-						will_bottom = scroll + height + offset > parent_height + parent_top;
-					}
-					if (!bottomed && will_bottom) {
-						bottomed = true;
-						if (parent.css("position") === "static") {
-							parent.css({
-								position: "relative"
-							});
-						}
-						return elm.css({
-							position: "absolute",
-							bottom: padding_bottom,
-							top: "auto"
-						}).trigger("sticky_kit:bottom");
-					}
-				}
-			};
-			recalc_and_tick = function() {
-				recalc();
-				return tick();
-			};
-			detach = function() {
-				detached = true;
-				win.off("touchmove", tick);
-				win.off("scroll", tick);
-				win.off("resize", recalc_and_tick);
-				$(document.body).off("sticky_kit:recalc", recalc_and_tick);
-				elm.off("sticky_kit:detach", detach);
-				elm.removeData("sticky_kit");
-				elm.css({
-					position: "",
-					bottom: "",
-					top: "",
-					width: ""
-				});
-				parent.position("position", "");
-				if (fixed) {
-					if (manual_spacer == null) {
-						if (el_float === "left" || el_float === "right") {
-							elm.insertAfter(spacer);
-						}
-						spacer.remove();
-					}
-					return elm.removeClass(sticky_class);
-				}
-			};
-			win.on("touchmove", tick);
-			win.on("scroll", tick);
-			win.on("resize", recalc_and_tick);
-			$(document.body).on("sticky_kit:recalc", recalc_and_tick);
-			elm.on("sticky_kit:detach", detach);
-			return setTimeout(tick, 0);
-		};
-		for (i = 0, len = this.length; i < len; i++) {
-			elm = this[i];
-			fn($(elm));
-		}
-		return this;
-	};
+  $.fn.stick_in_parent = function(opts) {
+    var doc, elm, enable_bottoming, fn, i, inner_scrolling, len, manual_spacer, offset_top, outer_width, parent_selector, recalc_every, sticky_class;
+    if (opts == null) {
+      opts = {};
+    }
+    sticky_class = opts.sticky_class, inner_scrolling = opts.inner_scrolling, recalc_every = opts.recalc_every, parent_selector = opts.parent, offset_top = opts.offset_top, manual_spacer = opts.spacer, enable_bottoming = opts.bottoming;
+    if (offset_top == null) {
+      offset_top = 0;
+    }
+    if (parent_selector == null) {
+      parent_selector = void 0;
+    }
+    if (inner_scrolling == null) {
+      inner_scrolling = true;
+    }
+    if (sticky_class == null) {
+      sticky_class = "is_stuck";
+    }
+    doc = $(document);
+    if (enable_bottoming == null) {
+      enable_bottoming = true;
+    }
+    outer_width = function(el) {
+      var _el, computed, w;
+      if (window.getComputedStyle) {
+        _el = el[0];
+        computed = window.getComputedStyle(el[0]);
+        w = parseFloat(computed.getPropertyValue("width")) + parseFloat(computed.getPropertyValue("margin-left")) + parseFloat(computed.getPropertyValue("margin-right"));
+        if (computed.getPropertyValue("box-sizing") !== "border-box") {
+          w += parseFloat(computed.getPropertyValue("border-left-width")) + parseFloat(computed.getPropertyValue("border-right-width")) + parseFloat(computed.getPropertyValue("padding-left")) + parseFloat(computed.getPropertyValue("padding-right"));
+        }
+        return w;
+      } else {
+        return el.outerWidth(true);
+      }
+    };
+    fn = function(elm, padding_bottom, parent_top, parent_height, top, height, el_float, detached) {
+      var bottomed, detach, fixed, last_pos, last_scroll_height, offset, parent, recalc, recalc_and_tick, recalc_counter, spacer, tick;
+      if (elm.data("sticky_kit")) {
+        return;
+      }
+      elm.data("sticky_kit", true);
+      last_scroll_height = doc.height();
+      parent = elm.parent();
+      if (parent_selector != null) {
+        parent = parent.closest(parent_selector);
+      }
+      if (!parent.length) {
+        throw "failed to find stick parent";
+      }
+      fixed = false;
+      bottomed = false;
+      spacer = manual_spacer != null ? manual_spacer && elm.closest(manual_spacer) : $("<div />");
+      if (spacer) {
+        spacer.css('position', elm.css('position'));
+      }
+      recalc = function() {
+        var border_top, padding_top, restore;
+        if (detached) {
+          return;
+        }
+        last_scroll_height = doc.height();
+        border_top = parseInt(parent.css("border-top-width"), 10);
+        padding_top = parseInt(parent.css("padding-top"), 10);
+        padding_bottom = parseInt(parent.css("padding-bottom"), 10);
+        parent_top = parent.offset().top + border_top + padding_top;
+        parent_height = parent.height();
+        if (fixed) {
+          fixed = false;
+          bottomed = false;
+          if (manual_spacer == null) {
+            elm.insertAfter(spacer);
+            spacer.detach();
+          }
+          elm.css({
+            position: "",
+            top: "",
+            width: "",
+            bottom: ""
+          }).removeClass(sticky_class);
+          restore = true;
+        }
+        top = elm.offset().top - (parseInt(elm.css("margin-top"), 10) || 0) - offset_top;
+        height = elm.outerHeight(true);
+        el_float = elm.css("float");
+        if (spacer) {
+          spacer.css({
+            width: outer_width(elm),
+            height: height,
+            display: elm.css("display"),
+            "vertical-align": elm.css("vertical-align"),
+            "float": el_float
+          });
+        }
+        if (restore) {
+          return tick();
+        }
+      };
+      recalc();
+      if (height === parent_height) {
+        return;
+      }
+      last_pos = void 0;
+      offset = offset_top;
+      recalc_counter = recalc_every;
+      tick = function() {
+        var css, delta, recalced, scroll, will_bottom, win_height;
+        if (detached) {
+          return;
+        }
+        recalced = false;
+        if (recalc_counter != null) {
+          recalc_counter -= 1;
+          if (recalc_counter <= 0) {
+            recalc_counter = recalc_every;
+            recalc();
+            recalced = true;
+          }
+        }
+        if (!recalced && doc.height() !== last_scroll_height) {
+          recalc();
+          recalced = true;
+        }
+        scroll = win.scrollTop();
+        if (last_pos != null) {
+          delta = scroll - last_pos;
+        }
+        last_pos = scroll;
+        if (fixed) {
+          if (enable_bottoming) {
+            will_bottom = scroll + height + offset > parent_height + parent_top;
+            if (bottomed && !will_bottom) {
+              bottomed = false;
+              elm.css({
+                position: "fixed",
+                bottom: "",
+                top: offset
+              }).trigger("sticky_kit:unbottom");
+            }
+          }
+          if (scroll < top) {
+            fixed = false;
+            offset = offset_top;
+            if (manual_spacer == null) {
+              if (el_float === "left" || el_float === "right") {
+                elm.insertAfter(spacer);
+              }
+              spacer.detach();
+            }
+            css = {
+              position: "",
+              width: "",
+              top: ""
+            };
+            elm.css(css).removeClass(sticky_class).trigger("sticky_kit:unstick");
+          }
+          if (inner_scrolling) {
+            win_height = win.height();
+            if (height + offset_top > win_height) {
+              if (!bottomed) {
+                offset -= delta;
+                offset = Math.max(win_height - height, offset);
+                offset = Math.min(offset_top, offset);
+                if (fixed) {
+                  elm.css({
+                    top: offset + "px"
+                  });
+                }
+              }
+            }
+          }
+        } else {
+          if (scroll > top) {
+            fixed = true;
+            css = {
+              position: "fixed",
+              top: offset
+            };
+            css.width = elm.css("box-sizing") === "border-box" ? elm.outerWidth() + "px" : elm.width() + "px";
+            elm.css(css).addClass(sticky_class);
+            if (manual_spacer == null) {
+              elm.after(spacer);
+              if (el_float === "left" || el_float === "right") {
+                spacer.append(elm);
+              }
+            }
+            elm.trigger("sticky_kit:stick");
+          }
+        }
+        if (fixed && enable_bottoming) {
+          if (will_bottom == null) {
+            will_bottom = scroll + height + offset > parent_height + parent_top;
+          }
+          if (!bottomed && will_bottom) {
+            bottomed = true;
+            if (parent.css("position") === "static") {
+              parent.css({
+                position: "relative"
+              });
+            }
+            return elm.css({
+              position: "absolute",
+              bottom: padding_bottom,
+              top: "auto"
+            }).trigger("sticky_kit:bottom");
+          }
+        }
+      };
+      recalc_and_tick = function() {
+        recalc();
+        return tick();
+      };
+      detach = function() {
+        detached = true;
+        win.off("touchmove", tick);
+        win.off("scroll", tick);
+        win.off("resize", recalc_and_tick);
+        $(document.body).off("sticky_kit:recalc", recalc_and_tick);
+        elm.off("sticky_kit:detach", detach);
+        elm.removeData("sticky_kit");
+        elm.css({
+          position: "",
+          bottom: "",
+          top: "",
+          width: ""
+        });
+        parent.position("position", "");
+        if (fixed) {
+          if (manual_spacer == null) {
+            if (el_float === "left" || el_float === "right") {
+              elm.insertAfter(spacer);
+            }
+            spacer.remove();
+          }
+          return elm.removeClass(sticky_class);
+        }
+      };
+      win.on("touchmove", tick);
+      win.on("scroll", tick);
+      win.on("resize", recalc_and_tick);
+      $(document.body).on("sticky_kit:recalc", recalc_and_tick);
+      elm.on("sticky_kit:detach", detach);
+      return setTimeout(tick, 0);
+    };
+    for (i = 0, len = this.length; i < len; i++) {
+      elm = this[i];
+      fn($(elm));
+    }
+    return this;
+  };
 
 }).call(this);
 
@@ -15314,300 +15325,300 @@ Share = (function(_super) {
  */
 
 BootstrapTabHistory = {
-	options: {
-		/**
-		 * When the anchor portion of the URI is used to activate a tab, scroll down to the given offset, rather than the
-		 * element with the given `id` attribute. Set to null to disable. Only relevant if showTabsBasedOnAnchor is true.
-		 *
-		 * May be overriden on a per-element basis by the attribute `data-tab-history-anchor-y-offset`.
-		 *
-		 * @public
-		 * @type {?number}
-		 */
-		defaultAnchorYOffset: 0,
-		/**
-		 * Either 'push' or 'replace', for whether to use `history.pushState` or `history.replaceState`, resp.
-		 *
-		 * May be overriden on a per-element basis by the attribute `data-tab-history-changer`.
-		 *
-		 * @public
-		 * @type {string}
-		 */
-		defaultChanger: 'replace',
-		/**
-		 * If true, update the URL in onShownTab in the calls to `history.pushState` and `history.replaceState`. Otherwise,
-		 * `null` is passed as the third parameter to these calls.
-		 *
-		 * May be overriden on a per-element basis by the attribute `data-tab-history-update-url`.
-		 *
-		 * @public
-		 * @type {boolean}
-		 */
-		defaultUpdateURL: false,
-		/**
-		 * Should the anchor portion of the loaded URI be used to activate a single tab if no history was present on page
-		 * load.
-		 *
-		 * @public
-		 * @type {boolean}
-		 */
-		showTabsBasedOnAnchor: true
-	}
+  options: {
+    /**
+     * When the anchor portion of the URI is used to activate a tab, scroll down to the given offset, rather than the
+     * element with the given `id` attribute. Set to null to disable. Only relevant if showTabsBasedOnAnchor is true.
+     *
+     * May be overriden on a per-element basis by the attribute `data-tab-history-anchor-y-offset`.
+     *
+     * @public
+     * @type {?number}
+     */
+    defaultAnchorYOffset: 0,
+    /**
+     * Either 'push' or 'replace', for whether to use `history.pushState` or `history.replaceState`, resp.
+     *
+     * May be overriden on a per-element basis by the attribute `data-tab-history-changer`.
+     *
+     * @public
+     * @type {string}
+     */
+    defaultChanger: 'replace',
+    /**
+     * If true, update the URL in onShownTab in the calls to `history.pushState` and `history.replaceState`. Otherwise,
+     * `null` is passed as the third parameter to these calls.
+     *
+     * May be overriden on a per-element basis by the attribute `data-tab-history-update-url`.
+     *
+     * @public
+     * @type {boolean}
+     */
+    defaultUpdateURL: false,
+    /**
+     * Should the anchor portion of the loaded URI be used to activate a single tab if no history was present on page
+     * load.
+     *
+     * @public
+     * @type {boolean}
+     */
+    showTabsBasedOnAnchor: true
+  }
 };
 
 (function () {
-	'use strict';
+  'use strict';
 
-	jQuery(function () {
-		if(history && history.pushState && history.replaceState) {
-			var bootstrapTabHistory = history.state && history.state.bootstrapTabHistory;
+  jQuery(function () {
+    if(history && history.pushState && history.replaceState) {
+      var bootstrapTabHistory = history.state && history.state.bootstrapTabHistory;
 
-			if(bootstrapTabHistory) {
-				showTabsBasedOnState(bootstrapTabHistory);
-			} else {
-				showTabsBasedOnAnchor();
-			}
+      if(bootstrapTabHistory) {
+        showTabsBasedOnState(bootstrapTabHistory);
+      } else {
+        showTabsBasedOnAnchor();
+      }
 
-			backfillHistoryState();
+      backfillHistoryState();
 
-			jQuery(document).on('shown.bs.tab show.bs.collapse', onShownTab);
-			jQuery(window).on('popstate', onPopState);
-		} else {
-			showTabsBasedOnAnchor();
-		}
-	});
+      jQuery(document).on('shown.bs.tab show.bs.collapse', onShownTab);
+      jQuery(window).on('popstate', onPopState);
+    } else {
+      showTabsBasedOnAnchor();
+    }
+  });
 
-	/**
-	 * Used to prevent onShownTab from registering shown events that we triggered via showTabsBasedOnState.
-	 *
-	 * @type {boolean}
-	 */
-	var showingTabsBasedOnState = false;
+  /**
+   * Used to prevent onShownTab from registering shown events that we triggered via showTabsBasedOnState.
+   *
+   * @type {boolean}
+   */
+  var showingTabsBasedOnState = false;
 
-	/**
-	 * Used to update `history.state` to reflect the default active tabs on initial page load. This supports proper
-	 * `history.back` handling when `data-tab-history-update-url` is true.
-	 */
-	function backfillHistoryState() {
-		var newState = null;
+  /**
+   * Used to update `history.state` to reflect the default active tabs on initial page load. This supports proper
+   * `history.back` handling when `data-tab-history-update-url` is true.
+   */
+  function backfillHistoryState() {
+    var newState = null;
 
-		jQuery('li.active > [data-tab-history], .panel-title.active [data-tab-history]').each(function () {//edited by Uncode
-			var $activeTabElement = jQuery(this);
-			var selector = getTabSelector($activeTabElement);
+    jQuery('li.active > [data-tab-history], .panel-title.active [data-tab-history]').each(function () {//edited by Uncode
+      var $activeTabElement = jQuery(this);
+      var selector = getTabSelector($activeTabElement);
 
-			if(selector) {
-				var tabGroup = getTabGroup($activeTabElement);
+      if(selector) {
+        var tabGroup = getTabGroup($activeTabElement);
 
-				if(tabGroup) {
-					newState = createNewHistoryState(newState || history.state, tabGroup, selector);
-				}
-			}
-		});
+        if(tabGroup) {
+          newState = createNewHistoryState(newState || history.state, tabGroup, selector);
+        }
+      }
+    });
 
-		if(newState) {
-			history.replaceState(newState, '', null);
-		}
-	}
+    if(newState) {
+      history.replaceState(newState, '', null);
+    }
+  }
 
-	/**
-	 * Clone the existing state, ensure its bootstrapTabHistory attribute is an Object, and add the provided tabGroup to
-	 * said bootstrapTabHistory attribute.
-	 *
-	 * @param {?object} existingState
-	 * @param {!string} tabGroup
-	 * @param {!string} selector
-	 * @returns {!object}
-	 */
-	function createNewHistoryState(existingState, tabGroup, selector) {
-		// Clone history.state and ensure it has a bootstrapTabHistory entry.
-		var newState = jQuery.extend(true, {}, existingState, {
-			bootstrapTabHistory: {}
-		});
+  /**
+   * Clone the existing state, ensure its bootstrapTabHistory attribute is an Object, and add the provided tabGroup to
+   * said bootstrapTabHistory attribute.
+   *
+   * @param {?object} existingState
+   * @param {!string} tabGroup
+   * @param {!string} selector
+   * @returns {!object}
+   */
+  function createNewHistoryState(existingState, tabGroup, selector) {
+    // Clone history.state and ensure it has a bootstrapTabHistory entry.
+    var newState = jQuery.extend(true, {}, existingState, {
+      bootstrapTabHistory: {}
+    });
 
-		newState.bootstrapTabHistory[tabGroup] = selector;
+    newState.bootstrapTabHistory[tabGroup] = selector;
 
-		return newState;
-	}
+    return newState;
+  }
 
-	/**
-	 * @param {jQuery} $tab
-	 * @returns {?string}
-	 */
-	function getTabGroup($tab) {
-		return parseTruthyAttributeValue($tab.data('tab-history'));
-	}
+  /**
+   * @param {jQuery} $tab
+   * @returns {?string}
+   */
+  function getTabGroup($tab) {
+    return parseTruthyAttributeValue($tab.data('tab-history'));
+  }
 
-	/**
-	 * @param {jQuery} $tab
-	 * @returns {?string}
-	 */
-	function getTabSelector($tab) {
-		return $tab.data('target') || $tab.attr('href');
-	}
+  /**
+   * @param {jQuery} $tab
+   * @returns {?string}
+   */
+  function getTabSelector($tab) {
+    return $tab.data('target') || $tab.attr('href');
+  }
 
-	/**
-	 * Receives the `shown.bs.tab` event. Updates `history.state` as appropriate.
-	 *
-	 * @param {jQuery.Event} shownEvt
-	 */
-	function onShownTab(shownEvt) {
-		if(!showingTabsBasedOnState) {
-			var $activatedTab = jQuery(shownEvt.target);
-			if ( $activatedTab.hasClass('panel-collapse') )
-				$activatedTab = $activatedTab.closest('.panel').find('a');
-			var selector = getTabSelector($activatedTab);
+  /**
+   * Receives the `shown.bs.tab` event. Updates `history.state` as appropriate.
+   *
+   * @param {jQuery.Event} shownEvt
+   */
+  function onShownTab(shownEvt) {
+    if(!showingTabsBasedOnState) {
+      var $activatedTab = jQuery(shownEvt.target);
+      if ( $activatedTab.hasClass('panel-collapse') )
+        $activatedTab = $activatedTab.closest('.panel').find('a');
+      var selector = getTabSelector($activatedTab);
 
-			if(selector) {
-				var tabGroup = getTabGroup($activatedTab);
+      if(selector) {
+        var tabGroup = getTabGroup($activatedTab);
 
-				if(tabGroup) {
-					var historyChanger = $activatedTab.data('tab-history-changer') || BootstrapTabHistory.options.defaultChanger;
-					var newState = createNewHistoryState(history.state, tabGroup, selector);
-					var updateURL = (function ($activatedTab) {
-						if(selector[0] === '#') {
-							var elementUpdateURLOption = parseTruthyAttributeValue($activatedTab.data('tab-history-update-url'));
+        if(tabGroup) {
+          var historyChanger = $activatedTab.data('tab-history-changer') || BootstrapTabHistory.options.defaultChanger;
+          var newState = createNewHistoryState(history.state, tabGroup, selector);
+          var updateURL = (function ($activatedTab) {
+            if(selector[0] === '#') {
+              var elementUpdateURLOption = parseTruthyAttributeValue($activatedTab.data('tab-history-update-url'));
 
-							if(elementUpdateURLOption === undefined) {
-								return BootstrapTabHistory.options.defaultUpdateURL;
-							} else {
-								return elementUpdateURLOption;
-							}
-						} else {
-							return false;
-						}
-					})($activatedTab);
+              if(elementUpdateURLOption === undefined) {
+                return BootstrapTabHistory.options.defaultUpdateURL;
+              } else {
+                return elementUpdateURLOption;
+              }
+            } else {
+              return false;
+            }
+          })($activatedTab);
 
-					switch(historyChanger) {
-						case 'push':
-							history.pushState(newState, '', updateURL ? selector : null);
-							break;
-						case 'replace':
-							history.replaceState(newState, '', updateURL ? selector : null);
-							break;
-						default:
-							throw new Error('Unknown tab-history-changer: ' + historyChanger);
-					}
-				}
-			}
-		}
-	}
+          switch(historyChanger) {
+            case 'push':
+              history.pushState(newState, '', updateURL ? selector : null);
+              break;
+            case 'replace':
+              history.replaceState(newState, '', updateURL ? selector : null);
+              break;
+            default:
+              throw new Error('Unknown tab-history-changer: ' + historyChanger);
+          }
+        }
+      }
+    }
+  }
 
-	/**
-	 * Receives the `popstate` event. Shows tabs based on the value of `history.state` as appropriate.
-	 */
-	function onPopState() {
-		var bootstrapTabHistory = history.state && history.state.bootstrapTabHistory;
+  /**
+   * Receives the `popstate` event. Shows tabs based on the value of `history.state` as appropriate.
+   */
+  function onPopState() {
+    var bootstrapTabHistory = history.state && history.state.bootstrapTabHistory;
 
-		if(bootstrapTabHistory) {
-			showTabsBasedOnState(bootstrapTabHistory);
-		}
-	}
+    if(bootstrapTabHistory) {
+      showTabsBasedOnState(bootstrapTabHistory);
+    }
+  }
 
-	/**
-	 * Returns the given value, _unless_ that value is an empty string, in which case `true` is returned.
-	 *
-	 * Rationale: HAML data attributes which are set to `true` are rendered as a blank string.
-	 *
-	 * @param {*} value
-	 * @returns {*}
-	 */
-	function parseTruthyAttributeValue(value) {
-		if(value) {
-			return value;
-		} else if(value === '') {
-			return true;
-		} else {
-			return value;
-		}
-	}
+  /**
+   * Returns the given value, _unless_ that value is an empty string, in which case `true` is returned.
+   *
+   * Rationale: HAML data attributes which are set to `true` are rendered as a blank string.
+   *
+   * @param {*} value
+   * @returns {*}
+   */
+  function parseTruthyAttributeValue(value) {
+    if(value) {
+      return value;
+    } else if(value === '') {
+      return true;
+    } else {
+      return value;
+    }
+  }
 
-	/**
-	 * Show tabs based upon the anchor component of `window.location`.
-	 */
-	function showTabsBasedOnAnchor() {
-		if(BootstrapTabHistory.options.showTabsBasedOnAnchor) {
-			var anchor = window.location && window.location.hash;
+  /**
+   * Show tabs based upon the anchor component of `window.location`.
+   */
+  function showTabsBasedOnAnchor() {
+    if(BootstrapTabHistory.options.showTabsBasedOnAnchor) {
+      var anchor = window.location && window.location.hash;
 
-			if(anchor) {
-				var $tabElement = showTabForSelector(anchor);
+      if(anchor) {
+        var $tabElement = showTabForSelector(anchor);
 
-				if($tabElement && window.addEventListener && window.removeEventListener) {
-					var anchorYOffset = (function ($tabElement) {
-						var elementSetting = $tabElement.data('tab-history-anchor-y-offset');
+        if($tabElement && window.addEventListener && window.removeEventListener) {
+          var anchorYOffset = (function ($tabElement) {
+            var elementSetting = $tabElement.data('tab-history-anchor-y-offset');
 
-						if(elementSetting === undefined) {
-							return BootstrapTabHistory.options.defaultAnchorYOffset;
-						} else {
-							return elementSetting;
-						}
-					})($tabElement);
+            if(elementSetting === undefined) {
+              return BootstrapTabHistory.options.defaultAnchorYOffset;
+            } else {
+              return elementSetting;
+            }
+          })($tabElement);
 
-					// HACK: This prevents scrolling to the tab on page load. This relies on the fact that we should never get
-					//   here on `history.forward`, `history.back`, or `location.reload`, since in all those situations the
-					//   `history.state` object should have been used (unless the browser did not support the modern History API).
-					if(anchorYOffset || anchorYOffset === 0) {
-						var scrollListener = function resetAnchorScroll () {
-							window.removeEventListener('scroll', scrollListener);
-							window.scrollTo(0, anchorYOffset);
-						};
+          // HACK: This prevents scrolling to the tab on page load. This relies on the fact that we should never get
+          //   here on `history.forward`, `history.back`, or `location.reload`, since in all those situations the
+          //   `history.state` object should have been used (unless the browser did not support the modern History API).
+          if(anchorYOffset || anchorYOffset === 0) {
+            var scrollListener = function resetAnchorScroll () {
+              window.removeEventListener('scroll', scrollListener);
+              window.scrollTo(0, anchorYOffset);
+            };
 
-						window.addEventListener('scroll', scrollListener);
-					}
-				}
-			}
-		}
-	}
+            window.addEventListener('scroll', scrollListener);
+          }
+        }
+      }
+    }
+  }
 
-	/**
-	 * Show a tab which corresponds to the provided selector.
-	 *
-	 * @param {string} selector - A CSS selector.
-	 * @returns {?jQuery} - The tab which was found to show (even if said tab was already active).
-	 */
-	function showTabForSelector(selector) {
-		var $tabElement = (function (selector) {
-			var $ret = null;
+  /**
+   * Show a tab which corresponds to the provided selector.
+   *
+   * @param {string} selector - A CSS selector.
+   * @returns {?jQuery} - The tab which was found to show (even if said tab was already active).
+   */
+  function showTabForSelector(selector) {
+    var $tabElement = (function (selector) {
+      var $ret = null;
 
-			jQuery('[data-toggle="tab"], [data-toggle="pill"], [data-toggle="collapse"]').each(function () {
-				var $potentialTab = jQuery(this);
+      jQuery('[data-toggle="tab"], [data-toggle="pill"], [data-toggle="collapse"]').each(function () {
+        var $potentialTab = jQuery(this);
 
-				if(($potentialTab.attr('href') === selector || $potentialTab.data('target') === selector ) && getTabGroup($potentialTab)) {
-					$ret = $potentialTab;
-					return false;
-				} else {
-				 return null;
-				}
-			});
+        if(($potentialTab.attr('href') === selector || $potentialTab.data('target') === selector ) && getTabGroup($potentialTab)) {
+          $ret = $potentialTab;
+          return false;
+        } else {
+         return null;
+        }
+      });
 
-			return $ret;
-		})(selector);
+      return $ret;
+    })(selector);
 
-		if($tabElement) {
-			$tabElement.trigger('click');
-			//$tabElement.tab('show');
-		}
+    if($tabElement) {
+      $tabElement.trigger('click');
+      //$tabElement.tab('show');
+    }
 
-		return $tabElement;
-	}
+    return $tabElement;
+  }
 
-	/**
-	 * Iterate through the provided set of tab tab groups, showing the tabs based on the stored selectors.
-	 *
-	 * @param {object} bootstrapTabHistory - Each of the values is passed to showTabForSelector; the keys are actually irrelevant.
-	 */
-	function showTabsBasedOnState(bootstrapTabHistory) {
-		showingTabsBasedOnState = true;
+  /**
+   * Iterate through the provided set of tab tab groups, showing the tabs based on the stored selectors.
+   *
+   * @param {object} bootstrapTabHistory - Each of the values is passed to showTabForSelector; the keys are actually irrelevant.
+   */
+  function showTabsBasedOnState(bootstrapTabHistory) {
+    showingTabsBasedOnState = true;
 
-		try {
-			for(var k in bootstrapTabHistory) {
-				if(bootstrapTabHistory.hasOwnProperty(k)) {
-					showTabForSelector(bootstrapTabHistory[k]);
-				}
-			}
-		} finally {
-			showingTabsBasedOnState = false;
-		}
-	}
+    try {
+      for(var k in bootstrapTabHistory) {
+        if(bootstrapTabHistory.hasOwnProperty(k)) {
+          showTabForSelector(bootstrapTabHistory[k]);
+        }
+      }
+    } finally {
+      showingTabsBasedOnState = false;
+    }
+  }
 })();
 
 
@@ -15619,1142 +15630,1142 @@ BootstrapTabHistory = {
  */
 (function($) {
 
-	function hasScrollBar() {
-		return $("body").height() > $(window).height();
-	}
-	/**
-	 * Justified Gallery controller constructor
-	 *
-	 * @param $gallery the gallery to build
-	 * @param settings the settings (the defaults are in $.fn.justifiedGallery.defaults)
-	 * @constructor
-	 */
-	var JustifiedGallery = function ($gallery, settings) {
-
-		this.settings = settings;
-		this.checkSettings();
-
-		this.imgAnalyzerTimeout = null;
-		this.entries = null;
-		this.buildingRow = {
-			entriesBuff : [],
-			width : 0,
-			height : 0,
-			aspectRatio : 0
-		};
-		this.lastFetchedEntry = null;
-		this.lastAnalyzedIndex = -1;
-		this.yield = {
-			every : 2, // do a flush every n flushes (must be greater than 1)
-			flushed : 0 // flushed rows without a yield
-		};
-		this.border = settings.border >= 0 ? settings.border : settings.margins;
-		this.maxRowHeight = this.retrieveMaxRowHeight();
-		this.suffixRanges = this.retrieveSuffixRanges();
-		this.offY = this.border;
-		this.rows = 0;
-		this.spinner = {
-			phase : 0,
-			timeSlot : 150,
-			$el : $('<div class="spinner"><span></span><span></span><span></span></div>'),
-			intervalId : null
-		};
-		this.checkWidthIntervalId = null;
-		this.galleryWidth = $gallery.width();
-		this.$gallery = $gallery;
-
-	};
-
-	/** @returns {String} the best suffix given the width and the height */
-	JustifiedGallery.prototype.getSuffix = function (width, height) {
-		var longestSide, i;
-		longestSide = (width > height) ? width : height;
-		for (i = 0; i < this.suffixRanges.length; i++) {
-			if (longestSide <= this.suffixRanges[i]) {
-				return this.settings.sizeRangeSuffixes[this.suffixRanges[i]];
-			}
-		}
-		return this.settings.sizeRangeSuffixes[this.suffixRanges[i - 1]];
-	};
-
-	/**
-	 * Remove the suffix from the string
-	 *
-	 * @returns {string} a new string without the suffix
-	 */
-	JustifiedGallery.prototype.removeSuffix = function (str, suffix) {
-		return str.substring(0, str.length - suffix.length);
-	};
-
-	/**
-	 * @returns {boolean} a boolean to say if the suffix is contained in the str or not
-	 */
-	JustifiedGallery.prototype.endsWith = function (str, suffix) {
-		return str.indexOf(suffix, str.length - suffix.length) !== -1;
-	};
-
-	/**
-	 * Get the used suffix of a particular url
-	 *
-	 * @param str
-	 * @returns {String} return the used suffix
-	 */
-	JustifiedGallery.prototype.getUsedSuffix = function (str) {
-		for (var si in this.settings.sizeRangeSuffixes) {
-			if (this.settings.sizeRangeSuffixes.hasOwnProperty(si)) {
-				if (this.settings.sizeRangeSuffixes[si].length === 0) continue;
-				if (this.endsWith(str, this.settings.sizeRangeSuffixes[si])) return this.settings.sizeRangeSuffixes[si];
-			}
-		}
-		return '';
-	};
-
-	/**
-	 * Given an image src, with the width and the height, returns the new image src with the
-	 * best suffix to show the best quality thumbnail.
-	 *
-	 * @returns {String} the suffix to use
-	 */
-	JustifiedGallery.prototype.newSrc = function (imageSrc, imgWidth, imgHeight, image) {
-		var newImageSrc;
-
-		if (this.settings.thumbnailPath) {
-			newImageSrc = this.settings.thumbnailPath(imageSrc, imgWidth, imgHeight, image);
-		} else {
-			var matchRes = imageSrc.match(this.settings.extension);
-			var ext = (matchRes !== null) ? matchRes[0] : '';
-			newImageSrc = imageSrc.replace(this.settings.extension, '');
-			newImageSrc = this.removeSuffix(newImageSrc, this.getUsedSuffix(newImageSrc));
-			newImageSrc += this.getSuffix(imgWidth, imgHeight) + ext;
-		}
-
-		return newImageSrc;
-	};
-
-	/**
-	 * Shows the images that is in the given entry
-	 *
-	 * @param $entry the entry
-	 * @param callback the callback that is called when the show animation is finished
-	 */
-	JustifiedGallery.prototype.showImg = function ($entry, callback) {
-		if (this.settings.cssAnimation) {
-			$entry.addClass('entry-visible');
-			if (callback) callback();
-		} else {
-			$entry.stop().fadeTo(this.settings.imagesAnimationDuration, 1.0, callback);
-			$entry.find('> img, > a > img').stop().fadeTo(this.settings.imagesAnimationDuration, 1.0, callback);
-		}
-	};
-
-	/**
-	 * Extract the image src form the image, looking from the 'safe-src', and if it can't be found, from the
-	 * 'src' attribute. It saves in the image data the 'jg.originalSrc' field, with the extracted src.
-	 *
-	 * @param $image the image to analyze
-	 * @returns {String} the extracted src
-	 */
-	JustifiedGallery.prototype.extractImgSrcFromImage = function ($image) {
-		var imageSrc = (typeof $image.data('safe-src') !== 'undefined') ? $image.data('safe-src') : $image.attr('src');
-		$image.data('jg.originalSrc', imageSrc);
-		return imageSrc;
-	};
-
-	/** @returns {jQuery} the image in the given entry */
-	JustifiedGallery.prototype.imgFromEntry = function ($entry) {
-		var $img = $entry.find('> img');
-		if ($img.length === 0) $img = $entry.find('> a > img');
-		if ($img.length === 0) $img = $entry.find('.t-entry-visual-cont img');//hacked by Uncode
-		return $img.length === 0 ? null : $img;
-	};
-
-	/** @returns {jQuery} the caption in the given entry */
-	JustifiedGallery.prototype.captionFromEntry = function ($entry) {
-		var $caption = $entry.find('> .caption');
-		return $caption.length === 0 ? null : $caption;
-	};
-
-	/**
-	 * Display the entry
-	 *
-	 * @param {jQuery} $entry the entry to display
-	 * @param {int} x the x position where the entry must be positioned
-	 * @param y the y position where the entry must be positioned
-	 * @param imgWidth the image width
-	 * @param imgHeight the image height
-	 * @param rowHeight the row height of the row that owns the entry
-	 */
-	JustifiedGallery.prototype.displayEntry = function ($entry, x, y, imgWidth, imgHeight, rowHeight) {
-		$entry.width(imgWidth);
-		$entry.height(Math.floor(rowHeight));//hacked by Uncode
-		$entry.css('top', Math.floor(y));//hacked by Uncode
-		$entry.css('left', x);
-
-		var $image = this.imgFromEntry($entry);
-		if ($image !== null) {
-			$image.css('width', imgWidth);
-			$image.css('height', imgHeight);
-			$image.css('margin-left', - imgWidth / 2);
-			$image.css('margin-top', - imgHeight / 2);
-
-			// Image reloading for an high quality of thumbnails
-			var imageSrc = $image.attr('src');
-			var newImageSrc = this.newSrc(imageSrc, imgWidth, imgHeight, $image[0]);
-
-			$image.one('error', function () {
-				$image.attr('src', $image.data('jg.originalSrc')); //revert to the original thumbnail, we got it.
-			});
-
-			var loadNewImage = function () {
-				if (imageSrc !== newImageSrc) { //load the new image after the fadeIn
-					$image.attr('src', newImageSrc);
-				}
-			};
-
-			if ($entry.data('jg.loaded') === 'skipped') {
-				this.onImageEvent(imageSrc, $.proxy(function() {
-					this.showImg($entry, loadNewImage);
-					$entry.data('jg.loaded', true);
-				}, this));
-			} else {
-				this.showImg($entry, loadNewImage);
-			}
-
-		} else {
-			this.showImg($entry);
-		}
-
-		this.displayEntryCaption($entry);
-	};
-
-	/**
-	 * Display the entry caption. If the caption element doesn't exists, it creates the caption using the 'alt'
-	 * or the 'title' attributes.
-	 *
-	 * @param {jQuery} $entry the entry to process
-	 */
-	JustifiedGallery.prototype.displayEntryCaption = function ($entry) {
-		var $image = this.imgFromEntry($entry);
-		if ($image !== null && this.settings.captions) {
-			var $imgCaption = this.captionFromEntry($entry);
-
-			// Create it if it doesn't exists
-			if ($imgCaption === null) {
-				var caption = $image.attr('alt');
-				if (!this.isValidCaption(caption)) caption = $entry.attr('title');
-				if (this.isValidCaption(caption)) { // Create only we found something
-					$imgCaption = $('<div class="caption">' + caption + '</div>');
-					$entry.append($imgCaption);
-					$entry.data('jg.createdCaption', true);
-				}
-			}
-
-			// Create events (we check again the $imgCaption because it can be still inexistent)
-			if ($imgCaption !== null) {
-				if (!this.settings.cssAnimation) $imgCaption.stop().fadeTo(0, this.settings.captionSettings.nonVisibleOpacity);
-				this.addCaptionEventsHandlers($entry);
-			}
-		} else {
-			this.removeCaptionEventsHandlers($entry);
-		}
-	};
-
-	/**
-	 * Validates the caption
-	 *
-	 * @param caption The caption that should be validated
-	 * @return {boolean} Validation result
-	 */
-	JustifiedGallery.prototype.isValidCaption = function (caption) {
-		return (typeof caption !== 'undefined' && caption.length > 0);
-	};
-
-	/**
-	 * The callback for the event 'mouseenter'. It assumes that the event currentTarget is an entry.
-	 * It shows the caption using jQuery (or using CSS if it is configured so)
-	 *
-	 * @param {Event} eventObject the event object
-	 */
-	JustifiedGallery.prototype.onEntryMouseEnterForCaption = function (eventObject) {
-		var $caption = this.captionFromEntry($(eventObject.currentTarget));
-		if (this.settings.cssAnimation) {
-			$caption.addClass('caption-visible').removeClass('caption-hidden');
-		} else {
-			$caption.stop().fadeTo(this.settings.captionSettings.animationDuration,
-					this.settings.captionSettings.visibleOpacity);
-		}
-	};
-
-	/**
-	 * The callback for the event 'mouseleave'. It assumes that the event currentTarget is an entry.
-	 * It hides the caption using jQuery (or using CSS if it is configured so)
-	 *
-	 * @param {Event} eventObject the event object
-	 */
-	JustifiedGallery.prototype.onEntryMouseLeaveForCaption = function (eventObject) {
-		var $caption = this.captionFromEntry($(eventObject.currentTarget));
-		if (this.settings.cssAnimation) {
-			$caption.removeClass('caption-visible').removeClass('caption-hidden');
-		} else {
-			$caption.stop().fadeTo(this.settings.captionSettings.animationDuration,
-					this.settings.captionSettings.nonVisibleOpacity);
-		}
-	};
-
-	/**
-	 * Add the handlers of the entry for the caption
-	 *
-	 * @param $entry the entry to modify
-	 */
-	JustifiedGallery.prototype.addCaptionEventsHandlers = function ($entry) {
-		var captionMouseEvents = $entry.data('jg.captionMouseEvents');
-		if (typeof captionMouseEvents === 'undefined') {
-			captionMouseEvents = {
-				mouseenter: $.proxy(this.onEntryMouseEnterForCaption, this),
-				mouseleave: $.proxy(this.onEntryMouseLeaveForCaption, this)
-			};
-			$entry.on('mouseenter', undefined, undefined, captionMouseEvents.mouseenter);
-			$entry.on('mouseleave', undefined, undefined, captionMouseEvents.mouseleave);
-			$entry.data('jg.captionMouseEvents', captionMouseEvents);
-		}
-	};
-
-	/**
-	 * Remove the handlers of the entry for the caption
-	 *
-	 * @param $entry the entry to modify
-	 */
-	JustifiedGallery.prototype.removeCaptionEventsHandlers = function ($entry) {
-		var captionMouseEvents = $entry.data('jg.captionMouseEvents');
-		if (typeof captionMouseEvents !== 'undefined') {
-			$entry.off('mouseenter', undefined, captionMouseEvents.mouseenter);
-			$entry.off('mouseleave', undefined, captionMouseEvents.mouseleave);
-			$entry.removeData('jg.captionMouseEvents');
-		}
-	};
-
-	/**
-	 * Justify the building row, preparing it to
-	 *
-	 * @param isLastRow
-	 * @returns a boolean to know if the row has been justified or not
-	 */
-	JustifiedGallery.prototype.prepareBuildingRow = function (isLastRow) {
-		var i, $entry, imgAspectRatio, newImgW, newImgH, justify = true;
-		var minHeight = 0;
-		var availableWidth = this.galleryWidth - 2 * this.border - (
-				(this.buildingRow.entriesBuff.length - 1) * this.settings.margins);
-		var rowHeight = Math.floor( availableWidth / this.buildingRow.aspectRatio );//hacked by Uncode
-		var defaultRowHeight = this.settings.rowHeight;
-		var justifiable = this.buildingRow.width / availableWidth > this.settings.justifyThreshold;
-
-		//Skip the last row if we can't justify it and the lastRow == 'hide'
-		if (isLastRow && this.settings.lastRow === 'hide' && !justifiable) {
-			for (i = 0; i < this.buildingRow.entriesBuff.length; i++) {
-				$entry = this.buildingRow.entriesBuff[i];
-				if (this.settings.cssAnimation)
-					$entry.removeClass('entry-visible');
-				else {
-					$entry.stop().fadeTo(0, 0.1);
-					$entry.find('> img, > a > img').fadeTo(0, 0);
-				}
-			}
-			return -1;
-		}
-
-		// With lastRow = nojustify, justify if is justificable (the images will not become too big)
-		if (isLastRow && !justifiable && this.settings.lastRow !== 'justify' && this.settings.lastRow !== 'hide') {
-			justify = false;
-
-			if (this.rows > 0) {
-				defaultRowHeight = (this.offY - this.border - this.settings.margins * this.rows) / this.rows;
-				justify = defaultRowHeight * this.buildingRow.aspectRatio / availableWidth > this.settings.justifyThreshold;
-			}
-		}
-
-		for (i = 0; i < this.buildingRow.entriesBuff.length; i++) {
-			$entry = this.buildingRow.entriesBuff[i];
-			imgAspectRatio = $entry.data('jg.width') / $entry.data('jg.height');
-
-			if (justify) {
-				newImgW = (i === this.buildingRow.entriesBuff.length - 1) ? availableWidth : rowHeight * imgAspectRatio;
-				newImgH = rowHeight;
-			} else {
-				newImgW = defaultRowHeight * imgAspectRatio;
-				newImgH = defaultRowHeight;
-			}
-
-			availableWidth -= Math.round(newImgW);
-			$entry.data('jg.jwidth', Math.round(newImgW));
-			$entry.data('jg.jheight', Math.ceil(newImgH));
-			if (i === 0 || minHeight > newImgH) minHeight = newImgH;
-		}
-
-		this.buildingRow.height = minHeight;
-		return justify;
-	};
-
-	/**
-	 * Clear the building row data to be used for a new row
-	 */
-	JustifiedGallery.prototype.clearBuildingRow = function () {
-		this.buildingRow.entriesBuff = [];
-		this.buildingRow.aspectRatio = 0;
-		this.buildingRow.width = 0;
-	};
-
-	/**
-	 * Flush a row: justify it, modify the gallery height accordingly to the row height
-	 *
-	 * @param isLastRow
-	 */
-	JustifiedGallery.prototype.flushRow = function (isLastRow) {
-		var settings = this.settings;
-		var $entry, buildingRowRes, offX = this.border, i;
-
-		buildingRowRes = this.prepareBuildingRow(isLastRow);
-		if (isLastRow && settings.lastRow === 'hide' && buildingRowRes === -1) {
-			this.clearBuildingRow();
-			return;
-		}
-
-		if (this.maxRowHeight) {
-			if (this.maxRowHeight.isPercentage && this.maxRowHeight.value * settings.rowHeight < this.buildingRow.height) {
-				this.buildingRow.height = this.maxRowHeight.value * settings.rowHeight;
-			} else if (this.maxRowHeight.value >= settings.rowHeight && this.maxRowHeight.value < this.buildingRow.height) {
-				this.buildingRow.height = this.maxRowHeight.value;
-			}
-		}
-
-		//Align last (unjustified) row
-		if (settings.lastRow === 'center' || settings.lastRow === 'right') {
-			var availableWidth = this.galleryWidth - 2 * this.border - (this.buildingRow.entriesBuff.length - 1) * settings.margins;
-
-			for (i = 0; i < this.buildingRow.entriesBuff.length; i++) {
-				$entry = this.buildingRow.entriesBuff[i];
-				availableWidth -= $entry.data('jg.jwidth');
-			}
-
-			if (settings.lastRow === 'center')
-				offX += availableWidth / 2;
-			else if (settings.lastRow === 'right')
-				offX += availableWidth;
-		}
-
-		for (i = 0; i < this.buildingRow.entriesBuff.length; i++) {
-			$entry = this.buildingRow.entriesBuff[i];
-			this.displayEntry($entry, offX, this.offY, $entry.data('jg.jwidth'), $entry.data('jg.jheight'), this.buildingRow.height);
-			offX += $entry.data('jg.jwidth') + settings.margins;
-		}
-
-		//Gallery Height
-		this.galleryHeightToSet = this.offY + this.buildingRow.height + this.border;
-		this.$gallery.height(this.galleryHeightToSet + this.getSpinnerHeight());
-
-		if (!isLastRow || (this.buildingRow.height <= settings.rowHeight && buildingRowRes)) {
-			//Ready for a new row
-			this.offY += this.buildingRow.height + settings.margins;
-			this.rows += 1;
-			this.clearBuildingRow();
-			this.$gallery.trigger('jg.rowflush');
-		}
-	};
-
-	/**
-	 * Checks the width of the gallery container, to know if a new justification is needed
-	 */
-	var scrollBarOn = false;
-	JustifiedGallery.prototype.checkWidth = function () {
-		this.checkWidthIntervalId = setInterval($.proxy(function () {
-			var galleryWidth = parseFloat(this.$gallery.width());
-			if (hasScrollBar() === scrollBarOn) {
-				if (Math.abs(galleryWidth - this.galleryWidth) > this.settings.refreshSensitivity) {
-					this.galleryWidth = galleryWidth;
-					this.rewind();
-
-					// Restart to analyze
-					this.startImgAnalyzer(true);
-				}
-			} else {
-				scrollBarOn = hasScrollBar();
-				this.galleryWidth = galleryWidth;
-			}
-		}, this), this.settings.refreshTime);
-	};
-
-	/**
-	 * @returns {boolean} a boolean saying if the spinner is active or not
-	 */
-	JustifiedGallery.prototype.isSpinnerActive = function () {
-		return this.spinner.intervalId !== null;
-	};
-
-	/**
-	 * @returns {int} the spinner height
-	 */
-	JustifiedGallery.prototype.getSpinnerHeight = function () {
-		return this.spinner.$el.innerHeight();
-	};
-
-	/**
-	 * Stops the spinner animation and modify the gallery height to exclude the spinner
-	 */
-	JustifiedGallery.prototype.stopLoadingSpinnerAnimation = function () {
-		clearInterval(this.spinner.intervalId);
-		this.spinner.intervalId = null;
-		this.$gallery.height(this.$gallery.height() - this.getSpinnerHeight());
-		this.spinner.$el.detach();
-	};
-
-	/**
-	 * Starts the spinner animation
-	 */
-	JustifiedGallery.prototype.startLoadingSpinnerAnimation = function () {
-		var spinnerContext = this.spinner;
-		var $spinnerPoints = spinnerContext.$el.find('span');
-		clearInterval(spinnerContext.intervalId);
-		this.$gallery.append(spinnerContext.$el);
-		this.$gallery.height(this.offY + this.buildingRow.height + this.getSpinnerHeight());
-		spinnerContext.intervalId = setInterval(function () {
-			if (spinnerContext.phase < $spinnerPoints.length) {
-				$spinnerPoints.eq(spinnerContext.phase).fadeTo(spinnerContext.timeSlot, 1);
-			} else {
-				$spinnerPoints.eq(spinnerContext.phase - $spinnerPoints.length).fadeTo(spinnerContext.timeSlot, 0);
-			}
-			spinnerContext.phase = (spinnerContext.phase + 1) % ($spinnerPoints.length * 2);
-		}, spinnerContext.timeSlot);
-	};
-
-	/**
-	 * Rewind the image analysis to start from the first entry.
-	 */
-	JustifiedGallery.prototype.rewind = function () {
-		this.lastFetchedEntry = null;
-		this.lastAnalyzedIndex = -1;
-		this.offY = this.border;
-		this.rows = 0;
-		this.clearBuildingRow();
-	};
-
-	/**
-	 * Update the entries searching it from the justified gallery HTML element
-	 *
-	 * @param norewind if norewind only the new entries will be changed (i.e. randomized, sorted or filtered)
-	 * @returns {boolean} true if some entries has been founded
-	 */
-	JustifiedGallery.prototype.updateEntries = function (norewind) {
-		var newEntries;
-
-		if (norewind && this.lastFetchedEntry != null) {
-			newEntries = $(this.lastFetchedEntry).nextAll(this.settings.selector).toArray();
-		} else {
-			this.entries = [];
-			newEntries = this.$gallery.children(this.settings.selector).toArray();
-		}
-
-		if (newEntries.length > 0) {
-
-			// Sort or randomize
-			if ($.isFunction(this.settings.sort)) {
-				newEntries = this.sortArray(newEntries);
-			} else if (this.settings.randomize) {
-				newEntries = this.shuffleArray(newEntries);
-			}
-			this.lastFetchedEntry = newEntries[newEntries.length - 1];
-
-			// Filter
-			if (this.settings.filter) {
-				newEntries = this.filterArray(newEntries);
-			} else {
-				this.resetFilters(newEntries);
-			}
-
-		}
-
-		this.entries = this.entries.concat(newEntries);
-		return true;
-	};
-
-	/**
-	 * Apply the entries order to the DOM, iterating the entries and appending the images
-	 *
-	 * @param entries the entries that has been modified and that must be re-ordered in the DOM
-	 */
-	JustifiedGallery.prototype.insertToGallery = function (entries) {
-		var that = this;
-		$.each(entries, function () {
-			$(this).appendTo(that.$gallery);
-		});
-	};
-
-	/**
-	 * Shuffle the array using the Fisher-Yates shuffle algorithm
-	 *
-	 * @param a the array to shuffle
-	 * @return the shuffled array
-	 */
-	JustifiedGallery.prototype.shuffleArray = function (a) {
-		var i, j, temp;
-		for (i = a.length - 1; i > 0; i--) {
-			j = Math.floor(Math.random() * (i + 1));
-			temp = a[i];
-			a[i] = a[j];
-			a[j] = temp;
-		}
-		this.insertToGallery(a);
-		return a;
-	};
-
-	/**
-	 * Sort the array using settings.comparator as comparator
-	 *
-	 * @param a the array to sort (it is sorted)
-	 * @return the sorted array
-	 */
-	JustifiedGallery.prototype.sortArray = function (a) {
-		a.sort(this.settings.sort);
-		this.insertToGallery(a);
-		return a;
-	};
-
-	/**
-	 * Reset the filters removing the 'jg-filtered' class from all the entries
-	 *
-	 * @param a the array to reset
-	 */
-	JustifiedGallery.prototype.resetFilters = function (a) {
-		for (var i = 0; i < a.length; i++) $(a[i]).removeClass('jg-filtered');
-	};
-
-	/**
-	 * Filter the entries considering theirs classes (if a string has been passed) or using a function for filtering.
-	 *
-	 * @param a the array to filter
-	 * @return the filtered array
-	 */
-	JustifiedGallery.prototype.filterArray = function (a) {
-		var settings = this.settings;
-		if ($.type(settings.filter) === 'string') {
-			// Filter only keeping the entries passed in the string
-			return a.filter(function (el) {
-				var $el = $(el);
-				if ($el.is(settings.filter)) {
-					$el.removeClass('jg-filtered');
-					return true;
-				} else {
-					$el.addClass('jg-filtered').removeClass('jg-visible');
-					return false;
-				}
-			});
-		} else if ($.isFunction(settings.filter)) {
-			// Filter using the passed function
-			var filteredArr = a.filter(settings.filter);
-			for (var i = 0; i < a.length; i++) {
-				if (filteredArr.indexOf(a[i]) == -1) {
-					$(a[i]).addClass('jg-filtered').removeClass('jg-visible');
-				} else {
-					$(a[i]).removeClass('jg-filtered');
-				}
-			}
-			return filteredArr;
-		}
-	};
-
-	/**
-	 * Destroy the Justified Gallery instance.
-	 *
-	 * It clears all the css properties added in the style attributes. We doesn't backup the original
-	 * values for those css attributes, because it costs (performance) and because in general one
-	 * shouldn't use the style attribute for an uniform set of images (where we suppose the use of
-	 * classes). Creating a backup is also difficult because JG could be called multiple times and
-	 * with different style attributes.
-	 */
-	JustifiedGallery.prototype.destroy = function () {
-		clearInterval(this.checkWidthIntervalId);
-
-		$.each(this.entries, $.proxy(function(_, entry) {
-			var $entry = $(entry);
-
-			// Reset entry style
-			$entry.css('width', '');
-			$entry.css('height', '');
-			$entry.css('top', '');
-			$entry.css('left', '');
-			$entry.data('jg.loaded', undefined);
-			$entry.removeClass('jg-entry');
-
-			// Reset image style
-			var $img = this.imgFromEntry($entry);
-			$img.css('width', '');
-			$img.css('height', '');
-			$img.css('margin-left', '');
-			$img.css('margin-top', '');
-			$img.attr('src', $img.data('jg.originalSrc'));
-			$img.data('jg.originalSrc', undefined);
-
-			// Remove caption
-			this.removeCaptionEventsHandlers($entry);
-			var $caption = this.captionFromEntry($entry);
-			if ($entry.data('jg.createdCaption')) {
-				// remove also the caption element (if created by jg)
-				$entry.data('jg.createdCaption', undefined);
-				if ($caption !== null) $caption.remove();
-			} else {
-				if ($caption !== null) $caption.fadeTo(0, 1);
-			}
-
-		}, this));
-
-		this.$gallery.css('height', '');
-		this.$gallery.removeClass('justified-gallery');
-		this.$gallery.data('jg.controller', undefined);
-	};
-
-	/**
-	 * Analyze the images and builds the rows. It returns if it found an image that is not loaded.
-	 *
-	 * @param isForResize if the image analyzer is called for resizing or not, to call a different callback at the end
-	 */
-	JustifiedGallery.prototype.analyzeImages = function (isForResize) {
-		for (var i = this.lastAnalyzedIndex + 1; i < this.entries.length; i++) {
-			var $entry = $(this.entries[i]);
-			if ($entry.data('jg.loaded') === true || $entry.data('jg.loaded') === 'skipped') {
-				var availableWidth = this.galleryWidth - 2 * this.border - (
-						(this.buildingRow.entriesBuff.length - 1) * this.settings.margins);
-				var imgAspectRatio = $entry.data('jg.width') / $entry.data('jg.height');
-				if (availableWidth / (this.buildingRow.aspectRatio + imgAspectRatio) < this.settings.rowHeight) {
-					this.flushRow(false);
-					if(++this.yield.flushed >= this.yield.every) {
-						this.startImgAnalyzer(isForResize);
-						return;
-					}
-				}
-
-				this.buildingRow.entriesBuff.push($entry);
-				this.buildingRow.aspectRatio += imgAspectRatio;
-				this.buildingRow.width += imgAspectRatio * this.settings.rowHeight;
-				this.lastAnalyzedIndex = i;
-
-			} else if ($entry.data('jg.loaded') !== 'error') {
-				return;
-			}
-		}
-
-		// Last row flush (the row is not full)
-		if (this.buildingRow.entriesBuff.length > 0) this.flushRow(true);
-
-		if (this.isSpinnerActive()) {
-			this.stopLoadingSpinnerAnimation();
-		}
-
-		/* Stop, if there is, the timeout to start the analyzeImages.
-		 This is because an image can be set loaded, and the timeout can be set,
-		 but this image can be analyzed yet.
-		 */
-		this.stopImgAnalyzerStarter();
-
-		//On complete callback
-		this.$gallery.trigger(isForResize ? 'jg.resize' : 'jg.complete');
-		this.$gallery.height(this.galleryHeightToSet);
-	};
-
-	/**
-	 * Stops any ImgAnalyzer starter (that has an assigned timeout)
-	 */
-	JustifiedGallery.prototype.stopImgAnalyzerStarter = function () {
-		this.yield.flushed = 0;
-		if (this.imgAnalyzerTimeout !== null) clearTimeout(this.imgAnalyzerTimeout);
-	};
-
-	/**
-	 * Starts the image analyzer. It is not immediately called to let the browser to update the view
-	 *
-	 * @param isForResize specifies if the image analyzer must be called for resizing or not
-	 */
-	JustifiedGallery.prototype.startImgAnalyzer = function (isForResize) {
-		var that = this;
-		this.stopImgAnalyzerStarter();
-		this.imgAnalyzerTimeout = setTimeout(function () {
-			that.analyzeImages(isForResize);
-		}, 0.001); // we can't start it immediately due to a IE different behaviour
-	};
-
-	/**
-	 * Checks if the image is loaded or not using another image object. We cannot use the 'complete' image property,
-	 * because some browsers, with a 404 set complete = true.
-	 *
-	 * @param imageSrc the image src to load
-	 * @param onLoad callback that is called when the image has been loaded
-	 * @param onError callback that is called in case of an error
-	 */
-	JustifiedGallery.prototype.onImageEvent = function (imageSrc, onLoad, onError) {
-		if (!onLoad && !onError) return;
-
-		var memImage = new Image();
-		var $memImage = $(memImage);
-		if (onLoad) {
-			$memImage.one('load', function () {
-				$memImage.off('load error');
-				onLoad(memImage);
-			});
-		}
-		if (onError) {
-			$memImage.one('error', function() {
-				$memImage.off('load error');
-				onError(memImage);
-			});
-		}
-		memImage.src = imageSrc;
-	};
-
-	/**
-	 * Init of Justified Gallery controlled
-	 * It analyzes all the entries starting theirs loading and calling the image analyzer (that works with loaded images)
-	 */
-	JustifiedGallery.prototype.init = function () {
-		var imagesToLoad = false, skippedImages = false, that = this;
-		$.each(this.entries, function (index, entry) {
-			var $entry = $(entry);
-			var $image = that.imgFromEntry($entry);
-
-			$entry.addClass('jg-entry');
-
-			if ($entry.data('jg.loaded') !== true && $entry.data('jg.loaded') !== 'skipped') {
-
-				// Link Rel global overwrite
-				if (that.settings.rel !== null) $entry.attr('rel', that.settings.rel);
-
-				// Link Target global overwrite
-				if (that.settings.target !== null) $entry.attr('target', that.settings.target);
-
-				if ($image !== null) {
-
-					// Image src
-					var imageSrc = that.extractImgSrcFromImage($image);
-					$image.attr('src', imageSrc);
-
-					/* If we have the height and the width, we don't wait that the image is loaded, but we start directly
-					 * with the justification */
-					if (that.settings.waitThumbnailsLoad === false) {
-						var width = parseFloat($image.attr('width'));
-						var height = parseFloat($image.attr('height'));
-						if (!isNaN(width) && !isNaN(height)) {
-							$entry.data('jg.width', width);
-							$entry.data('jg.height', height);
-							$entry.data('jg.loaded', 'skipped');
-							skippedImages = true;
-							that.startImgAnalyzer(false);
-							return true; // continue
-						}
-					}
-
-					$entry.data('jg.loaded', false);
-					imagesToLoad = true;
-
-					// Spinner start
-					if (!that.isSpinnerActive()) that.startLoadingSpinnerAnimation();
-
-					that.onImageEvent(imageSrc, function (loadImg) { // image loaded
-						$entry.data('jg.width', loadImg.width);
-						$entry.data('jg.height', loadImg.height);
-						$entry.data('jg.loaded', true);
-						that.startImgAnalyzer(false);
-					}, function () { // image load error
-						$entry.data('jg.loaded', 'error');
-						that.startImgAnalyzer(false);
-					});
-
-				} else {
-					$entry.data('jg.loaded', true);
-					$entry.data('jg.width', $entry.width() | parseFloat($entry.css('width')) | 1);
-					$entry.data('jg.height', $entry.height() | parseFloat($entry.css('height')) | 1);
-				}
-
-			}
-
-		});
-
-		if (!imagesToLoad && !skippedImages) this.startImgAnalyzer(false);
-		this.checkWidth();
-	};
-
-	/**
-	 * Checks that it is a valid number. If a string is passed it is converted to a number
-	 *
-	 * @param settingContainer the object that contains the setting (to allow the conversion)
-	 * @param settingName the setting name
-	 */
-	JustifiedGallery.prototype.checkOrConvertNumber = function (settingContainer, settingName) {
-		if ($.type(settingContainer[settingName]) === 'string') {
-			settingContainer[settingName] = parseFloat(settingContainer[settingName]);
-		}
-
-		if ($.type(settingContainer[settingName]) === 'number') {
-			if (isNaN(settingContainer[settingName])) throw 'invalid number for ' + settingName;
-		} else {
-			throw settingName + ' must be a number';
-		}
-	};
-
-	/**
-	 * Checks the sizeRangeSuffixes and, if necessary, converts
-	 * its keys from string (e.g. old settings with 'lt100') to int.
-	 */
-	JustifiedGallery.prototype.checkSizeRangesSuffixes = function () {
-		if ($.type(this.settings.sizeRangeSuffixes) !== 'object') {
-			throw 'sizeRangeSuffixes must be defined and must be an object';
-		}
-
-		var suffixRanges = [];
-		for (var rangeIdx in this.settings.sizeRangeSuffixes) {
-			if (this.settings.sizeRangeSuffixes.hasOwnProperty(rangeIdx)) suffixRanges.push(rangeIdx);
-		}
-
-		var newSizeRngSuffixes = {0: ''};
-		for (var i = 0; i < suffixRanges.length; i++) {
-			if ($.type(suffixRanges[i]) === 'string') {
-				try {
-					var numIdx = parseInt(suffixRanges[i].replace(/^[a-z]+/, ''), 10);
-					newSizeRngSuffixes[numIdx] = this.settings.sizeRangeSuffixes[suffixRanges[i]];
-				} catch (e) {
-					throw 'sizeRangeSuffixes keys must contains correct numbers (' + e + ')';
-				}
-			} else {
-				newSizeRngSuffixes[suffixRanges[i]] = this.settings.sizeRangeSuffixes[suffixRanges[i]];
-			}
-		}
-
-		this.settings.sizeRangeSuffixes = newSizeRngSuffixes;
-	};
-
-	/**
-	 * check and convert the maxRowHeight setting
-	 */
-	JustifiedGallery.prototype.retrieveMaxRowHeight = function () {
-		var newMaxRowHeight = { };
-
-		if ($.type(this.settings.maxRowHeight) === 'string') {
-			if (this.settings.maxRowHeight.match(/^[0-9]+%$/)) {
-				newMaxRowHeight.value = parseFloat(this.settings.maxRowHeight.match(/^([0-9]+)%$/)[1]) / 100;
-				newMaxRowHeight.isPercentage = false;
-			} else {
-				newMaxRowHeight.value = parseFloat(this.settings.maxRowHeight);
-				newMaxRowHeight.isPercentage = true;
-			}
-		} else if ($.type(this.settings.maxRowHeight) === 'number') {
-			newMaxRowHeight.value = this.settings.maxRowHeight;
-			newMaxRowHeight.isPercentage = false;
-		} else if (this.settings.maxRowHeight === false ||
-				this.settings.maxRowHeight === null ||
-				typeof this.settings.maxRowHeight == 'undefined') {
-			return null;
-		} else {
-			throw 'maxRowHeight must be a number or a percentage';
-		}
-
-		// check if the converted value is not a number
-		if (isNaN(newMaxRowHeight.value)) throw 'invalid number for maxRowHeight';
-
-		// check values
-		if (newMaxRowHeight.isPercentage) {
-			if (newMaxRowHeight.value < 100) newMaxRowHeight.value = 100;
-		}
-
-		return newMaxRowHeight;
-	};
-
-	/**
-	 * Checks the settings
-	 */
-	JustifiedGallery.prototype.checkSettings = function () {
-		this.checkSizeRangesSuffixes();
-
-		this.checkOrConvertNumber(this.settings, 'rowHeight');
-		this.checkOrConvertNumber(this.settings, 'margins');
-		this.checkOrConvertNumber(this.settings, 'border');
-
-		var lastRowModes = [
-			'justify',
-			'nojustify',
-			'left',
-			'center',
-			'right',
-			'hide'
-		];
-		if (lastRowModes.indexOf(this.settings.lastRow) === -1) {
-			throw 'lastRow must be one of: ' + lastRowModes.join(', ');
-		}
-
-		this.checkOrConvertNumber(this.settings, 'justifyThreshold');
-		if (this.settings.justifyThreshold < 0 || this.settings.justifyThreshold > 1) {
-			throw 'justifyThreshold must be in the interval [0,1]';
-		}
-		if ($.type(this.settings.cssAnimation) !== 'boolean') {
-			throw 'cssAnimation must be a boolean';
-		}
-
-		if ($.type(this.settings.captions) !== 'boolean') throw 'captions must be a boolean';
-		this.checkOrConvertNumber(this.settings.captionSettings, 'animationDuration');
-
-		this.checkOrConvertNumber(this.settings.captionSettings, 'visibleOpacity');
-		if (this.settings.captionSettings.visibleOpacity < 0 ||
-				this.settings.captionSettings.visibleOpacity > 1) {
-			throw 'captionSettings.visibleOpacity must be in the interval [0, 1]';
-		}
-
-		this.checkOrConvertNumber(this.settings.captionSettings, 'nonVisibleOpacity');
-		if (this.settings.captionSettings.nonVisibleOpacity < 0 ||
-				this.settings.captionSettings.nonVisibleOpacity > 1) {
-			throw 'captionSettings.nonVisibleOpacity must be in the interval [0, 1]';
-		}
-
-		this.checkOrConvertNumber(this.settings, 'imagesAnimationDuration');
-		this.checkOrConvertNumber(this.settings, 'refreshTime');
-		this.checkOrConvertNumber(this.settings, 'refreshSensitivity');
-		if ($.type(this.settings.randomize) !== 'boolean') throw 'randomize must be a boolean';
-		if ($.type(this.settings.selector) !== 'string') throw 'selector must be a string';
-
-		if (this.settings.sort !== false && !$.isFunction(this.settings.sort)) {
-			throw 'sort must be false or a comparison function';
-		}
-
-		if (this.settings.filter !== false && !$.isFunction(this.settings.filter) &&
-				$.type(this.settings.filter) !== 'string') {
-			throw 'filter must be false, a string or a filter function';
-		}
-	};
-
-	/**
-	 * It brings all the indexes from the sizeRangeSuffixes and it orders them. They are then sorted and returned.
-	 * @returns {Array} sorted suffix ranges
-	 */
-	JustifiedGallery.prototype.retrieveSuffixRanges = function () {
-		var suffixRanges = [];
-		for (var rangeIdx in this.settings.sizeRangeSuffixes) {
-			if (this.settings.sizeRangeSuffixes.hasOwnProperty(rangeIdx)) suffixRanges.push(parseInt(rangeIdx, 10));
-		}
-		suffixRanges.sort(function (a, b) { return a > b ? 1 : a < b ? -1 : 0; });
-		return suffixRanges;
-	};
-
-	/**
-	 * Update the existing settings only changing some of them
-	 *
-	 * @param newSettings the new settings (or a subgroup of them)
-	 */
-	JustifiedGallery.prototype.updateSettings = function (newSettings) {
-		// In this case Justified Gallery has been called again changing only some options
-		this.settings = $.extend({}, this.settings, newSettings);
-		this.checkSettings();
-
-		// As reported in the settings: negative value = same as margins, 0 = disabled
-		this.border = this.settings.border >= 0 ? this.settings.border : this.settings.margins;
-
-		this.maxRowHeight = this.retrieveMaxRowHeight();
-		this.suffixRanges = this.retrieveSuffixRanges();
-	};
-
-	/**
-	 * Justified Gallery plugin for jQuery
-	 *
-	 * Events
-	 *  - jg.complete : called when all the gallery has been created
-	 *  - jg.resize : called when the gallery has been resized
-	 *  - jg.rowflush : when a new row appears
-	 *
-	 * @param arg the action (or the settings) passed when the plugin is called
-	 * @returns {*} the object itself
-	 */
-	$.fn.justifiedGallery = function (arg) {
-		return this.each(function (index, gallery) {
-
-			var $gallery = $(gallery);
-			$gallery.addClass('justified-gallery');
-
-			var controller = $gallery.data('jg.controller');
-			if (typeof controller === 'undefined') {
-				// Create controller and assign it to the object data
-				if (typeof arg !== 'undefined' && arg !== null && $.type(arg) !== 'object') {
-					if (arg === 'destroy') return; // Just a call to an unexisting object
-					throw 'The argument must be an object';
-				}
-				controller = new JustifiedGallery($gallery, $.extend({}, $.fn.justifiedGallery.defaults, arg));
-				$gallery.data('jg.controller', controller);
-			} else if (arg === 'norewind') {
-				// In this case we don't rewind: we analyze only the latest images (e.g. to complete the last unfinished row
-				// ... left to be more readable
-			} else if (arg === 'destroy') {
-				controller.destroy();
-				return;
-			} else {
-				// In this case Justified Gallery has been called again changing only some options
-				controller.updateSettings(arg);
-				controller.rewind();
-			}
-
-			// Update the entries list
-			if (!controller.updateEntries(arg === 'norewind')) return;
-
-			// Init justified gallery
-			controller.init();
-
-		});
-	};
-
-	// Default options
-	$.fn.justifiedGallery.defaults = {
-		sizeRangeSuffixes: { }, /* e.g. Flickr configuration
-				{
-					100: '_t',  // used when longest is less than 100px
-					240: '_m',  // used when longest is between 101px and 240px
-					320: '_n',  // ...
-					500: '',
-					640: '_z',
-					1024: '_b'  // used as else case because it is the last
-				}
-		*/
-		thumbnailPath: undefined, /* If defined, sizeRangeSuffixes is not used, and this function is used to determine the
-		path relative to a specific thumbnail size. The function should accept respectively three arguments:
-		current path, width and height */
-		rowHeight: 120,
-		maxRowHeight: false, // false or negative value to deactivate. Positive number to express the value in pixels,
-												 // A string '[0-9]+%' to express in percentage (e.g. 300% means that the row height
-												 // can't exceed 3 * rowHeight)
-		margins: 1,
-		border: -1, // negative value = same as margins, 0 = disabled, any other value to set the border
-
-		lastRow: 'nojustify', // … which is the same as 'left', or can be 'justify', 'center', 'right' or 'hide'
-
-		justifyThreshold: 0.90, /* if row width / available space > 0.90 it will be always justified
-														 * (i.e. lastRow setting is not considered) */
-		waitThumbnailsLoad: true,
-		captions: true,
-		cssAnimation: true,
-		imagesAnimationDuration: 500, // ignored with css animations
-		captionSettings: { // ignored with css animations
-			animationDuration: 500,
-			visibleOpacity: 0.7,
-			nonVisibleOpacity: 0.0
-		},
-		rel: null, // rewrite the rel of each analyzed links
-		target: null, // rewrite the target of all links
-		extension: /\.[^.\\/]+$/, // regexp to capture the extension of an image
-		refreshTime: 200, // time interval (in ms) to check if the page changes its width
-		refreshSensitivity: 0, // change in width allowed (in px) without re-building the gallery
-		randomize: false,
-		sort: false, /*
-			- false: to do not sort
-			- function: to sort them using the function as comparator (see Array.prototype.sort())
-		*/
-		filter: false, /*
-			- false, null or undefined: for a disabled filter
-			- a string: an entry is kept if entry.is(filter string) returns true
-									see jQuery's .is() function for further information
-			- a function: invoked with arguments (entry, index, array). Return true to keep the entry, false otherwise.
-										It follows the specifications of the Array.prototype.filter() function of JavaScript.
-		*/
-		selector: 'a, div:not(.spinner)' // The selector that is used to know what are the entries of the gallery
-	};
+  function hasScrollBar() {
+    return $("body").height() > $(window).height();
+  }
+  /**
+   * Justified Gallery controller constructor
+   *
+   * @param $gallery the gallery to build
+   * @param settings the settings (the defaults are in $.fn.justifiedGallery.defaults)
+   * @constructor
+   */
+  var JustifiedGallery = function ($gallery, settings) {
+    
+    this.settings = settings;
+    this.checkSettings();
+
+    this.imgAnalyzerTimeout = null;
+    this.entries = null;
+    this.buildingRow = {
+      entriesBuff : [],
+      width : 0,
+      height : 0,
+      aspectRatio : 0
+    };
+    this.lastFetchedEntry = null;
+    this.lastAnalyzedIndex = -1;
+    this.yield = {
+      every : 2, // do a flush every n flushes (must be greater than 1)
+      flushed : 0 // flushed rows without a yield
+    };
+    this.border = settings.border >= 0 ? settings.border : settings.margins;
+    this.maxRowHeight = this.retrieveMaxRowHeight();
+    this.suffixRanges = this.retrieveSuffixRanges();
+    this.offY = this.border;
+    this.rows = 0;
+    this.spinner = {
+      phase : 0,
+      timeSlot : 150,
+      $el : $('<div class="spinner"><span></span><span></span><span></span></div>'),
+      intervalId : null
+    };
+    this.checkWidthIntervalId = null;
+    this.galleryWidth = $gallery.width();
+    this.$gallery = $gallery;
+
+  };
+
+  /** @returns {String} the best suffix given the width and the height */
+  JustifiedGallery.prototype.getSuffix = function (width, height) {
+    var longestSide, i;
+    longestSide = (width > height) ? width : height;
+    for (i = 0; i < this.suffixRanges.length; i++) {
+      if (longestSide <= this.suffixRanges[i]) {
+        return this.settings.sizeRangeSuffixes[this.suffixRanges[i]];
+      }
+    }
+    return this.settings.sizeRangeSuffixes[this.suffixRanges[i - 1]];
+  };
+
+  /**
+   * Remove the suffix from the string
+   *
+   * @returns {string} a new string without the suffix
+   */
+  JustifiedGallery.prototype.removeSuffix = function (str, suffix) {
+    return str.substring(0, str.length - suffix.length);
+  };
+
+  /**
+   * @returns {boolean} a boolean to say if the suffix is contained in the str or not
+   */
+  JustifiedGallery.prototype.endsWith = function (str, suffix) {
+    return str.indexOf(suffix, str.length - suffix.length) !== -1;
+  };
+
+  /**
+   * Get the used suffix of a particular url
+   *
+   * @param str
+   * @returns {String} return the used suffix
+   */
+  JustifiedGallery.prototype.getUsedSuffix = function (str) {
+    for (var si in this.settings.sizeRangeSuffixes) {
+      if (this.settings.sizeRangeSuffixes.hasOwnProperty(si)) {
+        if (this.settings.sizeRangeSuffixes[si].length === 0) continue;
+        if (this.endsWith(str, this.settings.sizeRangeSuffixes[si])) return this.settings.sizeRangeSuffixes[si];
+      }
+    }
+    return '';
+  };
+
+  /**
+   * Given an image src, with the width and the height, returns the new image src with the
+   * best suffix to show the best quality thumbnail.
+   *
+   * @returns {String} the suffix to use
+   */
+  JustifiedGallery.prototype.newSrc = function (imageSrc, imgWidth, imgHeight, image) {
+    var newImageSrc;
+
+    if (this.settings.thumbnailPath) {
+      newImageSrc = this.settings.thumbnailPath(imageSrc, imgWidth, imgHeight, image);
+    } else {
+      var matchRes = imageSrc.match(this.settings.extension);
+      var ext = (matchRes !== null) ? matchRes[0] : '';
+      newImageSrc = imageSrc.replace(this.settings.extension, '');
+      newImageSrc = this.removeSuffix(newImageSrc, this.getUsedSuffix(newImageSrc));
+      newImageSrc += this.getSuffix(imgWidth, imgHeight) + ext;
+    }
+
+    return newImageSrc;
+  };
+
+  /**
+   * Shows the images that is in the given entry
+   *
+   * @param $entry the entry
+   * @param callback the callback that is called when the show animation is finished
+   */
+  JustifiedGallery.prototype.showImg = function ($entry, callback) {
+    if (this.settings.cssAnimation) {
+      $entry.addClass('entry-visible');
+      if (callback) callback();
+    } else {
+      $entry.stop().fadeTo(this.settings.imagesAnimationDuration, 1.0, callback);
+      $entry.find('> img, > a > img').stop().fadeTo(this.settings.imagesAnimationDuration, 1.0, callback);
+    }
+  };
+
+  /**
+   * Extract the image src form the image, looking from the 'safe-src', and if it can't be found, from the
+   * 'src' attribute. It saves in the image data the 'jg.originalSrc' field, with the extracted src.
+   *
+   * @param $image the image to analyze
+   * @returns {String} the extracted src
+   */
+  JustifiedGallery.prototype.extractImgSrcFromImage = function ($image) {
+    var imageSrc = (typeof $image.data('safe-src') !== 'undefined') ? $image.data('safe-src') : $image.attr('src');
+    $image.data('jg.originalSrc', imageSrc);
+    return imageSrc;
+  };
+
+  /** @returns {jQuery} the image in the given entry */
+  JustifiedGallery.prototype.imgFromEntry = function ($entry) {
+    var $img = $entry.find('> img');
+    if ($img.length === 0) $img = $entry.find('> a > img');
+    if ($img.length === 0) $img = $entry.find('.t-entry-visual-cont img');//hacked by Uncode
+    return $img.length === 0 ? null : $img;
+  };
+
+  /** @returns {jQuery} the caption in the given entry */
+  JustifiedGallery.prototype.captionFromEntry = function ($entry) {
+    var $caption = $entry.find('> .caption');
+    return $caption.length === 0 ? null : $caption;
+  };
+
+  /**
+   * Display the entry
+   *
+   * @param {jQuery} $entry the entry to display
+   * @param {int} x the x position where the entry must be positioned
+   * @param y the y position where the entry must be positioned
+   * @param imgWidth the image width
+   * @param imgHeight the image height
+   * @param rowHeight the row height of the row that owns the entry
+   */
+  JustifiedGallery.prototype.displayEntry = function ($entry, x, y, imgWidth, imgHeight, rowHeight) {
+    $entry.width(imgWidth);
+    $entry.height(Math.floor(rowHeight));//hacked by Uncode
+    $entry.css('top', Math.floor(y));//hacked by Uncode
+    $entry.css('left', x);
+
+    var $image = this.imgFromEntry($entry);
+    if ($image !== null) {
+      $image.css('width', imgWidth);
+      $image.css('height', imgHeight);
+      $image.css('margin-left', - imgWidth / 2);
+      $image.css('margin-top', - imgHeight / 2);
+
+      // Image reloading for an high quality of thumbnails
+      var imageSrc = $image.attr('src');
+      var newImageSrc = this.newSrc(imageSrc, imgWidth, imgHeight, $image[0]);
+
+      $image.one('error', function () {
+        $image.attr('src', $image.data('jg.originalSrc')); //revert to the original thumbnail, we got it.
+      });
+
+      var loadNewImage = function () {
+        if (imageSrc !== newImageSrc) { //load the new image after the fadeIn
+          $image.attr('src', newImageSrc);
+        }
+      };
+
+      if ($entry.data('jg.loaded') === 'skipped') {
+        this.onImageEvent(imageSrc, $.proxy(function() {
+          this.showImg($entry, loadNewImage);
+          $entry.data('jg.loaded', true);
+        }, this));
+      } else {
+        this.showImg($entry, loadNewImage);
+      }
+
+    } else {
+      this.showImg($entry);
+    }
+
+    this.displayEntryCaption($entry);
+  };
+
+  /**
+   * Display the entry caption. If the caption element doesn't exists, it creates the caption using the 'alt'
+   * or the 'title' attributes.
+   *
+   * @param {jQuery} $entry the entry to process
+   */
+  JustifiedGallery.prototype.displayEntryCaption = function ($entry) {
+    var $image = this.imgFromEntry($entry);
+    if ($image !== null && this.settings.captions) {
+      var $imgCaption = this.captionFromEntry($entry);
+
+      // Create it if it doesn't exists
+      if ($imgCaption === null) {
+        var caption = $image.attr('alt');
+        if (!this.isValidCaption(caption)) caption = $entry.attr('title');
+        if (this.isValidCaption(caption)) { // Create only we found something
+          $imgCaption = $('<div class="caption">' + caption + '</div>');
+          $entry.append($imgCaption);
+          $entry.data('jg.createdCaption', true);
+        }
+      }
+
+      // Create events (we check again the $imgCaption because it can be still inexistent)
+      if ($imgCaption !== null) {
+        if (!this.settings.cssAnimation) $imgCaption.stop().fadeTo(0, this.settings.captionSettings.nonVisibleOpacity);
+        this.addCaptionEventsHandlers($entry);
+      }
+    } else {
+      this.removeCaptionEventsHandlers($entry);
+    }
+  };
+
+  /**
+   * Validates the caption
+   *
+   * @param caption The caption that should be validated
+   * @return {boolean} Validation result
+   */
+  JustifiedGallery.prototype.isValidCaption = function (caption) {
+    return (typeof caption !== 'undefined' && caption.length > 0);
+  };
+
+  /**
+   * The callback for the event 'mouseenter'. It assumes that the event currentTarget is an entry.
+   * It shows the caption using jQuery (or using CSS if it is configured so)
+   *
+   * @param {Event} eventObject the event object
+   */
+  JustifiedGallery.prototype.onEntryMouseEnterForCaption = function (eventObject) {
+    var $caption = this.captionFromEntry($(eventObject.currentTarget));
+    if (this.settings.cssAnimation) {
+      $caption.addClass('caption-visible').removeClass('caption-hidden');
+    } else {
+      $caption.stop().fadeTo(this.settings.captionSettings.animationDuration,
+          this.settings.captionSettings.visibleOpacity);
+    }
+  };
+
+  /**
+   * The callback for the event 'mouseleave'. It assumes that the event currentTarget is an entry.
+   * It hides the caption using jQuery (or using CSS if it is configured so)
+   *
+   * @param {Event} eventObject the event object
+   */
+  JustifiedGallery.prototype.onEntryMouseLeaveForCaption = function (eventObject) {
+    var $caption = this.captionFromEntry($(eventObject.currentTarget));
+    if (this.settings.cssAnimation) {
+      $caption.removeClass('caption-visible').removeClass('caption-hidden');
+    } else {
+      $caption.stop().fadeTo(this.settings.captionSettings.animationDuration,
+          this.settings.captionSettings.nonVisibleOpacity);
+    }
+  };
+
+  /**
+   * Add the handlers of the entry for the caption
+   *
+   * @param $entry the entry to modify
+   */
+  JustifiedGallery.prototype.addCaptionEventsHandlers = function ($entry) {
+    var captionMouseEvents = $entry.data('jg.captionMouseEvents');
+    if (typeof captionMouseEvents === 'undefined') {
+      captionMouseEvents = {
+        mouseenter: $.proxy(this.onEntryMouseEnterForCaption, this),
+        mouseleave: $.proxy(this.onEntryMouseLeaveForCaption, this)
+      };
+      $entry.on('mouseenter', undefined, undefined, captionMouseEvents.mouseenter);
+      $entry.on('mouseleave', undefined, undefined, captionMouseEvents.mouseleave);
+      $entry.data('jg.captionMouseEvents', captionMouseEvents);
+    }
+  };
+
+  /**
+   * Remove the handlers of the entry for the caption
+   *
+   * @param $entry the entry to modify
+   */
+  JustifiedGallery.prototype.removeCaptionEventsHandlers = function ($entry) {
+    var captionMouseEvents = $entry.data('jg.captionMouseEvents');
+    if (typeof captionMouseEvents !== 'undefined') {
+      $entry.off('mouseenter', undefined, captionMouseEvents.mouseenter);
+      $entry.off('mouseleave', undefined, captionMouseEvents.mouseleave);
+      $entry.removeData('jg.captionMouseEvents');
+    }
+  };
+
+  /**
+   * Justify the building row, preparing it to
+   *
+   * @param isLastRow
+   * @returns a boolean to know if the row has been justified or not
+   */
+  JustifiedGallery.prototype.prepareBuildingRow = function (isLastRow) {
+    var i, $entry, imgAspectRatio, newImgW, newImgH, justify = true;
+    var minHeight = 0;
+    var availableWidth = this.galleryWidth - 2 * this.border - (
+        (this.buildingRow.entriesBuff.length - 1) * this.settings.margins);
+    var rowHeight = Math.floor( availableWidth / this.buildingRow.aspectRatio );//hacked by Uncode
+    var defaultRowHeight = this.settings.rowHeight;
+    var justifiable = this.buildingRow.width / availableWidth > this.settings.justifyThreshold;
+
+    //Skip the last row if we can't justify it and the lastRow == 'hide'
+    if (isLastRow && this.settings.lastRow === 'hide' && !justifiable) {
+      for (i = 0; i < this.buildingRow.entriesBuff.length; i++) {
+        $entry = this.buildingRow.entriesBuff[i];
+        if (this.settings.cssAnimation)
+          $entry.removeClass('entry-visible');
+        else {
+          $entry.stop().fadeTo(0, 0.1);
+          $entry.find('> img, > a > img').fadeTo(0, 0);
+        }
+      }
+      return -1;
+    }
+
+    // With lastRow = nojustify, justify if is justificable (the images will not become too big)
+    if (isLastRow && !justifiable && this.settings.lastRow !== 'justify' && this.settings.lastRow !== 'hide') {
+      justify = false;
+
+      if (this.rows > 0) {
+        defaultRowHeight = (this.offY - this.border - this.settings.margins * this.rows) / this.rows;
+        justify = defaultRowHeight * this.buildingRow.aspectRatio / availableWidth > this.settings.justifyThreshold;
+      }
+    }
+
+    for (i = 0; i < this.buildingRow.entriesBuff.length; i++) {
+      $entry = this.buildingRow.entriesBuff[i];
+      imgAspectRatio = $entry.data('jg.width') / $entry.data('jg.height');
+
+      if (justify) {
+        newImgW = (i === this.buildingRow.entriesBuff.length - 1) ? availableWidth : rowHeight * imgAspectRatio;
+        newImgH = rowHeight;
+      } else {
+        newImgW = defaultRowHeight * imgAspectRatio;
+        newImgH = defaultRowHeight;
+      }
+
+      availableWidth -= Math.round(newImgW);
+      $entry.data('jg.jwidth', Math.round(newImgW));
+      $entry.data('jg.jheight', Math.ceil(newImgH));
+      if (i === 0 || minHeight > newImgH) minHeight = newImgH;
+    }
+
+    this.buildingRow.height = minHeight;
+    return justify;
+  };
+
+  /**
+   * Clear the building row data to be used for a new row
+   */
+  JustifiedGallery.prototype.clearBuildingRow = function () {
+    this.buildingRow.entriesBuff = [];
+    this.buildingRow.aspectRatio = 0;
+    this.buildingRow.width = 0;
+  };
+
+  /**
+   * Flush a row: justify it, modify the gallery height accordingly to the row height
+   *
+   * @param isLastRow
+   */
+  JustifiedGallery.prototype.flushRow = function (isLastRow) {
+    var settings = this.settings;
+    var $entry, buildingRowRes, offX = this.border, i;
+
+    buildingRowRes = this.prepareBuildingRow(isLastRow);
+    if (isLastRow && settings.lastRow === 'hide' && buildingRowRes === -1) {
+      this.clearBuildingRow();
+      return;
+    }
+
+    if (this.maxRowHeight) {
+      if (this.maxRowHeight.isPercentage && this.maxRowHeight.value * settings.rowHeight < this.buildingRow.height) {
+        this.buildingRow.height = this.maxRowHeight.value * settings.rowHeight;
+      } else if (this.maxRowHeight.value >= settings.rowHeight && this.maxRowHeight.value < this.buildingRow.height) {
+        this.buildingRow.height = this.maxRowHeight.value;
+      }
+    }
+
+    //Align last (unjustified) row
+    if (settings.lastRow === 'center' || settings.lastRow === 'right') {
+      var availableWidth = this.galleryWidth - 2 * this.border - (this.buildingRow.entriesBuff.length - 1) * settings.margins;
+
+      for (i = 0; i < this.buildingRow.entriesBuff.length; i++) {
+        $entry = this.buildingRow.entriesBuff[i];
+        availableWidth -= $entry.data('jg.jwidth');
+      }
+
+      if (settings.lastRow === 'center')
+        offX += availableWidth / 2;
+      else if (settings.lastRow === 'right')
+        offX += availableWidth;
+    }
+
+    for (i = 0; i < this.buildingRow.entriesBuff.length; i++) {
+      $entry = this.buildingRow.entriesBuff[i];
+      this.displayEntry($entry, offX, this.offY, $entry.data('jg.jwidth'), $entry.data('jg.jheight'), this.buildingRow.height);
+      offX += $entry.data('jg.jwidth') + settings.margins;
+    }
+
+    //Gallery Height
+    this.galleryHeightToSet = this.offY + this.buildingRow.height + this.border;
+    this.$gallery.height(this.galleryHeightToSet + this.getSpinnerHeight());
+
+    if (!isLastRow || (this.buildingRow.height <= settings.rowHeight && buildingRowRes)) {
+      //Ready for a new row
+      this.offY += this.buildingRow.height + settings.margins;
+      this.rows += 1;
+      this.clearBuildingRow();
+      this.$gallery.trigger('jg.rowflush');
+    }
+  };
+
+  /**
+   * Checks the width of the gallery container, to know if a new justification is needed
+   */
+  var scrollBarOn = false;
+  JustifiedGallery.prototype.checkWidth = function () {
+    this.checkWidthIntervalId = setInterval($.proxy(function () {
+      var galleryWidth = parseFloat(this.$gallery.width());
+      if (hasScrollBar() === scrollBarOn) {
+        if (Math.abs(galleryWidth - this.galleryWidth) > this.settings.refreshSensitivity) {
+          this.galleryWidth = galleryWidth;
+          this.rewind();
+
+          // Restart to analyze
+          this.startImgAnalyzer(true);
+        }
+      } else {
+        scrollBarOn = hasScrollBar();
+        this.galleryWidth = galleryWidth;
+      }
+    }, this), this.settings.refreshTime);
+  };
+
+  /**
+   * @returns {boolean} a boolean saying if the spinner is active or not
+   */
+  JustifiedGallery.prototype.isSpinnerActive = function () {
+    return this.spinner.intervalId !== null;
+  };
+
+  /**
+   * @returns {int} the spinner height
+   */
+  JustifiedGallery.prototype.getSpinnerHeight = function () {
+    return this.spinner.$el.innerHeight();
+  };
+
+  /**
+   * Stops the spinner animation and modify the gallery height to exclude the spinner
+   */
+  JustifiedGallery.prototype.stopLoadingSpinnerAnimation = function () {
+    clearInterval(this.spinner.intervalId);
+    this.spinner.intervalId = null;
+    this.$gallery.height(this.$gallery.height() - this.getSpinnerHeight());
+    this.spinner.$el.detach();
+  };
+
+  /**
+   * Starts the spinner animation
+   */
+  JustifiedGallery.prototype.startLoadingSpinnerAnimation = function () {
+    var spinnerContext = this.spinner;
+    var $spinnerPoints = spinnerContext.$el.find('span');
+    clearInterval(spinnerContext.intervalId);
+    this.$gallery.append(spinnerContext.$el);
+    this.$gallery.height(this.offY + this.buildingRow.height + this.getSpinnerHeight());
+    spinnerContext.intervalId = setInterval(function () {
+      if (spinnerContext.phase < $spinnerPoints.length) {
+        $spinnerPoints.eq(spinnerContext.phase).fadeTo(spinnerContext.timeSlot, 1);
+      } else {
+        $spinnerPoints.eq(spinnerContext.phase - $spinnerPoints.length).fadeTo(spinnerContext.timeSlot, 0);
+      }
+      spinnerContext.phase = (spinnerContext.phase + 1) % ($spinnerPoints.length * 2);
+    }, spinnerContext.timeSlot);
+  };
+
+  /**
+   * Rewind the image analysis to start from the first entry.
+   */
+  JustifiedGallery.prototype.rewind = function () {
+    this.lastFetchedEntry = null;
+    this.lastAnalyzedIndex = -1;
+    this.offY = this.border;
+    this.rows = 0;
+    this.clearBuildingRow();
+  };
+
+  /**
+   * Update the entries searching it from the justified gallery HTML element
+   *
+   * @param norewind if norewind only the new entries will be changed (i.e. randomized, sorted or filtered)
+   * @returns {boolean} true if some entries has been founded
+   */
+  JustifiedGallery.prototype.updateEntries = function (norewind) {
+    var newEntries;
+
+    if (norewind && this.lastFetchedEntry != null) {
+      newEntries = $(this.lastFetchedEntry).nextAll(this.settings.selector).toArray();
+    } else {
+      this.entries = [];
+      newEntries = this.$gallery.children(this.settings.selector).toArray();
+    }
+
+    if (newEntries.length > 0) {
+
+      // Sort or randomize
+      if ($.isFunction(this.settings.sort)) {
+        newEntries = this.sortArray(newEntries);
+      } else if (this.settings.randomize) {
+        newEntries = this.shuffleArray(newEntries);
+      }
+      this.lastFetchedEntry = newEntries[newEntries.length - 1];
+
+      // Filter
+      if (this.settings.filter) {
+        newEntries = this.filterArray(newEntries);
+      } else {
+        this.resetFilters(newEntries);
+      }
+
+    }
+
+    this.entries = this.entries.concat(newEntries);
+    return true;
+  };
+
+  /**
+   * Apply the entries order to the DOM, iterating the entries and appending the images
+   *
+   * @param entries the entries that has been modified and that must be re-ordered in the DOM
+   */
+  JustifiedGallery.prototype.insertToGallery = function (entries) {
+    var that = this;
+    $.each(entries, function () {
+      $(this).appendTo(that.$gallery);
+    });
+  };
+
+  /**
+   * Shuffle the array using the Fisher-Yates shuffle algorithm
+   *
+   * @param a the array to shuffle
+   * @return the shuffled array
+   */
+  JustifiedGallery.prototype.shuffleArray = function (a) {
+    var i, j, temp;
+    for (i = a.length - 1; i > 0; i--) {
+      j = Math.floor(Math.random() * (i + 1));
+      temp = a[i];
+      a[i] = a[j];
+      a[j] = temp;
+    }
+    this.insertToGallery(a);
+    return a;
+  };
+
+  /**
+   * Sort the array using settings.comparator as comparator
+   *
+   * @param a the array to sort (it is sorted)
+   * @return the sorted array
+   */
+  JustifiedGallery.prototype.sortArray = function (a) {
+    a.sort(this.settings.sort);
+    this.insertToGallery(a);
+    return a;
+  };
+
+  /**
+   * Reset the filters removing the 'jg-filtered' class from all the entries
+   *
+   * @param a the array to reset
+   */
+  JustifiedGallery.prototype.resetFilters = function (a) {
+    for (var i = 0; i < a.length; i++) $(a[i]).removeClass('jg-filtered');
+  };
+
+  /**
+   * Filter the entries considering theirs classes (if a string has been passed) or using a function for filtering.
+   *
+   * @param a the array to filter
+   * @return the filtered array
+   */
+  JustifiedGallery.prototype.filterArray = function (a) {
+    var settings = this.settings;
+    if ($.type(settings.filter) === 'string') {
+      // Filter only keeping the entries passed in the string
+      return a.filter(function (el) {
+        var $el = $(el);
+        if ($el.is(settings.filter)) {
+          $el.removeClass('jg-filtered');
+          return true;
+        } else {
+          $el.addClass('jg-filtered').removeClass('jg-visible');
+          return false;
+        }
+      });
+    } else if ($.isFunction(settings.filter)) {
+      // Filter using the passed function
+      var filteredArr = a.filter(settings.filter);
+      for (var i = 0; i < a.length; i++) {
+        if (filteredArr.indexOf(a[i]) == -1) {
+          $(a[i]).addClass('jg-filtered').removeClass('jg-visible');
+        } else {
+          $(a[i]).removeClass('jg-filtered');
+        }
+      }
+      return filteredArr;
+    }
+  };
+
+  /**
+   * Destroy the Justified Gallery instance.
+   *
+   * It clears all the css properties added in the style attributes. We doesn't backup the original
+   * values for those css attributes, because it costs (performance) and because in general one
+   * shouldn't use the style attribute for an uniform set of images (where we suppose the use of
+   * classes). Creating a backup is also difficult because JG could be called multiple times and
+   * with different style attributes.
+   */
+  JustifiedGallery.prototype.destroy = function () {
+    clearInterval(this.checkWidthIntervalId);
+
+    $.each(this.entries, $.proxy(function(_, entry) {
+      var $entry = $(entry);
+
+      // Reset entry style
+      $entry.css('width', '');
+      $entry.css('height', '');
+      $entry.css('top', '');
+      $entry.css('left', '');
+      $entry.data('jg.loaded', undefined);
+      $entry.removeClass('jg-entry');
+
+      // Reset image style
+      var $img = this.imgFromEntry($entry);
+      $img.css('width', '');
+      $img.css('height', '');
+      $img.css('margin-left', '');
+      $img.css('margin-top', '');
+      $img.attr('src', $img.data('jg.originalSrc'));
+      $img.data('jg.originalSrc', undefined);
+
+      // Remove caption
+      this.removeCaptionEventsHandlers($entry);
+      var $caption = this.captionFromEntry($entry);
+      if ($entry.data('jg.createdCaption')) {
+        // remove also the caption element (if created by jg)
+        $entry.data('jg.createdCaption', undefined);
+        if ($caption !== null) $caption.remove();
+      } else {
+        if ($caption !== null) $caption.fadeTo(0, 1);
+      }
+
+    }, this));
+
+    this.$gallery.css('height', '');
+    this.$gallery.removeClass('justified-gallery');
+    this.$gallery.data('jg.controller', undefined);
+  };
+
+  /**
+   * Analyze the images and builds the rows. It returns if it found an image that is not loaded.
+   *
+   * @param isForResize if the image analyzer is called for resizing or not, to call a different callback at the end
+   */
+  JustifiedGallery.prototype.analyzeImages = function (isForResize) {
+    for (var i = this.lastAnalyzedIndex + 1; i < this.entries.length; i++) {
+      var $entry = $(this.entries[i]);
+      if ($entry.data('jg.loaded') === true || $entry.data('jg.loaded') === 'skipped') {
+        var availableWidth = this.galleryWidth - 2 * this.border - (
+            (this.buildingRow.entriesBuff.length - 1) * this.settings.margins);
+        var imgAspectRatio = $entry.data('jg.width') / $entry.data('jg.height');
+        if (availableWidth / (this.buildingRow.aspectRatio + imgAspectRatio) < this.settings.rowHeight) {
+          this.flushRow(false);
+          if(++this.yield.flushed >= this.yield.every) {
+            this.startImgAnalyzer(isForResize);
+            return;
+          }
+        }
+
+        this.buildingRow.entriesBuff.push($entry);
+        this.buildingRow.aspectRatio += imgAspectRatio;
+        this.buildingRow.width += imgAspectRatio * this.settings.rowHeight;
+        this.lastAnalyzedIndex = i;
+
+      } else if ($entry.data('jg.loaded') !== 'error') {
+        return;
+      }
+    }
+
+    // Last row flush (the row is not full)
+    if (this.buildingRow.entriesBuff.length > 0) this.flushRow(true);
+
+    if (this.isSpinnerActive()) {
+      this.stopLoadingSpinnerAnimation();
+    }
+
+    /* Stop, if there is, the timeout to start the analyzeImages.
+     This is because an image can be set loaded, and the timeout can be set,
+     but this image can be analyzed yet.
+     */
+    this.stopImgAnalyzerStarter();
+
+    //On complete callback
+    this.$gallery.trigger(isForResize ? 'jg.resize' : 'jg.complete');
+    this.$gallery.height(this.galleryHeightToSet);
+  };
+
+  /**
+   * Stops any ImgAnalyzer starter (that has an assigned timeout)
+   */
+  JustifiedGallery.prototype.stopImgAnalyzerStarter = function () {
+    this.yield.flushed = 0;
+    if (this.imgAnalyzerTimeout !== null) clearTimeout(this.imgAnalyzerTimeout);
+  };
+
+  /**
+   * Starts the image analyzer. It is not immediately called to let the browser to update the view
+   *
+   * @param isForResize specifies if the image analyzer must be called for resizing or not
+   */
+  JustifiedGallery.prototype.startImgAnalyzer = function (isForResize) {
+    var that = this;
+    this.stopImgAnalyzerStarter();
+    this.imgAnalyzerTimeout = setTimeout(function () {
+      that.analyzeImages(isForResize);
+    }, 0.001); // we can't start it immediately due to a IE different behaviour
+  };
+
+  /**
+   * Checks if the image is loaded or not using another image object. We cannot use the 'complete' image property,
+   * because some browsers, with a 404 set complete = true.
+   *
+   * @param imageSrc the image src to load
+   * @param onLoad callback that is called when the image has been loaded
+   * @param onError callback that is called in case of an error
+   */
+  JustifiedGallery.prototype.onImageEvent = function (imageSrc, onLoad, onError) {
+    if (!onLoad && !onError) return;
+
+    var memImage = new Image();
+    var $memImage = $(memImage);
+    if (onLoad) {
+      $memImage.one('load', function () {
+        $memImage.off('load error');
+        onLoad(memImage);
+      });
+    }
+    if (onError) {
+      $memImage.one('error', function() {
+        $memImage.off('load error');
+        onError(memImage);
+      });
+    }
+    memImage.src = imageSrc;
+  };
+
+  /**
+   * Init of Justified Gallery controlled
+   * It analyzes all the entries starting theirs loading and calling the image analyzer (that works with loaded images)
+   */
+  JustifiedGallery.prototype.init = function () {
+    var imagesToLoad = false, skippedImages = false, that = this;
+    $.each(this.entries, function (index, entry) {
+      var $entry = $(entry);
+      var $image = that.imgFromEntry($entry);
+
+      $entry.addClass('jg-entry');
+
+      if ($entry.data('jg.loaded') !== true && $entry.data('jg.loaded') !== 'skipped') {
+
+        // Link Rel global overwrite
+        if (that.settings.rel !== null) $entry.attr('rel', that.settings.rel);
+
+        // Link Target global overwrite
+        if (that.settings.target !== null) $entry.attr('target', that.settings.target);
+
+        if ($image !== null) {
+
+          // Image src
+          var imageSrc = that.extractImgSrcFromImage($image);
+          $image.attr('src', imageSrc);
+
+          /* If we have the height and the width, we don't wait that the image is loaded, but we start directly
+           * with the justification */
+          if (that.settings.waitThumbnailsLoad === false) {
+            var width = parseFloat($image.attr('width'));
+            var height = parseFloat($image.attr('height'));
+            if (!isNaN(width) && !isNaN(height)) {
+              $entry.data('jg.width', width);
+              $entry.data('jg.height', height);
+              $entry.data('jg.loaded', 'skipped');
+              skippedImages = true;
+              that.startImgAnalyzer(false);
+              return true; // continue
+            }
+          }
+
+          $entry.data('jg.loaded', false);
+          imagesToLoad = true;
+
+          // Spinner start
+          if (!that.isSpinnerActive()) that.startLoadingSpinnerAnimation();
+
+          that.onImageEvent(imageSrc, function (loadImg) { // image loaded
+            $entry.data('jg.width', loadImg.width);
+            $entry.data('jg.height', loadImg.height);
+            $entry.data('jg.loaded', true);
+            that.startImgAnalyzer(false);
+          }, function () { // image load error
+            $entry.data('jg.loaded', 'error');
+            that.startImgAnalyzer(false);
+          });
+
+        } else {
+          $entry.data('jg.loaded', true);
+          $entry.data('jg.width', $entry.width() | parseFloat($entry.css('width')) | 1);
+          $entry.data('jg.height', $entry.height() | parseFloat($entry.css('height')) | 1);
+        }
+
+      }
+
+    });
+
+    if (!imagesToLoad && !skippedImages) this.startImgAnalyzer(false);
+    this.checkWidth();
+  };
+
+  /**
+   * Checks that it is a valid number. If a string is passed it is converted to a number
+   *
+   * @param settingContainer the object that contains the setting (to allow the conversion)
+   * @param settingName the setting name
+   */
+  JustifiedGallery.prototype.checkOrConvertNumber = function (settingContainer, settingName) {
+    if ($.type(settingContainer[settingName]) === 'string') {
+      settingContainer[settingName] = parseFloat(settingContainer[settingName]);
+    }
+
+    if ($.type(settingContainer[settingName]) === 'number') {
+      if (isNaN(settingContainer[settingName])) throw 'invalid number for ' + settingName;
+    } else {
+      throw settingName + ' must be a number';
+    }
+  };
+
+  /**
+   * Checks the sizeRangeSuffixes and, if necessary, converts
+   * its keys from string (e.g. old settings with 'lt100') to int.
+   */
+  JustifiedGallery.prototype.checkSizeRangesSuffixes = function () {
+    if ($.type(this.settings.sizeRangeSuffixes) !== 'object') {
+      throw 'sizeRangeSuffixes must be defined and must be an object';
+    }
+
+    var suffixRanges = [];
+    for (var rangeIdx in this.settings.sizeRangeSuffixes) {
+      if (this.settings.sizeRangeSuffixes.hasOwnProperty(rangeIdx)) suffixRanges.push(rangeIdx);
+    }
+
+    var newSizeRngSuffixes = {0: ''};
+    for (var i = 0; i < suffixRanges.length; i++) {
+      if ($.type(suffixRanges[i]) === 'string') {
+        try {
+          var numIdx = parseInt(suffixRanges[i].replace(/^[a-z]+/, ''), 10);
+          newSizeRngSuffixes[numIdx] = this.settings.sizeRangeSuffixes[suffixRanges[i]];
+        } catch (e) {
+          throw 'sizeRangeSuffixes keys must contains correct numbers (' + e + ')';
+        }
+      } else {
+        newSizeRngSuffixes[suffixRanges[i]] = this.settings.sizeRangeSuffixes[suffixRanges[i]];
+      }
+    }
+
+    this.settings.sizeRangeSuffixes = newSizeRngSuffixes;
+  };
+
+  /**
+   * check and convert the maxRowHeight setting
+   */
+  JustifiedGallery.prototype.retrieveMaxRowHeight = function () {
+    var newMaxRowHeight = { };
+
+    if ($.type(this.settings.maxRowHeight) === 'string') {
+      if (this.settings.maxRowHeight.match(/^[0-9]+%$/)) {
+        newMaxRowHeight.value = parseFloat(this.settings.maxRowHeight.match(/^([0-9]+)%$/)[1]) / 100;
+        newMaxRowHeight.isPercentage = false;
+      } else {
+        newMaxRowHeight.value = parseFloat(this.settings.maxRowHeight);
+        newMaxRowHeight.isPercentage = true;
+      }
+    } else if ($.type(this.settings.maxRowHeight) === 'number') {
+      newMaxRowHeight.value = this.settings.maxRowHeight;
+      newMaxRowHeight.isPercentage = false;
+    } else if (this.settings.maxRowHeight === false ||
+        this.settings.maxRowHeight === null ||
+        typeof this.settings.maxRowHeight == 'undefined') {
+      return null;
+    } else {
+      throw 'maxRowHeight must be a number or a percentage';
+    }
+
+    // check if the converted value is not a number
+    if (isNaN(newMaxRowHeight.value)) throw 'invalid number for maxRowHeight';
+
+    // check values
+    if (newMaxRowHeight.isPercentage) {
+      if (newMaxRowHeight.value < 100) newMaxRowHeight.value = 100;
+    }
+
+    return newMaxRowHeight;
+  };
+
+  /**
+   * Checks the settings
+   */
+  JustifiedGallery.prototype.checkSettings = function () {
+    this.checkSizeRangesSuffixes();
+
+    this.checkOrConvertNumber(this.settings, 'rowHeight');
+    this.checkOrConvertNumber(this.settings, 'margins');
+    this.checkOrConvertNumber(this.settings, 'border');
+
+    var lastRowModes = [
+      'justify',
+      'nojustify',
+      'left',
+      'center',
+      'right',
+      'hide'
+    ];
+    if (lastRowModes.indexOf(this.settings.lastRow) === -1) {
+      throw 'lastRow must be one of: ' + lastRowModes.join(', ');
+    }
+
+    this.checkOrConvertNumber(this.settings, 'justifyThreshold');
+    if (this.settings.justifyThreshold < 0 || this.settings.justifyThreshold > 1) {
+      throw 'justifyThreshold must be in the interval [0,1]';
+    }
+    if ($.type(this.settings.cssAnimation) !== 'boolean') {
+      throw 'cssAnimation must be a boolean';
+    }
+
+    if ($.type(this.settings.captions) !== 'boolean') throw 'captions must be a boolean';
+    this.checkOrConvertNumber(this.settings.captionSettings, 'animationDuration');
+
+    this.checkOrConvertNumber(this.settings.captionSettings, 'visibleOpacity');
+    if (this.settings.captionSettings.visibleOpacity < 0 ||
+        this.settings.captionSettings.visibleOpacity > 1) {
+      throw 'captionSettings.visibleOpacity must be in the interval [0, 1]';
+    }
+
+    this.checkOrConvertNumber(this.settings.captionSettings, 'nonVisibleOpacity');
+    if (this.settings.captionSettings.nonVisibleOpacity < 0 ||
+        this.settings.captionSettings.nonVisibleOpacity > 1) {
+      throw 'captionSettings.nonVisibleOpacity must be in the interval [0, 1]';
+    }
+
+    this.checkOrConvertNumber(this.settings, 'imagesAnimationDuration');
+    this.checkOrConvertNumber(this.settings, 'refreshTime');
+    this.checkOrConvertNumber(this.settings, 'refreshSensitivity');
+    if ($.type(this.settings.randomize) !== 'boolean') throw 'randomize must be a boolean';
+    if ($.type(this.settings.selector) !== 'string') throw 'selector must be a string';
+
+    if (this.settings.sort !== false && !$.isFunction(this.settings.sort)) {
+      throw 'sort must be false or a comparison function';
+    }
+
+    if (this.settings.filter !== false && !$.isFunction(this.settings.filter) &&
+        $.type(this.settings.filter) !== 'string') {
+      throw 'filter must be false, a string or a filter function';
+    }
+  };
+
+  /**
+   * It brings all the indexes from the sizeRangeSuffixes and it orders them. They are then sorted and returned.
+   * @returns {Array} sorted suffix ranges
+   */
+  JustifiedGallery.prototype.retrieveSuffixRanges = function () {
+    var suffixRanges = [];
+    for (var rangeIdx in this.settings.sizeRangeSuffixes) {
+      if (this.settings.sizeRangeSuffixes.hasOwnProperty(rangeIdx)) suffixRanges.push(parseInt(rangeIdx, 10));
+    }
+    suffixRanges.sort(function (a, b) { return a > b ? 1 : a < b ? -1 : 0; });
+    return suffixRanges;
+  };
+
+  /**
+   * Update the existing settings only changing some of them
+   *
+   * @param newSettings the new settings (or a subgroup of them)
+   */
+  JustifiedGallery.prototype.updateSettings = function (newSettings) {
+    // In this case Justified Gallery has been called again changing only some options
+    this.settings = $.extend({}, this.settings, newSettings);
+    this.checkSettings();
+
+    // As reported in the settings: negative value = same as margins, 0 = disabled
+    this.border = this.settings.border >= 0 ? this.settings.border : this.settings.margins;
+
+    this.maxRowHeight = this.retrieveMaxRowHeight();
+    this.suffixRanges = this.retrieveSuffixRanges();
+  };
+
+  /**
+   * Justified Gallery plugin for jQuery
+   *
+   * Events
+   *  - jg.complete : called when all the gallery has been created
+   *  - jg.resize : called when the gallery has been resized
+   *  - jg.rowflush : when a new row appears
+   *
+   * @param arg the action (or the settings) passed when the plugin is called
+   * @returns {*} the object itself
+   */
+  $.fn.justifiedGallery = function (arg) {
+    return this.each(function (index, gallery) {
+
+      var $gallery = $(gallery);
+      $gallery.addClass('justified-gallery');
+
+      var controller = $gallery.data('jg.controller');
+      if (typeof controller === 'undefined') {
+        // Create controller and assign it to the object data
+        if (typeof arg !== 'undefined' && arg !== null && $.type(arg) !== 'object') {
+          if (arg === 'destroy') return; // Just a call to an unexisting object
+          throw 'The argument must be an object';
+        }
+        controller = new JustifiedGallery($gallery, $.extend({}, $.fn.justifiedGallery.defaults, arg));
+        $gallery.data('jg.controller', controller);
+      } else if (arg === 'norewind') {
+        // In this case we don't rewind: we analyze only the latest images (e.g. to complete the last unfinished row
+        // ... left to be more readable
+      } else if (arg === 'destroy') {
+        controller.destroy();
+        return;
+      } else {
+        // In this case Justified Gallery has been called again changing only some options
+        controller.updateSettings(arg);
+        controller.rewind();
+      }
+
+      // Update the entries list
+      if (!controller.updateEntries(arg === 'norewind')) return;
+
+      // Init justified gallery
+      controller.init();
+
+    });
+  };
+
+  // Default options
+  $.fn.justifiedGallery.defaults = {
+    sizeRangeSuffixes: { }, /* e.g. Flickr configuration
+        {
+          100: '_t',  // used when longest is less than 100px
+          240: '_m',  // used when longest is between 101px and 240px
+          320: '_n',  // ...
+          500: '',
+          640: '_z',
+          1024: '_b'  // used as else case because it is the last
+        }
+    */
+    thumbnailPath: undefined, /* If defined, sizeRangeSuffixes is not used, and this function is used to determine the
+    path relative to a specific thumbnail size. The function should accept respectively three arguments:
+    current path, width and height */
+    rowHeight: 120,
+    maxRowHeight: false, // false or negative value to deactivate. Positive number to express the value in pixels,
+                         // A string '[0-9]+%' to express in percentage (e.g. 300% means that the row height
+                         // can't exceed 3 * rowHeight)
+    margins: 1,
+    border: -1, // negative value = same as margins, 0 = disabled, any other value to set the border
+
+    lastRow: 'nojustify', // … which is the same as 'left', or can be 'justify', 'center', 'right' or 'hide'
+
+    justifyThreshold: 0.90, /* if row width / available space > 0.90 it will be always justified
+                             * (i.e. lastRow setting is not considered) */
+    waitThumbnailsLoad: true,
+    captions: true,
+    cssAnimation: true,
+    imagesAnimationDuration: 500, // ignored with css animations
+    captionSettings: { // ignored with css animations
+      animationDuration: 500,
+      visibleOpacity: 0.7,
+      nonVisibleOpacity: 0.0
+    },
+    rel: null, // rewrite the rel of each analyzed links
+    target: null, // rewrite the target of all links
+    extension: /\.[^.\\/]+$/, // regexp to capture the extension of an image
+    refreshTime: 200, // time interval (in ms) to check if the page changes its width
+    refreshSensitivity: 0, // change in width allowed (in px) without re-building the gallery
+    randomize: false,
+    sort: false, /*
+      - false: to do not sort
+      - function: to sort them using the function as comparator (see Array.prototype.sort())
+    */
+    filter: false, /*
+      - false, null or undefined: for a disabled filter
+      - a string: an entry is kept if entry.is(filter string) returns true
+                  see jQuery's .is() function for further information
+      - a function: invoked with arguments (entry, index, array). Return true to keep the entry, false otherwise.
+                    It follows the specifications of the Array.prototype.filter() function of JavaScript.
+    */
+    selector: 'a, div:not(.spinner)' // The selector that is used to know what are the entries of the gallery
+  };
 
 }(jQuery));
 
@@ -16765,2126 +16776,2126 @@ BootstrapTabHistory = {
 /*! iScroll v5.2.0 ~ (c) 2008-2016 Matteo Spinelli ~ http://cubiq.org/license */
 (function (window, document, Math) {
 var rAF = window.requestAnimationFrame  ||
-		window.webkitRequestAnimationFrame  ||
-		window.mozRequestAnimationFrame     ||
-		window.oRequestAnimationFrame       ||
-		window.msRequestAnimationFrame      ||
-		function (callback) { window.setTimeout(callback, 1000 / 60); };
+    window.webkitRequestAnimationFrame  ||
+    window.mozRequestAnimationFrame     ||
+    window.oRequestAnimationFrame       ||
+    window.msRequestAnimationFrame      ||
+    function (callback) { window.setTimeout(callback, 1000 / 60); };
 
 var utils = (function () {
-		var me = {};
+    var me = {};
 
-		var _elementStyle = document.createElement('div').style;
-		var _vendor = (function () {
-				var vendors = ['t', 'webkitT', 'MozT', 'msT', 'OT'],
-						transform,
-						i = 0,
-						l = vendors.length;
+    var _elementStyle = document.createElement('div').style;
+    var _vendor = (function () {
+        var vendors = ['t', 'webkitT', 'MozT', 'msT', 'OT'],
+            transform,
+            i = 0,
+            l = vendors.length;
 
-				for ( ; i < l; i++ ) {
-						transform = vendors[i] + 'ransform';
-						if ( transform in _elementStyle ) return vendors[i].substr(0, vendors[i].length-1);
-				}
+        for ( ; i < l; i++ ) {
+            transform = vendors[i] + 'ransform';
+            if ( transform in _elementStyle ) return vendors[i].substr(0, vendors[i].length-1);
+        }
 
-				return false;
-		})();
+        return false;
+    })();
 
-		function _prefixStyle (style) {
-				if ( _vendor === false ) return false;
-				if ( _vendor === '' ) return style;
-				return _vendor + style.charAt(0).toUpperCase() + style.substr(1);
-		}
+    function _prefixStyle (style) {
+        if ( _vendor === false ) return false;
+        if ( _vendor === '' ) return style;
+        return _vendor + style.charAt(0).toUpperCase() + style.substr(1);
+    }
 
-		me.getTime = Date.now || function getTime () { return new Date().getTime(); };
+    me.getTime = Date.now || function getTime () { return new Date().getTime(); };
 
-		me.extend = function (target, obj) {
-				for ( var i in obj ) {
-						target[i] = obj[i];
-				}
-		};
+    me.extend = function (target, obj) {
+        for ( var i in obj ) {
+            target[i] = obj[i];
+        }
+    };
 
-		me.addEvent = function (el, type, fn, capture) {
-				el.addEventListener(type, fn, !!capture);
-		};
+    me.addEvent = function (el, type, fn, capture) {
+        el.addEventListener(type, fn, !!capture);
+    };
 
-		me.removeEvent = function (el, type, fn, capture) {
-				el.removeEventListener(type, fn, !!capture);
-		};
+    me.removeEvent = function (el, type, fn, capture) {
+        el.removeEventListener(type, fn, !!capture);
+    };
 
-		me.prefixPointerEvent = function (pointerEvent) {
-				return window.MSPointerEvent ?
-						'MSPointer' + pointerEvent.charAt(7).toUpperCase() + pointerEvent.substr(8):
-						pointerEvent;
-		};
+    me.prefixPointerEvent = function (pointerEvent) {
+        return window.MSPointerEvent ?
+            'MSPointer' + pointerEvent.charAt(7).toUpperCase() + pointerEvent.substr(8):
+            pointerEvent;
+    };
 
-		me.momentum = function (current, start, time, lowerMargin, wrapperSize, deceleration) {
-				var distance = current - start,
-						speed = Math.abs(distance) / time,
-						destination,
-						duration;
+    me.momentum = function (current, start, time, lowerMargin, wrapperSize, deceleration) {
+        var distance = current - start,
+            speed = Math.abs(distance) / time,
+            destination,
+            duration;
 
-				deceleration = deceleration === undefined ? 0.0006 : deceleration;
+        deceleration = deceleration === undefined ? 0.0006 : deceleration;
 
-				destination = current + ( speed * speed ) / ( 2 * deceleration ) * ( distance < 0 ? -1 : 1 );
-				duration = speed / deceleration;
+        destination = current + ( speed * speed ) / ( 2 * deceleration ) * ( distance < 0 ? -1 : 1 );
+        duration = speed / deceleration;
 
-				if ( destination < lowerMargin ) {
-						destination = wrapperSize ? lowerMargin - ( wrapperSize / 2.5 * ( speed / 8 ) ) : lowerMargin;
-						distance = Math.abs(destination - current);
-						duration = distance / speed;
-				} else if ( destination > 0 ) {
-						destination = wrapperSize ? wrapperSize / 2.5 * ( speed / 8 ) : 0;
-						distance = Math.abs(current) + destination;
-						duration = distance / speed;
-				}
+        if ( destination < lowerMargin ) {
+            destination = wrapperSize ? lowerMargin - ( wrapperSize / 2.5 * ( speed / 8 ) ) : lowerMargin;
+            distance = Math.abs(destination - current);
+            duration = distance / speed;
+        } else if ( destination > 0 ) {
+            destination = wrapperSize ? wrapperSize / 2.5 * ( speed / 8 ) : 0;
+            distance = Math.abs(current) + destination;
+            duration = distance / speed;
+        }
 
-				return {
-						destination: Math.round(destination),
-						duration: duration
-				};
-		};
+        return {
+            destination: Math.round(destination),
+            duration: duration
+        };
+    };
 
-		var _transform = _prefixStyle('transform');
+    var _transform = _prefixStyle('transform');
 
-		me.extend(me, {
-				hasTransform: _transform !== false,
-				hasPerspective: _prefixStyle('perspective') in _elementStyle,
-				hasTouch: 'ontouchstart' in window,
-				hasPointer: !!(window.PointerEvent || window.MSPointerEvent), // IE10 is prefixed
-				hasTransition: _prefixStyle('transition') in _elementStyle
-		});
+    me.extend(me, {
+        hasTransform: _transform !== false,
+        hasPerspective: _prefixStyle('perspective') in _elementStyle,
+        hasTouch: 'ontouchstart' in window,
+        hasPointer: !!(window.PointerEvent || window.MSPointerEvent), // IE10 is prefixed
+        hasTransition: _prefixStyle('transition') in _elementStyle
+    });
 
-		/*
-		This should find all Android browsers lower than build 535.19 (both stock browser and webview)
-		- galaxy S2 is ok
-		- 2.3.6 : `AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1`
-		- 4.0.4 : `AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30`
-	 - galaxy S3 is badAndroid (stock brower, webview)
-		 `AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30`
-	 - galaxy S4 is badAndroid (stock brower, webview)
-		 `AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30`
-	 - galaxy S5 is OK
-		 `AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Mobile Safari/537.36 (Chrome/)`
-	 - galaxy S6 is OK
-		 `AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Mobile Safari/537.36 (Chrome/)`
-	*/
-		me.isBadAndroid = (function() {
-				var appVersion = window.navigator.appVersion;
-				// Android browser is not a chrome browser.
-				if (/Android/.test(appVersion) && !(/Chrome\/\d/.test(appVersion))) {
-						var safariVersion = appVersion.match(/Safari\/(\d+.\d)/);
-						if(safariVersion && typeof safariVersion === "object" && safariVersion.length >= 2) {
-								return parseFloat(safariVersion[1]) < 535.19;
-						} else {
-								return true;
-						}
-				} else {
-						return false;
-				}
-		})();
+    /*
+    This should find all Android browsers lower than build 535.19 (both stock browser and webview)
+    - galaxy S2 is ok
+    - 2.3.6 : `AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1`
+    - 4.0.4 : `AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30`
+   - galaxy S3 is badAndroid (stock brower, webview)
+     `AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30`
+   - galaxy S4 is badAndroid (stock brower, webview)
+     `AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30`
+   - galaxy S5 is OK
+     `AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Mobile Safari/537.36 (Chrome/)`
+   - galaxy S6 is OK
+     `AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Mobile Safari/537.36 (Chrome/)`
+  */
+    me.isBadAndroid = (function() {
+        var appVersion = window.navigator.appVersion;
+        // Android browser is not a chrome browser.
+        if (/Android/.test(appVersion) && !(/Chrome\/\d/.test(appVersion))) {
+            var safariVersion = appVersion.match(/Safari\/(\d+.\d)/);
+            if(safariVersion && typeof safariVersion === "object" && safariVersion.length >= 2) {
+                return parseFloat(safariVersion[1]) < 535.19;
+            } else {
+                return true;
+            }
+        } else {
+            return false;
+        }
+    })();
 
-		me.extend(me.style = {}, {
-				transform: _transform,
-				transitionTimingFunction: _prefixStyle('transitionTimingFunction'),
-				transitionDuration: _prefixStyle('transitionDuration'),
-				transitionDelay: _prefixStyle('transitionDelay'),
-				transformOrigin: _prefixStyle('transformOrigin')
-		});
+    me.extend(me.style = {}, {
+        transform: _transform,
+        transitionTimingFunction: _prefixStyle('transitionTimingFunction'),
+        transitionDuration: _prefixStyle('transitionDuration'),
+        transitionDelay: _prefixStyle('transitionDelay'),
+        transformOrigin: _prefixStyle('transformOrigin')
+    });
 
-		me.hasClass = function (e, c) {
-				var re = new RegExp("(^|\\s)" + c + "(\\s|$)");
-				return re.test(e.className);
-		};
+    me.hasClass = function (e, c) {
+        var re = new RegExp("(^|\\s)" + c + "(\\s|$)");
+        return re.test(e.className);
+    };
 
-		me.addClass = function (e, c) {
-				if ( me.hasClass(e, c) ) {
-						return;
-				}
+    me.addClass = function (e, c) {
+        if ( me.hasClass(e, c) ) {
+            return;
+        }
 
-				var newclass = e.className.split(' ');
-				newclass.push(c);
-				e.className = newclass.join(' ');
-		};
+        var newclass = e.className.split(' ');
+        newclass.push(c);
+        e.className = newclass.join(' ');
+    };
 
-		me.removeClass = function (e, c) {
-				if ( !me.hasClass(e, c) ) {
-						return;
-				}
+    me.removeClass = function (e, c) {
+        if ( !me.hasClass(e, c) ) {
+            return;
+        }
 
-				var re = new RegExp("(^|\\s)" + c + "(\\s|$)", 'g');
-				e.className = e.className.replace(re, ' ');
-		};
+        var re = new RegExp("(^|\\s)" + c + "(\\s|$)", 'g');
+        e.className = e.className.replace(re, ' ');
+    };
 
-		me.offset = function (el) {
-				var left = -el.offsetLeft,
-						top = -el.offsetTop;
+    me.offset = function (el) {
+        var left = -el.offsetLeft,
+            top = -el.offsetTop;
 
-				// jshint -W084
-				while (el = el.offsetParent) {
-						left -= el.offsetLeft;
-						top -= el.offsetTop;
-				}
-				// jshint +W084
+        // jshint -W084
+        while (el = el.offsetParent) {
+            left -= el.offsetLeft;
+            top -= el.offsetTop;
+        }
+        // jshint +W084
 
-				return {
-						left: left,
-						top: top
-				};
-		};
+        return {
+            left: left,
+            top: top
+        };
+    };
 
-		me.preventDefaultException = function (el, exceptions) {
-				for ( var i in exceptions ) {
-						if ( exceptions[i].test(el[i]) ) {
-								return true;
-						}
-				}
+    me.preventDefaultException = function (el, exceptions) {
+        for ( var i in exceptions ) {
+            if ( exceptions[i].test(el[i]) ) {
+                return true;
+            }
+        }
 
-				return false;
-		};
+        return false;
+    };
 
-		me.extend(me.eventType = {}, {
-				touchstart: 1,
-				touchmove: 1,
-				touchend: 1,
+    me.extend(me.eventType = {}, {
+        touchstart: 1,
+        touchmove: 1,
+        touchend: 1,
 
-				mousedown: 2,
-				mousemove: 2,
-				mouseup: 2,
+        mousedown: 2,
+        mousemove: 2,
+        mouseup: 2,
 
-				pointerdown: 3,
-				pointermove: 3,
-				pointerup: 3,
+        pointerdown: 3,
+        pointermove: 3,
+        pointerup: 3,
 
-				MSPointerDown: 3,
-				MSPointerMove: 3,
-				MSPointerUp: 3
-		});
+        MSPointerDown: 3,
+        MSPointerMove: 3,
+        MSPointerUp: 3
+    });
 
-		me.extend(me.ease = {}, {
-				quadratic: {
-						style: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-						fn: function (k) {
-								return k * ( 2 - k );
-						}
-				},
-				circular: {
-						style: 'cubic-bezier(0.1, 0.57, 0.1, 1)',   // Not properly "circular" but this looks better, it should be (0.075, 0.82, 0.165, 1)
-						fn: function (k) {
-								return Math.sqrt( 1 - ( --k * k ) );
-						}
-				},
-				back: {
-						style: 'cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-						fn: function (k) {
-								var b = 4;
-								return ( k = k - 1 ) * k * ( ( b + 1 ) * k + b ) + 1;
-						}
-				},
-				bounce: {
-						style: '',
-						fn: function (k) {
-								if ( ( k /= 1 ) < ( 1 / 2.75 ) ) {
-										return 7.5625 * k * k;
-								} else if ( k < ( 2 / 2.75 ) ) {
-										return 7.5625 * ( k -= ( 1.5 / 2.75 ) ) * k + 0.75;
-								} else if ( k < ( 2.5 / 2.75 ) ) {
-										return 7.5625 * ( k -= ( 2.25 / 2.75 ) ) * k + 0.9375;
-								} else {
-										return 7.5625 * ( k -= ( 2.625 / 2.75 ) ) * k + 0.984375;
-								}
-						}
-				},
-				elastic: {
-						style: '',
-						fn: function (k) {
-								var f = 0.22,
-										e = 0.4;
+    me.extend(me.ease = {}, {
+        quadratic: {
+            style: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+            fn: function (k) {
+                return k * ( 2 - k );
+            }
+        },
+        circular: {
+            style: 'cubic-bezier(0.1, 0.57, 0.1, 1)',   // Not properly "circular" but this looks better, it should be (0.075, 0.82, 0.165, 1)
+            fn: function (k) {
+                return Math.sqrt( 1 - ( --k * k ) );
+            }
+        },
+        back: {
+            style: 'cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+            fn: function (k) {
+                var b = 4;
+                return ( k = k - 1 ) * k * ( ( b + 1 ) * k + b ) + 1;
+            }
+        },
+        bounce: {
+            style: '',
+            fn: function (k) {
+                if ( ( k /= 1 ) < ( 1 / 2.75 ) ) {
+                    return 7.5625 * k * k;
+                } else if ( k < ( 2 / 2.75 ) ) {
+                    return 7.5625 * ( k -= ( 1.5 / 2.75 ) ) * k + 0.75;
+                } else if ( k < ( 2.5 / 2.75 ) ) {
+                    return 7.5625 * ( k -= ( 2.25 / 2.75 ) ) * k + 0.9375;
+                } else {
+                    return 7.5625 * ( k -= ( 2.625 / 2.75 ) ) * k + 0.984375;
+                }
+            }
+        },
+        elastic: {
+            style: '',
+            fn: function (k) {
+                var f = 0.22,
+                    e = 0.4;
 
-								if ( k === 0 ) { return 0; }
-								if ( k == 1 ) { return 1; }
+                if ( k === 0 ) { return 0; }
+                if ( k == 1 ) { return 1; }
 
-								return ( e * Math.pow( 2, - 10 * k ) * Math.sin( ( k - f / 4 ) * ( 2 * Math.PI ) / f ) + 1 );
-						}
-				}
-		});
+                return ( e * Math.pow( 2, - 10 * k ) * Math.sin( ( k - f / 4 ) * ( 2 * Math.PI ) / f ) + 1 );
+            }
+        }
+    });
 
-		me.tap = function (e, eventName) {
-				var ev = document.createEvent('Event');
-				ev.initEvent(eventName, true, true);
-				ev.pageX = e.pageX;
-				ev.pageY = e.pageY;
-				e.target.dispatchEvent(ev);
-		};
+    me.tap = function (e, eventName) {
+        var ev = document.createEvent('Event');
+        ev.initEvent(eventName, true, true);
+        ev.pageX = e.pageX;
+        ev.pageY = e.pageY;
+        e.target.dispatchEvent(ev);
+    };
 
-		me.click = function (e) {
-				var target = e.target,
-						ev;
+    me.click = function (e) {
+        var target = e.target,
+            ev;
 
-				if ( !(/(SELECT|INPUT|TEXTAREA)/i).test(target.tagName) ) {
-						// https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/initMouseEvent
-						// initMouseEvent is deprecated.
-						ev = document.createEvent(window.MouseEvent ? 'MouseEvents' : 'Event');
-						ev.initEvent('click', true, true);
-						ev.view = e.view || window;
-						ev.detail = 1;
-						ev.screenX = target.screenX || 0;
-						ev.screenY = target.screenY || 0;
-						ev.clientX = target.clientX || 0;
-						ev.clientY = target.clientY || 0;
-						ev.ctrlKey = !!e.ctrlKey;
-						ev.altKey = !!e.altKey;
-						ev.shiftKey = !!e.shiftKey;
-						ev.metaKey = !!e.metaKey;
-						ev.button = 0;
-						ev.relatedTarget = null;
-						ev._constructed = true;
-						target.dispatchEvent(ev);
-				}
-		};
+        if ( !(/(SELECT|INPUT|TEXTAREA)/i).test(target.tagName) ) {
+            // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/initMouseEvent
+            // initMouseEvent is deprecated.
+            ev = document.createEvent(window.MouseEvent ? 'MouseEvents' : 'Event');
+            ev.initEvent('click', true, true);
+            ev.view = e.view || window;
+            ev.detail = 1;
+            ev.screenX = target.screenX || 0;
+            ev.screenY = target.screenY || 0;
+            ev.clientX = target.clientX || 0;
+            ev.clientY = target.clientY || 0;
+            ev.ctrlKey = !!e.ctrlKey;
+            ev.altKey = !!e.altKey;
+            ev.shiftKey = !!e.shiftKey;
+            ev.metaKey = !!e.metaKey;
+            ev.button = 0;
+            ev.relatedTarget = null;
+            ev._constructed = true;
+            target.dispatchEvent(ev);
+        }
+    };
 
-		return me;
+    return me;
 })();
 function IScroll (el, options) {
-		this.wrapper = typeof el == 'string' ? document.querySelector(el) : el;
-		this.scroller = this.wrapper.children[0];
-		this.scrollerStyle = this.scroller.style;       // cache style for better performance
+    this.wrapper = typeof el == 'string' ? document.querySelector(el) : el;
+    this.scroller = this.wrapper.children[0];
+    this.scrollerStyle = this.scroller.style;       // cache style for better performance
 
-		this.options = {
+    this.options = {
 
-				resizeScrollbars: true,
+        resizeScrollbars: true,
 
-				mouseWheelSpeed: 20,
+        mouseWheelSpeed: 20,
 
-				snapThreshold: 0.334,
+        snapThreshold: 0.334,
 
 // INSERT POINT: OPTIONS
-				disablePointer : !utils.hasPointer,
-				disableTouch : utils.hasPointer || !utils.hasTouch,
-				disableMouse : utils.hasPointer || utils.hasTouch,
-				startX: 0,
-				startY: 0,
-				scrollY: true,
-				directionLockThreshold: 5,
-				momentum: true,
+        disablePointer : !utils.hasPointer,
+        disableTouch : utils.hasPointer || !utils.hasTouch,
+        disableMouse : utils.hasPointer || utils.hasTouch,
+        startX: 0,
+        startY: 0,
+        scrollY: true,
+        directionLockThreshold: 5,
+        momentum: true,
 
-				bounce: true,
-				bounceTime: 600,
-				bounceEasing: '',
+        bounce: true,
+        bounceTime: 600,
+        bounceEasing: '',
 
-				preventDefault: true,
-				preventDefaultException: { tagName: /^(INPUT|TEXTAREA|BUTTON|SELECT|LABEL)$/ },
+        preventDefault: true,
+        preventDefaultException: { tagName: /^(INPUT|TEXTAREA|BUTTON|SELECT|LABEL)$/ },
 
-				HWCompositing: true,
-				useTransition: true,
-				useTransform: true,
-				bindToWrapper: typeof window.onmousedown === "undefined"
-		};
+        HWCompositing: true,
+        useTransition: true,
+        useTransform: true,
+        bindToWrapper: typeof window.onmousedown === "undefined"
+    };
 
-		for ( var i in options ) {
-				this.options[i] = options[i];
-		}
+    for ( var i in options ) {
+        this.options[i] = options[i];
+    }
 
-		// Normalize options
-		this.translateZ = this.options.HWCompositing && utils.hasPerspective ? ' translateZ(0)' : '';
+    // Normalize options
+    this.translateZ = this.options.HWCompositing && utils.hasPerspective ? ' translateZ(0)' : '';
 
-		this.options.useTransition = utils.hasTransition && this.options.useTransition;
-		this.options.useTransform = utils.hasTransform && this.options.useTransform;
+    this.options.useTransition = utils.hasTransition && this.options.useTransition;
+    this.options.useTransform = utils.hasTransform && this.options.useTransform;
 
-		this.options.eventPassthrough = this.options.eventPassthrough === true ? 'vertical' : this.options.eventPassthrough;
-		this.options.preventDefault = !this.options.eventPassthrough && this.options.preventDefault;
+    this.options.eventPassthrough = this.options.eventPassthrough === true ? 'vertical' : this.options.eventPassthrough;
+    this.options.preventDefault = !this.options.eventPassthrough && this.options.preventDefault;
 
-		// If you want eventPassthrough I have to lock one of the axes
-		this.options.scrollY = this.options.eventPassthrough == 'vertical' ? false : this.options.scrollY;
-		this.options.scrollX = this.options.eventPassthrough == 'horizontal' ? false : this.options.scrollX;
+    // If you want eventPassthrough I have to lock one of the axes
+    this.options.scrollY = this.options.eventPassthrough == 'vertical' ? false : this.options.scrollY;
+    this.options.scrollX = this.options.eventPassthrough == 'horizontal' ? false : this.options.scrollX;
 
-		// With eventPassthrough we also need lockDirection mechanism
-		this.options.freeScroll = this.options.freeScroll && !this.options.eventPassthrough;
-		this.options.directionLockThreshold = this.options.eventPassthrough ? 0 : this.options.directionLockThreshold;
+    // With eventPassthrough we also need lockDirection mechanism
+    this.options.freeScroll = this.options.freeScroll && !this.options.eventPassthrough;
+    this.options.directionLockThreshold = this.options.eventPassthrough ? 0 : this.options.directionLockThreshold;
 
-		this.options.bounceEasing = typeof this.options.bounceEasing == 'string' ? utils.ease[this.options.bounceEasing] || utils.ease.circular : this.options.bounceEasing;
+    this.options.bounceEasing = typeof this.options.bounceEasing == 'string' ? utils.ease[this.options.bounceEasing] || utils.ease.circular : this.options.bounceEasing;
 
-		this.options.resizePolling = this.options.resizePolling === undefined ? 60 : this.options.resizePolling;
+    this.options.resizePolling = this.options.resizePolling === undefined ? 60 : this.options.resizePolling;
 
-		if ( this.options.tap === true ) {
-				this.options.tap = 'tap';
-		}
+    if ( this.options.tap === true ) {
+        this.options.tap = 'tap';
+    }
 
-		// https://github.com/cubiq/iscroll/issues/1029
-		if (!this.options.useTransition && !this.options.useTransform) {
-				if(!(/relative|absolute/i).test(this.scrollerStyle.position)) {
-						this.scrollerStyle.position = "relative";
-				}
-		}
+    // https://github.com/cubiq/iscroll/issues/1029
+    if (!this.options.useTransition && !this.options.useTransform) {
+        if(!(/relative|absolute/i).test(this.scrollerStyle.position)) {
+            this.scrollerStyle.position = "relative";
+        }
+    }
 
-		if ( this.options.shrinkScrollbars == 'scale' ) {
-				this.options.useTransition = false;
-		}
+    if ( this.options.shrinkScrollbars == 'scale' ) {
+        this.options.useTransition = false;
+    }
 
-		this.options.invertWheelDirection = this.options.invertWheelDirection ? -1 : 1;
+    this.options.invertWheelDirection = this.options.invertWheelDirection ? -1 : 1;
 
 // INSERT POINT: NORMALIZATION
 
-		// Some defaults
-		this.x = 0;
-		this.y = 0;
-		this.directionX = 0;
-		this.directionY = 0;
-		this._events = {};
+    // Some defaults
+    this.x = 0;
+    this.y = 0;
+    this.directionX = 0;
+    this.directionY = 0;
+    this._events = {};
 
 // INSERT POINT: DEFAULTS
 
-		this._init();
-		this.refresh();
+    this._init();
+    this.refresh();
 
-		this.scrollTo(this.options.startX, this.options.startY);
-		this.enable();
+    this.scrollTo(this.options.startX, this.options.startY);
+    this.enable();
 }
 
 IScroll.prototype = {
-		version: '5.2.0',
+    version: '5.2.0',
 
-		_init: function () {
-				this._initEvents();
+    _init: function () {
+        this._initEvents();
 
-				if ( this.options.scrollbars || this.options.indicators ) {
-						this._initIndicators();
-				}
+        if ( this.options.scrollbars || this.options.indicators ) {
+            this._initIndicators();
+        }
 
-				if ( this.options.mouseWheel ) {
-						this._initWheel();
-				}
+        if ( this.options.mouseWheel ) {
+            this._initWheel();
+        }
 
-				if ( this.options.snap ) {
-						this._initSnap();
-				}
+        if ( this.options.snap ) {
+            this._initSnap();
+        }
 
-				if ( this.options.keyBindings ) {
-						this._initKeys();
-				}
+        if ( this.options.keyBindings ) {
+            this._initKeys();
+        }
 
 // INSERT POINT: _init
 
-		},
+    },
 
-		destroy: function () {
-				this._initEvents(true);
-				clearTimeout(this.resizeTimeout);
-				this.resizeTimeout = null;
-				this._execEvent('destroy');
-		},
+    destroy: function () {
+        this._initEvents(true);
+        clearTimeout(this.resizeTimeout);
+        this.resizeTimeout = null;
+        this._execEvent('destroy');
+    },
 
-		_transitionEnd: function (e) {
-				if ( e.target != this.scroller || !this.isInTransition ) {
-						return;
-				}
+    _transitionEnd: function (e) {
+        if ( e.target != this.scroller || !this.isInTransition ) {
+            return;
+        }
 
-				this._transitionTime();
-				if ( !this.resetPosition(this.options.bounceTime) ) {
-						this.isInTransition = false;
-						this._execEvent('scrollEnd');
-				}
-		},
+        this._transitionTime();
+        if ( !this.resetPosition(this.options.bounceTime) ) {
+            this.isInTransition = false;
+            this._execEvent('scrollEnd');
+        }
+    },
 
-		_start: function (e) {
-				// React to left mouse button only
-				if ( utils.eventType[e.type] != 1 ) {
-					// for button property
-					// http://unixpapa.com/js/mouse.html
-					var button;
-				if (!e.which) {
-					/* IE case */
-					button = (e.button < 2) ? 0 :
-									 ((e.button == 4) ? 1 : 2);
-				} else {
-					/* All others */
-					button = e.button;
-				}
-						if ( button !== 0 ) {
-								return;
-						}
-				}
+    _start: function (e) {
+        // React to left mouse button only
+        if ( utils.eventType[e.type] != 1 ) {
+          // for button property
+          // http://unixpapa.com/js/mouse.html
+          var button;
+        if (!e.which) {
+          /* IE case */
+          button = (e.button < 2) ? 0 :
+                   ((e.button == 4) ? 1 : 2);
+        } else {
+          /* All others */
+          button = e.button;
+        }
+            if ( button !== 0 ) {
+                return;
+            }
+        }
 
-				if ( !this.enabled || (this.initiated && utils.eventType[e.type] !== this.initiated) ) {
-						return;
-				}
+        if ( !this.enabled || (this.initiated && utils.eventType[e.type] !== this.initiated) ) {
+            return;
+        }
 
-				if ( this.options.preventDefault && !utils.isBadAndroid && !utils.preventDefaultException(e.target, this.options.preventDefaultException) ) {
-						e.preventDefault();
-				}
+        if ( this.options.preventDefault && !utils.isBadAndroid && !utils.preventDefaultException(e.target, this.options.preventDefaultException) ) {
+            e.preventDefault();
+        }
 
-				var point = e.touches ? e.touches[0] : e,
-						pos;
+        var point = e.touches ? e.touches[0] : e,
+            pos;
 
-				this.initiated  = utils.eventType[e.type];
-				this.moved      = false;
-				this.distX      = 0;
-				this.distY      = 0;
-				this.directionX = 0;
-				this.directionY = 0;
-				this.directionLocked = 0;
+        this.initiated  = utils.eventType[e.type];
+        this.moved      = false;
+        this.distX      = 0;
+        this.distY      = 0;
+        this.directionX = 0;
+        this.directionY = 0;
+        this.directionLocked = 0;
 
-				this.startTime = utils.getTime();
+        this.startTime = utils.getTime();
 
-				if ( this.options.useTransition && this.isInTransition ) {
-						this._transitionTime();
-						this.isInTransition = false;
-						pos = this.getComputedPosition();
-						this._translate(Math.round(pos.x), Math.round(pos.y));
-						this._execEvent('scrollEnd');
-				} else if ( !this.options.useTransition && this.isAnimating ) {
-						this.isAnimating = false;
-						this._execEvent('scrollEnd');
-				}
+        if ( this.options.useTransition && this.isInTransition ) {
+            this._transitionTime();
+            this.isInTransition = false;
+            pos = this.getComputedPosition();
+            this._translate(Math.round(pos.x), Math.round(pos.y));
+            this._execEvent('scrollEnd');
+        } else if ( !this.options.useTransition && this.isAnimating ) {
+            this.isAnimating = false;
+            this._execEvent('scrollEnd');
+        }
 
-				this.startX    = this.x;
-				this.startY    = this.y;
-				this.absStartX = this.x;
-				this.absStartY = this.y;
-				this.pointX    = point.pageX;
-				this.pointY    = point.pageY;
+        this.startX    = this.x;
+        this.startY    = this.y;
+        this.absStartX = this.x;
+        this.absStartY = this.y;
+        this.pointX    = point.pageX;
+        this.pointY    = point.pageY;
 
-				this._execEvent('beforeScrollStart');
-		},
+        this._execEvent('beforeScrollStart');
+    },
 
-		_move: function (e) {
-				if ( !this.enabled || utils.eventType[e.type] !== this.initiated ) {
-						return;
-				}
+    _move: function (e) {
+        if ( !this.enabled || utils.eventType[e.type] !== this.initiated ) {
+            return;
+        }
 
-				if ( this.options.preventDefault ) {    // increases performance on Android? TODO: check!
-						e.preventDefault();
-				}
+        if ( this.options.preventDefault ) {    // increases performance on Android? TODO: check!
+            e.preventDefault();
+        }
 
-				var point       = e.touches ? e.touches[0] : e,
-						deltaX      = point.pageX - this.pointX,
-						deltaY      = point.pageY - this.pointY,
-						timestamp   = utils.getTime(),
-						newX, newY,
-						absDistX, absDistY;
+        var point       = e.touches ? e.touches[0] : e,
+            deltaX      = point.pageX - this.pointX,
+            deltaY      = point.pageY - this.pointY,
+            timestamp   = utils.getTime(),
+            newX, newY,
+            absDistX, absDistY;
 
-				this.pointX     = point.pageX;
-				this.pointY     = point.pageY;
+        this.pointX     = point.pageX;
+        this.pointY     = point.pageY;
 
-				this.distX      += deltaX;
-				this.distY      += deltaY;
-				absDistX        = Math.abs(this.distX);
-				absDistY        = Math.abs(this.distY);
+        this.distX      += deltaX;
+        this.distY      += deltaY;
+        absDistX        = Math.abs(this.distX);
+        absDistY        = Math.abs(this.distY);
 
-				// We need to move at least 10 pixels for the scrolling to initiate
-				if ( timestamp - this.endTime > 300 && (absDistX < 10 && absDistY < 10) ) {
-						return;
-				}
+        // We need to move at least 10 pixels for the scrolling to initiate
+        if ( timestamp - this.endTime > 300 && (absDistX < 10 && absDistY < 10) ) {
+            return;
+        }
 
-				// If you are scrolling in one direction lock the other
-				if ( !this.directionLocked && !this.options.freeScroll ) {
-						if ( absDistX > absDistY + this.options.directionLockThreshold ) {
-								this.directionLocked = 'h';     // lock horizontally
-						} else if ( absDistY >= absDistX + this.options.directionLockThreshold ) {
-								this.directionLocked = 'v';     // lock vertically
-						} else {
-								this.directionLocked = 'n';     // no lock
-						}
-				}
+        // If you are scrolling in one direction lock the other
+        if ( !this.directionLocked && !this.options.freeScroll ) {
+            if ( absDistX > absDistY + this.options.directionLockThreshold ) {
+                this.directionLocked = 'h';     // lock horizontally
+            } else if ( absDistY >= absDistX + this.options.directionLockThreshold ) {
+                this.directionLocked = 'v';     // lock vertically
+            } else {
+                this.directionLocked = 'n';     // no lock
+            }
+        }
 
-				if ( this.directionLocked == 'h' ) {
-						if ( this.options.eventPassthrough == 'vertical' ) {
-								e.preventDefault();
-						} else if ( this.options.eventPassthrough == 'horizontal' ) {
-								this.initiated = false;
-								return;
-						}
+        if ( this.directionLocked == 'h' ) {
+            if ( this.options.eventPassthrough == 'vertical' ) {
+                e.preventDefault();
+            } else if ( this.options.eventPassthrough == 'horizontal' ) {
+                this.initiated = false;
+                return;
+            }
 
-						deltaY = 0;
-				} else if ( this.directionLocked == 'v' ) {
-						if ( this.options.eventPassthrough == 'horizontal' ) {
-								e.preventDefault();
-						} else if ( this.options.eventPassthrough == 'vertical' ) {
-								this.initiated = false;
-								return;
-						}
+            deltaY = 0;
+        } else if ( this.directionLocked == 'v' ) {
+            if ( this.options.eventPassthrough == 'horizontal' ) {
+                e.preventDefault();
+            } else if ( this.options.eventPassthrough == 'vertical' ) {
+                this.initiated = false;
+                return;
+            }
 
-						deltaX = 0;
-				}
+            deltaX = 0;
+        }
 
-				deltaX = this.hasHorizontalScroll ? deltaX : 0;
-				deltaY = this.hasVerticalScroll ? deltaY : 0;
+        deltaX = this.hasHorizontalScroll ? deltaX : 0;
+        deltaY = this.hasVerticalScroll ? deltaY : 0;
 
-				newX = this.x + deltaX;
-				newY = this.y + deltaY;
+        newX = this.x + deltaX;
+        newY = this.y + deltaY;
 
-				// Slow down if outside of the boundaries
-				if ( newX > 0 || newX < this.maxScrollX ) {
-						newX = this.options.bounce ? this.x + deltaX / 3 : newX > 0 ? 0 : this.maxScrollX;
-				}
-				if ( newY > 0 || newY < this.maxScrollY ) {
-						newY = this.options.bounce ? this.y + deltaY / 3 : newY > 0 ? 0 : this.maxScrollY;
-				}
+        // Slow down if outside of the boundaries
+        if ( newX > 0 || newX < this.maxScrollX ) {
+            newX = this.options.bounce ? this.x + deltaX / 3 : newX > 0 ? 0 : this.maxScrollX;
+        }
+        if ( newY > 0 || newY < this.maxScrollY ) {
+            newY = this.options.bounce ? this.y + deltaY / 3 : newY > 0 ? 0 : this.maxScrollY;
+        }
 
-				this.directionX = deltaX > 0 ? -1 : deltaX < 0 ? 1 : 0;
-				this.directionY = deltaY > 0 ? -1 : deltaY < 0 ? 1 : 0;
+        this.directionX = deltaX > 0 ? -1 : deltaX < 0 ? 1 : 0;
+        this.directionY = deltaY > 0 ? -1 : deltaY < 0 ? 1 : 0;
 
-				if ( !this.moved ) {
-						this._execEvent('scrollStart');
-				}
+        if ( !this.moved ) {
+            this._execEvent('scrollStart');
+        }
 
-				this.moved = true;
+        this.moved = true;
 
-				this._translate(newX, newY);
+        this._translate(newX, newY);
 
 /* REPLACE START: _move */
 
-				if ( timestamp - this.startTime > 300 ) {
-						this.startTime = timestamp;
-						this.startX = this.x;
-						this.startY = this.y;
-				}
+        if ( timestamp - this.startTime > 300 ) {
+            this.startTime = timestamp;
+            this.startX = this.x;
+            this.startY = this.y;
+        }
 
 /* REPLACE END: _move */
 
-		},
+    },
 
-		_end: function (e) {
-				if ( !this.enabled || utils.eventType[e.type] !== this.initiated ) {
-						return;
-				}
+    _end: function (e) {
+        if ( !this.enabled || utils.eventType[e.type] !== this.initiated ) {
+            return;
+        }
 
-				if ( this.options.preventDefault && !utils.preventDefaultException(e.target, this.options.preventDefaultException) ) {
-						e.preventDefault();
-				}
+        if ( this.options.preventDefault && !utils.preventDefaultException(e.target, this.options.preventDefaultException) ) {
+            e.preventDefault();
+        }
 
-				var point = e.changedTouches ? e.changedTouches[0] : e,
-						momentumX,
-						momentumY,
-						duration = utils.getTime() - this.startTime,
-						newX = Math.round(this.x),
-						newY = Math.round(this.y),
-						distanceX = Math.abs(newX - this.startX),
-						distanceY = Math.abs(newY - this.startY),
-						time = 0,
-						easing = '';
+        var point = e.changedTouches ? e.changedTouches[0] : e,
+            momentumX,
+            momentumY,
+            duration = utils.getTime() - this.startTime,
+            newX = Math.round(this.x),
+            newY = Math.round(this.y),
+            distanceX = Math.abs(newX - this.startX),
+            distanceY = Math.abs(newY - this.startY),
+            time = 0,
+            easing = '';
 
-				this.isInTransition = 0;
-				this.initiated = 0;
-				this.endTime = utils.getTime();
+        this.isInTransition = 0;
+        this.initiated = 0;
+        this.endTime = utils.getTime();
 
-				// reset if we are outside of the boundaries
-				if ( this.resetPosition(this.options.bounceTime) ) {
-						return;
-				}
+        // reset if we are outside of the boundaries
+        if ( this.resetPosition(this.options.bounceTime) ) {
+            return;
+        }
 
-				this.scrollTo(newX, newY);  // ensures that the last position is rounded
+        this.scrollTo(newX, newY);  // ensures that the last position is rounded
 
-				// we scrolled less than 10 pixels
-				if ( !this.moved ) {
-						if ( this.options.tap ) {
-								utils.tap(e, this.options.tap);
-						}
+        // we scrolled less than 10 pixels
+        if ( !this.moved ) {
+            if ( this.options.tap ) {
+                utils.tap(e, this.options.tap);
+            }
 
-						if ( this.options.click ) {
-								utils.click(e);
-						}
+            if ( this.options.click ) {
+                utils.click(e);
+            }
 
-						this._execEvent('scrollCancel');
-						return;
-				}
+            this._execEvent('scrollCancel');
+            return;
+        }
 
-				if ( this._events.flick && duration < 200 && distanceX < 100 && distanceY < 100 ) {
-						this._execEvent('flick');
-						return;
-				}
+        if ( this._events.flick && duration < 200 && distanceX < 100 && distanceY < 100 ) {
+            this._execEvent('flick');
+            return;
+        }
 
-				// start momentum animation if needed
-				if ( this.options.momentum && duration < 300 ) {
-						momentumX = this.hasHorizontalScroll ? utils.momentum(this.x, this.startX, duration, this.maxScrollX, this.options.bounce ? this.wrapperWidth : 0, this.options.deceleration) : { destination: newX, duration: 0 };
-						momentumY = this.hasVerticalScroll ? utils.momentum(this.y, this.startY, duration, this.maxScrollY, this.options.bounce ? this.wrapperHeight : 0, this.options.deceleration) : { destination: newY, duration: 0 };
-						newX = momentumX.destination;
-						newY = momentumY.destination;
-						time = Math.max(momentumX.duration, momentumY.duration);
-						this.isInTransition = 1;
-				}
+        // start momentum animation if needed
+        if ( this.options.momentum && duration < 300 ) {
+            momentumX = this.hasHorizontalScroll ? utils.momentum(this.x, this.startX, duration, this.maxScrollX, this.options.bounce ? this.wrapperWidth : 0, this.options.deceleration) : { destination: newX, duration: 0 };
+            momentumY = this.hasVerticalScroll ? utils.momentum(this.y, this.startY, duration, this.maxScrollY, this.options.bounce ? this.wrapperHeight : 0, this.options.deceleration) : { destination: newY, duration: 0 };
+            newX = momentumX.destination;
+            newY = momentumY.destination;
+            time = Math.max(momentumX.duration, momentumY.duration);
+            this.isInTransition = 1;
+        }
 
 
-				if ( this.options.snap ) {
-						var snap = this._nearestSnap(newX, newY);
-						this.currentPage = snap;
-						time = this.options.snapSpeed || Math.max(
-										Math.max(
-												Math.min(Math.abs(newX - snap.x), 1000),
-												Math.min(Math.abs(newY - snap.y), 1000)
-										), 300);
-						newX = snap.x;
-						newY = snap.y;
+        if ( this.options.snap ) {
+            var snap = this._nearestSnap(newX, newY);
+            this.currentPage = snap;
+            time = this.options.snapSpeed || Math.max(
+                    Math.max(
+                        Math.min(Math.abs(newX - snap.x), 1000),
+                        Math.min(Math.abs(newY - snap.y), 1000)
+                    ), 300);
+            newX = snap.x;
+            newY = snap.y;
 
-						this.directionX = 0;
-						this.directionY = 0;
-						easing = this.options.bounceEasing;
-				}
+            this.directionX = 0;
+            this.directionY = 0;
+            easing = this.options.bounceEasing;
+        }
 
 // INSERT POINT: _end
 
-				if ( newX != this.x || newY != this.y ) {
-						// change easing function when scroller goes out of the boundaries
-						if ( newX > 0 || newX < this.maxScrollX || newY > 0 || newY < this.maxScrollY ) {
-								easing = utils.ease.quadratic;
-						}
+        if ( newX != this.x || newY != this.y ) {
+            // change easing function when scroller goes out of the boundaries
+            if ( newX > 0 || newX < this.maxScrollX || newY > 0 || newY < this.maxScrollY ) {
+                easing = utils.ease.quadratic;
+            }
 
-						this.scrollTo(newX, newY, time, easing);
-						return;
-				}
+            this.scrollTo(newX, newY, time, easing);
+            return;
+        }
 
-				this._execEvent('scrollEnd');
-		},
+        this._execEvent('scrollEnd');
+    },
 
-		_resize: function () {
-				var that = this;
+    _resize: function () {
+        var that = this;
 
-				clearTimeout(this.resizeTimeout);
+        clearTimeout(this.resizeTimeout);
 
-				this.resizeTimeout = setTimeout(function () {
-						that.refresh();
-				}, this.options.resizePolling);
-		},
+        this.resizeTimeout = setTimeout(function () {
+            that.refresh();
+        }, this.options.resizePolling);
+    },
 
-		resetPosition: function (time) {
-				var x = this.x,
-						y = this.y;
+    resetPosition: function (time) {
+        var x = this.x,
+            y = this.y;
 
-				time = time || 0;
+        time = time || 0;
 
-				if ( !this.hasHorizontalScroll || this.x > 0 ) {
-						x = 0;
-				} else if ( this.x < this.maxScrollX ) {
-						x = this.maxScrollX;
-				}
+        if ( !this.hasHorizontalScroll || this.x > 0 ) {
+            x = 0;
+        } else if ( this.x < this.maxScrollX ) {
+            x = this.maxScrollX;
+        }
 
-				if ( !this.hasVerticalScroll || this.y > 0 ) {
-						y = 0;
-				} else if ( this.y < this.maxScrollY ) {
-						y = this.maxScrollY;
-				}
+        if ( !this.hasVerticalScroll || this.y > 0 ) {
+            y = 0;
+        } else if ( this.y < this.maxScrollY ) {
+            y = this.maxScrollY;
+        }
 
-				if ( x == this.x && y == this.y ) {
-						return false;
-				}
+        if ( x == this.x && y == this.y ) {
+            return false;
+        }
 
-				this.scrollTo(x, y, time, this.options.bounceEasing);
+        this.scrollTo(x, y, time, this.options.bounceEasing);
 
-				return true;
-		},
+        return true;
+    },
 
-		disable: function () {
-				this.enabled = false;
-		},
+    disable: function () {
+        this.enabled = false;
+    },
 
-		enable: function () {
-				this.enabled = true;
-		},
+    enable: function () {
+        this.enabled = true;
+    },
 
-		refresh: function () {
-				var rf = this.wrapper.offsetHeight;     // Force reflow
+    refresh: function () {
+        var rf = this.wrapper.offsetHeight;     // Force reflow
 
-				this.wrapperWidth   = this.wrapper.clientWidth;
-				this.wrapperHeight  = this.wrapper.clientHeight;
+        this.wrapperWidth   = this.wrapper.clientWidth;
+        this.wrapperHeight  = this.wrapper.clientHeight;
 
 /* REPLACE START: refresh */
 
-				this.scrollerWidth  = this.scroller.offsetWidth;
-				this.scrollerHeight = this.scroller.offsetHeight;
+        this.scrollerWidth  = this.scroller.offsetWidth;
+        this.scrollerHeight = this.scroller.offsetHeight;
 
-				this.maxScrollX     = this.wrapperWidth - this.scrollerWidth;
-				this.maxScrollY     = this.wrapperHeight - this.scrollerHeight;
+        this.maxScrollX     = this.wrapperWidth - this.scrollerWidth;
+        this.maxScrollY     = this.wrapperHeight - this.scrollerHeight;
 
 /* REPLACE END: refresh */
 
-				this.hasHorizontalScroll    = this.options.scrollX && this.maxScrollX < 0;
-				this.hasVerticalScroll      = this.options.scrollY && this.maxScrollY < 0;
+        this.hasHorizontalScroll    = this.options.scrollX && this.maxScrollX < 0;
+        this.hasVerticalScroll      = this.options.scrollY && this.maxScrollY < 0;
 
-				if ( !this.hasHorizontalScroll ) {
-						this.maxScrollX = 0;
-						this.scrollerWidth = this.wrapperWidth;
-				}
+        if ( !this.hasHorizontalScroll ) {
+            this.maxScrollX = 0;
+            this.scrollerWidth = this.wrapperWidth;
+        }
 
-				if ( !this.hasVerticalScroll ) {
-						this.maxScrollY = 0;
-						this.scrollerHeight = this.wrapperHeight;
-				}
+        if ( !this.hasVerticalScroll ) {
+            this.maxScrollY = 0;
+            this.scrollerHeight = this.wrapperHeight;
+        }
 
-				this.endTime = 0;
-				this.directionX = 0;
-				this.directionY = 0;
+        this.endTime = 0;
+        this.directionX = 0;
+        this.directionY = 0;
 
-				this.wrapperOffset = utils.offset(this.wrapper);
+        this.wrapperOffset = utils.offset(this.wrapper);
 
-				this._execEvent('refresh');
+        this._execEvent('refresh');
 
-				this.resetPosition();
+        this.resetPosition();
 
 // INSERT POINT: _refresh
 
-		},
+    },
 
-		on: function (type, fn) {
-				if ( !this._events[type] ) {
-						this._events[type] = [];
-				}
+    on: function (type, fn) {
+        if ( !this._events[type] ) {
+            this._events[type] = [];
+        }
 
-				this._events[type].push(fn);
-		},
+        this._events[type].push(fn);
+    },
 
-		off: function (type, fn) {
-				if ( !this._events[type] ) {
-						return;
-				}
+    off: function (type, fn) {
+        if ( !this._events[type] ) {
+            return;
+        }
 
-				var index = this._events[type].indexOf(fn);
+        var index = this._events[type].indexOf(fn);
 
-				if ( index > -1 ) {
-						this._events[type].splice(index, 1);
-				}
-		},
+        if ( index > -1 ) {
+            this._events[type].splice(index, 1);
+        }
+    },
 
-		_execEvent: function (type) {
-				if ( !this._events[type] ) {
-						return;
-				}
+    _execEvent: function (type) {
+        if ( !this._events[type] ) {
+            return;
+        }
 
-				var i = 0,
-						l = this._events[type].length;
+        var i = 0,
+            l = this._events[type].length;
 
-				if ( !l ) {
-						return;
-				}
+        if ( !l ) {
+            return;
+        }
 
-				for ( ; i < l; i++ ) {
-						this._events[type][i].apply(this, [].slice.call(arguments, 1));
-				}
-		},
+        for ( ; i < l; i++ ) {
+            this._events[type][i].apply(this, [].slice.call(arguments, 1));
+        }
+    },
 
-		scrollBy: function (x, y, time, easing) {
-				x = this.x + x;
-				y = this.y + y;
-				time = time || 0;
+    scrollBy: function (x, y, time, easing) {
+        x = this.x + x;
+        y = this.y + y;
+        time = time || 0;
 
-				this.scrollTo(x, y, time, easing);
-		},
+        this.scrollTo(x, y, time, easing);
+    },
 
-		scrollTo: function (x, y, time, easing) {
-				easing = easing || utils.ease.circular;
+    scrollTo: function (x, y, time, easing) {
+        easing = easing || utils.ease.circular;
 
-				this.isInTransition = this.options.useTransition && time > 0;
-				var transitionType = this.options.useTransition && easing.style;
-				if ( !time || transitionType ) {
-								if(transitionType) {
-										this._transitionTimingFunction(easing.style);
-										this._transitionTime(time);
-								}
-						this._translate(x, y);
-				} else {
-						this._animate(x, y, time, easing.fn);
-				}
-		},
+        this.isInTransition = this.options.useTransition && time > 0;
+        var transitionType = this.options.useTransition && easing.style;
+        if ( !time || transitionType ) {
+                if(transitionType) {
+                    this._transitionTimingFunction(easing.style);
+                    this._transitionTime(time);
+                }
+            this._translate(x, y);
+        } else {
+            this._animate(x, y, time, easing.fn);
+        }
+    },
 
-		scrollToElement: function (el, time, offsetX, offsetY, easing) {
-				el = el.nodeType ? el : this.scroller.querySelector(el);
+    scrollToElement: function (el, time, offsetX, offsetY, easing) {
+        el = el.nodeType ? el : this.scroller.querySelector(el);
 
-				if ( !el ) {
-						return;
-				}
+        if ( !el ) {
+            return;
+        }
 
-				var pos = utils.offset(el);
+        var pos = utils.offset(el);
 
-				pos.left -= this.wrapperOffset.left;
-				pos.top  -= this.wrapperOffset.top;
+        pos.left -= this.wrapperOffset.left;
+        pos.top  -= this.wrapperOffset.top;
 
-				// if offsetX/Y are true we center the element to the screen
-				if ( offsetX === true ) {
-						offsetX = Math.round(el.offsetWidth / 2 - this.wrapper.offsetWidth / 2);
-				}
-				if ( offsetY === true ) {
-						offsetY = Math.round(el.offsetHeight / 2 - this.wrapper.offsetHeight / 2);
-				}
+        // if offsetX/Y are true we center the element to the screen
+        if ( offsetX === true ) {
+            offsetX = Math.round(el.offsetWidth / 2 - this.wrapper.offsetWidth / 2);
+        }
+        if ( offsetY === true ) {
+            offsetY = Math.round(el.offsetHeight / 2 - this.wrapper.offsetHeight / 2);
+        }
 
-				pos.left -= offsetX || 0;
-				pos.top  -= offsetY || 0;
+        pos.left -= offsetX || 0;
+        pos.top  -= offsetY || 0;
 
-				pos.left = pos.left > 0 ? 0 : pos.left < this.maxScrollX ? this.maxScrollX : pos.left;
-				pos.top  = pos.top  > 0 ? 0 : pos.top  < this.maxScrollY ? this.maxScrollY : pos.top;
+        pos.left = pos.left > 0 ? 0 : pos.left < this.maxScrollX ? this.maxScrollX : pos.left;
+        pos.top  = pos.top  > 0 ? 0 : pos.top  < this.maxScrollY ? this.maxScrollY : pos.top;
 
-				time = time === undefined || time === null || time === 'auto' ? Math.max(Math.abs(this.x-pos.left), Math.abs(this.y-pos.top)) : time;
+        time = time === undefined || time === null || time === 'auto' ? Math.max(Math.abs(this.x-pos.left), Math.abs(this.y-pos.top)) : time;
 
-				this.scrollTo(pos.left, pos.top, time, easing);
-		},
+        this.scrollTo(pos.left, pos.top, time, easing);
+    },
 
-		_transitionTime: function (time) {
-				if (!this.options.useTransition) {
-						return;
-				}
-				time = time || 0;
-				var durationProp = utils.style.transitionDuration;
-				if(!durationProp) {
-						return;
-				}
+    _transitionTime: function (time) {
+        if (!this.options.useTransition) {
+            return;
+        }
+        time = time || 0;
+        var durationProp = utils.style.transitionDuration;
+        if(!durationProp) {
+            return;
+        }
 
-				this.scrollerStyle[durationProp] = time + 'ms';
+        this.scrollerStyle[durationProp] = time + 'ms';
 
-				if ( !time && utils.isBadAndroid ) {
-						this.scrollerStyle[durationProp] = '0.0001ms';
-						// remove 0.0001ms
-						var self = this;
-						rAF(function() {
-								if(self.scrollerStyle[durationProp] === '0.0001ms') {
-										self.scrollerStyle[durationProp] = '0s';
-								}
-						});
-				}
+        if ( !time && utils.isBadAndroid ) {
+            this.scrollerStyle[durationProp] = '0.0001ms';
+            // remove 0.0001ms
+            var self = this;
+            rAF(function() {
+                if(self.scrollerStyle[durationProp] === '0.0001ms') {
+                    self.scrollerStyle[durationProp] = '0s';
+                }
+            });
+        }
 
 
-				if ( this.indicators ) {
-						for ( var i = this.indicators.length; i--; ) {
-								this.indicators[i].transitionTime(time);
-						}
-				}
+        if ( this.indicators ) {
+            for ( var i = this.indicators.length; i--; ) {
+                this.indicators[i].transitionTime(time);
+            }
+        }
 
 
 // INSERT POINT: _transitionTime
 
-		},
+    },
 
-		_transitionTimingFunction: function (easing) {
-				this.scrollerStyle[utils.style.transitionTimingFunction] = easing;
+    _transitionTimingFunction: function (easing) {
+        this.scrollerStyle[utils.style.transitionTimingFunction] = easing;
 
 
-				if ( this.indicators ) {
-						for ( var i = this.indicators.length; i--; ) {
-								this.indicators[i].transitionTimingFunction(easing);
-						}
-				}
+        if ( this.indicators ) {
+            for ( var i = this.indicators.length; i--; ) {
+                this.indicators[i].transitionTimingFunction(easing);
+            }
+        }
 
 
 // INSERT POINT: _transitionTimingFunction
 
-		},
+    },
 
-		_translate: function (x, y) {
-				//Uncode addition
-				if ( (" " + this.wrapper.className + " ").replace(/[\n\t]/g, " ").indexOf(" no-scrolloverflow ") > -1 )
-						return false;
+    _translate: function (x, y) {
+        //Uncode addition
+        if ( (" " + this.wrapper.className + " ").replace(/[\n\t]/g, " ").indexOf(" no-scrolloverflow ") > -1 )
+            return false;
 
-				if ( this.options.useTransform ) {
+        if ( this.options.useTransform ) {
 
 /* REPLACE START: _translate */
 
-						this.scrollerStyle[utils.style.transform] = 'translate(' + x + 'px,' + y + 'px)' + this.translateZ;
+            this.scrollerStyle[utils.style.transform] = 'translate(' + x + 'px,' + y + 'px)' + this.translateZ;
 
 /* REPLACE END: _translate */
 
-				} else {
-						x = Math.round(x);
-						y = Math.round(y);
-						this.scrollerStyle.left = x + 'px';
-						this.scrollerStyle.top = y + 'px';
-				}
+        } else {
+            x = Math.round(x);
+            y = Math.round(y);
+            this.scrollerStyle.left = x + 'px';
+            this.scrollerStyle.top = y + 'px';
+        }
 
-				this.x = x;
-				this.y = y;
+        this.x = x;
+        this.y = y;
 
 
-				if ( this.indicators ) {
-						for ( var i = this.indicators.length; i--; ) {
-								this.indicators[i].updatePosition();
-						}
-				}
+        if ( this.indicators ) {
+            for ( var i = this.indicators.length; i--; ) {
+                this.indicators[i].updatePosition();
+            }
+        }
 
-				//Uncode addition
-				var uncodevent = new CustomEvent('fp-slide-scroll');
-				window.dispatchEvent(uncodevent);
+        //Uncode addition
+        var uncodevent = new CustomEvent('fp-slide-scroll');
+        window.dispatchEvent(uncodevent);       
 
 // INSERT POINT: _translate
 
-		},
+    },
 
-		_initEvents: function (remove) {
-				var eventType = remove ? utils.removeEvent : utils.addEvent,
-						target = this.options.bindToWrapper ? this.wrapper : window;
+    _initEvents: function (remove) {
+        var eventType = remove ? utils.removeEvent : utils.addEvent,
+            target = this.options.bindToWrapper ? this.wrapper : window;
 
-				eventType(window, 'orientationchange', this);
-				eventType(window, 'resize', this);
+        eventType(window, 'orientationchange', this);
+        eventType(window, 'resize', this);
 
-				if ( this.options.click ) {
-						eventType(this.wrapper, 'click', this, true);
-				}
+        if ( this.options.click ) {
+            eventType(this.wrapper, 'click', this, true);
+        }
 
-				if ( !this.options.disableMouse ) {
-						eventType(this.wrapper, 'mousedown', this);
-						eventType(target, 'mousemove', this);
-						eventType(target, 'mousecancel', this);
-						eventType(target, 'mouseup', this);
-				}
+        if ( !this.options.disableMouse ) {
+            eventType(this.wrapper, 'mousedown', this);
+            eventType(target, 'mousemove', this);
+            eventType(target, 'mousecancel', this);
+            eventType(target, 'mouseup', this);
+        }
 
-				if ( utils.hasPointer && !this.options.disablePointer ) {
-						eventType(this.wrapper, utils.prefixPointerEvent('pointerdown'), this);
-						eventType(target, utils.prefixPointerEvent('pointermove'), this);
-						eventType(target, utils.prefixPointerEvent('pointercancel'), this);
-						eventType(target, utils.prefixPointerEvent('pointerup'), this);
-				}
+        if ( utils.hasPointer && !this.options.disablePointer ) {
+            eventType(this.wrapper, utils.prefixPointerEvent('pointerdown'), this);
+            eventType(target, utils.prefixPointerEvent('pointermove'), this);
+            eventType(target, utils.prefixPointerEvent('pointercancel'), this);
+            eventType(target, utils.prefixPointerEvent('pointerup'), this);
+        }
 
-				if ( utils.hasTouch && !this.options.disableTouch ) {
-						eventType(this.wrapper, 'touchstart', this);
-						eventType(target, 'touchmove', this);
-						eventType(target, 'touchcancel', this);
-						eventType(target, 'touchend', this);
-				}
+        if ( utils.hasTouch && !this.options.disableTouch ) {
+            eventType(this.wrapper, 'touchstart', this);
+            eventType(target, 'touchmove', this);
+            eventType(target, 'touchcancel', this);
+            eventType(target, 'touchend', this);
+        }
 
-				eventType(this.scroller, 'transitionend', this);
-				eventType(this.scroller, 'webkitTransitionEnd', this);
-				eventType(this.scroller, 'oTransitionEnd', this);
-				eventType(this.scroller, 'MSTransitionEnd', this);
-		},
+        eventType(this.scroller, 'transitionend', this);
+        eventType(this.scroller, 'webkitTransitionEnd', this);
+        eventType(this.scroller, 'oTransitionEnd', this);
+        eventType(this.scroller, 'MSTransitionEnd', this);
+    },
 
-		getComputedPosition: function () {
-				var matrix = window.getComputedStyle(this.scroller, null),
-						x, y;
+    getComputedPosition: function () {
+        var matrix = window.getComputedStyle(this.scroller, null),
+            x, y;
 
-				if ( this.options.useTransform ) {
-						matrix = matrix[utils.style.transform].split(')')[0].split(', ');
-						x = +(matrix[12] || matrix[4]);
-						y = +(matrix[13] || matrix[5]);
-				} else {
-						x = +matrix.left.replace(/[^-\d.]/g, '');
-						y = +matrix.top.replace(/[^-\d.]/g, '');
-				}
+        if ( this.options.useTransform ) {
+            matrix = matrix[utils.style.transform].split(')')[0].split(', ');
+            x = +(matrix[12] || matrix[4]);
+            y = +(matrix[13] || matrix[5]);
+        } else {
+            x = +matrix.left.replace(/[^-\d.]/g, '');
+            y = +matrix.top.replace(/[^-\d.]/g, '');
+        }
 
-				return { x: x, y: y };
-		},
-		_initIndicators: function () {
-				var interactive = this.options.interactiveScrollbars,
-						customStyle = typeof this.options.scrollbars != 'string',
-						indicators = [],
-						indicator;
+        return { x: x, y: y };
+    },
+    _initIndicators: function () {
+        var interactive = this.options.interactiveScrollbars,
+            customStyle = typeof this.options.scrollbars != 'string',
+            indicators = [],
+            indicator;
 
-				var that = this;
+        var that = this;
 
-				this.indicators = [];
+        this.indicators = [];
 
-				if ( this.options.scrollbars ) {
-						// Vertical scrollbar
-						if ( this.options.scrollY ) {
-								indicator = {
-										el: createDefaultScrollbar('v', interactive, this.options.scrollbars),
-										interactive: interactive,
-										defaultScrollbars: true,
-										customStyle: customStyle,
-										resize: this.options.resizeScrollbars,
-										shrink: this.options.shrinkScrollbars,
-										fade: this.options.fadeScrollbars,
-										listenX: false
-								};
+        if ( this.options.scrollbars ) {
+            // Vertical scrollbar
+            if ( this.options.scrollY ) {
+                indicator = {
+                    el: createDefaultScrollbar('v', interactive, this.options.scrollbars),
+                    interactive: interactive,
+                    defaultScrollbars: true,
+                    customStyle: customStyle,
+                    resize: this.options.resizeScrollbars,
+                    shrink: this.options.shrinkScrollbars,
+                    fade: this.options.fadeScrollbars,
+                    listenX: false
+                };
 
-								this.wrapper.appendChild(indicator.el);
-								indicators.push(indicator);
-						}
+                this.wrapper.appendChild(indicator.el);
+                indicators.push(indicator);
+            }
 
-						// Horizontal scrollbar
-						if ( this.options.scrollX ) {
-								indicator = {
-										el: createDefaultScrollbar('h', interactive, this.options.scrollbars),
-										interactive: interactive,
-										defaultScrollbars: true,
-										customStyle: customStyle,
-										resize: this.options.resizeScrollbars,
-										shrink: this.options.shrinkScrollbars,
-										fade: this.options.fadeScrollbars,
-										listenY: false
-								};
+            // Horizontal scrollbar
+            if ( this.options.scrollX ) {
+                indicator = {
+                    el: createDefaultScrollbar('h', interactive, this.options.scrollbars),
+                    interactive: interactive,
+                    defaultScrollbars: true,
+                    customStyle: customStyle,
+                    resize: this.options.resizeScrollbars,
+                    shrink: this.options.shrinkScrollbars,
+                    fade: this.options.fadeScrollbars,
+                    listenY: false
+                };
 
-								this.wrapper.appendChild(indicator.el);
-								indicators.push(indicator);
-						}
-				}
+                this.wrapper.appendChild(indicator.el);
+                indicators.push(indicator);
+            }
+        }
 
-				if ( this.options.indicators ) {
-						// TODO: check concat compatibility
-						indicators = indicators.concat(this.options.indicators);
-				}
+        if ( this.options.indicators ) {
+            // TODO: check concat compatibility
+            indicators = indicators.concat(this.options.indicators);
+        }
 
-				for ( var i = indicators.length; i--; ) {
-						this.indicators.push( new Indicator(this, indicators[i]) );
-				}
+        for ( var i = indicators.length; i--; ) {
+            this.indicators.push( new Indicator(this, indicators[i]) );
+        }
 
-				// TODO: check if we can use array.map (wide compatibility and performance issues)
-				function _indicatorsMap (fn) {
-						if (that.indicators) {
-								for ( var i = that.indicators.length; i--; ) {
-										fn.call(that.indicators[i]);
-								}
-						}
-				}
+        // TODO: check if we can use array.map (wide compatibility and performance issues)
+        function _indicatorsMap (fn) {
+            if (that.indicators) {
+                for ( var i = that.indicators.length; i--; ) {
+                    fn.call(that.indicators[i]);
+                }
+            }
+        }
 
-				if ( this.options.fadeScrollbars ) {
-						this.on('scrollEnd', function () {
-								_indicatorsMap(function () {
-										this.fade();
-								});
-						});
+        if ( this.options.fadeScrollbars ) {
+            this.on('scrollEnd', function () {
+                _indicatorsMap(function () {
+                    this.fade();
+                });
+            });
 
-						this.on('scrollCancel', function () {
-								_indicatorsMap(function () {
-										this.fade();
-								});
-						});
+            this.on('scrollCancel', function () {
+                _indicatorsMap(function () {
+                    this.fade();
+                });
+            });
 
-						this.on('scrollStart', function () {
-								_indicatorsMap(function () {
-										this.fade(1);
-								});
-						});
+            this.on('scrollStart', function () {
+                _indicatorsMap(function () {
+                    this.fade(1);
+                });
+            });
 
-						this.on('beforeScrollStart', function () {
-								_indicatorsMap(function () {
-										this.fade(1, true);
-								});
-						});
-				}
+            this.on('beforeScrollStart', function () {
+                _indicatorsMap(function () {
+                    this.fade(1, true);
+                });
+            });
+        }
 
 
-				this.on('refresh', function () {
-						_indicatorsMap(function () {
-								this.refresh();
-						});
-				});
+        this.on('refresh', function () {
+            _indicatorsMap(function () {
+                this.refresh();
+            });
+        });
 
-				this.on('destroy', function () {
-						_indicatorsMap(function () {
-								this.destroy();
-						});
+        this.on('destroy', function () {
+            _indicatorsMap(function () {
+                this.destroy();
+            });
 
-						delete this.indicators;
-				});
-		},
+            delete this.indicators;
+        });
+    },
 
-		_initWheel: function () {
-				utils.addEvent(this.wrapper, 'wheel', this);
-				utils.addEvent(this.wrapper, 'mousewheel', this);
-				utils.addEvent(this.wrapper, 'DOMMouseScroll', this);
+    _initWheel: function () {
+        utils.addEvent(this.wrapper, 'wheel', this);
+        utils.addEvent(this.wrapper, 'mousewheel', this);
+        utils.addEvent(this.wrapper, 'DOMMouseScroll', this);
 
-				this.on('destroy', function () {
-						clearTimeout(this.wheelTimeout);
-						this.wheelTimeout = null;
-						utils.removeEvent(this.wrapper, 'wheel', this);
-						utils.removeEvent(this.wrapper, 'mousewheel', this);
-						utils.removeEvent(this.wrapper, 'DOMMouseScroll', this);
-				});
-		},
+        this.on('destroy', function () {
+            clearTimeout(this.wheelTimeout);
+            this.wheelTimeout = null;
+            utils.removeEvent(this.wrapper, 'wheel', this);
+            utils.removeEvent(this.wrapper, 'mousewheel', this);
+            utils.removeEvent(this.wrapper, 'DOMMouseScroll', this);
+        });
+    },
 
-		_wheel: function (e) {
-				if ( !this.enabled ) {
-						return;
-				}
+    _wheel: function (e) {
+        if ( !this.enabled ) {
+            return;
+        }
 
-				var wheelDeltaX, wheelDeltaY,
-						newX, newY,
-						that = this;
+        var wheelDeltaX, wheelDeltaY,
+            newX, newY,
+            that = this;
 
-				if ( this.wheelTimeout === undefined ) {
-						that._execEvent('scrollStart');
-				}
+        if ( this.wheelTimeout === undefined ) {
+            that._execEvent('scrollStart');
+        }
 
-				// Execute the scrollEnd event after 400ms the wheel stopped scrolling
-				clearTimeout(this.wheelTimeout);
-				this.wheelTimeout = setTimeout(function () {
-						if(!that.options.snap) {
-								that._execEvent('scrollEnd');
-						}
-						that.wheelTimeout = undefined;
-				}, 400);
+        // Execute the scrollEnd event after 400ms the wheel stopped scrolling
+        clearTimeout(this.wheelTimeout);
+        this.wheelTimeout = setTimeout(function () {
+            if(!that.options.snap) {
+                that._execEvent('scrollEnd');
+            }
+            that.wheelTimeout = undefined;
+        }, 400);
 
-				if ( 'deltaX' in e ) {
-						if (e.deltaMode === 1) {
-								wheelDeltaX = -e.deltaX * this.options.mouseWheelSpeed;
-								wheelDeltaY = -e.deltaY * this.options.mouseWheelSpeed;
-						} else {
-								wheelDeltaX = -e.deltaX;
-								wheelDeltaY = -e.deltaY;
-						}
-				} else if ( 'wheelDeltaX' in e ) {
-						wheelDeltaX = e.wheelDeltaX / 120 * this.options.mouseWheelSpeed;
-						wheelDeltaY = e.wheelDeltaY / 120 * this.options.mouseWheelSpeed;
-				} else if ( 'wheelDelta' in e ) {
-						wheelDeltaX = wheelDeltaY = e.wheelDelta / 120 * this.options.mouseWheelSpeed;
-				} else if ( 'detail' in e ) {
-						wheelDeltaX = wheelDeltaY = -e.detail / 3 * this.options.mouseWheelSpeed;
-				} else {
-						return;
-				}
+        if ( 'deltaX' in e ) {
+            if (e.deltaMode === 1) {
+                wheelDeltaX = -e.deltaX * this.options.mouseWheelSpeed;
+                wheelDeltaY = -e.deltaY * this.options.mouseWheelSpeed;
+            } else {
+                wheelDeltaX = -e.deltaX;
+                wheelDeltaY = -e.deltaY;
+            }
+        } else if ( 'wheelDeltaX' in e ) {
+            wheelDeltaX = e.wheelDeltaX / 120 * this.options.mouseWheelSpeed;
+            wheelDeltaY = e.wheelDeltaY / 120 * this.options.mouseWheelSpeed;
+        } else if ( 'wheelDelta' in e ) {
+            wheelDeltaX = wheelDeltaY = e.wheelDelta / 120 * this.options.mouseWheelSpeed;
+        } else if ( 'detail' in e ) {
+            wheelDeltaX = wheelDeltaY = -e.detail / 3 * this.options.mouseWheelSpeed;
+        } else {
+            return;
+        }
 
-				wheelDeltaX *= this.options.invertWheelDirection;
-				wheelDeltaY *= this.options.invertWheelDirection;
+        wheelDeltaX *= this.options.invertWheelDirection;
+        wheelDeltaY *= this.options.invertWheelDirection;
 
-				if ( !this.hasVerticalScroll ) {
-						wheelDeltaX = wheelDeltaY;
-						wheelDeltaY = 0;
-				}
+        if ( !this.hasVerticalScroll ) {
+            wheelDeltaX = wheelDeltaY;
+            wheelDeltaY = 0;
+        }
 
-				if ( this.options.snap ) {
-						newX = this.currentPage.pageX;
-						newY = this.currentPage.pageY;
+        if ( this.options.snap ) {
+            newX = this.currentPage.pageX;
+            newY = this.currentPage.pageY;
 
-						if ( wheelDeltaX > 0 ) {
-								newX--;
-						} else if ( wheelDeltaX < 0 ) {
-								newX++;
-						}
+            if ( wheelDeltaX > 0 ) {
+                newX--;
+            } else if ( wheelDeltaX < 0 ) {
+                newX++;
+            }
 
-						if ( wheelDeltaY > 0 ) {
-								newY--;
-						} else if ( wheelDeltaY < 0 ) {
-								newY++;
-						}
+            if ( wheelDeltaY > 0 ) {
+                newY--;
+            } else if ( wheelDeltaY < 0 ) {
+                newY++;
+            }
 
-						this.goToPage(newX, newY);
+            this.goToPage(newX, newY);
 
-						return;
-				}
+            return;
+        }
 
-				newX = this.x + Math.round(this.hasHorizontalScroll ? wheelDeltaX : 0);
-				newY = this.y + Math.round(this.hasVerticalScroll ? wheelDeltaY : 0);
+        newX = this.x + Math.round(this.hasHorizontalScroll ? wheelDeltaX : 0);
+        newY = this.y + Math.round(this.hasVerticalScroll ? wheelDeltaY : 0);
 
-				this.directionX = wheelDeltaX > 0 ? -1 : wheelDeltaX < 0 ? 1 : 0;
-				this.directionY = wheelDeltaY > 0 ? -1 : wheelDeltaY < 0 ? 1 : 0;
+        this.directionX = wheelDeltaX > 0 ? -1 : wheelDeltaX < 0 ? 1 : 0;
+        this.directionY = wheelDeltaY > 0 ? -1 : wheelDeltaY < 0 ? 1 : 0;
 
-				if ( newX > 0 ) {
-						newX = 0;
-				} else if ( newX < this.maxScrollX ) {
-						newX = this.maxScrollX;
-				}
+        if ( newX > 0 ) {
+            newX = 0;
+        } else if ( newX < this.maxScrollX ) {
+            newX = this.maxScrollX;
+        }
 
-				if ( newY > 0 ) {
-						newY = 0;
-				} else if ( newY < this.maxScrollY ) {
-						newY = this.maxScrollY;
-				}
+        if ( newY > 0 ) {
+            newY = 0;
+        } else if ( newY < this.maxScrollY ) {
+            newY = this.maxScrollY;
+        }
 
-				this.scrollTo(newX, newY, 0);
+        this.scrollTo(newX, newY, 0);
 
 // INSERT POINT: _wheel
-		},
-
-		_initSnap: function () {
-				this.currentPage = {};
-
-				if ( typeof this.options.snap == 'string' ) {
-						this.options.snap = this.scroller.querySelectorAll(this.options.snap);
-				}
-
-				this.on('refresh', function () {
-						var i = 0, l,
-								m = 0, n,
-								cx, cy,
-								x = 0, y,
-								stepX = this.options.snapStepX || this.wrapperWidth,
-								stepY = this.options.snapStepY || this.wrapperHeight,
-								el;
-
-						this.pages = [];
-
-						if ( !this.wrapperWidth || !this.wrapperHeight || !this.scrollerWidth || !this.scrollerHeight ) {
-								return;
-						}
-
-						if ( this.options.snap === true ) {
-								cx = Math.round( stepX / 2 );
-								cy = Math.round( stepY / 2 );
-
-								while ( x > -this.scrollerWidth ) {
-										this.pages[i] = [];
-										l = 0;
-										y = 0;
-
-										while ( y > -this.scrollerHeight ) {
-												this.pages[i][l] = {
-														x: Math.max(x, this.maxScrollX),
-														y: Math.max(y, this.maxScrollY),
-														width: stepX,
-														height: stepY,
-														cx: x - cx,
-														cy: y - cy
-												};
-
-												y -= stepY;
-												l++;
-										}
-
-										x -= stepX;
-										i++;
-								}
-						} else {
-								el = this.options.snap;
-								l = el.length;
-								n = -1;
-
-								for ( ; i < l; i++ ) {
-										if ( i === 0 || el[i].offsetLeft <= el[i-1].offsetLeft ) {
-												m = 0;
-												n++;
-										}
-
-										if ( !this.pages[m] ) {
-												this.pages[m] = [];
-										}
-
-										x = Math.max(-el[i].offsetLeft, this.maxScrollX);
-										y = Math.max(-el[i].offsetTop, this.maxScrollY);
-										cx = x - Math.round(el[i].offsetWidth / 2);
-										cy = y - Math.round(el[i].offsetHeight / 2);
-
-										this.pages[m][n] = {
-												x: x,
-												y: y,
-												width: el[i].offsetWidth,
-												height: el[i].offsetHeight,
-												cx: cx,
-												cy: cy
-										};
-
-										if ( x > this.maxScrollX ) {
-												m++;
-										}
-								}
-						}
-
-						this.goToPage(this.currentPage.pageX || 0, this.currentPage.pageY || 0, 0);
-
-						// Update snap threshold if needed
-						if ( this.options.snapThreshold % 1 === 0 ) {
-								this.snapThresholdX = this.options.snapThreshold;
-								this.snapThresholdY = this.options.snapThreshold;
-						} else {
-								this.snapThresholdX = Math.round(this.pages[this.currentPage.pageX][this.currentPage.pageY].width * this.options.snapThreshold);
-								this.snapThresholdY = Math.round(this.pages[this.currentPage.pageX][this.currentPage.pageY].height * this.options.snapThreshold);
-						}
-				});
-
-				this.on('flick', function () {
-						var time = this.options.snapSpeed || Math.max(
-										Math.max(
-												Math.min(Math.abs(this.x - this.startX), 1000),
-												Math.min(Math.abs(this.y - this.startY), 1000)
-										), 300);
-
-						this.goToPage(
-								this.currentPage.pageX + this.directionX,
-								this.currentPage.pageY + this.directionY,
-								time
-						);
-				});
-		},
-
-		_nearestSnap: function (x, y) {
-				if ( !this.pages.length ) {
-						return { x: 0, y: 0, pageX: 0, pageY: 0 };
-				}
-
-				var i = 0,
-						l = this.pages.length,
-						m = 0;
-
-				// Check if we exceeded the snap threshold
-				if ( Math.abs(x - this.absStartX) < this.snapThresholdX &&
-						Math.abs(y - this.absStartY) < this.snapThresholdY ) {
-						return this.currentPage;
-				}
-
-				if ( x > 0 ) {
-						x = 0;
-				} else if ( x < this.maxScrollX ) {
-						x = this.maxScrollX;
-				}
-
-				if ( y > 0 ) {
-						y = 0;
-				} else if ( y < this.maxScrollY ) {
-						y = this.maxScrollY;
-				}
-
-				for ( ; i < l; i++ ) {
-						if ( x >= this.pages[i][0].cx ) {
-								x = this.pages[i][0].x;
-								break;
-						}
-				}
-
-				l = this.pages[i].length;
-
-				for ( ; m < l; m++ ) {
-						if ( y >= this.pages[0][m].cy ) {
-								y = this.pages[0][m].y;
-								break;
-						}
-				}
-
-				if ( i == this.currentPage.pageX ) {
-						i += this.directionX;
-
-						if ( i < 0 ) {
-								i = 0;
-						} else if ( i >= this.pages.length ) {
-								i = this.pages.length - 1;
-						}
-
-						x = this.pages[i][0].x;
-				}
-
-				if ( m == this.currentPage.pageY ) {
-						m += this.directionY;
-
-						if ( m < 0 ) {
-								m = 0;
-						} else if ( m >= this.pages[0].length ) {
-								m = this.pages[0].length - 1;
-						}
-
-						y = this.pages[0][m].y;
-				}
-
-				return {
-						x: x,
-						y: y,
-						pageX: i,
-						pageY: m
-				};
-		},
-
-		goToPage: function (x, y, time, easing) {
-				easing = easing || this.options.bounceEasing;
-
-				if ( x >= this.pages.length ) {
-						x = this.pages.length - 1;
-				} else if ( x < 0 ) {
-						x = 0;
-				}
-
-				if ( y >= this.pages[x].length ) {
-						y = this.pages[x].length - 1;
-				} else if ( y < 0 ) {
-						y = 0;
-				}
-
-				var posX = this.pages[x][y].x,
-						posY = this.pages[x][y].y;
-
-				time = time === undefined ? this.options.snapSpeed || Math.max(
-						Math.max(
-								Math.min(Math.abs(posX - this.x), 1000),
-								Math.min(Math.abs(posY - this.y), 1000)
-						), 300) : time;
-
-				this.currentPage = {
-						x: posX,
-						y: posY,
-						pageX: x,
-						pageY: y
-				};
-
-				this.scrollTo(posX, posY, time, easing);
-		},
-
-		next: function (time, easing) {
-				var x = this.currentPage.pageX,
-						y = this.currentPage.pageY;
-
-				x++;
-
-				if ( x >= this.pages.length && this.hasVerticalScroll ) {
-						x = 0;
-						y++;
-				}
-
-				this.goToPage(x, y, time, easing);
-		},
-
-		prev: function (time, easing) {
-				var x = this.currentPage.pageX,
-						y = this.currentPage.pageY;
-
-				x--;
-
-				if ( x < 0 && this.hasVerticalScroll ) {
-						x = 0;
-						y--;
-				}
-
-				this.goToPage(x, y, time, easing);
-		},
-
-		_initKeys: function (e) {
-				// default key bindings
-				var keys = {
-						pageUp: 33,
-						pageDown: 34,
-						end: 35,
-						home: 36,
-						left: 37,
-						up: 38,
-						right: 39,
-						down: 40
-				};
-				var i;
-
-				// if you give me characters I give you keycode
-				if ( typeof this.options.keyBindings == 'object' ) {
-						for ( i in this.options.keyBindings ) {
-								if ( typeof this.options.keyBindings[i] == 'string' ) {
-										this.options.keyBindings[i] = this.options.keyBindings[i].toUpperCase().charCodeAt(0);
-								}
-						}
-				} else {
-						this.options.keyBindings = {};
-				}
-
-				for ( i in keys ) {
-						this.options.keyBindings[i] = this.options.keyBindings[i] || keys[i];
-				}
-
-				utils.addEvent(window, 'keydown', this);
-
-				this.on('destroy', function () {
-						utils.removeEvent(window, 'keydown', this);
-				});
-		},
-
-		_key: function (e) {
-				if ( !this.enabled ) {
-						return;
-				}
-
-				var snap = this.options.snap,   // we are using this alot, better to cache it
-						newX = snap ? this.currentPage.pageX : this.x,
-						newY = snap ? this.currentPage.pageY : this.y,
-						now = utils.getTime(),
-						prevTime = this.keyTime || 0,
-						acceleration = 0.250,
-						pos;
-
-				if ( this.options.useTransition && this.isInTransition ) {
-						pos = this.getComputedPosition();
-
-						this._translate(Math.round(pos.x), Math.round(pos.y));
-						this.isInTransition = false;
-				}
-
-				this.keyAcceleration = now - prevTime < 200 ? Math.min(this.keyAcceleration + acceleration, 50) : 0;
-
-				switch ( e.keyCode ) {
-						case this.options.keyBindings.pageUp:
-								if ( this.hasHorizontalScroll && !this.hasVerticalScroll ) {
-										newX += snap ? 1 : this.wrapperWidth;
-								} else {
-										newY += snap ? 1 : this.wrapperHeight;
-								}
-								break;
-						case this.options.keyBindings.pageDown:
-								if ( this.hasHorizontalScroll && !this.hasVerticalScroll ) {
-										newX -= snap ? 1 : this.wrapperWidth;
-								} else {
-										newY -= snap ? 1 : this.wrapperHeight;
-								}
-								break;
-						case this.options.keyBindings.end:
-								newX = snap ? this.pages.length-1 : this.maxScrollX;
-								newY = snap ? this.pages[0].length-1 : this.maxScrollY;
-								break;
-						case this.options.keyBindings.home:
-								newX = 0;
-								newY = 0;
-								break;
-						case this.options.keyBindings.left:
-								newX += snap ? -1 : 5 + this.keyAcceleration>>0;
-								break;
-						case this.options.keyBindings.up:
-								newY += snap ? 1 : 5 + this.keyAcceleration>>0;
-								break;
-						case this.options.keyBindings.right:
-								newX -= snap ? -1 : 5 + this.keyAcceleration>>0;
-								break;
-						case this.options.keyBindings.down:
-								newY -= snap ? 1 : 5 + this.keyAcceleration>>0;
-								break;
-						default:
-								return;
-				}
-
-				if ( snap ) {
-						this.goToPage(newX, newY);
-						return;
-				}
-
-				if ( newX > 0 ) {
-						newX = 0;
-						this.keyAcceleration = 0;
-				} else if ( newX < this.maxScrollX ) {
-						newX = this.maxScrollX;
-						this.keyAcceleration = 0;
-				}
-
-				if ( newY > 0 ) {
-						newY = 0;
-						this.keyAcceleration = 0;
-				} else if ( newY < this.maxScrollY ) {
-						newY = this.maxScrollY;
-						this.keyAcceleration = 0;
-				}
-
-				this.scrollTo(newX, newY, 0);
-
-				this.keyTime = now;
-		},
-
-		_animate: function (destX, destY, duration, easingFn) {
-				var that = this,
-						startX = this.x,
-						startY = this.y,
-						startTime = utils.getTime(),
-						destTime = startTime + duration;
-
-				function step () {
-						var now = utils.getTime(),
-								newX, newY,
-								easing;
-
-						if ( now >= destTime ) {
-								that.isAnimating = false;
-								that._translate(destX, destY);
-
-								if ( !that.resetPosition(that.options.bounceTime) ) {
-										that._execEvent('scrollEnd');
-								}
-
-								return;
-						}
-
-						now = ( now - startTime ) / duration;
-						easing = easingFn(now);
-						newX = ( destX - startX ) * easing + startX;
-						newY = ( destY - startY ) * easing + startY;
-						that._translate(newX, newY);
-
-						if ( that.isAnimating ) {
-								rAF(step);
-						}
-				}
-
-				this.isAnimating = true;
-				step();
-		},
-		handleEvent: function (e) {
-				switch ( e.type ) {
-						case 'touchstart':
-						case 'pointerdown':
-						case 'MSPointerDown':
-						case 'mousedown':
-								this._start(e);
-								break;
-						case 'touchmove':
-						case 'pointermove':
-						case 'MSPointerMove':
-						case 'mousemove':
-								this._move(e);
-								break;
-						case 'touchend':
-						case 'pointerup':
-						case 'MSPointerUp':
-						case 'mouseup':
-						case 'touchcancel':
-						case 'pointercancel':
-						case 'MSPointerCancel':
-						case 'mousecancel':
-								this._end(e);
-								break;
-						case 'orientationchange':
-						case 'resize':
-								this._resize();
-								break;
-						case 'transitionend':
-						case 'webkitTransitionEnd':
-						case 'oTransitionEnd':
-						case 'MSTransitionEnd':
-								this._transitionEnd(e);
-								break;
-						case 'wheel':
-						case 'DOMMouseScroll':
-						case 'mousewheel':
-								this._wheel(e);
-								break;
-						case 'keydown':
-								this._key(e);
-								break;
-						case 'click':
-								if ( this.enabled && !e._constructed ) {
-										e.preventDefault();
-										e.stopPropagation();
-								}
-								break;
-				}
-		}
+    },
+
+    _initSnap: function () {
+        this.currentPage = {};
+
+        if ( typeof this.options.snap == 'string' ) {
+            this.options.snap = this.scroller.querySelectorAll(this.options.snap);
+        }
+
+        this.on('refresh', function () {
+            var i = 0, l,
+                m = 0, n,
+                cx, cy,
+                x = 0, y,
+                stepX = this.options.snapStepX || this.wrapperWidth,
+                stepY = this.options.snapStepY || this.wrapperHeight,
+                el;
+
+            this.pages = [];
+
+            if ( !this.wrapperWidth || !this.wrapperHeight || !this.scrollerWidth || !this.scrollerHeight ) {
+                return;
+            }
+
+            if ( this.options.snap === true ) {
+                cx = Math.round( stepX / 2 );
+                cy = Math.round( stepY / 2 );
+
+                while ( x > -this.scrollerWidth ) {
+                    this.pages[i] = [];
+                    l = 0;
+                    y = 0;
+
+                    while ( y > -this.scrollerHeight ) {
+                        this.pages[i][l] = {
+                            x: Math.max(x, this.maxScrollX),
+                            y: Math.max(y, this.maxScrollY),
+                            width: stepX,
+                            height: stepY,
+                            cx: x - cx,
+                            cy: y - cy
+                        };
+
+                        y -= stepY;
+                        l++;
+                    }
+
+                    x -= stepX;
+                    i++;
+                }
+            } else {
+                el = this.options.snap;
+                l = el.length;
+                n = -1;
+
+                for ( ; i < l; i++ ) {
+                    if ( i === 0 || el[i].offsetLeft <= el[i-1].offsetLeft ) {
+                        m = 0;
+                        n++;
+                    }
+
+                    if ( !this.pages[m] ) {
+                        this.pages[m] = [];
+                    }
+
+                    x = Math.max(-el[i].offsetLeft, this.maxScrollX);
+                    y = Math.max(-el[i].offsetTop, this.maxScrollY);
+                    cx = x - Math.round(el[i].offsetWidth / 2);
+                    cy = y - Math.round(el[i].offsetHeight / 2);
+
+                    this.pages[m][n] = {
+                        x: x,
+                        y: y,
+                        width: el[i].offsetWidth,
+                        height: el[i].offsetHeight,
+                        cx: cx,
+                        cy: cy
+                    };
+
+                    if ( x > this.maxScrollX ) {
+                        m++;
+                    }
+                }
+            }
+
+            this.goToPage(this.currentPage.pageX || 0, this.currentPage.pageY || 0, 0);
+
+            // Update snap threshold if needed
+            if ( this.options.snapThreshold % 1 === 0 ) {
+                this.snapThresholdX = this.options.snapThreshold;
+                this.snapThresholdY = this.options.snapThreshold;
+            } else {
+                this.snapThresholdX = Math.round(this.pages[this.currentPage.pageX][this.currentPage.pageY].width * this.options.snapThreshold);
+                this.snapThresholdY = Math.round(this.pages[this.currentPage.pageX][this.currentPage.pageY].height * this.options.snapThreshold);
+            }
+        });
+
+        this.on('flick', function () {
+            var time = this.options.snapSpeed || Math.max(
+                    Math.max(
+                        Math.min(Math.abs(this.x - this.startX), 1000),
+                        Math.min(Math.abs(this.y - this.startY), 1000)
+                    ), 300);
+
+            this.goToPage(
+                this.currentPage.pageX + this.directionX,
+                this.currentPage.pageY + this.directionY,
+                time
+            );
+        });
+    },
+
+    _nearestSnap: function (x, y) {
+        if ( !this.pages.length ) {
+            return { x: 0, y: 0, pageX: 0, pageY: 0 };
+        }
+
+        var i = 0,
+            l = this.pages.length,
+            m = 0;
+
+        // Check if we exceeded the snap threshold
+        if ( Math.abs(x - this.absStartX) < this.snapThresholdX &&
+            Math.abs(y - this.absStartY) < this.snapThresholdY ) {
+            return this.currentPage;
+        }
+
+        if ( x > 0 ) {
+            x = 0;
+        } else if ( x < this.maxScrollX ) {
+            x = this.maxScrollX;
+        }
+
+        if ( y > 0 ) {
+            y = 0;
+        } else if ( y < this.maxScrollY ) {
+            y = this.maxScrollY;
+        }
+
+        for ( ; i < l; i++ ) {
+            if ( x >= this.pages[i][0].cx ) {
+                x = this.pages[i][0].x;
+                break;
+            }
+        }
+
+        l = this.pages[i].length;
+
+        for ( ; m < l; m++ ) {
+            if ( y >= this.pages[0][m].cy ) {
+                y = this.pages[0][m].y;
+                break;
+            }
+        }
+
+        if ( i == this.currentPage.pageX ) {
+            i += this.directionX;
+
+            if ( i < 0 ) {
+                i = 0;
+            } else if ( i >= this.pages.length ) {
+                i = this.pages.length - 1;
+            }
+
+            x = this.pages[i][0].x;
+        }
+
+        if ( m == this.currentPage.pageY ) {
+            m += this.directionY;
+
+            if ( m < 0 ) {
+                m = 0;
+            } else if ( m >= this.pages[0].length ) {
+                m = this.pages[0].length - 1;
+            }
+
+            y = this.pages[0][m].y;
+        }
+
+        return {
+            x: x,
+            y: y,
+            pageX: i,
+            pageY: m
+        };
+    },
+
+    goToPage: function (x, y, time, easing) {
+        easing = easing || this.options.bounceEasing;
+
+        if ( x >= this.pages.length ) {
+            x = this.pages.length - 1;
+        } else if ( x < 0 ) {
+            x = 0;
+        }
+
+        if ( y >= this.pages[x].length ) {
+            y = this.pages[x].length - 1;
+        } else if ( y < 0 ) {
+            y = 0;
+        }
+
+        var posX = this.pages[x][y].x,
+            posY = this.pages[x][y].y;
+
+        time = time === undefined ? this.options.snapSpeed || Math.max(
+            Math.max(
+                Math.min(Math.abs(posX - this.x), 1000),
+                Math.min(Math.abs(posY - this.y), 1000)
+            ), 300) : time;
+
+        this.currentPage = {
+            x: posX,
+            y: posY,
+            pageX: x,
+            pageY: y
+        };
+
+        this.scrollTo(posX, posY, time, easing);
+    },
+
+    next: function (time, easing) {
+        var x = this.currentPage.pageX,
+            y = this.currentPage.pageY;
+
+        x++;
+
+        if ( x >= this.pages.length && this.hasVerticalScroll ) {
+            x = 0;
+            y++;
+        }
+
+        this.goToPage(x, y, time, easing);
+    },
+
+    prev: function (time, easing) {
+        var x = this.currentPage.pageX,
+            y = this.currentPage.pageY;
+
+        x--;
+
+        if ( x < 0 && this.hasVerticalScroll ) {
+            x = 0;
+            y--;
+        }
+
+        this.goToPage(x, y, time, easing);
+    },
+
+    _initKeys: function (e) {
+        // default key bindings
+        var keys = {
+            pageUp: 33,
+            pageDown: 34,
+            end: 35,
+            home: 36,
+            left: 37,
+            up: 38,
+            right: 39,
+            down: 40
+        };
+        var i;
+
+        // if you give me characters I give you keycode
+        if ( typeof this.options.keyBindings == 'object' ) {
+            for ( i in this.options.keyBindings ) {
+                if ( typeof this.options.keyBindings[i] == 'string' ) {
+                    this.options.keyBindings[i] = this.options.keyBindings[i].toUpperCase().charCodeAt(0);
+                }
+            }
+        } else {
+            this.options.keyBindings = {};
+        }
+
+        for ( i in keys ) {
+            this.options.keyBindings[i] = this.options.keyBindings[i] || keys[i];
+        }
+
+        utils.addEvent(window, 'keydown', this);
+
+        this.on('destroy', function () {
+            utils.removeEvent(window, 'keydown', this);
+        });
+    },
+
+    _key: function (e) {
+        if ( !this.enabled ) {
+            return;
+        }
+
+        var snap = this.options.snap,   // we are using this alot, better to cache it
+            newX = snap ? this.currentPage.pageX : this.x,
+            newY = snap ? this.currentPage.pageY : this.y,
+            now = utils.getTime(),
+            prevTime = this.keyTime || 0,
+            acceleration = 0.250,
+            pos;
+
+        if ( this.options.useTransition && this.isInTransition ) {
+            pos = this.getComputedPosition();
+
+            this._translate(Math.round(pos.x), Math.round(pos.y));
+            this.isInTransition = false;
+        }
+
+        this.keyAcceleration = now - prevTime < 200 ? Math.min(this.keyAcceleration + acceleration, 50) : 0;
+
+        switch ( e.keyCode ) {
+            case this.options.keyBindings.pageUp:
+                if ( this.hasHorizontalScroll && !this.hasVerticalScroll ) {
+                    newX += snap ? 1 : this.wrapperWidth;
+                } else {
+                    newY += snap ? 1 : this.wrapperHeight;
+                }
+                break;
+            case this.options.keyBindings.pageDown:
+                if ( this.hasHorizontalScroll && !this.hasVerticalScroll ) {
+                    newX -= snap ? 1 : this.wrapperWidth;
+                } else {
+                    newY -= snap ? 1 : this.wrapperHeight;
+                }
+                break;
+            case this.options.keyBindings.end:
+                newX = snap ? this.pages.length-1 : this.maxScrollX;
+                newY = snap ? this.pages[0].length-1 : this.maxScrollY;
+                break;
+            case this.options.keyBindings.home:
+                newX = 0;
+                newY = 0;
+                break;
+            case this.options.keyBindings.left:
+                newX += snap ? -1 : 5 + this.keyAcceleration>>0;
+                break;
+            case this.options.keyBindings.up:
+                newY += snap ? 1 : 5 + this.keyAcceleration>>0;
+                break;
+            case this.options.keyBindings.right:
+                newX -= snap ? -1 : 5 + this.keyAcceleration>>0;
+                break;
+            case this.options.keyBindings.down:
+                newY -= snap ? 1 : 5 + this.keyAcceleration>>0;
+                break;
+            default:
+                return;
+        }
+
+        if ( snap ) {
+            this.goToPage(newX, newY);
+            return;
+        }
+
+        if ( newX > 0 ) {
+            newX = 0;
+            this.keyAcceleration = 0;
+        } else if ( newX < this.maxScrollX ) {
+            newX = this.maxScrollX;
+            this.keyAcceleration = 0;
+        }
+
+        if ( newY > 0 ) {
+            newY = 0;
+            this.keyAcceleration = 0;
+        } else if ( newY < this.maxScrollY ) {
+            newY = this.maxScrollY;
+            this.keyAcceleration = 0;
+        }
+
+        this.scrollTo(newX, newY, 0);
+
+        this.keyTime = now;
+    },
+
+    _animate: function (destX, destY, duration, easingFn) {
+        var that = this,
+            startX = this.x,
+            startY = this.y,
+            startTime = utils.getTime(),
+            destTime = startTime + duration;
+
+        function step () {
+            var now = utils.getTime(),
+                newX, newY,
+                easing;
+
+            if ( now >= destTime ) {
+                that.isAnimating = false;
+                that._translate(destX, destY);
+
+                if ( !that.resetPosition(that.options.bounceTime) ) {
+                    that._execEvent('scrollEnd');
+                }
+
+                return;
+            }
+
+            now = ( now - startTime ) / duration;
+            easing = easingFn(now);
+            newX = ( destX - startX ) * easing + startX;
+            newY = ( destY - startY ) * easing + startY;
+            that._translate(newX, newY);
+
+            if ( that.isAnimating ) {
+                rAF(step);
+            }
+        }
+
+        this.isAnimating = true;
+        step();
+    },
+    handleEvent: function (e) {
+        switch ( e.type ) {
+            case 'touchstart':
+            case 'pointerdown':
+            case 'MSPointerDown':
+            case 'mousedown':
+                this._start(e);
+                break;
+            case 'touchmove':
+            case 'pointermove':
+            case 'MSPointerMove':
+            case 'mousemove':
+                this._move(e);
+                break;
+            case 'touchend':
+            case 'pointerup':
+            case 'MSPointerUp':
+            case 'mouseup':
+            case 'touchcancel':
+            case 'pointercancel':
+            case 'MSPointerCancel':
+            case 'mousecancel':
+                this._end(e);
+                break;
+            case 'orientationchange':
+            case 'resize':
+                this._resize();
+                break;
+            case 'transitionend':
+            case 'webkitTransitionEnd':
+            case 'oTransitionEnd':
+            case 'MSTransitionEnd':
+                this._transitionEnd(e);
+                break;
+            case 'wheel':
+            case 'DOMMouseScroll':
+            case 'mousewheel':
+                this._wheel(e);
+                break;
+            case 'keydown':
+                this._key(e);
+                break;
+            case 'click':
+                if ( this.enabled && !e._constructed ) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+                break;
+        }
+    }
 };
 function createDefaultScrollbar (direction, interactive, type) {
-		var scrollbar = document.createElement('div'),
-				indicator = document.createElement('div');
+    var scrollbar = document.createElement('div'),
+        indicator = document.createElement('div');
 
-		if ( type === true ) {
-				scrollbar.style.cssText = 'position:absolute;z-index:9999';
-				indicator.style.cssText = '-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;position:absolute;background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.9);border-radius:3px';
-		}
+    if ( type === true ) {
+        scrollbar.style.cssText = 'position:absolute;z-index:9999';
+        indicator.style.cssText = '-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;position:absolute;background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.9);border-radius:3px';
+    }
 
-		indicator.className = 'iScrollIndicator';
+    indicator.className = 'iScrollIndicator';
 
-		if ( direction == 'h' ) {
-				if ( type === true ) {
-						scrollbar.style.cssText += ';height:7px;left:2px;right:2px;bottom:0';
-						indicator.style.height = '100%';
-				}
-				scrollbar.className = 'iScrollHorizontalScrollbar';
-		} else {
-				if ( type === true ) {
-						scrollbar.style.cssText += ';width:7px;bottom:2px;top:2px;right:1px';
-						indicator.style.width = '100%';
-				}
-				scrollbar.className = 'iScrollVerticalScrollbar';
-		}
+    if ( direction == 'h' ) {
+        if ( type === true ) {
+            scrollbar.style.cssText += ';height:7px;left:2px;right:2px;bottom:0';
+            indicator.style.height = '100%';
+        }
+        scrollbar.className = 'iScrollHorizontalScrollbar';
+    } else {
+        if ( type === true ) {
+            scrollbar.style.cssText += ';width:7px;bottom:2px;top:2px;right:1px';
+            indicator.style.width = '100%';
+        }
+        scrollbar.className = 'iScrollVerticalScrollbar';
+    }
 
-		scrollbar.style.cssText += ';overflow:hidden';
+    scrollbar.style.cssText += ';overflow:hidden';
 
-		if ( !interactive ) {
-				scrollbar.style.pointerEvents = 'none';
-		}
+    if ( !interactive ) {
+        scrollbar.style.pointerEvents = 'none';
+    }
 
-		scrollbar.appendChild(indicator);
+    scrollbar.appendChild(indicator);
 
-		return scrollbar;
+    return scrollbar;
 }
 
 function Indicator (scroller, options) {
-		this.wrapper = typeof options.el == 'string' ? document.querySelector(options.el) : options.el;
-		this.wrapperStyle = this.wrapper.style;
-		this.indicator = this.wrapper.children[0];
-		this.indicatorStyle = this.indicator.style;
-		this.scroller = scroller;
+    this.wrapper = typeof options.el == 'string' ? document.querySelector(options.el) : options.el;
+    this.wrapperStyle = this.wrapper.style;
+    this.indicator = this.wrapper.children[0];
+    this.indicatorStyle = this.indicator.style;
+    this.scroller = scroller;
 
-		this.options = {
-				listenX: true,
-				listenY: true,
-				interactive: false,
-				resize: true,
-				defaultScrollbars: false,
-				shrink: false,
-				fade: false,
-				speedRatioX: 0,
-				speedRatioY: 0
-		};
+    this.options = {
+        listenX: true,
+        listenY: true,
+        interactive: false,
+        resize: true,
+        defaultScrollbars: false,
+        shrink: false,
+        fade: false,
+        speedRatioX: 0,
+        speedRatioY: 0
+    };
 
-		for ( var i in options ) {
-				this.options[i] = options[i];
-		}
+    for ( var i in options ) {
+        this.options[i] = options[i];
+    }
 
-		this.sizeRatioX = 1;
-		this.sizeRatioY = 1;
-		this.maxPosX = 0;
-		this.maxPosY = 0;
+    this.sizeRatioX = 1;
+    this.sizeRatioY = 1;
+    this.maxPosX = 0;
+    this.maxPosY = 0;
 
-		if ( this.options.interactive ) {
-				if ( !this.options.disableTouch ) {
-						utils.addEvent(this.indicator, 'touchstart', this);
-						utils.addEvent(window, 'touchend', this);
-				}
-				if ( !this.options.disablePointer ) {
-						utils.addEvent(this.indicator, utils.prefixPointerEvent('pointerdown'), this);
-						utils.addEvent(window, utils.prefixPointerEvent('pointerup'), this);
-				}
-				if ( !this.options.disableMouse ) {
-						utils.addEvent(this.indicator, 'mousedown', this);
-						utils.addEvent(window, 'mouseup', this);
-				}
-		}
+    if ( this.options.interactive ) {
+        if ( !this.options.disableTouch ) {
+            utils.addEvent(this.indicator, 'touchstart', this);
+            utils.addEvent(window, 'touchend', this);
+        }
+        if ( !this.options.disablePointer ) {
+            utils.addEvent(this.indicator, utils.prefixPointerEvent('pointerdown'), this);
+            utils.addEvent(window, utils.prefixPointerEvent('pointerup'), this);
+        }
+        if ( !this.options.disableMouse ) {
+            utils.addEvent(this.indicator, 'mousedown', this);
+            utils.addEvent(window, 'mouseup', this);
+        }
+    }
 
-		if ( this.options.fade ) {
-				this.wrapperStyle[utils.style.transform] = this.scroller.translateZ;
-				var durationProp = utils.style.transitionDuration;
-				if(!durationProp) {
-						return;
-				}
-				this.wrapperStyle[durationProp] = utils.isBadAndroid ? '0.0001ms' : '0ms';
-				// remove 0.0001ms
-				var self = this;
-				if(utils.isBadAndroid) {
-						rAF(function() {
-								if(self.wrapperStyle[durationProp] === '0.0001ms') {
-										self.wrapperStyle[durationProp] = '0s';
-								}
-						});
-				}
-				this.wrapperStyle.opacity = '0';
-		}
+    if ( this.options.fade ) {
+        this.wrapperStyle[utils.style.transform] = this.scroller.translateZ;
+        var durationProp = utils.style.transitionDuration;
+        if(!durationProp) {
+            return;
+        }
+        this.wrapperStyle[durationProp] = utils.isBadAndroid ? '0.0001ms' : '0ms';
+        // remove 0.0001ms
+        var self = this;
+        if(utils.isBadAndroid) {
+            rAF(function() {
+                if(self.wrapperStyle[durationProp] === '0.0001ms') {
+                    self.wrapperStyle[durationProp] = '0s';
+                }
+            });
+        }
+        this.wrapperStyle.opacity = '0';
+    }
 }
 
 Indicator.prototype = {
-		handleEvent: function (e) {
-				switch ( e.type ) {
-						case 'touchstart':
-						case 'pointerdown':
-						case 'MSPointerDown':
-						case 'mousedown':
-								this._start(e);
-								break;
-						case 'touchmove':
-						case 'pointermove':
-						case 'MSPointerMove':
-						case 'mousemove':
-								this._move(e);
-								break;
-						case 'touchend':
-						case 'pointerup':
-						case 'MSPointerUp':
-						case 'mouseup':
-						case 'touchcancel':
-						case 'pointercancel':
-						case 'MSPointerCancel':
-						case 'mousecancel':
-								this._end(e);
-								break;
-				}
-		},
+    handleEvent: function (e) {
+        switch ( e.type ) {
+            case 'touchstart':
+            case 'pointerdown':
+            case 'MSPointerDown':
+            case 'mousedown':
+                this._start(e);
+                break;
+            case 'touchmove':
+            case 'pointermove':
+            case 'MSPointerMove':
+            case 'mousemove':
+                this._move(e);
+                break;
+            case 'touchend':
+            case 'pointerup':
+            case 'MSPointerUp':
+            case 'mouseup':
+            case 'touchcancel':
+            case 'pointercancel':
+            case 'MSPointerCancel':
+            case 'mousecancel':
+                this._end(e);
+                break;
+        }
+    },
 
-		destroy: function () {
-				if ( this.options.fadeScrollbars ) {
-						clearTimeout(this.fadeTimeout);
-						this.fadeTimeout = null;
-				}
-				if ( this.options.interactive ) {
-						utils.removeEvent(this.indicator, 'touchstart', this);
-						utils.removeEvent(this.indicator, utils.prefixPointerEvent('pointerdown'), this);
-						utils.removeEvent(this.indicator, 'mousedown', this);
+    destroy: function () {
+        if ( this.options.fadeScrollbars ) {
+            clearTimeout(this.fadeTimeout);
+            this.fadeTimeout = null;
+        }
+        if ( this.options.interactive ) {
+            utils.removeEvent(this.indicator, 'touchstart', this);
+            utils.removeEvent(this.indicator, utils.prefixPointerEvent('pointerdown'), this);
+            utils.removeEvent(this.indicator, 'mousedown', this);
 
-						utils.removeEvent(window, 'touchmove', this);
-						utils.removeEvent(window, utils.prefixPointerEvent('pointermove'), this);
-						utils.removeEvent(window, 'mousemove', this);
+            utils.removeEvent(window, 'touchmove', this);
+            utils.removeEvent(window, utils.prefixPointerEvent('pointermove'), this);
+            utils.removeEvent(window, 'mousemove', this);
 
-						utils.removeEvent(window, 'touchend', this);
-						utils.removeEvent(window, utils.prefixPointerEvent('pointerup'), this);
-						utils.removeEvent(window, 'mouseup', this);
-				}
+            utils.removeEvent(window, 'touchend', this);
+            utils.removeEvent(window, utils.prefixPointerEvent('pointerup'), this);
+            utils.removeEvent(window, 'mouseup', this);
+        }
 
-				if ( this.options.defaultScrollbars ) {
-						this.wrapper.parentNode.removeChild(this.wrapper);
-				}
-		},
+        if ( this.options.defaultScrollbars ) {
+            this.wrapper.parentNode.removeChild(this.wrapper);
+        }
+    },
 
-		_start: function (e) {
-				var point = e.touches ? e.touches[0] : e;
+    _start: function (e) {
+        var point = e.touches ? e.touches[0] : e;
 
-				e.preventDefault();
-				e.stopPropagation();
+        e.preventDefault();
+        e.stopPropagation();
 
-				this.transitionTime();
+        this.transitionTime();
 
-				this.initiated = true;
-				this.moved = false;
-				this.lastPointX = point.pageX;
-				this.lastPointY = point.pageY;
+        this.initiated = true;
+        this.moved = false;
+        this.lastPointX = point.pageX;
+        this.lastPointY = point.pageY;
 
-				this.startTime  = utils.getTime();
+        this.startTime  = utils.getTime();
 
-				if ( !this.options.disableTouch ) {
-						utils.addEvent(window, 'touchmove', this);
-				}
-				if ( !this.options.disablePointer ) {
-						utils.addEvent(window, utils.prefixPointerEvent('pointermove'), this);
-				}
-				if ( !this.options.disableMouse ) {
-						utils.addEvent(window, 'mousemove', this);
-				}
+        if ( !this.options.disableTouch ) {
+            utils.addEvent(window, 'touchmove', this);
+        }
+        if ( !this.options.disablePointer ) {
+            utils.addEvent(window, utils.prefixPointerEvent('pointermove'), this);
+        }
+        if ( !this.options.disableMouse ) {
+            utils.addEvent(window, 'mousemove', this);
+        }
 
-				this.scroller._execEvent('beforeScrollStart');
-		},
+        this.scroller._execEvent('beforeScrollStart');
+    },
 
-		_move: function (e) {
-				var point = e.touches ? e.touches[0] : e,
-						deltaX, deltaY,
-						newX, newY,
-						timestamp = utils.getTime();
+    _move: function (e) {
+        var point = e.touches ? e.touches[0] : e,
+            deltaX, deltaY,
+            newX, newY,
+            timestamp = utils.getTime();
 
-				if ( !this.moved ) {
-						this.scroller._execEvent('scrollStart');
-				}
+        if ( !this.moved ) {
+            this.scroller._execEvent('scrollStart');
+        }
 
-				this.moved = true;
+        this.moved = true;
 
-				deltaX = point.pageX - this.lastPointX;
-				this.lastPointX = point.pageX;
+        deltaX = point.pageX - this.lastPointX;
+        this.lastPointX = point.pageX;
 
-				deltaY = point.pageY - this.lastPointY;
-				this.lastPointY = point.pageY;
+        deltaY = point.pageY - this.lastPointY;
+        this.lastPointY = point.pageY;
 
-				newX = this.x + deltaX;
-				newY = this.y + deltaY;
+        newX = this.x + deltaX;
+        newY = this.y + deltaY;
 
-				this._pos(newX, newY);
+        this._pos(newX, newY);
 
 // INSERT POINT: indicator._move
 
-				e.preventDefault();
-				e.stopPropagation();
-		},
+        e.preventDefault();
+        e.stopPropagation();
+    },
 
-		_end: function (e) {
-				if ( !this.initiated ) {
-						return;
-				}
+    _end: function (e) {
+        if ( !this.initiated ) {
+            return;
+        }
 
-				this.initiated = false;
+        this.initiated = false;
 
-				e.preventDefault();
-				e.stopPropagation();
+        e.preventDefault();
+        e.stopPropagation();
 
-				utils.removeEvent(window, 'touchmove', this);
-				utils.removeEvent(window, utils.prefixPointerEvent('pointermove'), this);
-				utils.removeEvent(window, 'mousemove', this);
+        utils.removeEvent(window, 'touchmove', this);
+        utils.removeEvent(window, utils.prefixPointerEvent('pointermove'), this);
+        utils.removeEvent(window, 'mousemove', this);
 
-				if ( this.scroller.options.snap ) {
-						var snap = this.scroller._nearestSnap(this.scroller.x, this.scroller.y);
+        if ( this.scroller.options.snap ) {
+            var snap = this.scroller._nearestSnap(this.scroller.x, this.scroller.y);
 
-						var time = this.options.snapSpeed || Math.max(
-										Math.max(
-												Math.min(Math.abs(this.scroller.x - snap.x), 1000),
-												Math.min(Math.abs(this.scroller.y - snap.y), 1000)
-										), 300);
+            var time = this.options.snapSpeed || Math.max(
+                    Math.max(
+                        Math.min(Math.abs(this.scroller.x - snap.x), 1000),
+                        Math.min(Math.abs(this.scroller.y - snap.y), 1000)
+                    ), 300);
 
-						if ( this.scroller.x != snap.x || this.scroller.y != snap.y ) {
-								this.scroller.directionX = 0;
-								this.scroller.directionY = 0;
-								this.scroller.currentPage = snap;
-								this.scroller.scrollTo(snap.x, snap.y, time, this.scroller.options.bounceEasing);
-						}
-				}
+            if ( this.scroller.x != snap.x || this.scroller.y != snap.y ) {
+                this.scroller.directionX = 0;
+                this.scroller.directionY = 0;
+                this.scroller.currentPage = snap;
+                this.scroller.scrollTo(snap.x, snap.y, time, this.scroller.options.bounceEasing);
+            }
+        }
 
-				if ( this.moved ) {
-						this.scroller._execEvent('scrollEnd');
-				}
-		},
+        if ( this.moved ) {
+            this.scroller._execEvent('scrollEnd');
+        }
+    },
 
-		transitionTime: function (time) {
-				time = time || 0;
-				var durationProp = utils.style.transitionDuration;
-				if(!durationProp) {
-						return;
-				}
+    transitionTime: function (time) {
+        time = time || 0;
+        var durationProp = utils.style.transitionDuration;
+        if(!durationProp) {
+            return;
+        }
 
-				this.indicatorStyle[durationProp] = time + 'ms';
+        this.indicatorStyle[durationProp] = time + 'ms';
 
-				if ( !time && utils.isBadAndroid ) {
-						this.indicatorStyle[durationProp] = '0.0001ms';
-						// remove 0.0001ms
-						var self = this;
-						rAF(function() {
-								if(self.indicatorStyle[durationProp] === '0.0001ms') {
-										self.indicatorStyle[durationProp] = '0s';
-								}
-						});
-				}
-		},
+        if ( !time && utils.isBadAndroid ) {
+            this.indicatorStyle[durationProp] = '0.0001ms';
+            // remove 0.0001ms
+            var self = this;
+            rAF(function() {
+                if(self.indicatorStyle[durationProp] === '0.0001ms') {
+                    self.indicatorStyle[durationProp] = '0s';
+                }
+            });
+        }
+    },
 
-		transitionTimingFunction: function (easing) {
-				this.indicatorStyle[utils.style.transitionTimingFunction] = easing;
-		},
+    transitionTimingFunction: function (easing) {
+        this.indicatorStyle[utils.style.transitionTimingFunction] = easing;
+    },
 
-		refresh: function () {
-				this.transitionTime();
+    refresh: function () {
+        this.transitionTime();
 
-				if ( this.options.listenX && !this.options.listenY ) {
-						this.indicatorStyle.display = this.scroller.hasHorizontalScroll ? 'block' : 'none';
-				} else if ( this.options.listenY && !this.options.listenX ) {
-						this.indicatorStyle.display = this.scroller.hasVerticalScroll ? 'block' : 'none';
-				} else {
-						this.indicatorStyle.display = this.scroller.hasHorizontalScroll || this.scroller.hasVerticalScroll ? 'block' : 'none';
-				}
+        if ( this.options.listenX && !this.options.listenY ) {
+            this.indicatorStyle.display = this.scroller.hasHorizontalScroll ? 'block' : 'none';
+        } else if ( this.options.listenY && !this.options.listenX ) {
+            this.indicatorStyle.display = this.scroller.hasVerticalScroll ? 'block' : 'none';
+        } else {
+            this.indicatorStyle.display = this.scroller.hasHorizontalScroll || this.scroller.hasVerticalScroll ? 'block' : 'none';
+        }
 
-				if ( this.scroller.hasHorizontalScroll && this.scroller.hasVerticalScroll ) {
-						utils.addClass(this.wrapper, 'iScrollBothScrollbars');
-						utils.removeClass(this.wrapper, 'iScrollLoneScrollbar');
+        if ( this.scroller.hasHorizontalScroll && this.scroller.hasVerticalScroll ) {
+            utils.addClass(this.wrapper, 'iScrollBothScrollbars');
+            utils.removeClass(this.wrapper, 'iScrollLoneScrollbar');
 
-						if ( this.options.defaultScrollbars && this.options.customStyle ) {
-								if ( this.options.listenX ) {
-										this.wrapper.style.right = '8px';
-								} else {
-										this.wrapper.style.bottom = '8px';
-								}
-						}
-				} else {
-						utils.removeClass(this.wrapper, 'iScrollBothScrollbars');
-						utils.addClass(this.wrapper, 'iScrollLoneScrollbar');
+            if ( this.options.defaultScrollbars && this.options.customStyle ) {
+                if ( this.options.listenX ) {
+                    this.wrapper.style.right = '8px';
+                } else {
+                    this.wrapper.style.bottom = '8px';
+                }
+            }
+        } else {
+            utils.removeClass(this.wrapper, 'iScrollBothScrollbars');
+            utils.addClass(this.wrapper, 'iScrollLoneScrollbar');
 
-						if ( this.options.defaultScrollbars && this.options.customStyle ) {
-								if ( this.options.listenX ) {
-										this.wrapper.style.right = '2px';
-								} else {
-										this.wrapper.style.bottom = '2px';
-								}
-						}
-				}
+            if ( this.options.defaultScrollbars && this.options.customStyle ) {
+                if ( this.options.listenX ) {
+                    this.wrapper.style.right = '2px';
+                } else {
+                    this.wrapper.style.bottom = '2px';
+                }
+            }
+        }
 
-				var r = this.wrapper.offsetHeight;  // force refresh
+        var r = this.wrapper.offsetHeight;  // force refresh
 
-				if ( this.options.listenX ) {
-						this.wrapperWidth = this.wrapper.clientWidth;
-						if ( this.options.resize ) {
-								this.indicatorWidth = Math.max(Math.round(this.wrapperWidth * this.wrapperWidth / (this.scroller.scrollerWidth || this.wrapperWidth || 1)), 8);
-								this.indicatorStyle.width = this.indicatorWidth + 'px';
-						} else {
-								this.indicatorWidth = this.indicator.clientWidth;
-						}
+        if ( this.options.listenX ) {
+            this.wrapperWidth = this.wrapper.clientWidth;
+            if ( this.options.resize ) {
+                this.indicatorWidth = Math.max(Math.round(this.wrapperWidth * this.wrapperWidth / (this.scroller.scrollerWidth || this.wrapperWidth || 1)), 8);
+                this.indicatorStyle.width = this.indicatorWidth + 'px';
+            } else {
+                this.indicatorWidth = this.indicator.clientWidth;
+            }
 
-						this.maxPosX = this.wrapperWidth - this.indicatorWidth;
+            this.maxPosX = this.wrapperWidth - this.indicatorWidth;
 
-						if ( this.options.shrink == 'clip' ) {
-								this.minBoundaryX = -this.indicatorWidth + 8;
-								this.maxBoundaryX = this.wrapperWidth - 8;
-						} else {
-								this.minBoundaryX = 0;
-								this.maxBoundaryX = this.maxPosX;
-						}
+            if ( this.options.shrink == 'clip' ) {
+                this.minBoundaryX = -this.indicatorWidth + 8;
+                this.maxBoundaryX = this.wrapperWidth - 8;
+            } else {
+                this.minBoundaryX = 0;
+                this.maxBoundaryX = this.maxPosX;
+            }
 
-						this.sizeRatioX = this.options.speedRatioX || (this.scroller.maxScrollX && (this.maxPosX / this.scroller.maxScrollX));
-				}
+            this.sizeRatioX = this.options.speedRatioX || (this.scroller.maxScrollX && (this.maxPosX / this.scroller.maxScrollX));
+        }
 
-				if ( this.options.listenY ) {
-						this.wrapperHeight = this.wrapper.clientHeight;
-						if ( this.options.resize ) {
-								this.indicatorHeight = Math.max(Math.round(this.wrapperHeight * this.wrapperHeight / (this.scroller.scrollerHeight || this.wrapperHeight || 1)), 8);
-								this.indicatorStyle.height = this.indicatorHeight + 'px';
-						} else {
-								this.indicatorHeight = this.indicator.clientHeight;
-						}
+        if ( this.options.listenY ) {
+            this.wrapperHeight = this.wrapper.clientHeight;
+            if ( this.options.resize ) {
+                this.indicatorHeight = Math.max(Math.round(this.wrapperHeight * this.wrapperHeight / (this.scroller.scrollerHeight || this.wrapperHeight || 1)), 8);
+                this.indicatorStyle.height = this.indicatorHeight + 'px';
+            } else {
+                this.indicatorHeight = this.indicator.clientHeight;
+            }
 
-						this.maxPosY = this.wrapperHeight - this.indicatorHeight;
+            this.maxPosY = this.wrapperHeight - this.indicatorHeight;
 
-						if ( this.options.shrink == 'clip' ) {
-								this.minBoundaryY = -this.indicatorHeight + 8;
-								this.maxBoundaryY = this.wrapperHeight - 8;
-						} else {
-								this.minBoundaryY = 0;
-								this.maxBoundaryY = this.maxPosY;
-						}
+            if ( this.options.shrink == 'clip' ) {
+                this.minBoundaryY = -this.indicatorHeight + 8;
+                this.maxBoundaryY = this.wrapperHeight - 8;
+            } else {
+                this.minBoundaryY = 0;
+                this.maxBoundaryY = this.maxPosY;
+            }
 
-						this.maxPosY = this.wrapperHeight - this.indicatorHeight;
-						this.sizeRatioY = this.options.speedRatioY || (this.scroller.maxScrollY && (this.maxPosY / this.scroller.maxScrollY));
-				}
+            this.maxPosY = this.wrapperHeight - this.indicatorHeight;
+            this.sizeRatioY = this.options.speedRatioY || (this.scroller.maxScrollY && (this.maxPosY / this.scroller.maxScrollY));
+        }
 
-				this.updatePosition();
-		},
+        this.updatePosition();
+    },
 
-		updatePosition: function () {
-				var x = this.options.listenX && Math.round(this.sizeRatioX * this.scroller.x) || 0,
-						y = this.options.listenY && Math.round(this.sizeRatioY * this.scroller.y) || 0;
+    updatePosition: function () {
+        var x = this.options.listenX && Math.round(this.sizeRatioX * this.scroller.x) || 0,
+            y = this.options.listenY && Math.round(this.sizeRatioY * this.scroller.y) || 0;
 
-				if ( !this.options.ignoreBoundaries ) {
-						if ( x < this.minBoundaryX ) {
-								if ( this.options.shrink == 'scale' ) {
-										this.width = Math.max(this.indicatorWidth + x, 8);
-										this.indicatorStyle.width = this.width + 'px';
-								}
-								x = this.minBoundaryX;
-						} else if ( x > this.maxBoundaryX ) {
-								if ( this.options.shrink == 'scale' ) {
-										this.width = Math.max(this.indicatorWidth - (x - this.maxPosX), 8);
-										this.indicatorStyle.width = this.width + 'px';
-										x = this.maxPosX + this.indicatorWidth - this.width;
-								} else {
-										x = this.maxBoundaryX;
-								}
-						} else if ( this.options.shrink == 'scale' && this.width != this.indicatorWidth ) {
-								this.width = this.indicatorWidth;
-								this.indicatorStyle.width = this.width + 'px';
-						}
+        if ( !this.options.ignoreBoundaries ) {
+            if ( x < this.minBoundaryX ) {
+                if ( this.options.shrink == 'scale' ) {
+                    this.width = Math.max(this.indicatorWidth + x, 8);
+                    this.indicatorStyle.width = this.width + 'px';
+                }
+                x = this.minBoundaryX;
+            } else if ( x > this.maxBoundaryX ) {
+                if ( this.options.shrink == 'scale' ) {
+                    this.width = Math.max(this.indicatorWidth - (x - this.maxPosX), 8);
+                    this.indicatorStyle.width = this.width + 'px';
+                    x = this.maxPosX + this.indicatorWidth - this.width;
+                } else {
+                    x = this.maxBoundaryX;
+                }
+            } else if ( this.options.shrink == 'scale' && this.width != this.indicatorWidth ) {
+                this.width = this.indicatorWidth;
+                this.indicatorStyle.width = this.width + 'px';
+            }
 
-						if ( y < this.minBoundaryY ) {
-								if ( this.options.shrink == 'scale' ) {
-										this.height = Math.max(this.indicatorHeight + y * 3, 8);
-										this.indicatorStyle.height = this.height + 'px';
-								}
-								y = this.minBoundaryY;
-						} else if ( y > this.maxBoundaryY ) {
-								if ( this.options.shrink == 'scale' ) {
-										this.height = Math.max(this.indicatorHeight - (y - this.maxPosY) * 3, 8);
-										this.indicatorStyle.height = this.height + 'px';
-										y = this.maxPosY + this.indicatorHeight - this.height;
-								} else {
-										y = this.maxBoundaryY;
-								}
-						} else if ( this.options.shrink == 'scale' && this.height != this.indicatorHeight ) {
-								this.height = this.indicatorHeight;
-								this.indicatorStyle.height = this.height + 'px';
-						}
-				}
+            if ( y < this.minBoundaryY ) {
+                if ( this.options.shrink == 'scale' ) {
+                    this.height = Math.max(this.indicatorHeight + y * 3, 8);
+                    this.indicatorStyle.height = this.height + 'px';
+                }
+                y = this.minBoundaryY;
+            } else if ( y > this.maxBoundaryY ) {
+                if ( this.options.shrink == 'scale' ) {
+                    this.height = Math.max(this.indicatorHeight - (y - this.maxPosY) * 3, 8);
+                    this.indicatorStyle.height = this.height + 'px';
+                    y = this.maxPosY + this.indicatorHeight - this.height;
+                } else {
+                    y = this.maxBoundaryY;
+                }
+            } else if ( this.options.shrink == 'scale' && this.height != this.indicatorHeight ) {
+                this.height = this.indicatorHeight;
+                this.indicatorStyle.height = this.height + 'px';
+            }
+        }
 
-				this.x = x;
-				this.y = y;
+        this.x = x;
+        this.y = y;
 
-				if ( this.scroller.options.useTransform ) {
-						this.indicatorStyle[utils.style.transform] = 'translate(' + x + 'px,' + y + 'px)' + this.scroller.translateZ;
-				} else {
-						this.indicatorStyle.left = x + 'px';
-						this.indicatorStyle.top = y + 'px';
-				}
-		},
+        if ( this.scroller.options.useTransform ) {
+            this.indicatorStyle[utils.style.transform] = 'translate(' + x + 'px,' + y + 'px)' + this.scroller.translateZ;
+        } else {
+            this.indicatorStyle.left = x + 'px';
+            this.indicatorStyle.top = y + 'px';
+        }
+    },
 
-		_pos: function (x, y) {
-				if ( x < 0 ) {
-						x = 0;
-				} else if ( x > this.maxPosX ) {
-						x = this.maxPosX;
-				}
+    _pos: function (x, y) {
+        if ( x < 0 ) {
+            x = 0;
+        } else if ( x > this.maxPosX ) {
+            x = this.maxPosX;
+        }
 
-				if ( y < 0 ) {
-						y = 0;
-				} else if ( y > this.maxPosY ) {
-						y = this.maxPosY;
-				}
+        if ( y < 0 ) {
+            y = 0;
+        } else if ( y > this.maxPosY ) {
+            y = this.maxPosY;
+        }
 
-				x = this.options.listenX ? Math.round(x / this.sizeRatioX) : this.scroller.x;
-				y = this.options.listenY ? Math.round(y / this.sizeRatioY) : this.scroller.y;
+        x = this.options.listenX ? Math.round(x / this.sizeRatioX) : this.scroller.x;
+        y = this.options.listenY ? Math.round(y / this.sizeRatioY) : this.scroller.y;
 
-				this.scroller.scrollTo(x, y);
-		},
+        this.scroller.scrollTo(x, y);
+    },
 
-		fade: function (val, hold) {
-				if ( hold && !this.visible ) {
-						return;
-				}
+    fade: function (val, hold) {
+        if ( hold && !this.visible ) {
+            return;
+        }
 
-				clearTimeout(this.fadeTimeout);
-				this.fadeTimeout = null;
+        clearTimeout(this.fadeTimeout);
+        this.fadeTimeout = null;
 
-				var time = val ? 250 : 500,
-						delay = val ? 0 : 300;
+        var time = val ? 250 : 500,
+            delay = val ? 0 : 300;
 
-				val = val ? '1' : '0';
+        val = val ? '1' : '0';
 
-				this.wrapperStyle[utils.style.transitionDuration] = time + 'ms';
+        this.wrapperStyle[utils.style.transitionDuration] = time + 'ms';
 
-				this.fadeTimeout = setTimeout((function (val) {
-						this.wrapperStyle.opacity = val;
-						this.visible = +val;
-				}).bind(this, val), delay);
-		}
+        this.fadeTimeout = setTimeout((function (val) {
+            this.wrapperStyle.opacity = val;
+            this.visible = +val;
+        }).bind(this, val), delay);
+    }
 };
 
 IScroll.utils = utils;
 
 if ( typeof module != 'undefined' && module.exports ) {
-		module.exports = IScroll;
+    module.exports = IScroll;
 } else if ( typeof define == 'function' && define.amd ) {
-				define( function () { return IScroll; } );
+        define( function () { return IScroll; } );
 } else {
-		window.IScroll = IScroll;
+    window.IScroll = IScroll;
 }
 
 })(window, document, Math);
@@ -18896,3155 +18907,3155 @@ if ( typeof module != 'undefined' && module.exports ) {
  * Copyright (C) 2015 alvarotrigo.com - A project by Alvaro Trigo
  */
 (function(global, factory) {
-		'use strict';
-		if (typeof define === 'function' && define.amd) {
-				define(['jquery'], function($) {
-					return factory($, global, global.document, global.Math);
-				});
-		} else if (typeof exports === "object" && exports) {
-				module.exports = factory(require('jquery'), global, global.document, global.Math);
-		} else {
-				factory(jQuery, global, global.document, global.Math);
-		}
+    'use strict';
+    if (typeof define === 'function' && define.amd) {
+        define(['jquery'], function($) {
+          return factory($, global, global.document, global.Math);
+        });
+    } else if (typeof exports === "object" && exports) {
+        module.exports = factory(require('jquery'), global, global.document, global.Math);
+    } else {
+        factory(jQuery, global, global.document, global.Math);
+    }
 })(typeof window !== 'undefined' ? window : this, function($, window, document, Math, undefined) {
-		'use strict';
-
-		// keeping central set of classnames and selectors
-		var WRAPPER =               'fullpage-wrapper';
-		var WRAPPER_SEL =           '.' + WRAPPER;
-
-		// slimscroll
-		var SCROLLABLE =            'fp-scrollable';
-		var SCROLLABLE_SEL =        '.' + SCROLLABLE;
-
-		// util
-		var RESPONSIVE =            'fp-responsive';
-		var NO_TRANSITION =         'fp-notransition';
-		var DESTROYED =             'fp-destroyed';
-		var ENABLED =               'fp-enabled';
-		var VIEWING_PREFIX =        'fp-viewing';
-		var ACTIVE =                'active';
-		var ACTIVE_SEL =            '.' + ACTIVE;
-		var COMPLETELY =            'fp-completely';
-		var COMPLETELY_SEL =        '.' + COMPLETELY;
-
-		// section
-		var SECTION_DEFAULT_SEL =   '.section';
-		var SECTION =               'fp-section';
-		var SECTION_SEL =           '.' + SECTION;
-		var SECTION_ACTIVE_SEL =    SECTION_SEL + ACTIVE_SEL;
-		var SECTION_FIRST_SEL =     SECTION_SEL + ':first';
-		var SECTION_LAST_SEL =      SECTION_SEL + ':last';
-		var TABLE_CELL =            'fp-tableCell';
-		var TABLE_CELL_SEL =        '.' + TABLE_CELL;
-		var AUTO_HEIGHT =           'fp-auto-height';
-		var AUTO_HEIGHT_SEL =       '.fp-auto-height';
-		var NORMAL_SCROLL =         'fp-normal-scroll';
-		var NORMAL_SCROLL_SEL =     '.fp-normal-scroll';
-
-		// section nav
-		var SECTION_NAV =           'fp-nav';
-		var SECTION_NAV_SEL =       '#' + SECTION_NAV;
-		var SECTION_NAV_TOOLTIP =   'fp-tooltip';
-		var SECTION_NAV_TOOLTIP_SEL='.'+SECTION_NAV_TOOLTIP;
-		var SHOW_ACTIVE_TOOLTIP =   'fp-show-active';
-
-		// slide
-		var SLIDE_DEFAULT_SEL =     '.slide';
-		var SLIDE =                 'fp-slide';
-		var SLIDE_SEL =             '.' + SLIDE;
-		var SLIDE_ACTIVE_SEL =      SLIDE_SEL + ACTIVE_SEL;
-		var SLIDES_WRAPPER =        'fp-slides';
-		var SLIDES_WRAPPER_SEL =    '.' + SLIDES_WRAPPER;
-		var SLIDES_CONTAINER =      'fp-slidesContainer';
-		var SLIDES_CONTAINER_SEL =  '.' + SLIDES_CONTAINER;
-		var TABLE =                 'fp-table';
-
-		// slide nav
-		var SLIDES_NAV =            'fp-slidesNav';
-		var SLIDES_NAV_SEL =        '.' + SLIDES_NAV;
-		var SLIDES_NAV_LINK_SEL =   SLIDES_NAV_SEL + ' a';
-		var SLIDES_ARROW =          'fp-controlArrow';
-		var SLIDES_ARROW_SEL =      '.' + SLIDES_ARROW;
-		var SLIDES_PREV =           'fp-prev';
-		var SLIDES_PREV_SEL =       '.' + SLIDES_PREV;
-		var SLIDES_ARROW_PREV =     SLIDES_ARROW + ' ' + SLIDES_PREV;
-		var SLIDES_ARROW_PREV_SEL = SLIDES_ARROW_SEL + SLIDES_PREV_SEL;
-		var SLIDES_NEXT =           'fp-next';
-		var SLIDES_NEXT_SEL =       '.' + SLIDES_NEXT;
-		var SLIDES_ARROW_NEXT =     SLIDES_ARROW + ' ' + SLIDES_NEXT;
-		var SLIDES_ARROW_NEXT_SEL = SLIDES_ARROW_SEL + SLIDES_NEXT_SEL;
-
-		var $window = $(window);
-		var $document = $(document);
-
-		// Default options for iScroll.js used when using scrollOverflow
-		var iscrollOptions = {
-				scrollbars: true,
-				mouseWheel: true,
-				hideScrollbars: false,
-				fadeScrollbars: false,
-				disableMouse: true,
-				interactiveScrollbars: true,
-				bounce: false,
-		};
-
-		$.fn.fullpage = function(options) {
-				//only once my friend!
-				if($('html').hasClass(ENABLED)){ displayWarnings(); return; }
-
-				// common jQuery objects
-				var $htmlBody = $('html, body');
-				var $body = $('body');
-
-				var FP = $.fn.fullpage;
-
-				// Creating some defaults, extending them with any options that were provided
-				options = $.extend({
-						//navigation
-						menu: false,
-						anchors:[],
-						lockAnchors: false,
-						navigation: false,
-						navigationPosition: 'right',
-						navigationTooltips: [],
-						showActiveTooltip: false,
-						slidesNavigation: false,
-						slidesNavPosition: 'bottom',
-						scrollBar: false,
-						hybrid: false,
-
-						//scrolling
-						css3: true,
-						scrollingSpeed: 700,
-						autoScrolling: true,
-						fitToSection: true,
-						fitToSectionDelay: 1000,
-						easing: 'easeInOutCubic',
-						easingcss3: 'ease',
-						loopBottom: false,
-						loopTop: false,
-						loopHorizontal: true,
-						continuousVertical: false,
-						continuousHorizontal: false,
-						scrollHorizontally: false,
-						interlockedSlides: false,
-						dragAndMove: false,
-						offsetSections: false,
-						resetSliders: false,
-						fadingEffect: false,
-						normalScrollElements: null,
-						scrollOverflow: false,
-						scrollOverflowReset: false,
-						scrollOverflowHandler: iscrollHandler,
-						scrollOverflowOptions: null,
-						touchSensitivity: 5,
-						normalScrollElementTouchThreshold: 5,
-						bigSectionsDestination: null,
-
-						//Accessibility
-						keyboardScrolling: true,
-						animateAnchor: true,
-						recordHistory: true,
-
-						//design
-						controlArrows: true,
-						controlArrowColor: '#fff',
-						verticalCentered: true,
-						sectionsColor : [],
-						paddingTop: 0,
-						paddingBottom: 0,
-						fixedElements: null,
-						responsive: 0, //backwards compabitility with responsiveWiddth
-						responsiveWidth: 0,
-						responsiveHeight: 0,
-						responsiveSlides: false,
-						parallax: false,
-						parallaxOptions: {
-								type: 'reveal',
-								percentage: 62,
-								property: 'translate'
-						},
-
-						//Custom selectors
-						sectionSelector: SECTION_DEFAULT_SEL,
-						slideSelector: SLIDE_DEFAULT_SEL,
-
-						//events
-						afterLoad: null,
-						onLeave: null,
-						afterRender: null,
-						afterResize: null,
-						afterReBuild: null,
-						afterSlideLoad: null,
-						onSlideLeave: null,
-						afterResponsive: null,
-
-						lazyLoading: true
-				}, options);
-
-				//flag to avoid very fast sliding for landscape sliders
-				var slideMoving = false;
-
-				var isTouchDevice = navigator.userAgent.match(/(iPhone|iPod|iPad|Android|playbook|silk|BlackBerry|BB10|Windows Phone|Tizen|Bada|webOS|IEMobile|Opera Mini)/);
-				var isTouch = (('ontouchstart' in window) || (navigator.msMaxTouchPoints > 0) || (navigator.maxTouchPoints));
-				var container = $(this);
-				var windowsHeight = $window.height();
-				var isResizing = false;
-				var isWindowFocused = true;
-				var lastScrolledDestiny;
-				var lastScrolledSlide;
-				var canScroll = true;
-				var scrollings = [];
-				var controlPressed;
-				var startingSection;
-				var isScrollAllowed = {};
-				isScrollAllowed.m = {  'up':true, 'down':true, 'left':true, 'right':true };
-				isScrollAllowed.k = $.extend(true,{}, isScrollAllowed.m);
-				var MSPointer = getMSPointer();
-				var events = {
-						touchmove: 'ontouchmove' in window ? 'touchmove' :  MSPointer.move,
-						touchstart: 'ontouchstart' in window ? 'touchstart' :  MSPointer.down
-				};
-
-				//timeouts
-				var resizeId;
-				var afterSectionLoadsId;
-				var afterSlideLoadsId;
-				var scrollId;
-				var scrollId2;
-				var keydownId;
-				var originals = $.extend(true, {}, options); //deep copy
-
-				//Uncode addition
-				var $masthead = $('#masthead');
-				var hideMenu = !$('body').hasClass('vmenu') && $('body').hasClass('uncode-fp-menu-hide') ? true : false;
-				var menuHeight = $masthead.hasClass('menu-transparent') || hideMenu ? 0 : UNCODE.menuHeight;
-				var bodyBorder = UNCODE.bodyBorder;
-				var adminBarHeight = UNCODE.adminBarHeight;
-
-				displayWarnings();
-
-				//fixing bug in iScroll with links: https://github.com/cubiq/iscroll/issues/783
-				iscrollOptions.click = isTouch; // see #2035
-
-				//extending iScroll options with the user custom ones
-				iscrollOptions = $.extend(iscrollOptions, options.scrollOverflowOptions);
-
-				//easeInOutCubic animation included in the plugin
-				$.extend($.easing,{ easeInOutCubic: function (x, t, b, c, d) {if ((t/=d/2) < 1) return c/2*t*t*t + b;return c/2*((t-=2)*t*t + 2) + b;}});
-
-				/**
-				* Sets the autoScroll option.
-				* It changes the scroll bar visibility and the history of the site as a result.
-				*/
-				function setAutoScrolling(value, type){
-						//removing the transformation
-						if(!value){
-								silentScroll(0);
-						}
-
-						setVariableState('autoScrolling', value, type);
-
-						var element = $(SECTION_ACTIVE_SEL);
-
-						if(options.autoScrolling && !options.scrollBar){
-								$htmlBody.css({
-										'overflow' : 'hidden !important',
-										'height' : '100%'
-								});
-
-								//Uncode addition
-								//setRecordHistory(originals.recordHistory, 'internal');
-
-								//for IE touch devices
-								container.css({
-										'-ms-touch-action': 'none',
-										'touch-action': 'none'
-								});
-
-								if(element.length){
-										//moving the container up
-										silentScroll(element.position().top);
-								}
-
-						}else{
-								$htmlBody.css({
-										'overflow' : 'visible !important',
-										'height' : 'initial'
-								});
-
-								//Uncode addition
-								//setRecordHistory(false, 'internal');
-
-								//for IE touch devices
-								container.css({
-										'-ms-touch-action': '',
-										'touch-action': ''
-								});
-
-								//scrolling the page to the section with no animation
-								if (element.length) {
-										$htmlBody.scrollTop(element.position().top);
-								}
-						}
-				}
-
-				/**
-				* Defines wheter to record the history for each hash change in the URL.
-				*/
-				function setRecordHistory(value, type){
-						setVariableState('recordHistory', value, type);
-				}
-
-				/**
-				* Defines the scrolling speed
-				*/
-				function setScrollingSpeed(value, type){
-						setVariableState('scrollingSpeed', value, type);
-				}
-
-				/**
-				* Sets fitToSection
-				*/
-				function setFitToSection(value, type){
-						setVariableState('fitToSection', value, type);
-				}
-
-				/**
-				* Sets lockAnchors
-				*/
-				function setLockAnchors(value){
-						options.lockAnchors = value;
-				}
-
-				/**
-				* Adds or remove the possiblity of scrolling through sections by using the mouse wheel or the trackpad.
-				*/
-				function setMouseWheelScrolling(value){
-						if(value){
-								addMouseWheelHandler();
-								addMiddleWheelHandler();
-						}else{
-								removeMouseWheelHandler();
-								removeMiddleWheelHandler();
-						}
-				}
-
-				/**
-				* Adds or remove the possibility of scrolling through sections by using the mouse wheel/trackpad or touch gestures.
-				* Optionally a second parameter can be used to specify the direction for which the action will be applied.
-				*
-				* @param directions string containing the direction or directions separated by comma.
-				*/
-				function setAllowScrolling(value, directions){
-						if(typeof directions !== 'undefined'){
-								directions = directions.replace(/ /g,'').split(',');
-
-								$.each(directions, function (index, direction){
-										setIsScrollAllowed(value, direction, 'm');
-								});
-						}
-						else if(value){
-								setMouseWheelScrolling(true);
-								addTouchHandler();
-						}else{
-								setMouseWheelScrolling(false);
-								removeTouchHandler();
-						}
-				}
-
-				/**
-				* Adds or remove the possibility of scrolling through sections by using the keyboard arrow keys
-				*/
-				function setKeyboardScrolling(value, directions){
-						if(typeof directions !== 'undefined'){
-								directions = directions.replace(/ /g,'').split(',');
-
-								$.each(directions, function (index, direction){
-										setIsScrollAllowed(value, direction, 'k');
-								});
-						}else{
-								options.keyboardScrolling = value;
-						}
-				}
-
-				/**
-				* Moves the page up one section.
-				*/
-				function moveSectionUp(){
-						var prev = $(SECTION_ACTIVE_SEL).prev(SECTION_SEL);
-
-						//looping to the bottom if there's no more sections above
-						if (!prev.length && (options.loopTop || options.continuousVertical)) {
-								prev = $(SECTION_SEL).last();
-						}
-
-						if (prev.length) {
-								scrollPage(prev, null, true);
-						}
-				}
-
-				/**
-				* Moves the page down one section.
-				*/
-				function moveSectionDown(){
-						var next = $(SECTION_ACTIVE_SEL).next(SECTION_SEL);
-
-						//looping to the top if there's no more sections below
-						if(!next.length &&
-								(options.loopBottom || options.continuousVertical)){
-								next = $(SECTION_SEL).first();
-						}
-
-						if(next.length){
-								scrollPage(next, null, false);
-						}
-				}
-
-				/**
-				* Moves the page to the given section and slide with no animation.
-				* Anchors or index positions can be used as params.
-				*/
-				function silentMoveTo(sectionAnchor, slideAnchor){
-						setScrollingSpeed (0, 'internal');
-						moveTo(sectionAnchor, slideAnchor);
-						setScrollingSpeed (originals.scrollingSpeed, 'internal');
-				}
-
-				/**
-				* Moves the page to the given section and slide.
-				* Anchors or index positions can be used as params.
-				*/
-				function moveTo(sectionAnchor, slideAnchor){
-						var destiny = getSectionByAnchor(sectionAnchor);
-
-						if (typeof slideAnchor !== 'undefined'){
-								scrollPageAndSlide(sectionAnchor, slideAnchor);
-						}else if(destiny.length > 0){
-								scrollPage(destiny);
-						}
-				}
-
-				/**
-				* Slides right the slider of the active section.
-				* Optional `section` param.
-				*/
-				function moveSlideRight(section){
-						moveSlide('right', section);
-				}
-
-				/**
-				* Slides left the slider of the active section.
-				* Optional `section` param.
-				*/
-				function moveSlideLeft(section){
-						moveSlide('left', section);
-				}
-
-				/**
-				 * When resizing is finished, we adjust the slides sizes and positions
-				 */
-				function reBuild(resizing){
-						if(container.hasClass(DESTROYED)){ return; }  //nothing to do if the plugin was destroyed
-
-						isResizing = true;
-
-						windowsHeight = $window.height();  //updating global var
-
-						$(SECTION_SEL).each(function(){
-								var slidesWrap = $(this).find(SLIDES_WRAPPER_SEL);
-								var slides = $(this).find(SLIDE_SEL);
-
-								//adjusting the height of the table-cell for IE and Firefox
-								if(options.verticalCentered){
-										$(this).find(TABLE_CELL_SEL).css('height', getTableHeight($(this)) + 'px');
-								}
-
-								$(this).css('height', windowsHeight + 'px');
-
-								//resizing the scrolling divs
-								if(options.scrollOverflow){
-										if(slides.length){
-												slides.each(function(){
-														createScrollBar($(this));
-												});
-										}else{
-												createScrollBar($(this));
-										}
-								}
-
-								//adjusting the position fo the FULL WIDTH slides...
-								if (slides.length > 1) {
-										landscapeScroll(slidesWrap, slidesWrap.find(SLIDE_ACTIVE_SEL));
-								}
-						});
-
-						var activeSection = $(SECTION_ACTIVE_SEL);
-						var sectionIndex = activeSection.index(SECTION_SEL);
-
-						//isn't it the first section?
-						if(sectionIndex){
-								//adjusting the position for the current section
-								silentMoveTo(sectionIndex + 1);
-						}
-
-						isResizing = false;
-						$.isFunction( options.afterResize ) && resizing && options.afterResize.call(container);
-						$.isFunction( options.afterReBuild ) && !resizing && options.afterReBuild.call(container);
-				}
-
-				/**
-				* Turns fullPage.js to normal scrolling mode when the viewport `width` or `height`
-				* are smaller than the set limit values.
-				*/
-				function setResponsive(active){
-						var isResponsive = $body.hasClass(RESPONSIVE);
-
-						if(active){
-								if(!isResponsive){
-										setAutoScrolling(false, 'internal');
-										setFitToSection(false, 'internal');
-										$(SECTION_NAV_SEL).hide();
-										$body.addClass(RESPONSIVE);
-										$.isFunction( options.afterResponsive ) && options.afterResponsive.call( container, active);
-								}
-						}
-						else if(isResponsive){
-								setAutoScrolling(originals.autoScrolling, 'internal');
-								setFitToSection(originals.autoScrolling, 'internal');
-								$(SECTION_NAV_SEL).show();
-								$body.removeClass(RESPONSIVE);
-								$.isFunction( options.afterResponsive ) && options.afterResponsive.call( container, active);
-						}
-				}
-
-				if($(this).length){
-						//public functions
-						FP.setAutoScrolling = setAutoScrolling;
-						FP.setRecordHistory = setRecordHistory;
-						FP.setScrollingSpeed = setScrollingSpeed;
-						FP.setFitToSection = setFitToSection;
-						FP.setLockAnchors = setLockAnchors;
-						FP.setMouseWheelScrolling = setMouseWheelScrolling;
-						FP.setAllowScrolling = setAllowScrolling;
-						FP.setKeyboardScrolling = setKeyboardScrolling;
-						FP.moveSectionUp = moveSectionUp;
-						FP.moveSectionDown = moveSectionDown;
-						FP.silentMoveTo = silentMoveTo;
-						FP.moveTo = moveTo;
-						FP.moveSlideRight = moveSlideRight;
-						FP.moveSlideLeft = moveSlideLeft;
-						FP.fitToSection = fitToSection;
-						FP.reBuild = reBuild;
-						FP.setResponsive = setResponsive;
-						FP.destroy = destroy;
-
-						init();
-
-						bindEvents();
-				}
-
-				function init(){
-						//if css3 is not supported, it will use jQuery animations
-						if(options.css3){
-								options.css3 = support3d();
-						}
-
-						options.scrollBar = options.scrollBar || options.hybrid;
-
-						setOptionsFromDOM();
-						prepareDom();
-						setAllowScrolling(true);
-						setAutoScrolling(options.autoScrolling, 'internal');
-						responsive();
-
-						//setting the class for the body element
-						setBodyClass();
-
-						//Uncode addition
-						// if(document.readyState === 'complete'){
-						//     scrollToAnchor();
-						// }
-						// $window.on('load', scrollToAnchor);
-				}
-
-				function bindEvents(){
-						$window
-								//when scrolling...
-								//.on('scroll', scrollHandler)
-
-								//detecting any change on the URL to scroll to the given anchor link
-								//(a way to detect back history button as we play with the hashes on the URL)
-								.on('hashchange', hashChangeHandler)
-
-								//when opening a new tab (ctrl + t), `control` won't be pressed when coming back.
-								.blur(blurHandler)
-
-								//when resizing the site, we adjust the heights of the sections, slimScroll...
-								.resize(resizeHandler);
-
-						$document
-								//Sliding with arrow keys, both, vertical and horizontal
-								.keydown(keydownHandler)
-
-								//to prevent scrolling while zooming
-								.keyup(keyUpHandler)
-
-								//Scrolls to the section when clicking the navigation bullet
-								.on('click touchstart', SECTION_NAV_SEL + ' a', sectionBulletHandler)
-
-								//Scrolls the slider to the given slide destination for the given section
-								.on('click touchstart', SLIDES_NAV_LINK_SEL, slideBulletHandler)
-
-								.on('click', SECTION_NAV_TOOLTIP_SEL, tooltipTextHandler);
-
-						//Scrolling horizontally when clicking on the slider controls.
-						$(SECTION_SEL).on('click touchstart', SLIDES_ARROW_SEL, slideArrowHandler);
-
-						/**
-						* Applying normalScroll elements.
-						* Ignoring the scrolls over the specified selectors.
-						*/
-						if(options.normalScrollElements){
-								$document.on('mouseenter', options.normalScrollElements, function () {
-										setMouseWheelScrolling(false);
-								});
-
-								$document.on('mouseleave', options.normalScrollElements, function(){
-										setMouseWheelScrolling(true);
-								});
-						}
-				}
-
-				/**
-				* Setting options from DOM elements if they are not provided.
-				*/
-				function setOptionsFromDOM(){
-						var sections = container.find(options.sectionSelector);
-
-						//no anchors option? Checking for them in the DOM attributes
-						if(!options.anchors.length){
-								options.anchors = sections.filter('[data-anchor]').map(function(){
-										return $(this).data('anchor').toString();
-								}).get();
-						}
-
-						//no tooltips option? Checking for them in the DOM attributes
-						if(!options.navigationTooltips.length){
-								options.navigationTooltips = sections.filter('[data-tooltip]').map(function(){
-										return $(this).data('tooltip').toString();
-								}).get();
-						}
-				}
-
-				/**
-				* Works over the DOM structure to set it up for the current fullpage options.
-				*/
-				function prepareDom(){
-						container.css({
-								'height': '100%',
-								'position': 'relative'
-						});
-
-						//adding a class to recognize the container internally in the code
-						container.addClass(WRAPPER);
-						$('html').addClass(ENABLED);
-
-						windowsHeight = $window.height();
-
-						container.removeClass(DESTROYED); //in case it was destroyed before initializing it again
-
-						addInternalSelectors();
-
-						 //styling the sections / slides / menu
-						$(SECTION_SEL).each(function(index){
-								var section = $(this);
-								var slides = section.find(SLIDE_SEL);
-								var numSlides = slides.length;
-
-								styleSection(section, index);
-								styleMenu(section, index);
-
-								// if there's any slide
-								if (numSlides > 0) {
-										styleSlides(section, slides, numSlides);
-								}else{
-										if(options.verticalCentered){
-												addTableClass(section);
-										}
-								}
-						});
-
-						//fixed elements need to be moved out of the plugin container due to problems with CSS3.
-						if(options.fixedElements && options.css3){
-								$(options.fixedElements).appendTo($body);
-						}
-
-						//vertical centered of the navigation + active bullet
-						if(options.navigation){
-								addVerticalNavigation();
-						}
-
-						enableYoutubeAPI();
-
-						if(options.scrollOverflow){
-								if(document.readyState === 'complete'){
-										createScrollBarHandler();
-								}
-								//after DOM and images are loaded
-								$window.on('load', createScrollBarHandler);
-						}else{
-								afterRenderActions();
-						}
-				}
-
-				/**
-				* Styles the horizontal slides for a section.
-				*/
-				function styleSlides(section, slides, numSlides){
-						var sliderWidth = numSlides * 100;
-						var slideWidth = 100 / numSlides;
-
-						slides.wrapAll('<div class="' + SLIDES_CONTAINER + '" />');
-						slides.parent().wrap('<div class="' + SLIDES_WRAPPER + '" />');
-
-						section.find(SLIDES_CONTAINER_SEL).css('width', sliderWidth + '%');
-
-						if(numSlides > 1){
-								if(options.controlArrows){
-										createSlideArrows(section);
-								}
-
-								if(options.slidesNavigation){
-										addSlidesNavigation(section, numSlides);
-								}
-						}
-
-						slides.each(function(index) {
-								$(this).css('width', slideWidth + '%');
-
-								if(options.verticalCentered){
-										addTableClass($(this));
-								}
-						});
-
-						var startingSlide = section.find(SLIDE_ACTIVE_SEL);
-
-						//if the slide won't be an starting point, the default will be the first one
-						//the active section isn't the first one? Is not the first slide of the first section? Then we load that section/slide by default.
-						if( startingSlide.length &&  ($(SECTION_ACTIVE_SEL).index(SECTION_SEL) !== 0 || ($(SECTION_ACTIVE_SEL).index(SECTION_SEL) === 0 && startingSlide.index() !== 0))){
-								silentLandscapeScroll(startingSlide, 'internal');
-						}else{
-								slides.eq(0).addClass(ACTIVE);
-						}
-				}
-
-				/**
-				* Styling vertical sections
-				*/
-				function styleSection(section, index){
-						//if no active section is defined, the 1st one will be the default one
-						if(!index && $(SECTION_ACTIVE_SEL).length === 0) {
-								section.addClass(ACTIVE);
-						}
-						startingSection = $(SECTION_ACTIVE_SEL);
-
-						section.css('height', windowsHeight + 'px');
-
-						if(options.paddingTop){
-								section.css('padding-top', options.paddingTop);
-						}
-
-						if(options.paddingBottom){
-								section.css('padding-bottom', options.paddingBottom);
-						}
-
-						if (typeof options.sectionsColor[index] !==  'undefined') {
-								section.css('background-color', options.sectionsColor[index]);
-						}
-
-						if (typeof options.anchors[index] !== 'undefined') {
-								section.attr('data-anchor', options.anchors[index]);
-						}
-				}
-
-				/**
-				* Sets the data-anchor attributes to the menu elements and activates the current one.
-				*/
-				function styleMenu(section, index){
-						if (typeof options.anchors[index] !== 'undefined') {
-								//activating the menu / nav element on load
-								if(section.hasClass(ACTIVE)){
-										activateMenuAndNav(options.anchors[index], index);
-								}
-						}
-
-						//moving the menu outside the main container if it is inside (avoid problems with fixed positions when using CSS3 tranforms)
-						if(options.menu && options.css3 && $(options.menu).closest(WRAPPER_SEL).length){
-								$(options.menu).appendTo($body);
-						}
-				}
-
-				/**
-				* Adds internal classes to be able to provide customizable selectors
-				* keeping the link with the style sheet.
-				*/
-				function addInternalSelectors(){
-						container.find(options.sectionSelector).addClass(SECTION);
-						container.find(options.slideSelector).addClass(SLIDE);
-				}
-
-				/**
-				* Creates the control arrows for the given section
-				*/
-				function createSlideArrows(section){
-						section.find(SLIDES_WRAPPER_SEL).after('<div class="' + SLIDES_ARROW_PREV + '"></div><div class="' + SLIDES_ARROW_NEXT + '"></div>');
-
-						if(options.controlArrowColor!='#fff'){
-								section.find(SLIDES_ARROW_NEXT_SEL).css('border-color', 'transparent transparent transparent '+options.controlArrowColor);
-								section.find(SLIDES_ARROW_PREV_SEL).css('border-color', 'transparent '+ options.controlArrowColor + ' transparent transparent');
-						}
-
-						if(!options.loopHorizontal){
-								section.find(SLIDES_ARROW_PREV_SEL).hide();
-						}
-				}
-
-				/**
-				* Creates a vertical navigation bar.
-				*/
-				function addVerticalNavigation(){
-						$body.append('<div id="' + SECTION_NAV + '"><ul></ul></div>');
-						var nav = $(SECTION_NAV_SEL);
-
-						nav.addClass(function() {
-								return options.showActiveTooltip ? SHOW_ACTIVE_TOOLTIP + ' ' + options.navigationPosition : options.navigationPosition;
-						});
-
-						for (var i = 0; i < $(SECTION_SEL).length; i++) {
-								var link = '';
-								if (options.anchors.length) {
-										link = options.anchors[i];
-								}
-
-								var li = '<li><a href="#' + link + '"><span></span></a>';
-
-								// Only add tooltip if needed (defined by user)
-								var tooltip = options.navigationTooltips[i];
-
-								if (typeof tooltip !== 'undefined' && tooltip !== '') {
-										li += '<div class="' + SECTION_NAV_TOOLTIP + ' ' + options.navigationPosition + '">' + tooltip + '</div>';
-								}
-
-								li += '</li>';
-
-								nav.find('ul').append(li);
-						}
-
-						//centering it vertically
-						$(SECTION_NAV_SEL).css('margin-top', '-' + ($(SECTION_NAV_SEL).height()/2) + 'px');
-
-						//activating the current active section
-						$(SECTION_NAV_SEL).find('li').eq($(SECTION_ACTIVE_SEL).index(SECTION_SEL)).find('a').addClass(ACTIVE);
-				}
-
-				/**
-				* Creates the slim scroll scrollbar for the sections and slides inside them.
-				*/
-				function createScrollBarHandler(){
-						$(SECTION_SEL).each(function(){
-								var slides = $(this).find(SLIDE_SEL);
-
-								if(slides.length){
-										slides.each(function(){
-												createScrollBar($(this));
-										});
-								}else{
-										createScrollBar($(this));
-								}
-
-						});
-						afterRenderActions();
-				}
-
-				/*
-				* Enables the Youtube videos API so we can control their flow if necessary.
-				*/
-				function enableYoutubeAPI(){
-						container.find('iframe[src*="youtube.com/embed/"]').each(function(){
-								addURLParam($(this), 'enablejsapi=1');
-						});
-				}
-
-				/**
-				* Adds a new parameter and its value to the `src` of a given element
-				*/
-				function addURLParam(element, newParam){
-						var originalSrc = element.attr('src');
-						element.attr('src', originalSrc + getUrlParamSign(originalSrc) + newParam);
-				}
-
-				/*
-				* Returns the prefix sign to use for a new parameter in an existen URL.
-				*
-				* @return {String}  ? | &
-				*/
-				function getUrlParamSign(url){
-						return ( !/\?/.test( url ) ) ? '?' : '&';
-				}
-
-				/**
-				* Actions and callbacks to fire afterRender
-				*/
-				function afterRenderActions(){
-						var section = $(SECTION_ACTIVE_SEL);
-
-						section.addClass(COMPLETELY);
-
-						if(options.scrollOverflowHandler.afterRender){
-								options.scrollOverflowHandler.afterRender(section);
-						}
-						lazyLoad(section);
-						playMedia(section);
-						options.scrollOverflowHandler.afterLoad();
-
-						if(isDestinyTheStartingSection()){
-								$.isFunction( options.afterLoad ) && options.afterLoad.call(section, section.data('anchor'), (section.index(SECTION_SEL) + 1));
-						}
-
-						$.isFunction( options.afterRender ) && options.afterRender.call(container);
-				}
-
-				/**
-				* Determines if the URL anchor destiny is the starting section (the one using 'active' class before initialization)
-				*/
-				function isDestinyTheStartingSection(){
-						var anchors =  window.location.hash.replace('#', '').split('/');
-						var destinationSection = getSectionByAnchor(decodeURIComponent(anchors[0]));
-
-						return !destinationSection.length || destinationSection.length && destinationSection.index() === startingSection.index();
-				}
-
-
-				var isScrolling = false;
-				var lastScroll = 0;
-
-				//when scrolling...
-				function scrollHandler(){
-						var currentSection;
-
-						if(!options.autoScrolling || options.scrollBar){
-								var currentScroll = $window.scrollTop();
-								var scrollDirection = getScrollDirection(currentScroll);
-								var visibleSectionIndex = 0;
-								var screen_mid = currentScroll + ($window.height() / 2.0);
-								var isAtBottom = $body.height() - $window.height() === currentScroll;
-								var sections =  document.querySelectorAll(SECTION_SEL);
-
-								//when using `auto-height` for a small last section it won't be centered in the viewport
-								if(isAtBottom){
-										visibleSectionIndex = sections.length - 1;
-								}
-								//is at top? when using `auto-height` for a small first section it won't be centered in the viewport
-								else if(!currentScroll){
-										visibleSectionIndex = 0;
-								}
-
-								//taking the section which is showing more content in the viewport
-								else{
-										for (var i = 0; i < sections.length; ++i) {
-												var section = sections[i];
-
-												// Pick the the last section which passes the middle line of the screen.
-												if (section.offsetTop <= screen_mid)
-												{
-														visibleSectionIndex = i;
-												}
-										}
-								}
-
-								if(isCompletelyInViewPort(scrollDirection)){
-										if(!$(SECTION_ACTIVE_SEL).hasClass(COMPLETELY)){
-												$(SECTION_ACTIVE_SEL).addClass(COMPLETELY).siblings().removeClass(COMPLETELY);
-										}
-								}
-
-								//geting the last one, the current one on the screen
-								currentSection = $(sections).eq(visibleSectionIndex);
-
-								//setting the visible section as active when manually scrolling
-								//executing only once the first time we reach the section
-								if(!currentSection.hasClass(ACTIVE)){
-										isScrolling = true;
-										var leavingSection = $(SECTION_ACTIVE_SEL);
-										var leavingSectionIndex = leavingSection.index(SECTION_SEL) + 1;
-										var yMovement = getYmovement(currentSection);
-										var anchorLink  = currentSection.data('anchor');
-										var sectionIndex = currentSection.index(SECTION_SEL) + 1;
-										var activeSlide = currentSection.find(SLIDE_ACTIVE_SEL);
-										var slideIndex;
-										var slideAnchorLink;
-
-										if(activeSlide.length){
-												slideAnchorLink = activeSlide.data('anchor');
-												slideIndex = activeSlide.index();
-										}
-
-										if(canScroll){
-												currentSection.addClass(ACTIVE).siblings().removeClass(ACTIVE);
-
-												$.isFunction( options.onLeave ) && options.onLeave.call( leavingSection, leavingSectionIndex, sectionIndex, yMovement);
-												$.isFunction( options.afterLoad ) && options.afterLoad.call( currentSection, anchorLink, sectionIndex);
-
-												stopMedia(leavingSection);
-												lazyLoad(currentSection);
-												playMedia(currentSection);
-
-												activateMenuAndNav(anchorLink, sectionIndex - 1);
-
-												if(options.anchors.length){
-														//needed to enter in hashChange event when using the menu with anchor links
-														lastScrolledDestiny = anchorLink;
-												}
-												setState(slideIndex, slideAnchorLink, anchorLink, sectionIndex);
-										}
-
-										//small timeout in order to avoid entering in hashChange event when scrolling is not finished yet
-										clearTimeout(scrollId);
-										scrollId = setTimeout(function(){
-												isScrolling = false;
-										}, 100);
-								}
-
-								if(options.fitToSection){
-										//for the auto adjust of the viewport to fit a whole section
-										clearTimeout(scrollId2);
-
-										scrollId2 = setTimeout(function(){
-												//checking it again in case it changed during the delay
-												if(options.fitToSection){
-														fitToSection();
-												}
-										}, options.fitToSectionDelay);
-								}
-						}
-				}
-
-				/**
-				* Fits the site to the nearest active section
-				*/
-				function fitToSection(){
-						//checking fitToSection again in case it was set to false before the timeout delay
-						if(canScroll){
-								//allows to scroll to an active section and
-								//if the section is already active, we prevent firing callbacks
-								isResizing = true;
-
-								scrollPage($(SECTION_ACTIVE_SEL));
-								isResizing = false;
-						}
-				}
-
-				/**
-				* Determines whether the active section has seen in its whole or not.
-				*/
-				function isCompletelyInViewPort(movement){
-						var top = $(SECTION_ACTIVE_SEL).position().top;
-						var bottom = top + $window.height();
-
-						if(movement == 'up'){
-								return bottom >= ($window.scrollTop() + $window.height());
-						}
-						return top <= $window.scrollTop();
-				}
-
-				/**
-				* Gets the directon of the the scrolling fired by the scroll event.
-				*/
-				function getScrollDirection(currentScroll){
-						var direction = currentScroll > lastScroll ? 'down' : 'up';
-
-						lastScroll = currentScroll;
-
-						//needed for auto-height sections to determine if we want to scroll to the top or bottom of the destination
-						previousDestTop = currentScroll;
-
-						return direction;
-				}
-
-				/**
-				* Determines the way of scrolling up or down:
-				* by 'automatically' scrolling a section or by using the default and normal scrolling.
-				*/
-				function scrolling(type, scrollable){
-						if (!isScrollAllowed.m[type]){
-								return;
-						}
-						var check = (type === 'down') ? 'bottom' : 'top';
-						var scrollSection = (type === 'down') ? moveSectionDown : moveSectionUp;
-
-						if(scrollable.length > 0 ){
-								//is the scrollbar at the start/end of the scroll?
-								if(options.scrollOverflowHandler.isScrolled(check, scrollable)){
-										scrollSection();
-								}else{
-										return true;
-								}
-						}else{
-								// moved up/down
-								scrollSection();
-						}
-				}
-
-				/*
-				* Preventing bouncing in iOS #2285
-				*/
-				function preventBouncing(event){
-						var e = event.originalEvent;
-						if(!checkParentForNormalScrollElement(event.target) && options.autoScrolling && isReallyTouch(e)){
-								//preventing the easing on iOS devices
-								event.preventDefault();
-						}
-				}
-
-				var touchStartY = 0;
-				var touchStartX = 0;
-				var touchEndY = 0;
-				var touchEndX = 0;
-
-				/* Detecting touch events
-
-				* As we are changing the top property of the page on scrolling, we can not use the traditional way to detect it.
-				* This way, the touchstart and the touch moves shows an small difference between them which is the
-				* used one to determine the direction.
-				*/
-				function touchMoveHandler(event){
-						var e = event.originalEvent;
-						var activeSection = $(e.target).closest(SECTION_SEL);
-
-						// additional: if one of the normalScrollElements isn't within options.normalScrollElementTouchThreshold hops up the DOM chain
-						if (!checkParentForNormalScrollElement(event.target) && isReallyTouch(e) ) {
-
-								if(options.autoScrolling){
-										//preventing the easing on iOS devices
-										event.preventDefault();
-								}
-
-								var scrollable = options.scrollOverflowHandler.scrollable(activeSection);
-								var touchEvents = getEventsPage(e);
-
-								touchEndY = touchEvents.y;
-								touchEndX = touchEvents.x;
-
-								//if movement in the X axys is greater than in the Y and the currect section has slides...
-								if (activeSection.find(SLIDES_WRAPPER_SEL).length && Math.abs(touchStartX - touchEndX) > (Math.abs(touchStartY - touchEndY))) {
-
-										//is the movement greater than the minimum resistance to scroll?
-										if (!slideMoving && Math.abs(touchStartX - touchEndX) > ($window.outerWidth() / 100 * options.touchSensitivity)) {
-												if (touchStartX > touchEndX) {
-														if(isScrollAllowed.m.right){
-																moveSlideRight(activeSection); //next
-														}
-												} else {
-														if(isScrollAllowed.m.left){
-																moveSlideLeft(activeSection); //prev
-														}
-												}
-										}
-								}
-
-								//vertical scrolling (only when autoScrolling is enabled)
-								else if(options.autoScrolling && canScroll){
-
-										//is the movement greater than the minimum resistance to scroll?
-										if (Math.abs(touchStartY - touchEndY) > ($window.height() / 100 * options.touchSensitivity)) {
-												if (touchStartY > touchEndY) {
-														scrolling('down', scrollable);
-												} else if (touchEndY > touchStartY) {
-														scrolling('up', scrollable);
-												}
-										}
-								}
-						}
-				}
-
-				/**
-				 * recursive function to loop up the parent nodes to check if one of them exists in options.normalScrollElements
-				 * Currently works well for iOS - Android might need some testing
-				 * @param  {Element} el  target element / jquery selector (in subsequent nodes)
-				 * @param  {int}     hop current hop compared to options.normalScrollElementTouchThreshold
-				 * @return {boolean} true if there is a match to options.normalScrollElements
-				 */
-				function checkParentForNormalScrollElement (el, hop) {
-						hop = hop || 0;
-						var parent = $(el).parent();
-
-						if (hop < options.normalScrollElementTouchThreshold &&
-								parent.is(options.normalScrollElements) ) {
-								return true;
-						} else if (hop == options.normalScrollElementTouchThreshold) {
-								return false;
-						} else {
-								return checkParentForNormalScrollElement(parent, ++hop);
-						}
-				}
-
-				/**
-				* As IE >= 10 fires both touch and mouse events when using a mouse in a touchscreen
-				* this way we make sure that is really a touch event what IE is detecting.
-				*/
-				function isReallyTouch(e){
-						//if is not IE   ||  IE is detecting `touch` or `pen`
-						return typeof e.pointerType === 'undefined' || e.pointerType != 'mouse';
-				}
-
-				/**
-				* Handler for the touch start event.
-				*/
-				function touchStartHandler(event){
-						var e = event.originalEvent;
-
-						//stopping the auto scroll to adjust to a section
-						if(options.fitToSection){
-								$htmlBody.stop();
-						}
-
-						if(isReallyTouch(e)){
-								var touchEvents = getEventsPage(e);
-								touchStartY = touchEvents.y;
-								touchStartX = touchEvents.x;
-						}
-				}
-
-				/**
-				* Gets the average of the last `number` elements of the given array.
-				*/
-				function getAverage(elements, number){
-						var sum = 0;
-
-						//taking `number` elements from the end to make the average, if there are not enought, 1
-						var lastElements = elements.slice(Math.max(elements.length - number, 1));
-
-						for(var i = 0; i < lastElements.length; i++){
-								sum = sum + lastElements[i];
-						}
-
-						return Math.ceil(sum/number);
-				}
-
-				/**
-				 * Detecting mousewheel scrolling
-				 *
-				 * http://blogs.sitepointstatic.com/examples/tech/mouse-wheel/index.html
-				 * http://www.sitepoint.com/html5-javascript-mouse-wheel/
-				 */
-				var prevTime = new Date().getTime();
-
-				function MouseWheelHandler(e) {
-						var curTime = new Date().getTime();
-						var isNormalScroll = $(COMPLETELY_SEL).hasClass(NORMAL_SCROLL);
-
-						//autoscrolling and not zooming?
-						if(options.autoScrolling && !controlPressed && !isNormalScroll){
-								// cross-browser wheel delta
-								e = e || window.event;
-								var value = e.wheelDelta || -e.deltaY || -e.detail;
-								var delta = Math.max(-1, Math.min(1, value));
-
-								var horizontalDetection = typeof e.wheelDeltaX !== 'undefined' || typeof e.deltaX !== 'undefined';
-								var isScrollingVertically = (Math.abs(e.wheelDeltaX) < Math.abs(e.wheelDelta)) || (Math.abs(e.deltaX ) < Math.abs(e.deltaY) || !horizontalDetection);
-
-								//Limiting the array to 150 (lets not waste memory!)
-								if(scrollings.length > 149){
-										scrollings.shift();
-								}
-
-								//keeping record of the previous scrollings
-								scrollings.push(Math.abs(value));
-
-								//preventing to scroll the site on mouse wheel when scrollbar is present
-								if(options.scrollBar){
-										e.preventDefault ? e.preventDefault() : e.returnValue = false;
-								}
-
-								var activeSection = $(SECTION_ACTIVE_SEL);
-								var scrollable = options.scrollOverflowHandler.scrollable(activeSection);
-
-								//time difference between the last scroll and the current one
-								var timeDiff = curTime-prevTime;
-								prevTime = curTime;
-
-								//haven't they scrolled in a while?
-								//(enough to be consider a different scrolling action to scroll another section)
-								if(timeDiff > 200){
-										//emptying the array, we dont care about old scrollings for our averages
-										scrollings = [];
-								}
-
-								if(canScroll){
-										var averageEnd = getAverage(scrollings, 10);
-										var averageMiddle = getAverage(scrollings, 70);
-										var isAccelerating = averageEnd >= averageMiddle;
-
-										//to avoid double swipes...
-										if(isAccelerating && isScrollingVertically){
-												//scrolling down?
-												if (delta < 0) {
-														scrolling('down', scrollable);
-
-												//scrolling up?
-												}else {
-														scrolling('up', scrollable);
-												}
-										}
-								}
-
-								return false;
-						}
-
-						if(options.fitToSection){
-								//stopping the auto scroll to adjust to a section
-								$htmlBody.stop();
-						}
-				}
-
-				/**
-				* Slides a slider to the given direction.
-				* Optional `section` param.
-				*/
-				function moveSlide(direction, section){
-						var activeSection = typeof section === 'undefined' ? $(SECTION_ACTIVE_SEL) : section;
-						var slides = activeSection.find(SLIDES_WRAPPER_SEL);
-						var numSlides = slides.find(SLIDE_SEL).length;
-
-						// more than one slide needed and nothing should be sliding
-						if (!slides.length || slideMoving || numSlides < 2) {
-								return;
-						}
-
-						var currentSlide = slides.find(SLIDE_ACTIVE_SEL);
-						var destiny = null;
-
-						if(direction === 'left'){
-								destiny = currentSlide.prev(SLIDE_SEL);
-						}else{
-								destiny = currentSlide.next(SLIDE_SEL);
-						}
-
-						//isn't there a next slide in the secuence?
-						if(!destiny.length){
-								//respect loopHorizontal settin
-								if (!options.loopHorizontal) return;
-
-								if(direction === 'left'){
-										destiny = currentSlide.siblings(':last');
-								}else{
-										destiny = currentSlide.siblings(':first');
-								}
-						}
-
-						slideMoving = true;
-
-						landscapeScroll(slides, destiny, direction);
-				}
-
-				/**
-				* Maintains the active slides in the viewport
-				* (Because the `scroll` animation might get lost with some actions, such as when using continuousVertical)
-				*/
-				function keepSlidesPosition(){
-						$(SLIDE_ACTIVE_SEL).each(function(){
-								silentLandscapeScroll($(this), 'internal');
-						});
-				}
-
-				var previousDestTop = 0;
-				/**
-				* Returns the destination Y position based on the scrolling direction and
-				* the height of the section.
-				*/
-				function getDestinationPosition(element){
-						var elemPosition = element.position();
-
-						//top of the desination will be at the top of the viewport
-						var position = elemPosition.top;
-						var isScrollingDown =  elemPosition.top > previousDestTop;
-						var sectionBottom = position - windowsHeight + element.outerHeight();
-						var bigSectionsDestination = options.bigSectionsDestination;
-
-						//Uncode addition
-						var containerH = container.outerHeight();
-						var containerPosition = container.offset();
-
-						//########### Commented by Uncode - START ###########
-						//is the destination element bigger than the viewport?
-						// if(element.outerHeight() > windowsHeight){
-						//     //scrolling up?
-						//     if(!isScrollingDown && !bigSectionsDestination || bigSectionsDestination === 'bottom' ){
-						//         position = sectionBottom;
-						//     }
-						// }
-
-						// //sections equal or smaller than the viewport height && scrolling down? ||  is resizing and its in the last section
-						// else if(isScrollingDown || (isResizing && element.is(':last-child')) ){
-						//     //The bottom of the destination will be at the bottom of the viewport
-						//     position = sectionBottom;
-						// }
-						//########### Commented by Uncode - END ###########
-
-						//Uncode addition
-						if ( !$masthead.hasClass('menu-transparent') && $('body').hasClass('uncode-fp-menu-shrink') && !element.is(':first-child') )
-								position += 18;
-						if ( ( containerH + menuHeight + bodyBorder + adminBarHeight - windowsHeight ) < position || ( isResizing && element.is(':last-child') ) ) {
-								position = sectionBottom + menuHeight + bodyBorder*2 + adminBarHeight;
-						}
-
-						/*
-						Keeping record of the last scrolled position to determine the scrolling direction.
-						No conventional methods can be used as the scroll bar might not be present
-						AND the section might not be active if it is auto-height and didnt reach the middle
-						of the viewport.
-						*/
-						previousDestTop = position;
-						return position;
-				}
-
-				/**
-				* Scrolls the site to the given element and scrolls to the slide if a callback is given.
-				*/
-				function scrollPage(element, callback, isMovementUp){
-						if(typeof element === 'undefined'){ return; } //there's no element to scroll, leaving the function
-
-						var dtop = getDestinationPosition(element);
-						var slideAnchorLink;
-						var slideIndex;
-
-						//local variables
-						var v = {
-								element: element,
-								callback: callback,
-								isMovementUp: isMovementUp,
-								dtop: dtop,
-								yMovement: getYmovement(element),
-								anchorLink: element.data('anchor'),
-								sectionIndex: element.index(SECTION_SEL),
-								activeSlide: element.find(SLIDE_ACTIVE_SEL),
-								activeSection: $(SECTION_ACTIVE_SEL),
-								leavingSection: $(SECTION_ACTIVE_SEL).index(SECTION_SEL) + 1,
-
-								//caching the value of isResizing at the momment the function is called
-								//because it will be checked later inside a setTimeout and the value might change
-								localIsResizing: isResizing
-						};
-
-						//quiting when destination scroll is the same as the current one
-						if((v.activeSection.is(element) && !isResizing) || (options.scrollBar && $window.scrollTop() === v.dtop && !element.hasClass(AUTO_HEIGHT) )){ return; }
-
-						if(v.activeSlide.length){
-								slideAnchorLink = v.activeSlide.data('anchor');
-								slideIndex = v.activeSlide.index();
-						}
-
-						// If continuousVertical && we need to wrap around
-						if (options.autoScrolling && options.continuousVertical && typeof (v.isMovementUp) !== "undefined" &&
-								((!v.isMovementUp && v.yMovement == 'up') || // Intending to scroll down but about to go up or
-								(v.isMovementUp && v.yMovement == 'down'))) { // intending to scroll up but about to go down
-
-								v = createInfiniteSections(v);
-						}
-
-						//callback (onLeave) if the site is not just resizing and readjusting the slides
-						if($.isFunction(options.onLeave) && !v.localIsResizing){
-								if(options.onLeave.call(v.activeSection, v.leavingSection, (v.sectionIndex + 1), v.yMovement) === false){
-										return;
-								}
-						}
-
-						//pausing media of the leaving section (if we are not just resizing, as destinatino will be the same one)
-						if(!v.localIsResizing){
-								stopMedia(v.activeSection);
-						}
-
-						options.scrollOverflowHandler.beforeLeave();
-						element.addClass(ACTIVE).siblings().removeClass(ACTIVE);
-						lazyLoad(element);
-						options.scrollOverflowHandler.onLeave();
-
-
-						//preventing from activating the MouseWheelHandler event
-						//more than once if the page is scrolling
-						canScroll = false;
-
-						setState(slideIndex, slideAnchorLink, v.anchorLink, v.sectionIndex);
-
-						performMovement(v);
-
-						//flag to avoid callingn `scrollPage()` twice in case of using anchor links
-						lastScrolledDestiny = v.anchorLink;
-
-						//avoid firing it twice (as it does also on scroll)
-						activateMenuAndNav(v.anchorLink, v.sectionIndex);
-				}
-
-				/**
-				* Performs the vertical movement (by CSS3 or by jQuery)
-				*/
-				function performMovement(v){
-						// using CSS3 translate functionality
-						if (options.css3 && options.autoScrolling && !options.scrollBar) {
-
-								// The first section can have a negative value in iOS 10. Not quite sure why: -0.0142822265625
-								// that's why we round it to 0.
-								var translate3d = 'translate3d(0px, -' + Math.round(v.dtop) + 'px, 0px)';
-								transformContainer(translate3d, true);
-
-								//even when the scrollingSpeed is 0 there's a little delay, which might cause the
-								//scrollingSpeed to change in case of using silentMoveTo();
-								if(options.scrollingSpeed){
-										clearTimeout(afterSectionLoadsId);
-										afterSectionLoadsId = setTimeout(function () {
-												afterSectionLoads(v);
-										}, options.scrollingSpeed);
-								}else{
-										afterSectionLoads(v);
-								}
-						}
-
-						// using jQuery animate
-						else{
-								var scrollSettings = getScrollSettings(v);
-
-								$(scrollSettings.element).animate(
-										scrollSettings.options,
-								options.scrollingSpeed, options.easing).promise().done(function () { //only one single callback in case of animating  `html, body`
-										if(options.scrollBar){
-
-												/* Hack!
-												The timeout prevents setting the most dominant section in the viewport as "active" when the user
-												scrolled to a smaller section by using the mousewheel (auto scrolling) rather than draging the scroll bar.
-
-												When using scrollBar:true It seems like the scroll events still getting propagated even after the scrolling animation has finished.
-												*/
-												setTimeout(function(){
-														afterSectionLoads(v);
-												},30);
-										}else{
-												afterSectionLoads(v);
-										}
-								});
-						}
-				}
-
-				/**
-				* Gets the scrolling settings depending on the plugin autoScrolling option
-				*/
-				function getScrollSettings(v){
-						var scroll = {};
-
-						if(options.autoScrolling && !options.scrollBar){
-								scroll.options = { 'top': -v.dtop};
-								scroll.element = WRAPPER_SEL;
-						}else{
-								scroll.options = { 'scrollTop': v.dtop};
-								scroll.element = 'html, body';
-						}
-
-						return scroll;
-				}
-
-				/**
-				* Adds sections before or after the current one to create the infinite effect.
-				*/
-				function createInfiniteSections(v){
-						// Scrolling down
-						if (!v.isMovementUp) {
-								// Move all previous sections to after the active section
-								$(SECTION_ACTIVE_SEL).after(v.activeSection.prevAll(SECTION_SEL).get().reverse());
-						}
-						else { // Scrolling up
-								// Move all next sections to before the active section
-								$(SECTION_ACTIVE_SEL).before(v.activeSection.nextAll(SECTION_SEL));
-						}
-
-						// Maintain the displayed position (now that we changed the element order)
-						silentScroll($(SECTION_ACTIVE_SEL).position().top);
-
-						// Maintain the active slides visible in the viewport
-						keepSlidesPosition();
-
-						// save for later the elements that still need to be reordered
-						v.wrapAroundElements = v.activeSection;
-
-						// Recalculate animation variables
-						v.dtop = v.element.position().top;
-						v.yMovement = getYmovement(v.element);
-
-						return v;
-				}
-
-				/**
-				* Fix section order after continuousVertical changes have been animated
-				*/
-				function continuousVerticalFixSectionOrder (v) {
-						// If continuousVertical is in effect (and autoScrolling would also be in effect then),
-						// finish moving the elements around so the direct navigation will function more simply
-						if (!v.wrapAroundElements || !v.wrapAroundElements.length) {
-								return;
-						}
-
-						if (v.isMovementUp) {
-								$(SECTION_FIRST_SEL).before(v.wrapAroundElements);
-						}
-						else {
-								$(SECTION_LAST_SEL).after(v.wrapAroundElements);
-						}
-
-						silentScroll($(SECTION_ACTIVE_SEL).position().top);
-
-						// Maintain the active slides visible in the viewport
-						keepSlidesPosition();
-				}
-
-
-				/**
-				* Actions to do once the section is loaded.
-				*/
-				function afterSectionLoads (v){
-						continuousVerticalFixSectionOrder(v);
-
-						//callback (afterLoad) if the site is not just resizing and readjusting the slides
-						$.isFunction(options.afterLoad) && !v.localIsResizing && options.afterLoad.call(v.element, v.anchorLink, (v.sectionIndex + 1));
-						options.scrollOverflowHandler.afterLoad();
-
-						if(!v.localIsResizing){
-								playMedia(v.element);
-						}
-
-						v.element.addClass(COMPLETELY).siblings().removeClass(COMPLETELY);
-
-						canScroll = true;
-
-						$.isFunction(v.callback) && v.callback.call(this);
-				}
-
-				/**
-				* Sets the value for the given attribute from the `data-` attribute with the same suffix
-				* ie: data-srcset ==> srcset  |  data-src ==> src
-				*/
-				function setSrc(element, attribute){
-						element
-								.attr(attribute, element.data(attribute))
-								.removeAttr('data-' + attribute);
-				}
-
-				/**
-				* Lazy loads image, video and audio elements.
-				*/
-				function lazyLoad(destiny){
-						if (!options.lazyLoading){
-								return;
-						}
-
-						var panel = getSlideOrSection(destiny);
-						var element;
-
-						panel.find('img[data-src], img[data-srcset], source[data-src], audio[data-src], iframe[data-src]').each(function(){
-								element = $(this);
-
-								$.each(['src', 'srcset'], function(index, type){
-										var attribute = element.attr('data-' + type);
-										if(typeof attribute !== 'undefined' && attribute){
-												setSrc(element, type);
-										}
-								});
-
-								if(element.is('source')){
-										element.closest('video').get(0).load();
-								}
-						});
-				}
-
-				/**
-				* Plays video and audio elements.
-				*/
-				function playMedia(destiny){
-						var panel = getSlideOrSection(destiny);
-
-						//playing HTML5 media elements
-						panel.find('video, audio').each(function(){
-								var element = $(this).get(0);
-
-								if( element.hasAttribute('data-autoplay') && typeof element.play === 'function' ) {
-										element.play();
-								}
-						});
-
-						//youtube videos
-						panel.find('iframe[src*="youtube.com/embed/"]').each(function(){
-								var element = $(this).get(0);
-
-								if ( element.hasAttribute('data-autoplay') ){
-										playYoutube(element);
-								}
-
-								//in case the URL was not loaded yet. On page load we need time for the new URL (with the API string) to load.
-								element.onload = function() {
-										if ( element.hasAttribute('data-autoplay') ){
-												playYoutube(element);
-										}
-								};
-						});
-				}
-
-				/**
-				* Plays a youtube video
-				*/
-				function playYoutube(element){
-						element.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
-				}
-
-				/**
-				* Stops video and audio elements.
-				*/
-				function stopMedia(destiny){
-						var panel = getSlideOrSection(destiny);
-
-						//stopping HTML5 media elements
-						panel.find('video, audio').each(function(){
-								var element = $(this).get(0);
-
-								if( !element.hasAttribute('data-keepplaying') && typeof element.pause === 'function' ) {
-										element.pause();
-								}
-						});
-
-						//youtube videos
-						panel.find('iframe[src*="youtube.com/embed/"]').each(function(){
-								var element = $(this).get(0);
-
-								if( /youtube\.com\/embed\//.test($(this).attr('src')) && !element.hasAttribute('data-keepplaying')){
-										$(this).get(0).contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}','*');
-								}
-						});
-				}
-
-				/**
-				* Gets the active slide (or section) for the given section
-				*/
-				function getSlideOrSection(destiny){
-						var slide = destiny.find(SLIDE_ACTIVE_SEL);
-						if( slide.length ) {
-								destiny = $(slide);
-						}
-
-						return destiny;
-				}
-
-				/**
-				* Scrolls to the anchor in the URL when loading the site
-				*/
-				function scrollToAnchor(){
-						//getting the anchor link in the URL and deleting the `#`
-						var value =  window.location.hash.replace('#', '').split('/');
-						var sectionAnchor = decodeURIComponent(value[0]);
-						var slideAnchor = decodeURIComponent(value[1]);
-
-						if(sectionAnchor){  //if theres any #
-								if(options.animateAnchor){
-										scrollPageAndSlide(sectionAnchor, slideAnchor);
-								}else{
-										silentMoveTo(sectionAnchor, slideAnchor);
-								}
-						}
-				}
-
-				/**
-				* Detecting any change on the URL to scroll to the given anchor link
-				* (a way to detect back history button as we play with the hashes on the URL)
-				*/
-				function hashChangeHandler(){
-						if(!isScrolling && !options.lockAnchors){
-								var value =  window.location.hash.replace('#', '').split('/');
-								var sectionAnchor = decodeURIComponent(value[0]);
-								var slideAnchor = decodeURIComponent(value[1]);
-
-										//when moving to a slide in the first section for the first time (first time to add an anchor to the URL)
-										var isFirstSlideMove =  (typeof lastScrolledDestiny === 'undefined');
-										var isFirstScrollMove = (typeof lastScrolledDestiny === 'undefined' && typeof slideAnchor === 'undefined' && !slideMoving);
-
-
-								if(sectionAnchor.length){
-										/*in order to call scrollpage() only once for each destination at a time
-										It is called twice for each scroll otherwise, as in case of using anchorlinks `hashChange`
-										event is fired on every scroll too.*/
-										if ((sectionAnchor && sectionAnchor !== lastScrolledDestiny) && !isFirstSlideMove || isFirstScrollMove || (!slideMoving && lastScrolledSlide != slideAnchor ))  {
-												scrollPageAndSlide(sectionAnchor, slideAnchor);
-										}
-								}
-						}
-				}
-
-				//Sliding with arrow keys, both, vertical and horizontal
-				function keydownHandler(e) {
-
-						clearTimeout(keydownId);
-
-						var activeElement = $(':focus');
-
-						if(!activeElement.is('textarea') && !activeElement.is('input') && !activeElement.is('select') &&
-								activeElement.attr('contentEditable') !== "true" && activeElement.attr('contentEditable') !== '' &&
-								options.keyboardScrolling && options.autoScrolling){
-								var keyCode = e.which;
-
-								//preventing the scroll with arrow keys & spacebar & Page Up & Down keys
-								var keyControls = [40, 38, 32, 33, 34];
-								if($.inArray(keyCode, keyControls) > -1){
-										e.preventDefault();
-								}
-
-								controlPressed = e.ctrlKey;
-
-								keydownId = setTimeout(function(){
-										onkeydown(e);
-								},150);
-						}
-				}
-
-				function tooltipTextHandler(){
-						$(this).prev().trigger('click');
-				}
-
-				//to prevent scrolling while zooming
-				function keyUpHandler(e){
-						if(isWindowFocused){ //the keyup gets fired on new tab ctrl + t in Firefox
-								controlPressed = e.ctrlKey;
-						}
-				}
-
-				//binding the mousemove when the mouse's middle button is released
-				function mouseDownHandler(e){
-						//middle button
-						if (e.which == 2){
-								oldPageY = e.pageY;
-								container.on('mousemove', mouseMoveHandler);
-						}
-				}
-
-				//unbinding the mousemove when the mouse's middle button is released
-				function mouseUpHandler(e){
-						//middle button
-						if (e.which == 2){
-								container.off('mousemove');
-						}
-				}
-
-				//Scrolling horizontally when clicking on the slider controls.
-				function slideArrowHandler(){
-						var section = $(this).closest(SECTION_SEL);
-
-						if ($(this).hasClass(SLIDES_PREV)) {
-								if(isScrollAllowed.m.left){
-										moveSlideLeft(section);
-								}
-						} else {
-								if(isScrollAllowed.m.right){
-										moveSlideRight(section);
-								}
-						}
-				}
-
-				//when opening a new tab (ctrl + t), `control` won't be pressed when coming back.
-				function blurHandler(){
-						isWindowFocused = false;
-						controlPressed = false;
-				}
-
-				//Scrolls to the section when clicking the navigation bullet
-				function sectionBulletHandler(e){
-						e.preventDefault();
-						var index = $(this).parent().index();
-						scrollPage($(SECTION_SEL).eq(index));
-				}
-
-				//Scrolls the slider to the given slide destination for the given section
-				function slideBulletHandler(e){
-						e.preventDefault();
-						var slides = $(this).closest(SECTION_SEL).find(SLIDES_WRAPPER_SEL);
-						var destiny = slides.find(SLIDE_SEL).eq($(this).closest('li').index());
-
-						landscapeScroll(slides, destiny);
-				}
-
-				/**
-				* Keydown event
-				*/
-				function onkeydown(e){
-						var shiftPressed = e.shiftKey;
-
-						//do nothing if we can not scroll or we are not using horizotnal key arrows.
-						if(!canScroll && [37,39].indexOf(e.which) < 0){
-								return;
-						}
-
-						switch (e.which) {
-								//up
-								case 38:
-								case 33:
-										if(isScrollAllowed.k.up){
-												moveSectionUp();
-										}
-										break;
-
-								//down
-								case 32: //spacebar
-										if(shiftPressed && isScrollAllowed.k.up){
-												moveSectionUp();
-												break;
-										}
-								/* falls through */
-								case 40:
-								case 34:
-										if(isScrollAllowed.k.down){
-												moveSectionDown();
-										}
-										break;
-
-								//Home
-								case 36:
-										if(isScrollAllowed.k.up){
-												moveTo(1);
-										}
-										break;
-
-								//End
-								case 35:
-										 if(isScrollAllowed.k.down){
-												moveTo( $(SECTION_SEL).length );
-										}
-										break;
-
-								//left
-								case 37:
-										if(isScrollAllowed.k.left){
-												moveSlideLeft();
-										}
-										break;
-
-								//right
-								case 39:
-										if(isScrollAllowed.k.right){
-												moveSlideRight();
-										}
-										break;
-
-								default:
-										return; // exit this handler for other keys
-						}
-				}
-
-				/**
-				* Detecting the direction of the mouse movement.
-				* Used only for the middle button of the mouse.
-				*/
-				var oldPageY = 0;
-				function mouseMoveHandler(e){
-						if(canScroll){
-								// moving up
-								if (e.pageY < oldPageY && isScrollAllowed.m.up){
-										moveSectionUp();
-								}
-
-								// moving down
-								else if(e.pageY > oldPageY && isScrollAllowed.m.down){
-										moveSectionDown();
-								}
-						}
-						oldPageY = e.pageY;
-				}
-
-				/**
-				* Scrolls horizontal sliders.
-				*/
-				function landscapeScroll(slides, destiny, direction){
-						var section = slides.closest(SECTION_SEL);
-						var v = {
-								slides: slides,
-								destiny: destiny,
-								direction: direction,
-								destinyPos: destiny.position(),
-								slideIndex: destiny.index(),
-								section: section,
-								sectionIndex: section.index(SECTION_SEL),
-								anchorLink: section.data('anchor'),
-								slidesNav: section.find(SLIDES_NAV_SEL),
-								slideAnchor:  getAnchor(destiny),
-								prevSlide: section.find(SLIDE_ACTIVE_SEL),
-								prevSlideIndex: section.find(SLIDE_ACTIVE_SEL).index(),
-
-								//caching the value of isResizing at the momment the function is called
-								//because it will be checked later inside a setTimeout and the value might change
-								localIsResizing: isResizing
-						};
-						v.xMovement = getXmovement(v.prevSlideIndex, v.slideIndex);
-
-						//important!! Only do it when not resizing
-						if(!v.localIsResizing){
-								//preventing from scrolling to the next/prev section when using scrollHorizontally
-								canScroll = false;
-						}
-
-						if(options.onSlideLeave){
-
-								//if the site is not just resizing and readjusting the slides
-								if(!v.localIsResizing && v.xMovement!=='none'){
-										if($.isFunction( options.onSlideLeave )){
-												if(options.onSlideLeave.call( v.prevSlide, v.anchorLink, (v.sectionIndex + 1), v.prevSlideIndex, v.xMovement, v.slideIndex ) === false){
-														slideMoving = false;
-														return;
-												}
-										}
-								}
-						}
-
-						destiny.addClass(ACTIVE).siblings().removeClass(ACTIVE);
-
-						if(!v.localIsResizing){
-								stopMedia(v.prevSlide);
-								lazyLoad(destiny);
-						}
-
-						if(!options.loopHorizontal && options.controlArrows){
-								//hidding it for the fist slide, showing for the rest
-								section.find(SLIDES_ARROW_PREV_SEL).toggle(v.slideIndex!==0);
-
-								//hidding it for the last slide, showing for the rest
-								section.find(SLIDES_ARROW_NEXT_SEL).toggle(!destiny.is(':last-child'));
-						}
-
-						//only changing the URL if the slides are in the current section (not for resize re-adjusting)
-						if(section.hasClass(ACTIVE) && !v.localIsResizing){
-								setState(v.slideIndex, v.slideAnchor, v.anchorLink, v.sectionIndex);
-						}
-
-						performHorizontalMove(slides, v, true);
-				}
-
-
-				function afterSlideLoads(v){
-						activeSlidesNavigation(v.slidesNav, v.slideIndex);
-
-						//if the site is not just resizing and readjusting the slides
-						if(!v.localIsResizing){
-								$.isFunction( options.afterSlideLoad ) && options.afterSlideLoad.call( v.destiny, v.anchorLink, (v.sectionIndex + 1), v.slideAnchor, v.slideIndex);
-
-								//needs to be inside the condition to prevent problems with continuousVertical and scrollHorizontally
-								//and to prevent double scroll right after a windows resize
-								canScroll = true;
-
-								playMedia(v.destiny);
-						}
-
-						//letting them slide again
-						slideMoving = false;
-				}
-
-				/**
-				* Performs the horizontal movement. (CSS3 or jQuery)
-				*
-				* @param fireCallback {Bool} - determines whether or not to fire the callback
-				*/
-				function performHorizontalMove(slides, v, fireCallback){
-						var destinyPos = v.destinyPos;
-
-						if(options.css3){
-								var translate3d = 'translate3d(-' + Math.round(destinyPos.left) + 'px, 0px, 0px)';
-
-								addAnimation(slides.find(SLIDES_CONTAINER_SEL)).css(getTransforms(translate3d), v);
-
-								afterSlideLoadsId = setTimeout(function(){
-										fireCallback && afterSlideLoads(v);
-								}, options.scrollingSpeed, options.easing);
-						}else{
-								slides.animate({
-										scrollLeft : Math.round(destinyPos.left)
-								}, options.scrollingSpeed, options.easing, function() {
-
-										fireCallback && afterSlideLoads(v);
-								});
-						}
-				}
-
-				/**
-				* Sets the state for the horizontal bullet navigations.
-				*/
-				function activeSlidesNavigation(slidesNav, slideIndex){
-						slidesNav.find(ACTIVE_SEL).removeClass(ACTIVE);
-						slidesNav.find('li').eq(slideIndex).find('a').addClass(ACTIVE);
-				}
-
-				var previousHeight = windowsHeight;
-
-				//when resizing the site, we adjust the heights of the sections, slimScroll...
-				function resizeHandler(){
-						//checking if it needs to get responsive
-						responsive();
-
-						// rebuild immediately on touch devices
-						if (isTouchDevice) {
-								var activeElement = $(document.activeElement);
-
-								//if the keyboard is NOT visible
-								if (!activeElement.is('textarea') && !activeElement.is('input') && !activeElement.is('select')) {
-										var currentHeight = $window.height();
-
-										//making sure the change in the viewport size is enough to force a rebuild. (20 % of the window to avoid problems when hidding scroll bars)
-										if( Math.abs(currentHeight - previousHeight) > (20 * Math.max(previousHeight, currentHeight) / 100) ){
-												reBuild(true);
-												previousHeight = currentHeight;
-										}
-								}
-						}else{
-								//in order to call the functions only when the resize is finished
-								//http://stackoverflow.com/questions/4298612/jquery-how-to-call-resize-event-only-once-its-finished-resizing
-								clearTimeout(resizeId);
-
-								resizeId = setTimeout(function(){
-										reBuild(true);
-								}, 350);
-						}
-				}
-
-				/**
-				* Checks if the site needs to get responsive and disables autoScrolling if so.
-				* A class `fp-responsive` is added to the plugin's container in case the user wants to use it for his own responsive CSS.
-				*/
-				function responsive(){
-						var widthLimit = options.responsive || options.responsiveWidth; //backwards compatiblity
-						var heightLimit = options.responsiveHeight;
-
-						//only calculating what we need. Remember its called on the resize event.
-						var isBreakingPointWidth = widthLimit && $window.outerWidth() < widthLimit;
-						var isBreakingPointHeight = heightLimit && $window.height() < heightLimit;
-
-						if(widthLimit && heightLimit){
-								setResponsive(isBreakingPointWidth || isBreakingPointHeight);
-						}
-						else if(widthLimit){
-								setResponsive(isBreakingPointWidth);
-						}
-						else if(heightLimit){
-								setResponsive(isBreakingPointHeight);
-						}
-				}
-
-				/**
-				* Adds transition animations for the given element
-				*/
-				function addAnimation(container, element){
-						var transition = 'all ' + options.scrollingSpeed + 'ms ' + options.easingcss3;
-
-						container.removeClass(NO_TRANSITION);
-						return container.css({
-								'-webkit-transition': transition,
-								'transition': transition
-						});
-				}
-
-				/**
-				* Remove transition animations for the given element
-				*/
-				function removeAnimation(element){
-						return element.addClass(NO_TRANSITION);
-				}
-
-				/**
-				* Activating the vertical navigation bullets according to the given slide name.
-				*/
-				function activateNavDots(name, sectionIndex){
-						if(options.navigation){
-								$(SECTION_NAV_SEL).find(ACTIVE_SEL).removeClass(ACTIVE);
-								if(name){
-										$(SECTION_NAV_SEL).find('a[href="#' + name + '"]').addClass(ACTIVE);
-								}else{
-										$(SECTION_NAV_SEL).find('li').eq(sectionIndex).find('a').addClass(ACTIVE);
-								}
-						}
-				}
-
-				/**
-				* Activating the website main menu elements according to the given slide name.
-				*/
-				function activateMenuElement(name){
-						if(options.menu){
-								$(options.menu).find(ACTIVE_SEL).removeClass(ACTIVE);
-								$(options.menu).find('[data-menuanchor="'+name+'"]').addClass(ACTIVE);
-						}
-				}
-
-				/**
-				* Sets to active the current menu and vertical nav items.
-				*/
-				function activateMenuAndNav(anchor, index){
-						activateMenuElement(anchor);
-						activateNavDots(anchor, index);
-				}
-
-				/**
-				* Retuns `up` or `down` depending on the scrolling movement to reach its destination
-				* from the current section.
-				*/
-				function getYmovement(destiny){
-						var fromIndex = $(SECTION_ACTIVE_SEL).index(SECTION_SEL);
-						var toIndex = destiny.index(SECTION_SEL);
-						if( fromIndex == toIndex){
-								return 'none';
-						}
-						if(fromIndex > toIndex){
-								return 'up';
-						}
-						return 'down';
-				}
-
-				/**
-				* Retuns `right` or `left` depending on the scrolling movement to reach its destination
-				* from the current slide.
-				*/
-				function getXmovement(fromIndex, toIndex){
-						if( fromIndex == toIndex){
-								return 'none';
-						}
-						if(fromIndex > toIndex){
-								return 'left';
-						}
-						return 'right';
-				}
-
-				/**
-				* Checks if the element needs scrollbar and if the user wants to apply it.
-				* If so it creates it.
-				*
-				* @param {Object} element   jQuery object of the section or slide
-				*/
-				function createScrollBar(element){
-						//User doesn't want scrollbar here? Sayonara baby!
-						if(element.hasClass('fp-noscroll')) return;
-
-						//needed to make `scrollHeight` work under Opera 12
-						element.css('overflow', 'hidden');
-
-						var scrollOverflowHandler = options.scrollOverflowHandler;
-						var wrap = scrollOverflowHandler.wrapContent();
-						//in case element is a slide
-						var section = element.closest(SECTION_SEL);
-						var scrollable = scrollOverflowHandler.scrollable(element);
-						var contentHeight;
-
-						//if there was scroll, the contentHeight will be the one in the scrollable section
-						if(scrollable.length){
-								contentHeight = scrollOverflowHandler.scrollHeight(element);
-						}else{
-								contentHeight = element.get(0).scrollHeight;
-								if(options.verticalCentered){
-										contentHeight = element.find(TABLE_CELL_SEL).get(0).scrollHeight;
-								}
-						}
-
-						var scrollHeight = windowsHeight - parseInt(section.css('padding-bottom')) - parseInt(section.css('padding-top'));
-						//Uncode addition
-						scrollHeight -= UNCODE.bodyBorder*2 + UNCODE.adminBarHeight;
-
-						//needs scroll?
-						if ( contentHeight > scrollHeight) {
-								//did we already have an scrollbar ? Updating it
-								if(scrollable.length){
-										scrollOverflowHandler.update(element, scrollHeight);
-								}
-								//creating the scrolling
-								else{
-										if(options.verticalCentered){
-												element.find(TABLE_CELL_SEL).wrapInner(wrap);
-										}else{
-												element.wrapInner(wrap);
-										}
-										scrollOverflowHandler.create(element, scrollHeight);
-								}
-						}
-						//removing the scrolling when it is not necessary anymore
-						else{
-								scrollOverflowHandler.remove(element);
-						}
-
-						//undo
-						element.css('overflow', '');
-				}
-
-				function addTableClass(element){
-						//In case we are styling for the 2nd time as in with reponsiveSlides
-						if(!element.hasClass(TABLE)){
-								element.addClass(TABLE).wrapInner('<div class="' + TABLE_CELL + '" style="height:' + getTableHeight(element) + 'px;" />');
-						}
-				}
-
-				function getTableHeight(element){
-						var sectionHeight = windowsHeight;
-
-						if(options.paddingTop || options.paddingBottom){
-								var section = element;
-								if(!section.hasClass(SECTION)){
-										section = element.closest(SECTION_SEL);
-								}
-
-								var paddings = parseInt(section.css('padding-top')) + parseInt(section.css('padding-bottom'));
-								sectionHeight = (windowsHeight - paddings);
-						}
-
-						return sectionHeight;
-				}
-
-				/**
-				* Adds a css3 transform property to the container class with or without animation depending on the animated param.
-				*/
-				function transformContainer(translate3d, animated){
-						if(animated){
-								addAnimation(container);
-						}else{
-								removeAnimation(container);
-						}
-
-						container.css(getTransforms(translate3d));
-
-						//syncronously removing the class after the animation has been applied.
-						setTimeout(function(){
-								container.removeClass(NO_TRANSITION);
-						},10);
-				}
-
-				/**
-				* Gets a section by its anchor / index
-				*/
-				function getSectionByAnchor(sectionAnchor){
-						if(!sectionAnchor) return [];
-
-						var section = container.find(SECTION_SEL + '[data-anchor="'+sectionAnchor+'"]');
-						if(!section.length){
-								section = $(SECTION_SEL).eq( sectionAnchor -1);
-						}
-
-						return section;
-				}
-
-				/**
-				* Gets a slide inside a given section by its anchor / index
-				*/
-				function getSlideByAnchor(slideAnchor, section){
-						var slides = section.find(SLIDES_WRAPPER_SEL);
-						var slide =  slides.find(SLIDE_SEL + '[data-anchor="'+slideAnchor+'"]');
-
-						if(!slide.length){
-								slide = slides.find(SLIDE_SEL).eq(slideAnchor);
-						}
-
-						return slide;
-				}
-
-				/**
-				* Scrolls to the given section and slide anchors
-				*/
-				function scrollPageAndSlide(destiny, slide){
-						var section = getSectionByAnchor(destiny);
-
-						//do nothing if there's no section with the given anchor name
-						if(!section.length) return;
-
-						//default slide
-						if (typeof slide === 'undefined') {
-								slide = 0;
-						}
-
-						//we need to scroll to the section and then to the slide
-						if (destiny !== lastScrolledDestiny && !section.hasClass(ACTIVE)){
-								scrollPage(section, function(){
-										scrollSlider(section, slide);
-								});
-						}
-						//if we were already in the section
-						else{
-								scrollSlider(section, slide);
-						}
-				}
-
-				/**
-				* Scrolls the slider to the given slide destination for the given section
-				*/
-				function scrollSlider(section, slideAnchor){
-						if(typeof slideAnchor !== 'undefined'){
-								var slides = section.find(SLIDES_WRAPPER_SEL);
-								var destiny =  getSlideByAnchor(slideAnchor, section);
-
-								if(destiny.length){
-										landscapeScroll(slides, destiny);
-								}
-						}
-				}
-
-				/**
-				* Creates a landscape navigation bar with dots for horizontal sliders.
-				*/
-				function addSlidesNavigation(section, numSlides){
-						section.append('<div class="' + SLIDES_NAV + '"><ul></ul></div>');
-						var nav = section.find(SLIDES_NAV_SEL);
-
-						//top or bottom
-						nav.addClass(options.slidesNavPosition);
-
-						for(var i=0; i< numSlides; i++){
-								nav.find('ul').append('<li><a href="#"><span></span></a></li>');
-						}
-
-						//centering it
-						nav.css('margin-left', '-' + (nav.width()/2) + 'px');
-
-						nav.find('li').first().find('a').addClass(ACTIVE);
-				}
-
-
-				/**
-				* Sets the state of the website depending on the active section/slide.
-				* It changes the URL hash when needed and updates the body class.
-				*/
-				function setState(slideIndex, slideAnchor, anchorLink, sectionIndex){
-						var sectionHash = '';
-
-						if(options.anchors.length && !options.lockAnchors){
-
-								//isn't it the first slide?
-								if(slideIndex){
-										if(typeof anchorLink !== 'undefined'){
-												sectionHash = anchorLink;
-										}
-
-										//slide without anchor link? We take the index instead.
-										if(typeof slideAnchor === 'undefined'){
-												slideAnchor = slideIndex;
-										}
-
-										lastScrolledSlide = slideAnchor;
-										setUrlHash(sectionHash + '/' + slideAnchor);
-
-								//first slide won't have slide anchor, just the section one
-								}else if(typeof slideIndex !== 'undefined'){
-										lastScrolledSlide = slideAnchor;
-										setUrlHash(anchorLink);
-								}
-
-								//section without slides
-								else{
-										setUrlHash(anchorLink);
-								}
-						}
-
-						setBodyClass();
-				}
-
-				/**
-				* Sets the URL hash.
-				*/
-				function setUrlHash(url){
-						//Uncode addition
-						if ( typeof SiteParameters.slide_footer != 'undefined' && url == SiteParameters.slide_footer )
-								return false;
-
-						if(options.recordHistory){
-								location.hash = url;
-						}else{
-								//Uncode addition
-								//Mobile Chrome doesn't work the normal way, so... lets use HTML5 for phones :)
-								// if(isTouchDevice || isTouch){
-								//     window.history.replaceState(undefined, undefined, '#' + url);
-								// }else{
-								//     var baseUrl = window.location.href.split('#')[0];
-								//     window.location.replace( baseUrl + '#' + url );
-								// }
-								return false;
-						}
-				}
-
-				/**
-				* Gets the anchor for the given slide / section. Its index will be used if there's none.
-				*/
-				function getAnchor(element){
-						var anchor = element.data('anchor');
-						var index = element.index();
-
-						//Slide without anchor link? We take the index instead.
-						if(typeof anchor === 'undefined'){
-								anchor = index;
-						}
-
-						return anchor;
-				}
-
-				/**
-				* Sets a class for the body of the page depending on the active section / slide
-				*/
-				function setBodyClass(){
-						var section = $(SECTION_ACTIVE_SEL);
-						var slide = section.find(SLIDE_ACTIVE_SEL);
-
-						var sectionAnchor = getAnchor(section);
-						var slideAnchor = getAnchor(slide);
-
-						var text = String(sectionAnchor);
-
-						if(slide.length){
-								text = text + '-' + slideAnchor;
-						}
-
-						//changing slash for dash to make it a valid CSS style
-						text = text.replace('/', '-').replace('#','');
-
-						//removing previous anchor classes
-						var classRe = new RegExp('\\b\\s?' + VIEWING_PREFIX + '-[^\\s]+\\b', "g");
-						$body[0].className = $body[0].className.replace(classRe, '');
-
-						//adding the current anchor
-						$body.addClass(VIEWING_PREFIX + '-' + text);
-				}
-
-				/**
-				* Checks for translate3d support
-				* @return boolean
-				* http://stackoverflow.com/questions/5661671/detecting-transform-translate3d-support
-				*/
-				function support3d() {
-						var el = document.createElement('p'),
-								has3d,
-								transforms = {
-										'webkitTransform':'-webkit-transform',
-										'OTransform':'-o-transform',
-										'msTransform':'-ms-transform',
-										'MozTransform':'-moz-transform',
-										'transform':'transform'
-								};
-
-						// Add it to the body to get the computed style.
-						document.body.insertBefore(el, null);
-
-						for (var t in transforms) {
-								if (el.style[t] !== undefined) {
-										el.style[t] = 'translate3d(1px,1px,1px)';
-										has3d = window.getComputedStyle(el).getPropertyValue(transforms[t]);
-								}
-						}
-
-						document.body.removeChild(el);
-
-						return (has3d !== undefined && has3d.length > 0 && has3d !== 'none');
-				}
-
-				/**
-				* Removes the auto scrolling action fired by the mouse wheel and trackpad.
-				* After this function is called, the mousewheel and trackpad movements won't scroll through sections.
-				*/
-				function removeMouseWheelHandler(){
-						if (document.addEventListener) {
-								document.removeEventListener('mousewheel', MouseWheelHandler, false); //IE9, Chrome, Safari, Oper
-								document.removeEventListener('wheel', MouseWheelHandler, false); //Firefox
-								document.removeEventListener('MozMousePixelScroll', MouseWheelHandler, false); //old Firefox
-						} else {
-								document.detachEvent('onmousewheel', MouseWheelHandler); //IE 6/7/8
-						}
-				}
-
-				/**
-				* Adds the auto scrolling action for the mouse wheel and trackpad.
-				* After this function is called, the mousewheel and trackpad movements will scroll through sections
-				* https://developer.mozilla.org/en-US/docs/Web/Events/wheel
-				*/
-				function addMouseWheelHandler(){
-						var prefix = '';
-						var _addEventListener;
-
-						if (window.addEventListener){
-								_addEventListener = "addEventListener";
-						}else{
-								_addEventListener = "attachEvent";
-								prefix = 'on';
-						}
-
-						 // detect available wheel event
-						var support = 'onwheel' in document.createElement('div') ? 'wheel' : // Modern browsers support "wheel"
-											document.onmousewheel !== undefined ? 'mousewheel' : // Webkit and IE support at least "mousewheel"
-											'DOMMouseScroll'; // let's assume that remaining browsers are older Firefox
-
-
-						if(support == 'DOMMouseScroll'){
-								document[ _addEventListener ](prefix + 'MozMousePixelScroll', MouseWheelHandler, false);
-						}
-
-						//handle MozMousePixelScroll in older Firefox
-						else{
-								document[ _addEventListener ](prefix + support, MouseWheelHandler, false);
-						}
-				}
-
-				/**
-				* Binding the mousemove when the mouse's middle button is pressed
-				*/
-				function addMiddleWheelHandler(){
-						container
-								.on('mousedown', mouseDownHandler)
-								.on('mouseup', mouseUpHandler);
-				}
-
-				/**
-				* Unbinding the mousemove when the mouse's middle button is released
-				*/
-				function removeMiddleWheelHandler(){
-						container
-								.off('mousedown', mouseDownHandler)
-								.off('mouseup', mouseUpHandler);
-				}
-
-				/**
-				* Adds the possibility to auto scroll through sections on touch devices.
-				*/
-				function addTouchHandler(){
-						if(isTouchDevice || isTouch){
-								if(options.autoScrolling){
-										$body.off(events.touchmove).on(events.touchmove, preventBouncing);
-								}
-
-								$(WRAPPER_SEL)
-										.off(events.touchstart).on(events.touchstart, touchStartHandler)
-										.off(events.touchmove).on(events.touchmove, touchMoveHandler);
-						}
-				}
-
-				/**
-				* Removes the auto scrolling for touch devices.
-				*/
-				function removeTouchHandler(){
-						if(isTouchDevice || isTouch){
-								$(WRAPPER_SEL)
-										.off(events.touchstart)
-										.off(events.touchmove);
-						}
-				}
-
-				/*
-				* Returns and object with Microsoft pointers (for IE<11 and for IE >= 11)
-				* http://msdn.microsoft.com/en-us/library/ie/dn304886(v=vs.85).aspx
-				*/
-				function getMSPointer(){
-						var pointer;
-
-						//IE >= 11 & rest of browsers
-						if(window.PointerEvent){
-								pointer = { down: 'pointerdown', move: 'pointermove'};
-						}
-
-						//IE < 11
-						else{
-								pointer = { down: 'MSPointerDown', move: 'MSPointerMove'};
-						}
-
-						return pointer;
-				}
-
-				/**
-				* Gets the pageX and pageY properties depending on the browser.
-				* https://github.com/alvarotrigo/fullPage.js/issues/194#issuecomment-34069854
-				*/
-				function getEventsPage(e){
-						var events = [];
-
-						events.y = (typeof e.pageY !== 'undefined' && (e.pageY || e.pageX) ? e.pageY : e.touches[0].pageY);
-						events.x = (typeof e.pageX !== 'undefined' && (e.pageY || e.pageX) ? e.pageX : e.touches[0].pageX);
-
-						//in touch devices with scrollBar:true, e.pageY is detected, but we have to deal with touch events. #1008
-						if(isTouch && isReallyTouch(e) && options.scrollBar){
-								events.y = e.touches[0].pageY;
-								events.x = e.touches[0].pageX;
-						}
-
-						return events;
-				}
-
-				/**
-				* Slides silently (with no animation) the active slider to the given slide.
-				* @param noCallback {bool} true or defined -> no callbacks
-				*/
-				function silentLandscapeScroll(activeSlide, noCallbacks){
-						setScrollingSpeed (0, 'internal');
-
-						if(typeof noCallbacks !== 'undefined'){
-								//preventing firing callbacks afterSlideLoad etc.
-								isResizing = true;
-						}
-
-						landscapeScroll(activeSlide.closest(SLIDES_WRAPPER_SEL), activeSlide);
-
-						if(typeof noCallbacks !== 'undefined'){
-								isResizing = false;
-						}
-
-						setScrollingSpeed(originals.scrollingSpeed, 'internal');
-				}
-
-				/**
-				* Scrolls silently (with no animation) the page to the given Y position.
-				*/
-				function silentScroll(top){
-						// The first section can have a negative value in iOS 10. Not quite sure why: -0.0142822265625
-						// that's why we round it to 0.
-						var roundedTop = Math.round(top);
-
-						if (options.css3 && options.autoScrolling && !options.scrollBar){
-								var translate3d = 'translate3d(0px, -' + roundedTop + 'px, 0px)';
-								transformContainer(translate3d, false);
-						}
-						else if(options.autoScrolling && !options.scrollBar){
-								container.css('top', -roundedTop);
-						}
-						else{
-								$htmlBody.scrollTop(roundedTop);
-						}
-				}
-
-				/**
-				* Returns the cross-browser transform string.
-				*/
-				function getTransforms(translate3d){
-						return {
-								'-webkit-transform': translate3d,
-								'-moz-transform': translate3d,
-								'-ms-transform':translate3d,
-								'transform': translate3d
-						};
-				}
-
-				/**
-				* Allowing or disallowing the mouse/swipe scroll in a given direction. (not for keyboard)
-				* @type  m (mouse) or k (keyboard)
-				*/
-				function setIsScrollAllowed(value, direction, type){
-						switch (direction){
-								case 'up': isScrollAllowed[type].up = value; break;
-								case 'down': isScrollAllowed[type].down = value; break;
-								case 'left': isScrollAllowed[type].left = value; break;
-								case 'right': isScrollAllowed[type].right = value; break;
-								case 'all':
-										if(type == 'm'){
-												setAllowScrolling(value);
-										}else{
-												setKeyboardScrolling(value);
-										}
-						}
-				}
-
-				/*
-				* Destroys fullpage.js plugin events and optinally its html markup and styles
-				*/
-				function destroy(all){
-						setAutoScrolling(false, 'internal');
-						setAllowScrolling(false);
-						setKeyboardScrolling(false);
-						container.addClass(DESTROYED);
-
-						clearTimeout(afterSlideLoadsId);
-						clearTimeout(afterSectionLoadsId);
-						clearTimeout(resizeId);
-						clearTimeout(scrollId);
-						clearTimeout(scrollId2);
-
-						$window
-								.off('scroll', scrollHandler)
-								.off('hashchange', hashChangeHandler)
-								.off('resize', resizeHandler);
-
-						$document
-								.off('click touchstart', SECTION_NAV_SEL + ' a')
-								.off('mouseenter', SECTION_NAV_SEL + ' li')
-								.off('mouseleave', SECTION_NAV_SEL + ' li')
-								.off('click touchstart', SLIDES_NAV_LINK_SEL)
-								.off('mouseover', options.normalScrollElements)
-								.off('mouseout', options.normalScrollElements);
-
-						$(SECTION_SEL)
-								.off('click touchstart', SLIDES_ARROW_SEL);
-
-						clearTimeout(afterSlideLoadsId);
-						clearTimeout(afterSectionLoadsId);
-
-						//lets make a mess!
-						if(all){
-								destroyStructure();
-						}
-				}
-
-				/*
-				* Removes inline styles added by fullpage.js
-				*/
-				function destroyStructure(){
-						//reseting the `top` or `translate` properties to 0
-						silentScroll(0);
-
-						//loading all the lazy load content
-						container.find('img[data-src], source[data-src], audio[data-src], iframe[data-src]').each(function(){
-								setSrc($(this), 'src');
-						});
-
-						container.find('img[data-srcset]').each(function(){
-								setSrc($(this), 'srcset');
-						});
-
-						$(SECTION_NAV_SEL + ', ' + SLIDES_NAV_SEL +  ', ' + SLIDES_ARROW_SEL).remove();
-
-						//removing inline styles
-						$(SECTION_SEL).css( {
-								'height': '',
-								'background-color' : '',
-								'padding': ''
-						});
-
-						$(SLIDE_SEL).css( {
-								'width': ''
-						});
-
-						container.css({
-								'height': '',
-								'position': '',
-								'-ms-touch-action': '',
-								'touch-action': ''
-						});
-
-						$htmlBody.css({
-								'overflow': '',
-								'height': ''
-						});
-
-						// remove .fp-enabled class
-						$('html').removeClass(ENABLED);
-
-						// remove .fp-responsive class
-						$body.removeClass(RESPONSIVE);
-
-						// remove all of the .fp-viewing- classes
-						$.each($body.get(0).className.split(/\s+/), function (index, className) {
-								if (className.indexOf(VIEWING_PREFIX) === 0) {
-										$body.removeClass(className);
-								}
-						});
-
-						//removing added classes
-						$(SECTION_SEL + ', ' + SLIDE_SEL).each(function(){
-								options.scrollOverflowHandler.remove($(this));
-								$(this).removeClass(TABLE + ' ' + ACTIVE);
-						});
-
-						removeAnimation(container);
-
-						//Unwrapping content
-						container.find(TABLE_CELL_SEL + ', ' + SLIDES_CONTAINER_SEL + ', ' + SLIDES_WRAPPER_SEL).each(function(){
-								//unwrap not being use in case there's no child element inside and its just text
-								$(this).replaceWith(this.childNodes);
-						});
-
-						//removing the applied transition from the fullpage wrapper
-						container.css({
-								'-webkit-transition': 'none',
-								'transition': 'none'
-						});
-
-						//scrolling the page to the top with no animation
-						$htmlBody.scrollTop(0);
-
-						//removing selectors
-						var usedSelectors = [SECTION, SLIDE, SLIDES_CONTAINER];
-						$.each(usedSelectors, function(index, value){
-								$('.' + value).removeClass(value);
-						});
-				}
-
-				/*
-				* Sets the state for a variable with multiple states (original, and temporal)
-				* Some variables such as `autoScrolling` or `recordHistory` might change automatically its state when using `responsive` or `autoScrolling:false`.
-				* This function is used to keep track of both states, the original and the temporal one.
-				* If type is not 'internal', then we assume the user is globally changing the variable.
-				*/
-				function setVariableState(variable, value, type){
-						options[variable] = value;
-						if(type !== 'internal'){
-								originals[variable] = value;
-						}
-				}
-
-				/**
-				* Displays warnings
-				*/
-				function displayWarnings(){
-						var extensions = ['fadingEffect', 'continuousHorizontal', 'scrollHorizontally', 'interlockedSlides', 'resetSliders', 'responsiveSlides', 'offsetSections', 'dragAndMove', 'scrollOverflowReset', 'parallax'];
-						//UNCODE.addition
-						// if($('html').hasClass(ENABLED)){
-						//     showError('error', 'Fullpage.js can only be initialized once and you are doing it multiple times!');
-						//     return;
-						// }
-
-						// Disable mutually exclusive settings
-						//UNCODE.addition
-						// if (options.continuousVertical &&
-						//     (options.loopTop || options.loopBottom)) {
-						//     options.continuousVertical = false;
-						//     showError('warn', 'Option `loopTop/loopBottom` is mutually exclusive with `continuousVertical`; `continuousVertical` disabled');
-						// }
-
-						// if(options.scrollBar && options.scrollOverflow){
-						//     showError('warn', 'Option `scrollBar` is mutually exclusive with `scrollOverflow`. Sections with scrollOverflow might not work well in Firefox');
-						// }
-
-						// if(options.continuousVertical && (options.scrollBar || !options.autoScrolling)){
-						//     options.continuousVertical = false;
-						//     showError('warn', 'Scroll bars (`scrollBar:true` or `autoScrolling:false`) are mutually exclusive with `continuousVertical`; `continuousVertical` disabled');
-						// }
-
-						//using extensions? Wrong file!
-						$.each(extensions, function(index, extension){
-								//is the option set to true?
-								if(options[extension]){
-										showError('warn', 'fullpage.js extensions require jquery.fullpage.extensions.min.js file instead of the usual jquery.fullpage.js. Requested: '+ extension);
-								}
-						});
-
-						//anchors can not have the same value as any element ID or NAME
-						$.each(options.anchors, function(index, name){
-
-								//case insensitive selectors (http://stackoverflow.com/a/19465187/1081396)
-								var nameAttr = $document.find('[name]').filter(function() {
-										return $(this).attr('name') && $(this).attr('name').toLowerCase() == name.toLowerCase();
-								});
-
-								var idAttr = $document.find('[id]').filter(function() {
-										return $(this).attr('id') && $(this).attr('id').toLowerCase() == name.toLowerCase();
-								});
-
-								if(idAttr.length || nameAttr.length ){
-										showError('error', 'data-anchor tags can not have the same value as any `id` element on the site (or `name` element for IE).');
-										idAttr.length && showError('error', '"' + name + '" is is being used by another element `id` property');
-										nameAttr.length && showError('error', '"' + name + '" is is being used by another element `name` property');
-								}
-						});
-				}
-
-				/**
-				* Shows a message in the console of the given type.
-				*/
-				function showError(type, text){
-						console && console[type] && console[type]('fullPage: ' + text);
-				}
-
-		}; //end of $.fn.fullpage
-
-		if(typeof IScroll !== 'undefined'){
-				/*
-				* Turns iScroll `mousewheel` option off dynamically
-				* https://github.com/cubiq/iscroll/issues/1036
-				*/
-				IScroll.prototype.wheelOn = function () {
-						this.wrapper.addEventListener('wheel', this);
-						this.wrapper.addEventListener('mousewheel', this);
-						this.wrapper.addEventListener('DOMMouseScroll', this);
-				};
-
-				/*
-				* Turns iScroll `mousewheel` option on dynamically
-				* https://github.com/cubiq/iscroll/issues/1036
-				*/
-				IScroll.prototype.wheelOff = function () {
-						this.wrapper.removeEventListener('wheel', this);
-						this.wrapper.removeEventListener('mousewheel', this);
-						this.wrapper.removeEventListener('DOMMouseScroll', this);
-				};
-		}
-
-		/**
-		 * An object to handle overflow scrolling.
-		 * This uses jquery.slimScroll to accomplish overflow scrolling.
-		 * It is possible to pass in an alternate scrollOverflowHandler
-		 * to the fullpage.js option that implements the same functions
-		 * as this handler.
-		 *
-		 * @type {Object}
-		 */
-		var iscrollHandler = {
-				refreshId: null,
-				iScrollInstances: [],
-
-				// Enables or disables the mouse wheel for the active section or all slides in it
-				toggleWheel: function(value){
-						var scrollable = $(SECTION_ACTIVE_SEL).find(SCROLLABLE_SEL);
-						scrollable.each(function(){
-								var iScrollInstance = $(this).data('iscrollInstance');
-								if(typeof iScrollInstance !== 'undefined' && iScrollInstance){
-										if(value){
-												iScrollInstance.wheelOn();
-										}
-										else{
-												iScrollInstance.wheelOff();
-										}
-								}
-						});
-				},
-
-				/**
-				* Turns off iScroll for the destination section.
-				* When scrolling very fast on some trackpads (and Apple laptops) the inertial scrolling would
-				* scroll the destination section/slide before the sections animations ends.
-				*/
-				onLeave: function(){
-						iscrollHandler.toggleWheel(false);
-				},
-
-				// Turns off iScroll for the leaving section
-				beforeLeave: function(){
-						iscrollHandler.onLeave()
-				},
-
-				// Turns on iScroll on section load
-				afterLoad: function(){
-						iscrollHandler.toggleWheel(true);
-				},
-
-				/**
-				 * Called when overflow scrolling is needed for a section.
-				 *
-				 * @param  {Object} element      jQuery object containing current section
-				 * @param  {Number} scrollHeight Current window height in pixels
-				 */
-				create: function(element, scrollHeight) {
-						var scrollable = element.find(SCROLLABLE_SEL);
-
-						scrollable.height(scrollHeight);
-						scrollable.each(function() {
-								var $this = $(this);
-								var iScrollInstance = $this.data('iscrollInstance');
-								if (iScrollInstance) {
-										$.each(iscrollHandler.iScrollInstances, function(){
-												$(this).destroy();
-										});
-								}
-
-								iScrollInstance = new IScroll($this.get(0), iscrollOptions);
-								iscrollHandler.iScrollInstances.push(iScrollInstance);
-
-								//off by default until the section gets active
-								iScrollInstance.wheelOff();
-
-								$this.data('iscrollInstance', iScrollInstance);
-						});
-				},
-
-				/**
-				 * Return a boolean depending on whether the scrollable element is a
-				 * the end or at the start of the scrolling depending on the given type.
-				 *
-				 * @param  {String}  type       Either 'top' or 'bottom'
-				 * @param  {Object}  scrollable jQuery object for the scrollable element
-				 * @return {Boolean}
-				 */
-				isScrolled: function(type, scrollable) {
-						var scroller = scrollable.data('iscrollInstance');
-
-						//no scroller?
-						if (!scroller) {
-								return true;
-						}
-
-						if (type === 'top') {
-								return scroller.y >= 0 && !scrollable.scrollTop();
-						} else if (type === 'bottom') {
-								return (0 - scroller.y) + scrollable.scrollTop() + 1 + scrollable.innerHeight() >= scrollable[0].scrollHeight;
-						}
-				},
-
-				/**
-				 * Returns the scrollable element for the given section.
-				 * If there are landscape slides, will only return a scrollable element
-				 * if it is in the active slide.
-				 *
-				 * @param  {Object}  activeSection jQuery object containing current section
-				 * @return {Boolean}
-				 */
-				scrollable: function(activeSection){
-						// if there are landscape slides, we check if the scrolling bar is in the current one or not
-						if (activeSection.find(SLIDES_WRAPPER_SEL).length) {
-								return activeSection.find(SLIDE_ACTIVE_SEL).find(SCROLLABLE_SEL);
-						}
-						return activeSection.find(SCROLLABLE_SEL);
-				},
-
-				/**
-				 * Returns the scroll height of the wrapped content.
-				 * If this is larger than the window height minus section padding,
-				 * overflow scrolling is needed.
-				 *
-				 * @param  {Object} element jQuery object containing current section
-				 * @return {Number}
-				 */
-				scrollHeight: function(element) {
-						return element.find(SCROLLABLE_SEL).children().first().get(0).scrollHeight;
-				},
-
-				/**
-				 * Called when overflow scrolling is no longer needed for a section.
-				 *
-				 * @param  {Object} element      jQuery object containing current section
-				 */
-				remove: function(element) {
-						var scrollable = element.find(SCROLLABLE_SEL);
-						if (scrollable.length) {
-								var iScrollInstance = scrollable.data('iscrollInstance');
-								iScrollInstance.destroy();
-
-								scrollable.data('iscrollInstance', null);
-						}
-						element.find(SCROLLABLE_SEL).children().first().children().first().unwrap().unwrap();
-				},
-
-				/**
-				 * Called when overflow scrolling has already been setup but the
-				 * window height has potentially changed.
-				 *
-				 * @param  {Object} element      jQuery object containing current section
-				 * @param  {Number} scrollHeight Current window height in pixels
-				 */
-				update: function(element, scrollHeight) {
-						//using a timeout in order to execute the refresh function only once when `update` is called multiple times in a
-						//short period of time.
-						//it also comes on handy because iScroll requires the use of timeout when using `refresh`.
-						clearTimeout(iscrollHandler.refreshId);
-						iscrollHandler.refreshId = setTimeout(function(){
-								$.each(iscrollHandler.iScrollInstances, function(){
-										$(this).get(0).refresh();
-								});
-						}, 150);
-
-						//updating the wrappers height
-						element.find(SCROLLABLE_SEL).css('height', scrollHeight + 'px').parent().css('height', scrollHeight + 'px');
-				},
-
-				/**
-				 * Called to get any additional elements needed to wrap the section
-				 * content in order to facilitate overflow scrolling.
-				 *
-				 * @return {String|Object} Can be a string containing HTML,
-				 *                         a DOM element, or jQuery object.
-				 */
-				wrapContent: function() {
-						return '<div class="' + SCROLLABLE + '"><div class="fp-scroller"></div></div>';
-				}
-		};
+    'use strict';
+
+    // keeping central set of classnames and selectors
+    var WRAPPER =               'fullpage-wrapper';
+    var WRAPPER_SEL =           '.' + WRAPPER;
+
+    // slimscroll
+    var SCROLLABLE =            'fp-scrollable';
+    var SCROLLABLE_SEL =        '.' + SCROLLABLE;
+
+    // util
+    var RESPONSIVE =            'fp-responsive';
+    var NO_TRANSITION =         'fp-notransition';
+    var DESTROYED =             'fp-destroyed';
+    var ENABLED =               'fp-enabled';
+    var VIEWING_PREFIX =        'fp-viewing';
+    var ACTIVE =                'active';
+    var ACTIVE_SEL =            '.' + ACTIVE;
+    var COMPLETELY =            'fp-completely';
+    var COMPLETELY_SEL =        '.' + COMPLETELY;
+
+    // section
+    var SECTION_DEFAULT_SEL =   '.section';
+    var SECTION =               'fp-section';
+    var SECTION_SEL =           '.' + SECTION;
+    var SECTION_ACTIVE_SEL =    SECTION_SEL + ACTIVE_SEL;
+    var SECTION_FIRST_SEL =     SECTION_SEL + ':first';
+    var SECTION_LAST_SEL =      SECTION_SEL + ':last';
+    var TABLE_CELL =            'fp-tableCell';
+    var TABLE_CELL_SEL =        '.' + TABLE_CELL;
+    var AUTO_HEIGHT =           'fp-auto-height';
+    var AUTO_HEIGHT_SEL =       '.fp-auto-height';
+    var NORMAL_SCROLL =         'fp-normal-scroll';
+    var NORMAL_SCROLL_SEL =     '.fp-normal-scroll';
+
+    // section nav
+    var SECTION_NAV =           'fp-nav';
+    var SECTION_NAV_SEL =       '#' + SECTION_NAV;
+    var SECTION_NAV_TOOLTIP =   'fp-tooltip';
+    var SECTION_NAV_TOOLTIP_SEL='.'+SECTION_NAV_TOOLTIP;
+    var SHOW_ACTIVE_TOOLTIP =   'fp-show-active';
+
+    // slide
+    var SLIDE_DEFAULT_SEL =     '.slide';
+    var SLIDE =                 'fp-slide';
+    var SLIDE_SEL =             '.' + SLIDE;
+    var SLIDE_ACTIVE_SEL =      SLIDE_SEL + ACTIVE_SEL;
+    var SLIDES_WRAPPER =        'fp-slides';
+    var SLIDES_WRAPPER_SEL =    '.' + SLIDES_WRAPPER;
+    var SLIDES_CONTAINER =      'fp-slidesContainer';
+    var SLIDES_CONTAINER_SEL =  '.' + SLIDES_CONTAINER;
+    var TABLE =                 'fp-table';
+
+    // slide nav
+    var SLIDES_NAV =            'fp-slidesNav';
+    var SLIDES_NAV_SEL =        '.' + SLIDES_NAV;
+    var SLIDES_NAV_LINK_SEL =   SLIDES_NAV_SEL + ' a';
+    var SLIDES_ARROW =          'fp-controlArrow';
+    var SLIDES_ARROW_SEL =      '.' + SLIDES_ARROW;
+    var SLIDES_PREV =           'fp-prev';
+    var SLIDES_PREV_SEL =       '.' + SLIDES_PREV;
+    var SLIDES_ARROW_PREV =     SLIDES_ARROW + ' ' + SLIDES_PREV;
+    var SLIDES_ARROW_PREV_SEL = SLIDES_ARROW_SEL + SLIDES_PREV_SEL;
+    var SLIDES_NEXT =           'fp-next';
+    var SLIDES_NEXT_SEL =       '.' + SLIDES_NEXT;
+    var SLIDES_ARROW_NEXT =     SLIDES_ARROW + ' ' + SLIDES_NEXT;
+    var SLIDES_ARROW_NEXT_SEL = SLIDES_ARROW_SEL + SLIDES_NEXT_SEL;
+
+    var $window = $(window);
+    var $document = $(document);
+
+    // Default options for iScroll.js used when using scrollOverflow
+    var iscrollOptions = {
+        scrollbars: true,
+        mouseWheel: true,
+        hideScrollbars: false,
+        fadeScrollbars: false,
+        disableMouse: true,
+        interactiveScrollbars: true,
+        bounce: false,
+    };
+
+    $.fn.fullpage = function(options) {
+        //only once my friend!
+        if($('html').hasClass(ENABLED)){ displayWarnings(); return; }
+
+        // common jQuery objects
+        var $htmlBody = $('html, body');
+        var $body = $('body');
+
+        var FP = $.fn.fullpage;
+
+        // Creating some defaults, extending them with any options that were provided
+        options = $.extend({
+            //navigation
+            menu: false,
+            anchors:[],
+            lockAnchors: false,
+            navigation: false,
+            navigationPosition: 'right',
+            navigationTooltips: [],
+            showActiveTooltip: false,
+            slidesNavigation: false,
+            slidesNavPosition: 'bottom',
+            scrollBar: false,
+            hybrid: false,
+
+            //scrolling
+            css3: true,
+            scrollingSpeed: 700,
+            autoScrolling: true,
+            fitToSection: true,
+            fitToSectionDelay: 1000,
+            easing: 'easeInOutCubic',
+            easingcss3: 'ease',
+            loopBottom: false,
+            loopTop: false,
+            loopHorizontal: true,
+            continuousVertical: false,
+            continuousHorizontal: false,
+            scrollHorizontally: false,
+            interlockedSlides: false,
+            dragAndMove: false,
+            offsetSections: false,
+            resetSliders: false,
+            fadingEffect: false,
+            normalScrollElements: null,
+            scrollOverflow: false,
+            scrollOverflowReset: false,
+            scrollOverflowHandler: iscrollHandler,
+            scrollOverflowOptions: null,
+            touchSensitivity: 5,
+            normalScrollElementTouchThreshold: 5,
+            bigSectionsDestination: null,
+
+            //Accessibility
+            keyboardScrolling: true,
+            animateAnchor: true,
+            recordHistory: true,
+
+            //design
+            controlArrows: true,
+            controlArrowColor: '#fff',
+            verticalCentered: true,
+            sectionsColor : [],
+            paddingTop: 0,
+            paddingBottom: 0,
+            fixedElements: null,
+            responsive: 0, //backwards compabitility with responsiveWiddth
+            responsiveWidth: 0,
+            responsiveHeight: 0,
+            responsiveSlides: false,
+            parallax: false,
+            parallaxOptions: {
+                type: 'reveal',
+                percentage: 62,
+                property: 'translate'
+            },
+
+            //Custom selectors
+            sectionSelector: SECTION_DEFAULT_SEL,
+            slideSelector: SLIDE_DEFAULT_SEL,
+
+            //events
+            afterLoad: null,
+            onLeave: null,
+            afterRender: null,
+            afterResize: null,
+            afterReBuild: null,
+            afterSlideLoad: null,
+            onSlideLeave: null,
+            afterResponsive: null,
+
+            lazyLoading: true
+        }, options);
+
+        //flag to avoid very fast sliding for landscape sliders
+        var slideMoving = false;
+
+        var isTouchDevice = navigator.userAgent.match(/(iPhone|iPod|iPad|Android|playbook|silk|BlackBerry|BB10|Windows Phone|Tizen|Bada|webOS|IEMobile|Opera Mini)/);
+        var isTouch = (('ontouchstart' in window) || (navigator.msMaxTouchPoints > 0) || (navigator.maxTouchPoints));
+        var container = $(this);
+        var windowsHeight = $window.height();
+        var isResizing = false;
+        var isWindowFocused = true;
+        var lastScrolledDestiny;
+        var lastScrolledSlide;
+        var canScroll = true;
+        var scrollings = [];
+        var controlPressed;
+        var startingSection;
+        var isScrollAllowed = {};
+        isScrollAllowed.m = {  'up':true, 'down':true, 'left':true, 'right':true };
+        isScrollAllowed.k = $.extend(true,{}, isScrollAllowed.m);
+        var MSPointer = getMSPointer();
+        var events = {
+            touchmove: 'ontouchmove' in window ? 'touchmove' :  MSPointer.move,
+            touchstart: 'ontouchstart' in window ? 'touchstart' :  MSPointer.down
+        };
+
+        //timeouts
+        var resizeId;
+        var afterSectionLoadsId;
+        var afterSlideLoadsId;
+        var scrollId;
+        var scrollId2;
+        var keydownId;
+        var originals = $.extend(true, {}, options); //deep copy
+
+        //Uncode addition
+        var $masthead = $('#masthead');
+        var hideMenu = !$('body').hasClass('vmenu') && $('body').hasClass('uncode-fp-menu-hide') ? true : false;
+        var menuHeight = $masthead.hasClass('menu-transparent') || hideMenu ? 0 : UNCODE.menuHeight;
+        var bodyBorder = UNCODE.bodyBorder;
+        var adminBarHeight = UNCODE.adminBarHeight;
+
+        displayWarnings();
+
+        //fixing bug in iScroll with links: https://github.com/cubiq/iscroll/issues/783
+        iscrollOptions.click = isTouch; // see #2035
+
+        //extending iScroll options with the user custom ones
+        iscrollOptions = $.extend(iscrollOptions, options.scrollOverflowOptions);
+
+        //easeInOutCubic animation included in the plugin
+        $.extend($.easing,{ easeInOutCubic: function (x, t, b, c, d) {if ((t/=d/2) < 1) return c/2*t*t*t + b;return c/2*((t-=2)*t*t + 2) + b;}});
+
+        /**
+        * Sets the autoScroll option.
+        * It changes the scroll bar visibility and the history of the site as a result.
+        */
+        function setAutoScrolling(value, type){
+            //removing the transformation
+            if(!value){
+                silentScroll(0);
+            }
+
+            setVariableState('autoScrolling', value, type);
+
+            var element = $(SECTION_ACTIVE_SEL);
+
+            if(options.autoScrolling && !options.scrollBar){
+                $htmlBody.css({
+                    'overflow' : 'hidden !important',
+                    'height' : '100%'
+                });
+
+                //Uncode addition
+                //setRecordHistory(originals.recordHistory, 'internal');
+
+                //for IE touch devices
+                container.css({
+                    '-ms-touch-action': 'none',
+                    'touch-action': 'none'
+                });
+
+                if(element.length){
+                    //moving the container up
+                    silentScroll(element.position().top);
+                }
+
+            }else{
+                $htmlBody.css({
+                    'overflow' : 'visible !important',
+                    'height' : 'initial'
+                });
+
+                //Uncode addition
+                //setRecordHistory(false, 'internal');
+
+                //for IE touch devices
+                container.css({
+                    '-ms-touch-action': '',
+                    'touch-action': ''
+                });
+
+                //scrolling the page to the section with no animation
+                if (element.length) {
+                    $htmlBody.scrollTop(element.position().top);
+                }
+            }
+        }
+
+        /**
+        * Defines wheter to record the history for each hash change in the URL.
+        */
+        function setRecordHistory(value, type){
+            setVariableState('recordHistory', value, type);
+        }
+
+        /**
+        * Defines the scrolling speed
+        */
+        function setScrollingSpeed(value, type){
+            setVariableState('scrollingSpeed', value, type);
+        }
+
+        /**
+        * Sets fitToSection
+        */
+        function setFitToSection(value, type){
+            setVariableState('fitToSection', value, type);
+        }
+
+        /**
+        * Sets lockAnchors
+        */
+        function setLockAnchors(value){
+            options.lockAnchors = value;
+        }
+
+        /**
+        * Adds or remove the possiblity of scrolling through sections by using the mouse wheel or the trackpad.
+        */
+        function setMouseWheelScrolling(value){
+            if(value){
+                addMouseWheelHandler();
+                addMiddleWheelHandler();
+            }else{
+                removeMouseWheelHandler();
+                removeMiddleWheelHandler();
+            }
+        }
+
+        /**
+        * Adds or remove the possibility of scrolling through sections by using the mouse wheel/trackpad or touch gestures.
+        * Optionally a second parameter can be used to specify the direction for which the action will be applied.
+        *
+        * @param directions string containing the direction or directions separated by comma.
+        */
+        function setAllowScrolling(value, directions){
+            if(typeof directions !== 'undefined'){
+                directions = directions.replace(/ /g,'').split(',');
+
+                $.each(directions, function (index, direction){
+                    setIsScrollAllowed(value, direction, 'm');
+                });
+            }
+            else if(value){
+                setMouseWheelScrolling(true);
+                addTouchHandler();
+            }else{
+                setMouseWheelScrolling(false);
+                removeTouchHandler();
+            }
+        }
+
+        /**
+        * Adds or remove the possibility of scrolling through sections by using the keyboard arrow keys
+        */
+        function setKeyboardScrolling(value, directions){
+            if(typeof directions !== 'undefined'){
+                directions = directions.replace(/ /g,'').split(',');
+
+                $.each(directions, function (index, direction){
+                    setIsScrollAllowed(value, direction, 'k');
+                });
+            }else{
+                options.keyboardScrolling = value;
+            }
+        }
+
+        /**
+        * Moves the page up one section.
+        */
+        function moveSectionUp(){
+            var prev = $(SECTION_ACTIVE_SEL).prev(SECTION_SEL);
+
+            //looping to the bottom if there's no more sections above
+            if (!prev.length && (options.loopTop || options.continuousVertical)) {
+                prev = $(SECTION_SEL).last();
+            }
+
+            if (prev.length) {
+                scrollPage(prev, null, true);
+            }
+        }
+
+        /**
+        * Moves the page down one section.
+        */
+        function moveSectionDown(){
+            var next = $(SECTION_ACTIVE_SEL).next(SECTION_SEL);
+
+            //looping to the top if there's no more sections below
+            if(!next.length &&
+                (options.loopBottom || options.continuousVertical)){
+                next = $(SECTION_SEL).first();
+            }
+
+            if(next.length){
+                scrollPage(next, null, false);
+            }
+        }
+
+        /**
+        * Moves the page to the given section and slide with no animation.
+        * Anchors or index positions can be used as params.
+        */
+        function silentMoveTo(sectionAnchor, slideAnchor){
+            setScrollingSpeed (0, 'internal');
+            moveTo(sectionAnchor, slideAnchor);
+            setScrollingSpeed (originals.scrollingSpeed, 'internal');
+        }
+
+        /**
+        * Moves the page to the given section and slide.
+        * Anchors or index positions can be used as params.
+        */
+        function moveTo(sectionAnchor, slideAnchor){
+            var destiny = getSectionByAnchor(sectionAnchor);
+
+            if (typeof slideAnchor !== 'undefined'){
+                scrollPageAndSlide(sectionAnchor, slideAnchor);
+            }else if(destiny.length > 0){
+                scrollPage(destiny);
+            }
+        }
+
+        /**
+        * Slides right the slider of the active section.
+        * Optional `section` param.
+        */
+        function moveSlideRight(section){
+            moveSlide('right', section);
+        }
+
+        /**
+        * Slides left the slider of the active section.
+        * Optional `section` param.
+        */
+        function moveSlideLeft(section){
+            moveSlide('left', section);
+        }
+
+        /**
+         * When resizing is finished, we adjust the slides sizes and positions
+         */
+        function reBuild(resizing){
+            if(container.hasClass(DESTROYED)){ return; }  //nothing to do if the plugin was destroyed
+
+            isResizing = true;
+
+            windowsHeight = $window.height();  //updating global var
+
+            $(SECTION_SEL).each(function(){
+                var slidesWrap = $(this).find(SLIDES_WRAPPER_SEL);
+                var slides = $(this).find(SLIDE_SEL);
+
+                //adjusting the height of the table-cell for IE and Firefox
+                if(options.verticalCentered){
+                    $(this).find(TABLE_CELL_SEL).css('height', getTableHeight($(this)) + 'px');
+                }
+
+                $(this).css('height', windowsHeight + 'px');
+
+                //resizing the scrolling divs
+                if(options.scrollOverflow){
+                    if(slides.length){
+                        slides.each(function(){
+                            createScrollBar($(this));
+                        });
+                    }else{
+                        createScrollBar($(this));
+                    }
+                }
+
+                //adjusting the position fo the FULL WIDTH slides...
+                if (slides.length > 1) {
+                    landscapeScroll(slidesWrap, slidesWrap.find(SLIDE_ACTIVE_SEL));
+                }
+            });
+
+            var activeSection = $(SECTION_ACTIVE_SEL);
+            var sectionIndex = activeSection.index(SECTION_SEL);
+
+            //isn't it the first section?
+            if(sectionIndex){
+                //adjusting the position for the current section
+                silentMoveTo(sectionIndex + 1);
+            }
+
+            isResizing = false;
+            $.isFunction( options.afterResize ) && resizing && options.afterResize.call(container);
+            $.isFunction( options.afterReBuild ) && !resizing && options.afterReBuild.call(container);
+        }
+
+        /**
+        * Turns fullPage.js to normal scrolling mode when the viewport `width` or `height`
+        * are smaller than the set limit values.
+        */
+        function setResponsive(active){
+            var isResponsive = $body.hasClass(RESPONSIVE);
+
+            if(active){
+                if(!isResponsive){
+                    setAutoScrolling(false, 'internal');
+                    setFitToSection(false, 'internal');
+                    $(SECTION_NAV_SEL).hide();
+                    $body.addClass(RESPONSIVE);
+                    $.isFunction( options.afterResponsive ) && options.afterResponsive.call( container, active);
+                }
+            }
+            else if(isResponsive){
+                setAutoScrolling(originals.autoScrolling, 'internal');
+                setFitToSection(originals.autoScrolling, 'internal');
+                $(SECTION_NAV_SEL).show();
+                $body.removeClass(RESPONSIVE);
+                $.isFunction( options.afterResponsive ) && options.afterResponsive.call( container, active);
+            }
+        }
+
+        if($(this).length){
+            //public functions
+            FP.setAutoScrolling = setAutoScrolling;
+            FP.setRecordHistory = setRecordHistory;
+            FP.setScrollingSpeed = setScrollingSpeed;
+            FP.setFitToSection = setFitToSection;
+            FP.setLockAnchors = setLockAnchors;
+            FP.setMouseWheelScrolling = setMouseWheelScrolling;
+            FP.setAllowScrolling = setAllowScrolling;
+            FP.setKeyboardScrolling = setKeyboardScrolling;
+            FP.moveSectionUp = moveSectionUp;
+            FP.moveSectionDown = moveSectionDown;
+            FP.silentMoveTo = silentMoveTo;
+            FP.moveTo = moveTo;
+            FP.moveSlideRight = moveSlideRight;
+            FP.moveSlideLeft = moveSlideLeft;
+            FP.fitToSection = fitToSection;
+            FP.reBuild = reBuild;
+            FP.setResponsive = setResponsive;
+            FP.destroy = destroy;
+
+            init();
+
+            bindEvents();
+        }
+
+        function init(){
+            //if css3 is not supported, it will use jQuery animations
+            if(options.css3){
+                options.css3 = support3d();
+            }
+
+            options.scrollBar = options.scrollBar || options.hybrid;
+
+            setOptionsFromDOM();
+            prepareDom();
+            setAllowScrolling(true);
+            setAutoScrolling(options.autoScrolling, 'internal');
+            responsive();
+
+            //setting the class for the body element
+            setBodyClass();
+
+            //Uncode addition
+            // if(document.readyState === 'complete'){
+            //     scrollToAnchor();
+            // }
+            // $window.on('load', scrollToAnchor);
+        }
+
+        function bindEvents(){
+            $window
+                //when scrolling...
+                //.on('scroll', scrollHandler)
+
+                //detecting any change on the URL to scroll to the given anchor link
+                //(a way to detect back history button as we play with the hashes on the URL)
+                .on('hashchange', hashChangeHandler)
+
+                //when opening a new tab (ctrl + t), `control` won't be pressed when coming back.
+                .blur(blurHandler)
+
+                //when resizing the site, we adjust the heights of the sections, slimScroll...
+                .resize(resizeHandler);
+
+            $document
+                //Sliding with arrow keys, both, vertical and horizontal
+                .keydown(keydownHandler)
+
+                //to prevent scrolling while zooming
+                .keyup(keyUpHandler)
+
+                //Scrolls to the section when clicking the navigation bullet
+                .on('click touchstart', SECTION_NAV_SEL + ' a', sectionBulletHandler)
+
+                //Scrolls the slider to the given slide destination for the given section
+                .on('click touchstart', SLIDES_NAV_LINK_SEL, slideBulletHandler)
+
+                .on('click', SECTION_NAV_TOOLTIP_SEL, tooltipTextHandler);
+
+            //Scrolling horizontally when clicking on the slider controls.
+            $(SECTION_SEL).on('click touchstart', SLIDES_ARROW_SEL, slideArrowHandler);
+
+            /**
+            * Applying normalScroll elements.
+            * Ignoring the scrolls over the specified selectors.
+            */
+            if(options.normalScrollElements){
+                $document.on('mouseenter', options.normalScrollElements, function () {
+                    setMouseWheelScrolling(false);
+                });
+
+                $document.on('mouseleave', options.normalScrollElements, function(){
+                    setMouseWheelScrolling(true);
+                });
+            }
+        }
+
+        /**
+        * Setting options from DOM elements if they are not provided.
+        */
+        function setOptionsFromDOM(){
+            var sections = container.find(options.sectionSelector);
+
+            //no anchors option? Checking for them in the DOM attributes
+            if(!options.anchors.length){
+                options.anchors = sections.filter('[data-anchor]').map(function(){
+                    return $(this).data('anchor').toString();
+                }).get();
+            }
+
+            //no tooltips option? Checking for them in the DOM attributes
+            if(!options.navigationTooltips.length){
+                options.navigationTooltips = sections.filter('[data-tooltip]').map(function(){
+                    return $(this).data('tooltip').toString();
+                }).get();
+            }
+        }
+
+        /**
+        * Works over the DOM structure to set it up for the current fullpage options.
+        */
+        function prepareDom(){
+            container.css({
+                'height': '100%',
+                'position': 'relative'
+            });
+
+            //adding a class to recognize the container internally in the code
+            container.addClass(WRAPPER);
+            $('html').addClass(ENABLED);
+
+            windowsHeight = $window.height();
+
+            container.removeClass(DESTROYED); //in case it was destroyed before initializing it again
+
+            addInternalSelectors();
+
+             //styling the sections / slides / menu
+            $(SECTION_SEL).each(function(index){
+                var section = $(this);
+                var slides = section.find(SLIDE_SEL);
+                var numSlides = slides.length;
+
+                styleSection(section, index);
+                styleMenu(section, index);
+
+                // if there's any slide
+                if (numSlides > 0) {
+                    styleSlides(section, slides, numSlides);
+                }else{
+                    if(options.verticalCentered){
+                        addTableClass(section);
+                    }
+                }
+            });
+
+            //fixed elements need to be moved out of the plugin container due to problems with CSS3.
+            if(options.fixedElements && options.css3){
+                $(options.fixedElements).appendTo($body);
+            }
+
+            //vertical centered of the navigation + active bullet
+            if(options.navigation){
+                addVerticalNavigation();
+            }
+
+            enableYoutubeAPI();
+
+            if(options.scrollOverflow){
+                if(document.readyState === 'complete'){
+                    createScrollBarHandler();
+                }
+                //after DOM and images are loaded
+                $window.on('load', createScrollBarHandler);
+            }else{
+                afterRenderActions();
+            }
+        }
+
+        /**
+        * Styles the horizontal slides for a section.
+        */
+        function styleSlides(section, slides, numSlides){
+            var sliderWidth = numSlides * 100;
+            var slideWidth = 100 / numSlides;
+
+            slides.wrapAll('<div class="' + SLIDES_CONTAINER + '" />');
+            slides.parent().wrap('<div class="' + SLIDES_WRAPPER + '" />');
+
+            section.find(SLIDES_CONTAINER_SEL).css('width', sliderWidth + '%');
+
+            if(numSlides > 1){
+                if(options.controlArrows){
+                    createSlideArrows(section);
+                }
+
+                if(options.slidesNavigation){
+                    addSlidesNavigation(section, numSlides);
+                }
+            }
+
+            slides.each(function(index) {
+                $(this).css('width', slideWidth + '%');
+
+                if(options.verticalCentered){
+                    addTableClass($(this));
+                }
+            });
+
+            var startingSlide = section.find(SLIDE_ACTIVE_SEL);
+
+            //if the slide won't be an starting point, the default will be the first one
+            //the active section isn't the first one? Is not the first slide of the first section? Then we load that section/slide by default.
+            if( startingSlide.length &&  ($(SECTION_ACTIVE_SEL).index(SECTION_SEL) !== 0 || ($(SECTION_ACTIVE_SEL).index(SECTION_SEL) === 0 && startingSlide.index() !== 0))){
+                silentLandscapeScroll(startingSlide, 'internal');
+            }else{
+                slides.eq(0).addClass(ACTIVE);
+            }
+        }
+
+        /**
+        * Styling vertical sections
+        */
+        function styleSection(section, index){
+            //if no active section is defined, the 1st one will be the default one
+            if(!index && $(SECTION_ACTIVE_SEL).length === 0) {
+                section.addClass(ACTIVE);
+            }
+            startingSection = $(SECTION_ACTIVE_SEL);
+
+            section.css('height', windowsHeight + 'px');
+
+            if(options.paddingTop){
+                section.css('padding-top', options.paddingTop);
+            }
+
+            if(options.paddingBottom){
+                section.css('padding-bottom', options.paddingBottom);
+            }
+
+            if (typeof options.sectionsColor[index] !==  'undefined') {
+                section.css('background-color', options.sectionsColor[index]);
+            }
+
+            if (typeof options.anchors[index] !== 'undefined') {
+                section.attr('data-anchor', options.anchors[index]);
+            }
+        }
+
+        /**
+        * Sets the data-anchor attributes to the menu elements and activates the current one.
+        */
+        function styleMenu(section, index){
+            if (typeof options.anchors[index] !== 'undefined') {
+                //activating the menu / nav element on load
+                if(section.hasClass(ACTIVE)){
+                    activateMenuAndNav(options.anchors[index], index);
+                }
+            }
+
+            //moving the menu outside the main container if it is inside (avoid problems with fixed positions when using CSS3 tranforms)
+            if(options.menu && options.css3 && $(options.menu).closest(WRAPPER_SEL).length){
+                $(options.menu).appendTo($body);
+            }
+        }
+
+        /**
+        * Adds internal classes to be able to provide customizable selectors
+        * keeping the link with the style sheet.
+        */
+        function addInternalSelectors(){
+            container.find(options.sectionSelector).addClass(SECTION);
+            container.find(options.slideSelector).addClass(SLIDE);
+        }
+
+        /**
+        * Creates the control arrows for the given section
+        */
+        function createSlideArrows(section){
+            section.find(SLIDES_WRAPPER_SEL).after('<div class="' + SLIDES_ARROW_PREV + '"></div><div class="' + SLIDES_ARROW_NEXT + '"></div>');
+
+            if(options.controlArrowColor!='#fff'){
+                section.find(SLIDES_ARROW_NEXT_SEL).css('border-color', 'transparent transparent transparent '+options.controlArrowColor);
+                section.find(SLIDES_ARROW_PREV_SEL).css('border-color', 'transparent '+ options.controlArrowColor + ' transparent transparent');
+            }
+
+            if(!options.loopHorizontal){
+                section.find(SLIDES_ARROW_PREV_SEL).hide();
+            }
+        }
+
+        /**
+        * Creates a vertical navigation bar.
+        */
+        function addVerticalNavigation(){
+            $body.append('<div id="' + SECTION_NAV + '"><ul></ul></div>');
+            var nav = $(SECTION_NAV_SEL);
+
+            nav.addClass(function() {
+                return options.showActiveTooltip ? SHOW_ACTIVE_TOOLTIP + ' ' + options.navigationPosition : options.navigationPosition;
+            });
+
+            for (var i = 0; i < $(SECTION_SEL).length; i++) {
+                var link = '';
+                if (options.anchors.length) {
+                    link = options.anchors[i];
+                }
+
+                var li = '<li><a href="#' + link + '"><span></span></a>';
+
+                // Only add tooltip if needed (defined by user)
+                var tooltip = options.navigationTooltips[i];
+
+                if (typeof tooltip !== 'undefined' && tooltip !== '') {
+                    li += '<div class="' + SECTION_NAV_TOOLTIP + ' ' + options.navigationPosition + '">' + tooltip + '</div>';
+                }
+
+                li += '</li>';
+
+                nav.find('ul').append(li);
+            }
+
+            //centering it vertically
+            $(SECTION_NAV_SEL).css('margin-top', '-' + ($(SECTION_NAV_SEL).height()/2) + 'px');
+
+            //activating the current active section
+            $(SECTION_NAV_SEL).find('li').eq($(SECTION_ACTIVE_SEL).index(SECTION_SEL)).find('a').addClass(ACTIVE);
+        }
+
+        /**
+        * Creates the slim scroll scrollbar for the sections and slides inside them.
+        */
+        function createScrollBarHandler(){
+            $(SECTION_SEL).each(function(){
+                var slides = $(this).find(SLIDE_SEL);
+
+                if(slides.length){
+                    slides.each(function(){
+                        createScrollBar($(this));
+                    });
+                }else{
+                    createScrollBar($(this));
+                }
+
+            });
+            afterRenderActions();
+        }
+
+        /*
+        * Enables the Youtube videos API so we can control their flow if necessary.
+        */
+        function enableYoutubeAPI(){
+            container.find('iframe[src*="youtube.com/embed/"]').each(function(){
+                addURLParam($(this), 'enablejsapi=1');
+            });
+        }
+
+        /**
+        * Adds a new parameter and its value to the `src` of a given element
+        */
+        function addURLParam(element, newParam){
+            var originalSrc = element.attr('src');
+            element.attr('src', originalSrc + getUrlParamSign(originalSrc) + newParam);
+        }
+
+        /*
+        * Returns the prefix sign to use for a new parameter in an existen URL.
+        *
+        * @return {String}  ? | &
+        */
+        function getUrlParamSign(url){
+            return ( !/\?/.test( url ) ) ? '?' : '&';
+        }
+
+        /**
+        * Actions and callbacks to fire afterRender
+        */
+        function afterRenderActions(){
+            var section = $(SECTION_ACTIVE_SEL);
+
+            section.addClass(COMPLETELY);
+
+            if(options.scrollOverflowHandler.afterRender){
+                options.scrollOverflowHandler.afterRender(section);
+            }
+            lazyLoad(section);
+            playMedia(section);
+            options.scrollOverflowHandler.afterLoad();
+            
+            if(isDestinyTheStartingSection()){
+                $.isFunction( options.afterLoad ) && options.afterLoad.call(section, section.data('anchor'), (section.index(SECTION_SEL) + 1));
+            }
+
+            $.isFunction( options.afterRender ) && options.afterRender.call(container);
+        }
+
+        /**
+        * Determines if the URL anchor destiny is the starting section (the one using 'active' class before initialization)
+        */
+        function isDestinyTheStartingSection(){
+            var anchors =  window.location.hash.replace('#', '').split('/');
+            var destinationSection = getSectionByAnchor(decodeURIComponent(anchors[0]));
+    
+            return !destinationSection.length || destinationSection.length && destinationSection.index() === startingSection.index();
+        }
+
+
+        var isScrolling = false;
+        var lastScroll = 0;
+
+        //when scrolling...
+        function scrollHandler(){
+            var currentSection;
+
+            if(!options.autoScrolling || options.scrollBar){
+                var currentScroll = $window.scrollTop();
+                var scrollDirection = getScrollDirection(currentScroll);
+                var visibleSectionIndex = 0;
+                var screen_mid = currentScroll + ($window.height() / 2.0);
+                var isAtBottom = $body.height() - $window.height() === currentScroll;
+                var sections =  document.querySelectorAll(SECTION_SEL);
+
+                //when using `auto-height` for a small last section it won't be centered in the viewport
+                if(isAtBottom){
+                    visibleSectionIndex = sections.length - 1;
+                }
+                //is at top? when using `auto-height` for a small first section it won't be centered in the viewport
+                else if(!currentScroll){
+                    visibleSectionIndex = 0;
+                }
+
+                //taking the section which is showing more content in the viewport
+                else{
+                    for (var i = 0; i < sections.length; ++i) {
+                        var section = sections[i];
+
+                        // Pick the the last section which passes the middle line of the screen.
+                        if (section.offsetTop <= screen_mid)
+                        {
+                            visibleSectionIndex = i;
+                        }
+                    }
+                }
+
+                if(isCompletelyInViewPort(scrollDirection)){
+                    if(!$(SECTION_ACTIVE_SEL).hasClass(COMPLETELY)){
+                        $(SECTION_ACTIVE_SEL).addClass(COMPLETELY).siblings().removeClass(COMPLETELY);
+                    }
+                }
+
+                //geting the last one, the current one on the screen
+                currentSection = $(sections).eq(visibleSectionIndex);
+
+                //setting the visible section as active when manually scrolling
+                //executing only once the first time we reach the section
+                if(!currentSection.hasClass(ACTIVE)){
+                    isScrolling = true;
+                    var leavingSection = $(SECTION_ACTIVE_SEL);
+                    var leavingSectionIndex = leavingSection.index(SECTION_SEL) + 1;
+                    var yMovement = getYmovement(currentSection);
+                    var anchorLink  = currentSection.data('anchor');
+                    var sectionIndex = currentSection.index(SECTION_SEL) + 1;
+                    var activeSlide = currentSection.find(SLIDE_ACTIVE_SEL);
+                    var slideIndex;
+                    var slideAnchorLink;
+
+                    if(activeSlide.length){
+                        slideAnchorLink = activeSlide.data('anchor');
+                        slideIndex = activeSlide.index();
+                    }
+
+                    if(canScroll){
+                        currentSection.addClass(ACTIVE).siblings().removeClass(ACTIVE);
+
+                        $.isFunction( options.onLeave ) && options.onLeave.call( leavingSection, leavingSectionIndex, sectionIndex, yMovement);
+                        $.isFunction( options.afterLoad ) && options.afterLoad.call( currentSection, anchorLink, sectionIndex);
+
+                        stopMedia(leavingSection);
+                        lazyLoad(currentSection);
+                        playMedia(currentSection);
+
+                        activateMenuAndNav(anchorLink, sectionIndex - 1);
+
+                        if(options.anchors.length){
+                            //needed to enter in hashChange event when using the menu with anchor links
+                            lastScrolledDestiny = anchorLink;
+                        }
+                        setState(slideIndex, slideAnchorLink, anchorLink, sectionIndex);
+                    }
+
+                    //small timeout in order to avoid entering in hashChange event when scrolling is not finished yet
+                    clearTimeout(scrollId);
+                    scrollId = setTimeout(function(){
+                        isScrolling = false;
+                    }, 100);
+                }
+
+                if(options.fitToSection){
+                    //for the auto adjust of the viewport to fit a whole section
+                    clearTimeout(scrollId2);
+
+                    scrollId2 = setTimeout(function(){
+                        //checking it again in case it changed during the delay
+                        if(options.fitToSection){
+                            fitToSection();
+                        }
+                    }, options.fitToSectionDelay);
+                }
+            }
+        }
+
+        /**
+        * Fits the site to the nearest active section
+        */
+        function fitToSection(){
+            //checking fitToSection again in case it was set to false before the timeout delay
+            if(canScroll){
+                //allows to scroll to an active section and
+                //if the section is already active, we prevent firing callbacks
+                isResizing = true;
+
+                scrollPage($(SECTION_ACTIVE_SEL));
+                isResizing = false;
+            }
+        }
+
+        /**
+        * Determines whether the active section has seen in its whole or not.
+        */
+        function isCompletelyInViewPort(movement){
+            var top = $(SECTION_ACTIVE_SEL).position().top;
+            var bottom = top + $window.height();
+
+            if(movement == 'up'){
+                return bottom >= ($window.scrollTop() + $window.height());
+            }
+            return top <= $window.scrollTop();
+        }
+
+        /**
+        * Gets the directon of the the scrolling fired by the scroll event.
+        */
+        function getScrollDirection(currentScroll){
+            var direction = currentScroll > lastScroll ? 'down' : 'up';
+
+            lastScroll = currentScroll;
+
+            //needed for auto-height sections to determine if we want to scroll to the top or bottom of the destination
+            previousDestTop = currentScroll;
+
+            return direction;
+        }
+
+        /**
+        * Determines the way of scrolling up or down:
+        * by 'automatically' scrolling a section or by using the default and normal scrolling.
+        */
+        function scrolling(type, scrollable){
+            if (!isScrollAllowed.m[type]){
+                return;
+            }
+            var check = (type === 'down') ? 'bottom' : 'top';
+            var scrollSection = (type === 'down') ? moveSectionDown : moveSectionUp;
+
+            if(scrollable.length > 0 ){
+                //is the scrollbar at the start/end of the scroll?
+                if(options.scrollOverflowHandler.isScrolled(check, scrollable)){
+                    scrollSection();
+                }else{
+                    return true;
+                }
+            }else{
+                // moved up/down
+                scrollSection();
+            }
+        }
+
+        /*
+        * Preventing bouncing in iOS #2285
+        */
+        function preventBouncing(event){
+            var e = event.originalEvent;
+            if(!checkParentForNormalScrollElement(event.target) && options.autoScrolling && isReallyTouch(e)){
+                //preventing the easing on iOS devices
+                event.preventDefault();
+            }
+        }
+
+        var touchStartY = 0;
+        var touchStartX = 0;
+        var touchEndY = 0;
+        var touchEndX = 0;
+
+        /* Detecting touch events
+
+        * As we are changing the top property of the page on scrolling, we can not use the traditional way to detect it.
+        * This way, the touchstart and the touch moves shows an small difference between them which is the
+        * used one to determine the direction.
+        */
+        function touchMoveHandler(event){
+            var e = event.originalEvent;
+            var activeSection = $(e.target).closest(SECTION_SEL);
+
+            // additional: if one of the normalScrollElements isn't within options.normalScrollElementTouchThreshold hops up the DOM chain
+            if (!checkParentForNormalScrollElement(event.target) && isReallyTouch(e) ) {
+
+                if(options.autoScrolling){
+                    //preventing the easing on iOS devices
+                    event.preventDefault();
+                }
+
+                var scrollable = options.scrollOverflowHandler.scrollable(activeSection);
+                var touchEvents = getEventsPage(e);
+
+                touchEndY = touchEvents.y;
+                touchEndX = touchEvents.x;
+
+                //if movement in the X axys is greater than in the Y and the currect section has slides...
+                if (activeSection.find(SLIDES_WRAPPER_SEL).length && Math.abs(touchStartX - touchEndX) > (Math.abs(touchStartY - touchEndY))) {
+
+                    //is the movement greater than the minimum resistance to scroll?
+                    if (!slideMoving && Math.abs(touchStartX - touchEndX) > ($window.outerWidth() / 100 * options.touchSensitivity)) {
+                        if (touchStartX > touchEndX) {
+                            if(isScrollAllowed.m.right){
+                                moveSlideRight(activeSection); //next
+                            }
+                        } else {
+                            if(isScrollAllowed.m.left){
+                                moveSlideLeft(activeSection); //prev
+                            }
+                        }
+                    }
+                }
+
+                //vertical scrolling (only when autoScrolling is enabled)
+                else if(options.autoScrolling && canScroll){
+
+                    //is the movement greater than the minimum resistance to scroll?
+                    if (Math.abs(touchStartY - touchEndY) > ($window.height() / 100 * options.touchSensitivity)) {
+                        if (touchStartY > touchEndY) {
+                            scrolling('down', scrollable);
+                        } else if (touchEndY > touchStartY) {
+                            scrolling('up', scrollable);
+                        }
+                    }
+                }
+            }
+        }
+
+        /**
+         * recursive function to loop up the parent nodes to check if one of them exists in options.normalScrollElements
+         * Currently works well for iOS - Android might need some testing
+         * @param  {Element} el  target element / jquery selector (in subsequent nodes)
+         * @param  {int}     hop current hop compared to options.normalScrollElementTouchThreshold
+         * @return {boolean} true if there is a match to options.normalScrollElements
+         */
+        function checkParentForNormalScrollElement (el, hop) {
+            hop = hop || 0;
+            var parent = $(el).parent();
+
+            if (hop < options.normalScrollElementTouchThreshold &&
+                parent.is(options.normalScrollElements) ) {
+                return true;
+            } else if (hop == options.normalScrollElementTouchThreshold) {
+                return false;
+            } else {
+                return checkParentForNormalScrollElement(parent, ++hop);
+            }
+        }
+
+        /**
+        * As IE >= 10 fires both touch and mouse events when using a mouse in a touchscreen
+        * this way we make sure that is really a touch event what IE is detecting.
+        */
+        function isReallyTouch(e){
+            //if is not IE   ||  IE is detecting `touch` or `pen`
+            return typeof e.pointerType === 'undefined' || e.pointerType != 'mouse';
+        }
+
+        /**
+        * Handler for the touch start event.
+        */
+        function touchStartHandler(event){
+            var e = event.originalEvent;
+
+            //stopping the auto scroll to adjust to a section
+            if(options.fitToSection){
+                $htmlBody.stop();
+            }
+
+            if(isReallyTouch(e)){
+                var touchEvents = getEventsPage(e);
+                touchStartY = touchEvents.y;
+                touchStartX = touchEvents.x;
+            }
+        }
+
+        /**
+        * Gets the average of the last `number` elements of the given array.
+        */
+        function getAverage(elements, number){
+            var sum = 0;
+
+            //taking `number` elements from the end to make the average, if there are not enought, 1
+            var lastElements = elements.slice(Math.max(elements.length - number, 1));
+
+            for(var i = 0; i < lastElements.length; i++){
+                sum = sum + lastElements[i];
+            }
+
+            return Math.ceil(sum/number);
+        }
+
+        /**
+         * Detecting mousewheel scrolling
+         *
+         * http://blogs.sitepointstatic.com/examples/tech/mouse-wheel/index.html
+         * http://www.sitepoint.com/html5-javascript-mouse-wheel/
+         */
+        var prevTime = new Date().getTime();
+
+        function MouseWheelHandler(e) {
+            var curTime = new Date().getTime();
+            var isNormalScroll = $(COMPLETELY_SEL).hasClass(NORMAL_SCROLL);
+
+            //autoscrolling and not zooming?
+            if(options.autoScrolling && !controlPressed && !isNormalScroll){
+                // cross-browser wheel delta
+                e = e || window.event;
+                var value = e.wheelDelta || -e.deltaY || -e.detail;
+                var delta = Math.max(-1, Math.min(1, value));
+
+                var horizontalDetection = typeof e.wheelDeltaX !== 'undefined' || typeof e.deltaX !== 'undefined';
+                var isScrollingVertically = (Math.abs(e.wheelDeltaX) < Math.abs(e.wheelDelta)) || (Math.abs(e.deltaX ) < Math.abs(e.deltaY) || !horizontalDetection);
+
+                //Limiting the array to 150 (lets not waste memory!)
+                if(scrollings.length > 149){
+                    scrollings.shift();
+                }
+
+                //keeping record of the previous scrollings
+                scrollings.push(Math.abs(value));
+
+                //preventing to scroll the site on mouse wheel when scrollbar is present
+                if(options.scrollBar){
+                    e.preventDefault ? e.preventDefault() : e.returnValue = false;
+                }
+
+                var activeSection = $(SECTION_ACTIVE_SEL);
+                var scrollable = options.scrollOverflowHandler.scrollable(activeSection);
+
+                //time difference between the last scroll and the current one
+                var timeDiff = curTime-prevTime;
+                prevTime = curTime;
+
+                //haven't they scrolled in a while?
+                //(enough to be consider a different scrolling action to scroll another section)
+                if(timeDiff > 200){
+                    //emptying the array, we dont care about old scrollings for our averages
+                    scrollings = [];
+                }
+
+                if(canScroll){
+                    var averageEnd = getAverage(scrollings, 10);
+                    var averageMiddle = getAverage(scrollings, 70);
+                    var isAccelerating = averageEnd >= averageMiddle;
+
+                    //to avoid double swipes...
+                    if(isAccelerating && isScrollingVertically){
+                        //scrolling down?
+                        if (delta < 0) {
+                            scrolling('down', scrollable);
+
+                        //scrolling up?
+                        }else {
+                            scrolling('up', scrollable);
+                        }
+                    }
+                }
+
+                return false;
+            }
+
+            if(options.fitToSection){
+                //stopping the auto scroll to adjust to a section
+                $htmlBody.stop();
+            }
+        }
+
+        /**
+        * Slides a slider to the given direction.
+        * Optional `section` param.
+        */
+        function moveSlide(direction, section){
+            var activeSection = typeof section === 'undefined' ? $(SECTION_ACTIVE_SEL) : section;
+            var slides = activeSection.find(SLIDES_WRAPPER_SEL);
+            var numSlides = slides.find(SLIDE_SEL).length;
+
+            // more than one slide needed and nothing should be sliding
+            if (!slides.length || slideMoving || numSlides < 2) {
+                return;
+            }
+
+            var currentSlide = slides.find(SLIDE_ACTIVE_SEL);
+            var destiny = null;
+
+            if(direction === 'left'){
+                destiny = currentSlide.prev(SLIDE_SEL);
+            }else{
+                destiny = currentSlide.next(SLIDE_SEL);
+            }
+
+            //isn't there a next slide in the secuence?
+            if(!destiny.length){
+                //respect loopHorizontal settin
+                if (!options.loopHorizontal) return;
+
+                if(direction === 'left'){
+                    destiny = currentSlide.siblings(':last');
+                }else{
+                    destiny = currentSlide.siblings(':first');
+                }
+            }
+
+            slideMoving = true;
+
+            landscapeScroll(slides, destiny, direction);
+        }
+
+        /**
+        * Maintains the active slides in the viewport
+        * (Because the `scroll` animation might get lost with some actions, such as when using continuousVertical)
+        */
+        function keepSlidesPosition(){
+            $(SLIDE_ACTIVE_SEL).each(function(){
+                silentLandscapeScroll($(this), 'internal');
+            });
+        }
+
+        var previousDestTop = 0;
+        /**
+        * Returns the destination Y position based on the scrolling direction and
+        * the height of the section.
+        */
+        function getDestinationPosition(element){
+            var elemPosition = element.position();
+
+            //top of the desination will be at the top of the viewport
+            var position = elemPosition.top;
+            var isScrollingDown =  elemPosition.top > previousDestTop;
+            var sectionBottom = position - windowsHeight + element.outerHeight();
+            var bigSectionsDestination = options.bigSectionsDestination;
+
+            //Uncode addition
+            var containerH = container.outerHeight();
+            var containerPosition = container.offset();
+
+            //########### Commented by Uncode - START ###########
+            //is the destination element bigger than the viewport?
+            // if(element.outerHeight() > windowsHeight){
+            //     //scrolling up?
+            //     if(!isScrollingDown && !bigSectionsDestination || bigSectionsDestination === 'bottom' ){
+            //         position = sectionBottom;
+            //     }
+            // }
+
+            // //sections equal or smaller than the viewport height && scrolling down? ||  is resizing and its in the last section
+            // else if(isScrollingDown || (isResizing && element.is(':last-child')) ){
+            //     //The bottom of the destination will be at the bottom of the viewport
+            //     position = sectionBottom;
+            // }
+            //########### Commented by Uncode - END ###########
+
+            //Uncode addition
+            if ( !$masthead.hasClass('menu-transparent') && $('body').hasClass('uncode-fp-menu-shrink') && !element.is(':first-child') )
+                position += 18;
+            if ( ( containerH + menuHeight + bodyBorder + adminBarHeight - windowsHeight ) < position || ( isResizing && element.is(':last-child') ) ) {
+                position = sectionBottom + menuHeight + bodyBorder*2 + adminBarHeight;
+            }
+            
+            /*
+            Keeping record of the last scrolled position to determine the scrolling direction.
+            No conventional methods can be used as the scroll bar might not be present
+            AND the section might not be active if it is auto-height and didnt reach the middle
+            of the viewport.
+            */
+            previousDestTop = position;
+            return position;
+        }
+
+        /**
+        * Scrolls the site to the given element and scrolls to the slide if a callback is given.
+        */
+        function scrollPage(element, callback, isMovementUp){
+            if(typeof element === 'undefined'){ return; } //there's no element to scroll, leaving the function
+
+            var dtop = getDestinationPosition(element);
+            var slideAnchorLink;
+            var slideIndex;
+
+            //local variables
+            var v = {
+                element: element,
+                callback: callback,
+                isMovementUp: isMovementUp,
+                dtop: dtop,
+                yMovement: getYmovement(element),
+                anchorLink: element.data('anchor'),
+                sectionIndex: element.index(SECTION_SEL),
+                activeSlide: element.find(SLIDE_ACTIVE_SEL),
+                activeSection: $(SECTION_ACTIVE_SEL),
+                leavingSection: $(SECTION_ACTIVE_SEL).index(SECTION_SEL) + 1,
+
+                //caching the value of isResizing at the momment the function is called
+                //because it will be checked later inside a setTimeout and the value might change
+                localIsResizing: isResizing
+            };
+
+            //quiting when destination scroll is the same as the current one
+            if((v.activeSection.is(element) && !isResizing) || (options.scrollBar && $window.scrollTop() === v.dtop && !element.hasClass(AUTO_HEIGHT) )){ return; }
+
+            if(v.activeSlide.length){
+                slideAnchorLink = v.activeSlide.data('anchor');
+                slideIndex = v.activeSlide.index();
+            }
+
+            // If continuousVertical && we need to wrap around
+            if (options.autoScrolling && options.continuousVertical && typeof (v.isMovementUp) !== "undefined" &&
+                ((!v.isMovementUp && v.yMovement == 'up') || // Intending to scroll down but about to go up or
+                (v.isMovementUp && v.yMovement == 'down'))) { // intending to scroll up but about to go down
+
+                v = createInfiniteSections(v);
+            }
+
+            //callback (onLeave) if the site is not just resizing and readjusting the slides
+            if($.isFunction(options.onLeave) && !v.localIsResizing){
+                if(options.onLeave.call(v.activeSection, v.leavingSection, (v.sectionIndex + 1), v.yMovement) === false){
+                    return;
+                }
+            }
+
+            //pausing media of the leaving section (if we are not just resizing, as destinatino will be the same one)
+            if(!v.localIsResizing){
+                stopMedia(v.activeSection);
+            }
+
+            options.scrollOverflowHandler.beforeLeave();
+            element.addClass(ACTIVE).siblings().removeClass(ACTIVE);
+            lazyLoad(element);
+            options.scrollOverflowHandler.onLeave();
+
+
+            //preventing from activating the MouseWheelHandler event
+            //more than once if the page is scrolling
+            canScroll = false;
+
+            setState(slideIndex, slideAnchorLink, v.anchorLink, v.sectionIndex);
+
+            performMovement(v);
+
+            //flag to avoid callingn `scrollPage()` twice in case of using anchor links
+            lastScrolledDestiny = v.anchorLink;
+
+            //avoid firing it twice (as it does also on scroll)
+            activateMenuAndNav(v.anchorLink, v.sectionIndex);
+        }
+
+        /**
+        * Performs the vertical movement (by CSS3 or by jQuery)
+        */
+        function performMovement(v){
+            // using CSS3 translate functionality
+            if (options.css3 && options.autoScrolling && !options.scrollBar) {
+
+                // The first section can have a negative value in iOS 10. Not quite sure why: -0.0142822265625
+                // that's why we round it to 0.
+                var translate3d = 'translate3d(0px, -' + Math.round(v.dtop) + 'px, 0px)';
+                transformContainer(translate3d, true);
+
+                //even when the scrollingSpeed is 0 there's a little delay, which might cause the
+                //scrollingSpeed to change in case of using silentMoveTo();
+                if(options.scrollingSpeed){
+                    clearTimeout(afterSectionLoadsId);
+                    afterSectionLoadsId = setTimeout(function () {
+                        afterSectionLoads(v);
+                    }, options.scrollingSpeed);
+                }else{
+                    afterSectionLoads(v);
+                }
+            }
+
+            // using jQuery animate
+            else{
+                var scrollSettings = getScrollSettings(v);
+
+                $(scrollSettings.element).animate(
+                    scrollSettings.options,
+                options.scrollingSpeed, options.easing).promise().done(function () { //only one single callback in case of animating  `html, body`
+                    if(options.scrollBar){
+
+                        /* Hack!
+                        The timeout prevents setting the most dominant section in the viewport as "active" when the user
+                        scrolled to a smaller section by using the mousewheel (auto scrolling) rather than draging the scroll bar.
+
+                        When using scrollBar:true It seems like the scroll events still getting propagated even after the scrolling animation has finished.
+                        */
+                        setTimeout(function(){
+                            afterSectionLoads(v);
+                        },30);
+                    }else{
+                        afterSectionLoads(v);
+                    }
+                });
+            }
+        }
+
+        /**
+        * Gets the scrolling settings depending on the plugin autoScrolling option
+        */
+        function getScrollSettings(v){
+            var scroll = {};
+
+            if(options.autoScrolling && !options.scrollBar){
+                scroll.options = { 'top': -v.dtop};
+                scroll.element = WRAPPER_SEL;
+            }else{
+                scroll.options = { 'scrollTop': v.dtop};
+                scroll.element = 'html, body';
+            }
+
+            return scroll;
+        }
+
+        /**
+        * Adds sections before or after the current one to create the infinite effect.
+        */
+        function createInfiniteSections(v){
+            // Scrolling down
+            if (!v.isMovementUp) {
+                // Move all previous sections to after the active section
+                $(SECTION_ACTIVE_SEL).after(v.activeSection.prevAll(SECTION_SEL).get().reverse());
+            }
+            else { // Scrolling up
+                // Move all next sections to before the active section
+                $(SECTION_ACTIVE_SEL).before(v.activeSection.nextAll(SECTION_SEL));
+            }
+
+            // Maintain the displayed position (now that we changed the element order)
+            silentScroll($(SECTION_ACTIVE_SEL).position().top);
+
+            // Maintain the active slides visible in the viewport
+            keepSlidesPosition();
+
+            // save for later the elements that still need to be reordered
+            v.wrapAroundElements = v.activeSection;
+
+            // Recalculate animation variables
+            v.dtop = v.element.position().top;
+            v.yMovement = getYmovement(v.element);
+
+            return v;
+        }
+
+        /**
+        * Fix section order after continuousVertical changes have been animated
+        */
+        function continuousVerticalFixSectionOrder (v) {
+            // If continuousVertical is in effect (and autoScrolling would also be in effect then),
+            // finish moving the elements around so the direct navigation will function more simply
+            if (!v.wrapAroundElements || !v.wrapAroundElements.length) {
+                return;
+            }
+
+            if (v.isMovementUp) {
+                $(SECTION_FIRST_SEL).before(v.wrapAroundElements);
+            }
+            else {
+                $(SECTION_LAST_SEL).after(v.wrapAroundElements);
+            }
+
+            silentScroll($(SECTION_ACTIVE_SEL).position().top);
+
+            // Maintain the active slides visible in the viewport
+            keepSlidesPosition();
+        }
+
+
+        /**
+        * Actions to do once the section is loaded.
+        */
+        function afterSectionLoads (v){
+            continuousVerticalFixSectionOrder(v);
+
+            //callback (afterLoad) if the site is not just resizing and readjusting the slides
+            $.isFunction(options.afterLoad) && !v.localIsResizing && options.afterLoad.call(v.element, v.anchorLink, (v.sectionIndex + 1));
+            options.scrollOverflowHandler.afterLoad();
+
+            if(!v.localIsResizing){
+                playMedia(v.element);
+            }
+
+            v.element.addClass(COMPLETELY).siblings().removeClass(COMPLETELY);
+
+            canScroll = true;
+
+            $.isFunction(v.callback) && v.callback.call(this);
+        }
+
+        /**
+        * Sets the value for the given attribute from the `data-` attribute with the same suffix
+        * ie: data-srcset ==> srcset  |  data-src ==> src
+        */
+        function setSrc(element, attribute){
+            element
+                .attr(attribute, element.data(attribute))
+                .removeAttr('data-' + attribute);
+        }
+
+        /**
+        * Lazy loads image, video and audio elements.
+        */
+        function lazyLoad(destiny){
+            if (!options.lazyLoading){
+                return;
+            }
+
+            var panel = getSlideOrSection(destiny);
+            var element;
+            
+            panel.find('img[data-src], img[data-srcset], source[data-src], audio[data-src], iframe[data-src]').each(function(){
+                element = $(this);
+
+                $.each(['src', 'srcset'], function(index, type){
+                    var attribute = element.attr('data-' + type);
+                    if(typeof attribute !== 'undefined' && attribute){
+                        setSrc(element, type);
+                    }
+                });
+
+                if(element.is('source')){
+                    element.closest('video').get(0).load();
+                }
+            });
+        }
+
+        /**
+        * Plays video and audio elements.
+        */
+        function playMedia(destiny){
+            var panel = getSlideOrSection(destiny);
+
+            //playing HTML5 media elements
+            panel.find('video, audio').each(function(){
+                var element = $(this).get(0);
+
+                if( element.hasAttribute('data-autoplay') && typeof element.play === 'function' ) {
+                    element.play();
+                }
+            });
+
+            //youtube videos
+            panel.find('iframe[src*="youtube.com/embed/"]').each(function(){
+                var element = $(this).get(0);
+
+                if ( element.hasAttribute('data-autoplay') ){
+                    playYoutube(element);
+                }
+
+                //in case the URL was not loaded yet. On page load we need time for the new URL (with the API string) to load.
+                element.onload = function() {
+                    if ( element.hasAttribute('data-autoplay') ){
+                        playYoutube(element);
+                    }
+                };
+            });
+        }
+
+        /**
+        * Plays a youtube video
+        */
+        function playYoutube(element){
+            element.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+        }
+
+        /**
+        * Stops video and audio elements.
+        */
+        function stopMedia(destiny){
+            var panel = getSlideOrSection(destiny);
+
+            //stopping HTML5 media elements
+            panel.find('video, audio').each(function(){
+                var element = $(this).get(0);
+
+                if( !element.hasAttribute('data-keepplaying') && typeof element.pause === 'function' ) {
+                    element.pause();
+                }
+            });
+
+            //youtube videos
+            panel.find('iframe[src*="youtube.com/embed/"]').each(function(){
+                var element = $(this).get(0);
+
+                if( /youtube\.com\/embed\//.test($(this).attr('src')) && !element.hasAttribute('data-keepplaying')){
+                    $(this).get(0).contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}','*');
+                }
+            });
+        }
+
+        /**
+        * Gets the active slide (or section) for the given section
+        */
+        function getSlideOrSection(destiny){
+            var slide = destiny.find(SLIDE_ACTIVE_SEL);
+            if( slide.length ) {
+                destiny = $(slide);
+            }
+
+            return destiny;
+        }
+
+        /**
+        * Scrolls to the anchor in the URL when loading the site
+        */
+        function scrollToAnchor(){
+            //getting the anchor link in the URL and deleting the `#`
+            var value =  window.location.hash.replace('#', '').split('/');
+            var sectionAnchor = decodeURIComponent(value[0]);
+            var slideAnchor = decodeURIComponent(value[1]);
+
+            if(sectionAnchor){  //if theres any #
+                if(options.animateAnchor){
+                    scrollPageAndSlide(sectionAnchor, slideAnchor);
+                }else{
+                    silentMoveTo(sectionAnchor, slideAnchor);
+                }
+            }
+        }
+
+        /**
+        * Detecting any change on the URL to scroll to the given anchor link
+        * (a way to detect back history button as we play with the hashes on the URL)
+        */
+        function hashChangeHandler(){
+            if(!isScrolling && !options.lockAnchors){
+                var value =  window.location.hash.replace('#', '').split('/');
+                var sectionAnchor = decodeURIComponent(value[0]);
+                var slideAnchor = decodeURIComponent(value[1]);
+
+                    //when moving to a slide in the first section for the first time (first time to add an anchor to the URL)
+                    var isFirstSlideMove =  (typeof lastScrolledDestiny === 'undefined');
+                    var isFirstScrollMove = (typeof lastScrolledDestiny === 'undefined' && typeof slideAnchor === 'undefined' && !slideMoving);
+
+
+                if(sectionAnchor.length){
+                    /*in order to call scrollpage() only once for each destination at a time
+                    It is called twice for each scroll otherwise, as in case of using anchorlinks `hashChange`
+                    event is fired on every scroll too.*/
+                    if ((sectionAnchor && sectionAnchor !== lastScrolledDestiny) && !isFirstSlideMove || isFirstScrollMove || (!slideMoving && lastScrolledSlide != slideAnchor ))  {
+                        scrollPageAndSlide(sectionAnchor, slideAnchor);
+                    }
+                }
+            }
+        }
+
+        //Sliding with arrow keys, both, vertical and horizontal
+        function keydownHandler(e) {
+
+            clearTimeout(keydownId);
+
+            var activeElement = $(':focus');
+
+            if(!activeElement.is('textarea') && !activeElement.is('input') && !activeElement.is('select') &&
+                activeElement.attr('contentEditable') !== "true" && activeElement.attr('contentEditable') !== '' &&
+                options.keyboardScrolling && options.autoScrolling){
+                var keyCode = e.which;
+
+                //preventing the scroll with arrow keys & spacebar & Page Up & Down keys
+                var keyControls = [40, 38, 32, 33, 34];
+                if($.inArray(keyCode, keyControls) > -1){
+                    e.preventDefault();
+                }
+
+                controlPressed = e.ctrlKey;
+
+                keydownId = setTimeout(function(){
+                    onkeydown(e);
+                },150);
+            }
+        }
+
+        function tooltipTextHandler(){
+            $(this).prev().trigger('click');
+        }
+
+        //to prevent scrolling while zooming
+        function keyUpHandler(e){
+            if(isWindowFocused){ //the keyup gets fired on new tab ctrl + t in Firefox
+                controlPressed = e.ctrlKey;
+            }
+        }
+
+        //binding the mousemove when the mouse's middle button is released
+        function mouseDownHandler(e){
+            //middle button
+            if (e.which == 2){
+                oldPageY = e.pageY;
+                container.on('mousemove', mouseMoveHandler);
+            }
+        }
+
+        //unbinding the mousemove when the mouse's middle button is released
+        function mouseUpHandler(e){
+            //middle button
+            if (e.which == 2){
+                container.off('mousemove');
+            }
+        }
+
+        //Scrolling horizontally when clicking on the slider controls.
+        function slideArrowHandler(){
+            var section = $(this).closest(SECTION_SEL);
+
+            if ($(this).hasClass(SLIDES_PREV)) {
+                if(isScrollAllowed.m.left){
+                    moveSlideLeft(section);
+                }
+            } else {
+                if(isScrollAllowed.m.right){
+                    moveSlideRight(section);
+                }
+            }
+        }
+
+        //when opening a new tab (ctrl + t), `control` won't be pressed when coming back.
+        function blurHandler(){
+            isWindowFocused = false;
+            controlPressed = false;
+        }
+
+        //Scrolls to the section when clicking the navigation bullet
+        function sectionBulletHandler(e){
+            e.preventDefault();
+            var index = $(this).parent().index();
+            scrollPage($(SECTION_SEL).eq(index));
+        }
+
+        //Scrolls the slider to the given slide destination for the given section
+        function slideBulletHandler(e){
+            e.preventDefault();
+            var slides = $(this).closest(SECTION_SEL).find(SLIDES_WRAPPER_SEL);
+            var destiny = slides.find(SLIDE_SEL).eq($(this).closest('li').index());
+
+            landscapeScroll(slides, destiny);
+        }
+
+        /**
+        * Keydown event
+        */
+        function onkeydown(e){
+            var shiftPressed = e.shiftKey;
+
+            //do nothing if we can not scroll or we are not using horizotnal key arrows.
+            if(!canScroll && [37,39].indexOf(e.which) < 0){
+                return;
+            }
+
+            switch (e.which) {
+                //up
+                case 38:
+                case 33:
+                    if(isScrollAllowed.k.up){
+                        moveSectionUp();
+                    }
+                    break;
+
+                //down
+                case 32: //spacebar
+                    if(shiftPressed && isScrollAllowed.k.up){
+                        moveSectionUp();
+                        break;
+                    }
+                /* falls through */
+                case 40:
+                case 34:
+                    if(isScrollAllowed.k.down){
+                        moveSectionDown();
+                    }
+                    break;
+
+                //Home
+                case 36:
+                    if(isScrollAllowed.k.up){
+                        moveTo(1);
+                    }
+                    break;
+
+                //End
+                case 35:
+                     if(isScrollAllowed.k.down){
+                        moveTo( $(SECTION_SEL).length );
+                    }
+                    break;
+
+                //left
+                case 37:
+                    if(isScrollAllowed.k.left){
+                        moveSlideLeft();
+                    }
+                    break;
+
+                //right
+                case 39:
+                    if(isScrollAllowed.k.right){
+                        moveSlideRight();
+                    }
+                    break;
+
+                default:
+                    return; // exit this handler for other keys
+            }
+        }
+
+        /**
+        * Detecting the direction of the mouse movement.
+        * Used only for the middle button of the mouse.
+        */
+        var oldPageY = 0;
+        function mouseMoveHandler(e){
+            if(canScroll){
+                // moving up
+                if (e.pageY < oldPageY && isScrollAllowed.m.up){
+                    moveSectionUp();
+                }
+
+                // moving down
+                else if(e.pageY > oldPageY && isScrollAllowed.m.down){
+                    moveSectionDown();
+                }
+            }
+            oldPageY = e.pageY;
+        }
+
+        /**
+        * Scrolls horizontal sliders.
+        */
+        function landscapeScroll(slides, destiny, direction){
+            var section = slides.closest(SECTION_SEL);
+            var v = {
+                slides: slides,
+                destiny: destiny,
+                direction: direction,
+                destinyPos: destiny.position(),
+                slideIndex: destiny.index(),
+                section: section,
+                sectionIndex: section.index(SECTION_SEL),
+                anchorLink: section.data('anchor'),
+                slidesNav: section.find(SLIDES_NAV_SEL),
+                slideAnchor:  getAnchor(destiny),
+                prevSlide: section.find(SLIDE_ACTIVE_SEL),
+                prevSlideIndex: section.find(SLIDE_ACTIVE_SEL).index(),
+
+                //caching the value of isResizing at the momment the function is called
+                //because it will be checked later inside a setTimeout and the value might change
+                localIsResizing: isResizing
+            };
+            v.xMovement = getXmovement(v.prevSlideIndex, v.slideIndex);
+
+            //important!! Only do it when not resizing
+            if(!v.localIsResizing){
+                //preventing from scrolling to the next/prev section when using scrollHorizontally
+                canScroll = false;
+            }
+
+            if(options.onSlideLeave){
+
+                //if the site is not just resizing and readjusting the slides
+                if(!v.localIsResizing && v.xMovement!=='none'){
+                    if($.isFunction( options.onSlideLeave )){
+                        if(options.onSlideLeave.call( v.prevSlide, v.anchorLink, (v.sectionIndex + 1), v.prevSlideIndex, v.xMovement, v.slideIndex ) === false){
+                            slideMoving = false;
+                            return;
+                        }
+                    }
+                }
+            }
+
+            destiny.addClass(ACTIVE).siblings().removeClass(ACTIVE);
+
+            if(!v.localIsResizing){
+                stopMedia(v.prevSlide);
+                lazyLoad(destiny);
+            }
+
+            if(!options.loopHorizontal && options.controlArrows){
+                //hidding it for the fist slide, showing for the rest
+                section.find(SLIDES_ARROW_PREV_SEL).toggle(v.slideIndex!==0);
+
+                //hidding it for the last slide, showing for the rest
+                section.find(SLIDES_ARROW_NEXT_SEL).toggle(!destiny.is(':last-child'));
+            }
+
+            //only changing the URL if the slides are in the current section (not for resize re-adjusting)
+            if(section.hasClass(ACTIVE) && !v.localIsResizing){
+                setState(v.slideIndex, v.slideAnchor, v.anchorLink, v.sectionIndex);
+            }
+
+            performHorizontalMove(slides, v, true);
+        }
+
+
+        function afterSlideLoads(v){
+            activeSlidesNavigation(v.slidesNav, v.slideIndex);
+
+            //if the site is not just resizing and readjusting the slides
+            if(!v.localIsResizing){
+                $.isFunction( options.afterSlideLoad ) && options.afterSlideLoad.call( v.destiny, v.anchorLink, (v.sectionIndex + 1), v.slideAnchor, v.slideIndex);
+
+                //needs to be inside the condition to prevent problems with continuousVertical and scrollHorizontally
+                //and to prevent double scroll right after a windows resize
+                canScroll = true;
+
+                playMedia(v.destiny);
+            }
+
+            //letting them slide again
+            slideMoving = false;
+        }
+
+        /**
+        * Performs the horizontal movement. (CSS3 or jQuery)
+        *
+        * @param fireCallback {Bool} - determines whether or not to fire the callback
+        */
+        function performHorizontalMove(slides, v, fireCallback){
+            var destinyPos = v.destinyPos;
+
+            if(options.css3){
+                var translate3d = 'translate3d(-' + Math.round(destinyPos.left) + 'px, 0px, 0px)';
+
+                addAnimation(slides.find(SLIDES_CONTAINER_SEL)).css(getTransforms(translate3d), v);
+
+                afterSlideLoadsId = setTimeout(function(){
+                    fireCallback && afterSlideLoads(v);
+                }, options.scrollingSpeed, options.easing);
+            }else{
+                slides.animate({
+                    scrollLeft : Math.round(destinyPos.left)
+                }, options.scrollingSpeed, options.easing, function() {
+
+                    fireCallback && afterSlideLoads(v);
+                });
+            }
+        }
+
+        /**
+        * Sets the state for the horizontal bullet navigations.
+        */
+        function activeSlidesNavigation(slidesNav, slideIndex){
+            slidesNav.find(ACTIVE_SEL).removeClass(ACTIVE);
+            slidesNav.find('li').eq(slideIndex).find('a').addClass(ACTIVE);
+        }
+
+        var previousHeight = windowsHeight;
+
+        //when resizing the site, we adjust the heights of the sections, slimScroll...
+        function resizeHandler(){
+            //checking if it needs to get responsive
+            responsive();
+
+            // rebuild immediately on touch devices
+            if (isTouchDevice) {
+                var activeElement = $(document.activeElement);
+
+                //if the keyboard is NOT visible
+                if (!activeElement.is('textarea') && !activeElement.is('input') && !activeElement.is('select')) {
+                    var currentHeight = $window.height();
+
+                    //making sure the change in the viewport size is enough to force a rebuild. (20 % of the window to avoid problems when hidding scroll bars)
+                    if( Math.abs(currentHeight - previousHeight) > (20 * Math.max(previousHeight, currentHeight) / 100) ){
+                        reBuild(true);
+                        previousHeight = currentHeight;
+                    }
+                }
+            }else{
+                //in order to call the functions only when the resize is finished
+                //http://stackoverflow.com/questions/4298612/jquery-how-to-call-resize-event-only-once-its-finished-resizing
+                clearTimeout(resizeId);
+
+                resizeId = setTimeout(function(){
+                    reBuild(true);
+                }, 350);
+            }
+        }
+
+        /**
+        * Checks if the site needs to get responsive and disables autoScrolling if so.
+        * A class `fp-responsive` is added to the plugin's container in case the user wants to use it for his own responsive CSS.
+        */
+        function responsive(){
+            var widthLimit = options.responsive || options.responsiveWidth; //backwards compatiblity
+            var heightLimit = options.responsiveHeight;
+
+            //only calculating what we need. Remember its called on the resize event.
+            var isBreakingPointWidth = widthLimit && $window.outerWidth() < widthLimit;
+            var isBreakingPointHeight = heightLimit && $window.height() < heightLimit;
+
+            if(widthLimit && heightLimit){
+                setResponsive(isBreakingPointWidth || isBreakingPointHeight);
+            }
+            else if(widthLimit){
+                setResponsive(isBreakingPointWidth);
+            }
+            else if(heightLimit){
+                setResponsive(isBreakingPointHeight);
+            }
+        }
+
+        /**
+        * Adds transition animations for the given element
+        */
+        function addAnimation(container, element){
+            var transition = 'all ' + options.scrollingSpeed + 'ms ' + options.easingcss3;
+
+            container.removeClass(NO_TRANSITION);
+            return container.css({
+                '-webkit-transition': transition,
+                'transition': transition
+            });
+        }
+
+        /**
+        * Remove transition animations for the given element
+        */
+        function removeAnimation(element){
+            return element.addClass(NO_TRANSITION);
+        }
+
+        /**
+        * Activating the vertical navigation bullets according to the given slide name.
+        */
+        function activateNavDots(name, sectionIndex){
+            if(options.navigation){
+                $(SECTION_NAV_SEL).find(ACTIVE_SEL).removeClass(ACTIVE);
+                if(name){
+                    $(SECTION_NAV_SEL).find('a[href="#' + name + '"]').addClass(ACTIVE);
+                }else{
+                    $(SECTION_NAV_SEL).find('li').eq(sectionIndex).find('a').addClass(ACTIVE);
+                }
+            }
+        }
+
+        /**
+        * Activating the website main menu elements according to the given slide name.
+        */
+        function activateMenuElement(name){
+            if(options.menu){
+                $(options.menu).find(ACTIVE_SEL).removeClass(ACTIVE);
+                $(options.menu).find('[data-menuanchor="'+name+'"]').addClass(ACTIVE);
+            }
+        }
+
+        /**
+        * Sets to active the current menu and vertical nav items.
+        */
+        function activateMenuAndNav(anchor, index){
+            activateMenuElement(anchor);
+            activateNavDots(anchor, index);
+        }
+
+        /**
+        * Retuns `up` or `down` depending on the scrolling movement to reach its destination
+        * from the current section.
+        */
+        function getYmovement(destiny){
+            var fromIndex = $(SECTION_ACTIVE_SEL).index(SECTION_SEL);
+            var toIndex = destiny.index(SECTION_SEL);
+            if( fromIndex == toIndex){
+                return 'none';
+            }
+            if(fromIndex > toIndex){
+                return 'up';
+            }
+            return 'down';
+        }
+
+        /**
+        * Retuns `right` or `left` depending on the scrolling movement to reach its destination
+        * from the current slide.
+        */
+        function getXmovement(fromIndex, toIndex){
+            if( fromIndex == toIndex){
+                return 'none';
+            }
+            if(fromIndex > toIndex){
+                return 'left';
+            }
+            return 'right';
+        }
+
+        /**
+        * Checks if the element needs scrollbar and if the user wants to apply it.
+        * If so it creates it.
+        *
+        * @param {Object} element   jQuery object of the section or slide
+        */
+        function createScrollBar(element){
+            //User doesn't want scrollbar here? Sayonara baby!
+            if(element.hasClass('fp-noscroll')) return;
+
+            //needed to make `scrollHeight` work under Opera 12
+            element.css('overflow', 'hidden');
+
+            var scrollOverflowHandler = options.scrollOverflowHandler;
+            var wrap = scrollOverflowHandler.wrapContent();
+            //in case element is a slide
+            var section = element.closest(SECTION_SEL);
+            var scrollable = scrollOverflowHandler.scrollable(element);
+            var contentHeight;
+
+            //if there was scroll, the contentHeight will be the one in the scrollable section
+            if(scrollable.length){
+                contentHeight = scrollOverflowHandler.scrollHeight(element);
+            }else{
+                contentHeight = element.get(0).scrollHeight;
+                if(options.verticalCentered){
+                    contentHeight = element.find(TABLE_CELL_SEL).get(0).scrollHeight;
+                }
+            }
+
+            var scrollHeight = windowsHeight - parseInt(section.css('padding-bottom')) - parseInt(section.css('padding-top'));
+            //Uncode addition
+            scrollHeight -= UNCODE.bodyBorder*2 + UNCODE.adminBarHeight;
+
+            //needs scroll?
+            if ( contentHeight > scrollHeight) {
+                //did we already have an scrollbar ? Updating it
+                if(scrollable.length){
+                    scrollOverflowHandler.update(element, scrollHeight);
+                }
+                //creating the scrolling
+                else{
+                    if(options.verticalCentered){
+                        element.find(TABLE_CELL_SEL).wrapInner(wrap);
+                    }else{
+                        element.wrapInner(wrap);
+                    }
+                    scrollOverflowHandler.create(element, scrollHeight);
+                }
+            }
+            //removing the scrolling when it is not necessary anymore
+            else{
+                scrollOverflowHandler.remove(element);
+            }
+
+            //undo
+            element.css('overflow', '');
+        }
+
+        function addTableClass(element){
+            //In case we are styling for the 2nd time as in with reponsiveSlides
+            if(!element.hasClass(TABLE)){
+                element.addClass(TABLE).wrapInner('<div class="' + TABLE_CELL + '" style="height:' + getTableHeight(element) + 'px;" />');
+            }
+        }
+
+        function getTableHeight(element){
+            var sectionHeight = windowsHeight;
+
+            if(options.paddingTop || options.paddingBottom){
+                var section = element;
+                if(!section.hasClass(SECTION)){
+                    section = element.closest(SECTION_SEL);
+                }
+
+                var paddings = parseInt(section.css('padding-top')) + parseInt(section.css('padding-bottom'));
+                sectionHeight = (windowsHeight - paddings);
+            }
+
+            return sectionHeight;
+        }
+
+        /**
+        * Adds a css3 transform property to the container class with or without animation depending on the animated param.
+        */
+        function transformContainer(translate3d, animated){
+            if(animated){
+                addAnimation(container);
+            }else{
+                removeAnimation(container);
+            }
+
+            container.css(getTransforms(translate3d));
+
+            //syncronously removing the class after the animation has been applied.
+            setTimeout(function(){
+                container.removeClass(NO_TRANSITION);
+            },10);
+        }
+
+        /**
+        * Gets a section by its anchor / index
+        */
+        function getSectionByAnchor(sectionAnchor){
+            if(!sectionAnchor) return [];
+
+            var section = container.find(SECTION_SEL + '[data-anchor="'+sectionAnchor+'"]');
+            if(!section.length){
+                section = $(SECTION_SEL).eq( sectionAnchor -1);
+            }
+
+            return section;
+        }
+
+        /**
+        * Gets a slide inside a given section by its anchor / index
+        */
+        function getSlideByAnchor(slideAnchor, section){
+            var slides = section.find(SLIDES_WRAPPER_SEL);
+            var slide =  slides.find(SLIDE_SEL + '[data-anchor="'+slideAnchor+'"]');
+
+            if(!slide.length){
+                slide = slides.find(SLIDE_SEL).eq(slideAnchor);
+            }
+
+            return slide;
+        }
+
+        /**
+        * Scrolls to the given section and slide anchors
+        */
+        function scrollPageAndSlide(destiny, slide){
+            var section = getSectionByAnchor(destiny);
+
+            //do nothing if there's no section with the given anchor name
+            if(!section.length) return;
+
+            //default slide
+            if (typeof slide === 'undefined') {
+                slide = 0;
+            }
+
+            //we need to scroll to the section and then to the slide
+            if (destiny !== lastScrolledDestiny && !section.hasClass(ACTIVE)){
+                scrollPage(section, function(){
+                    scrollSlider(section, slide);
+                });
+            }
+            //if we were already in the section
+            else{
+                scrollSlider(section, slide);
+            }
+        }
+
+        /**
+        * Scrolls the slider to the given slide destination for the given section
+        */
+        function scrollSlider(section, slideAnchor){
+            if(typeof slideAnchor !== 'undefined'){
+                var slides = section.find(SLIDES_WRAPPER_SEL);
+                var destiny =  getSlideByAnchor(slideAnchor, section);
+
+                if(destiny.length){
+                    landscapeScroll(slides, destiny);
+                }
+            }
+        }
+
+        /**
+        * Creates a landscape navigation bar with dots for horizontal sliders.
+        */
+        function addSlidesNavigation(section, numSlides){
+            section.append('<div class="' + SLIDES_NAV + '"><ul></ul></div>');
+            var nav = section.find(SLIDES_NAV_SEL);
+
+            //top or bottom
+            nav.addClass(options.slidesNavPosition);
+
+            for(var i=0; i< numSlides; i++){
+                nav.find('ul').append('<li><a href="#"><span></span></a></li>');
+            }
+
+            //centering it
+            nav.css('margin-left', '-' + (nav.width()/2) + 'px');
+
+            nav.find('li').first().find('a').addClass(ACTIVE);
+        }
+
+
+        /**
+        * Sets the state of the website depending on the active section/slide.
+        * It changes the URL hash when needed and updates the body class.
+        */
+        function setState(slideIndex, slideAnchor, anchorLink, sectionIndex){
+            var sectionHash = '';
+
+            if(options.anchors.length && !options.lockAnchors){
+
+                //isn't it the first slide?
+                if(slideIndex){
+                    if(typeof anchorLink !== 'undefined'){
+                        sectionHash = anchorLink;
+                    }
+
+                    //slide without anchor link? We take the index instead.
+                    if(typeof slideAnchor === 'undefined'){
+                        slideAnchor = slideIndex;
+                    }
+
+                    lastScrolledSlide = slideAnchor;
+                    setUrlHash(sectionHash + '/' + slideAnchor);
+
+                //first slide won't have slide anchor, just the section one
+                }else if(typeof slideIndex !== 'undefined'){
+                    lastScrolledSlide = slideAnchor;
+                    setUrlHash(anchorLink);
+                }
+
+                //section without slides
+                else{
+                    setUrlHash(anchorLink);
+                }
+            }
+
+            setBodyClass();
+        }
+
+        /**
+        * Sets the URL hash.
+        */
+        function setUrlHash(url){
+            //Uncode addition
+            if ( typeof SiteParameters.slide_footer != 'undefined' && url == SiteParameters.slide_footer )
+                return false;
+
+            if(options.recordHistory){
+                location.hash = url;
+            }else{
+                //Uncode addition
+                //Mobile Chrome doesn't work the normal way, so... lets use HTML5 for phones :)
+                // if(isTouchDevice || isTouch){
+                //     window.history.replaceState(undefined, undefined, '#' + url);
+                // }else{
+                //     var baseUrl = window.location.href.split('#')[0];
+                //     window.location.replace( baseUrl + '#' + url );
+                // }
+                return false;
+            }
+        }
+
+        /**
+        * Gets the anchor for the given slide / section. Its index will be used if there's none.
+        */
+        function getAnchor(element){
+            var anchor = element.data('anchor');
+            var index = element.index();
+
+            //Slide without anchor link? We take the index instead.
+            if(typeof anchor === 'undefined'){
+                anchor = index;
+            }
+
+            return anchor;
+        }
+
+        /**
+        * Sets a class for the body of the page depending on the active section / slide
+        */
+        function setBodyClass(){
+            var section = $(SECTION_ACTIVE_SEL);
+            var slide = section.find(SLIDE_ACTIVE_SEL);
+
+            var sectionAnchor = getAnchor(section);
+            var slideAnchor = getAnchor(slide);
+
+            var text = String(sectionAnchor);
+
+            if(slide.length){
+                text = text + '-' + slideAnchor;
+            }
+
+            //changing slash for dash to make it a valid CSS style
+            text = text.replace('/', '-').replace('#','');
+
+            //removing previous anchor classes
+            var classRe = new RegExp('\\b\\s?' + VIEWING_PREFIX + '-[^\\s]+\\b', "g");
+            $body[0].className = $body[0].className.replace(classRe, '');
+
+            //adding the current anchor
+            $body.addClass(VIEWING_PREFIX + '-' + text);
+        }
+
+        /**
+        * Checks for translate3d support
+        * @return boolean
+        * http://stackoverflow.com/questions/5661671/detecting-transform-translate3d-support
+        */
+        function support3d() {
+            var el = document.createElement('p'),
+                has3d,
+                transforms = {
+                    'webkitTransform':'-webkit-transform',
+                    'OTransform':'-o-transform',
+                    'msTransform':'-ms-transform',
+                    'MozTransform':'-moz-transform',
+                    'transform':'transform'
+                };
+
+            // Add it to the body to get the computed style.
+            document.body.insertBefore(el, null);
+
+            for (var t in transforms) {
+                if (el.style[t] !== undefined) {
+                    el.style[t] = 'translate3d(1px,1px,1px)';
+                    has3d = window.getComputedStyle(el).getPropertyValue(transforms[t]);
+                }
+            }
+
+            document.body.removeChild(el);
+
+            return (has3d !== undefined && has3d.length > 0 && has3d !== 'none');
+        }
+
+        /**
+        * Removes the auto scrolling action fired by the mouse wheel and trackpad.
+        * After this function is called, the mousewheel and trackpad movements won't scroll through sections.
+        */
+        function removeMouseWheelHandler(){
+            if (document.addEventListener) {
+                document.removeEventListener('mousewheel', MouseWheelHandler, false); //IE9, Chrome, Safari, Oper
+                document.removeEventListener('wheel', MouseWheelHandler, false); //Firefox
+                document.removeEventListener('MozMousePixelScroll', MouseWheelHandler, false); //old Firefox
+            } else {
+                document.detachEvent('onmousewheel', MouseWheelHandler); //IE 6/7/8
+            }
+        }
+
+        /**
+        * Adds the auto scrolling action for the mouse wheel and trackpad.
+        * After this function is called, the mousewheel and trackpad movements will scroll through sections
+        * https://developer.mozilla.org/en-US/docs/Web/Events/wheel
+        */
+        function addMouseWheelHandler(){
+            var prefix = '';
+            var _addEventListener;
+
+            if (window.addEventListener){
+                _addEventListener = "addEventListener";
+            }else{
+                _addEventListener = "attachEvent";
+                prefix = 'on';
+            }
+
+             // detect available wheel event
+            var support = 'onwheel' in document.createElement('div') ? 'wheel' : // Modern browsers support "wheel"
+                      document.onmousewheel !== undefined ? 'mousewheel' : // Webkit and IE support at least "mousewheel"
+                      'DOMMouseScroll'; // let's assume that remaining browsers are older Firefox
+
+
+            if(support == 'DOMMouseScroll'){
+                document[ _addEventListener ](prefix + 'MozMousePixelScroll', MouseWheelHandler, false);
+            }
+
+            //handle MozMousePixelScroll in older Firefox
+            else{
+                document[ _addEventListener ](prefix + support, MouseWheelHandler, false);
+            }
+        }
+
+        /**
+        * Binding the mousemove when the mouse's middle button is pressed
+        */
+        function addMiddleWheelHandler(){
+            container
+                .on('mousedown', mouseDownHandler)
+                .on('mouseup', mouseUpHandler);
+        }
+
+        /**
+        * Unbinding the mousemove when the mouse's middle button is released
+        */
+        function removeMiddleWheelHandler(){
+            container
+                .off('mousedown', mouseDownHandler)
+                .off('mouseup', mouseUpHandler);
+        }
+
+        /**
+        * Adds the possibility to auto scroll through sections on touch devices.
+        */
+        function addTouchHandler(){
+            if(isTouchDevice || isTouch){
+                if(options.autoScrolling){
+                    $body.off(events.touchmove).on(events.touchmove, preventBouncing);
+                }
+
+                $(WRAPPER_SEL)
+                    .off(events.touchstart).on(events.touchstart, touchStartHandler)
+                    .off(events.touchmove).on(events.touchmove, touchMoveHandler);
+            }
+        }
+
+        /**
+        * Removes the auto scrolling for touch devices.
+        */
+        function removeTouchHandler(){
+            if(isTouchDevice || isTouch){
+                $(WRAPPER_SEL)
+                    .off(events.touchstart)
+                    .off(events.touchmove);
+            }
+        }
+
+        /*
+        * Returns and object with Microsoft pointers (for IE<11 and for IE >= 11)
+        * http://msdn.microsoft.com/en-us/library/ie/dn304886(v=vs.85).aspx
+        */
+        function getMSPointer(){
+            var pointer;
+
+            //IE >= 11 & rest of browsers
+            if(window.PointerEvent){
+                pointer = { down: 'pointerdown', move: 'pointermove'};
+            }
+
+            //IE < 11
+            else{
+                pointer = { down: 'MSPointerDown', move: 'MSPointerMove'};
+            }
+
+            return pointer;
+        }
+
+        /**
+        * Gets the pageX and pageY properties depending on the browser.
+        * https://github.com/alvarotrigo/fullPage.js/issues/194#issuecomment-34069854
+        */
+        function getEventsPage(e){
+            var events = [];
+
+            events.y = (typeof e.pageY !== 'undefined' && (e.pageY || e.pageX) ? e.pageY : e.touches[0].pageY);
+            events.x = (typeof e.pageX !== 'undefined' && (e.pageY || e.pageX) ? e.pageX : e.touches[0].pageX);
+
+            //in touch devices with scrollBar:true, e.pageY is detected, but we have to deal with touch events. #1008
+            if(isTouch && isReallyTouch(e) && options.scrollBar){
+                events.y = e.touches[0].pageY;
+                events.x = e.touches[0].pageX;
+            }
+
+            return events;
+        }
+
+        /**
+        * Slides silently (with no animation) the active slider to the given slide.
+        * @param noCallback {bool} true or defined -> no callbacks
+        */
+        function silentLandscapeScroll(activeSlide, noCallbacks){
+            setScrollingSpeed (0, 'internal');
+
+            if(typeof noCallbacks !== 'undefined'){
+                //preventing firing callbacks afterSlideLoad etc.
+                isResizing = true;
+            }
+
+            landscapeScroll(activeSlide.closest(SLIDES_WRAPPER_SEL), activeSlide);
+
+            if(typeof noCallbacks !== 'undefined'){
+                isResizing = false;
+            }
+
+            setScrollingSpeed(originals.scrollingSpeed, 'internal');
+        }
+
+        /**
+        * Scrolls silently (with no animation) the page to the given Y position.
+        */
+        function silentScroll(top){
+            // The first section can have a negative value in iOS 10. Not quite sure why: -0.0142822265625
+            // that's why we round it to 0.
+            var roundedTop = Math.round(top);
+
+            if (options.css3 && options.autoScrolling && !options.scrollBar){
+                var translate3d = 'translate3d(0px, -' + roundedTop + 'px, 0px)';
+                transformContainer(translate3d, false);
+            }
+            else if(options.autoScrolling && !options.scrollBar){
+                container.css('top', -roundedTop);
+            }
+            else{
+                $htmlBody.scrollTop(roundedTop);
+            }
+        }
+
+        /**
+        * Returns the cross-browser transform string.
+        */
+        function getTransforms(translate3d){
+            return {
+                '-webkit-transform': translate3d,
+                '-moz-transform': translate3d,
+                '-ms-transform':translate3d,
+                'transform': translate3d
+            };
+        }
+
+        /**
+        * Allowing or disallowing the mouse/swipe scroll in a given direction. (not for keyboard)
+        * @type  m (mouse) or k (keyboard)
+        */
+        function setIsScrollAllowed(value, direction, type){
+            switch (direction){
+                case 'up': isScrollAllowed[type].up = value; break;
+                case 'down': isScrollAllowed[type].down = value; break;
+                case 'left': isScrollAllowed[type].left = value; break;
+                case 'right': isScrollAllowed[type].right = value; break;
+                case 'all':
+                    if(type == 'm'){
+                        setAllowScrolling(value);
+                    }else{
+                        setKeyboardScrolling(value);
+                    }
+            }
+        }
+
+        /*
+        * Destroys fullpage.js plugin events and optinally its html markup and styles
+        */
+        function destroy(all){
+            setAutoScrolling(false, 'internal');
+            setAllowScrolling(false);
+            setKeyboardScrolling(false);
+            container.addClass(DESTROYED);
+
+            clearTimeout(afterSlideLoadsId);
+            clearTimeout(afterSectionLoadsId);
+            clearTimeout(resizeId);
+            clearTimeout(scrollId);
+            clearTimeout(scrollId2);
+
+            $window
+                .off('scroll', scrollHandler)
+                .off('hashchange', hashChangeHandler)
+                .off('resize', resizeHandler);
+
+            $document
+                .off('click touchstart', SECTION_NAV_SEL + ' a')
+                .off('mouseenter', SECTION_NAV_SEL + ' li')
+                .off('mouseleave', SECTION_NAV_SEL + ' li')
+                .off('click touchstart', SLIDES_NAV_LINK_SEL)
+                .off('mouseover', options.normalScrollElements)
+                .off('mouseout', options.normalScrollElements);
+
+            $(SECTION_SEL)
+                .off('click touchstart', SLIDES_ARROW_SEL);
+
+            clearTimeout(afterSlideLoadsId);
+            clearTimeout(afterSectionLoadsId);
+
+            //lets make a mess!
+            if(all){
+                destroyStructure();
+            }
+        }
+
+        /*
+        * Removes inline styles added by fullpage.js
+        */
+        function destroyStructure(){
+            //reseting the `top` or `translate` properties to 0
+            silentScroll(0);
+
+            //loading all the lazy load content
+            container.find('img[data-src], source[data-src], audio[data-src], iframe[data-src]').each(function(){
+                setSrc($(this), 'src');
+            });
+
+            container.find('img[data-srcset]').each(function(){
+                setSrc($(this), 'srcset');
+            });
+
+            $(SECTION_NAV_SEL + ', ' + SLIDES_NAV_SEL +  ', ' + SLIDES_ARROW_SEL).remove();
+
+            //removing inline styles
+            $(SECTION_SEL).css( {
+                'height': '',
+                'background-color' : '',
+                'padding': ''
+            });
+
+            $(SLIDE_SEL).css( {
+                'width': ''
+            });
+
+            container.css({
+                'height': '',
+                'position': '',
+                '-ms-touch-action': '',
+                'touch-action': ''
+            });
+
+            $htmlBody.css({
+                'overflow': '',
+                'height': ''
+            });
+
+            // remove .fp-enabled class
+            $('html').removeClass(ENABLED);
+
+            // remove .fp-responsive class
+            $body.removeClass(RESPONSIVE);
+
+            // remove all of the .fp-viewing- classes
+            $.each($body.get(0).className.split(/\s+/), function (index, className) {
+                if (className.indexOf(VIEWING_PREFIX) === 0) {
+                    $body.removeClass(className);
+                }
+            });
+
+            //removing added classes
+            $(SECTION_SEL + ', ' + SLIDE_SEL).each(function(){
+                options.scrollOverflowHandler.remove($(this));
+                $(this).removeClass(TABLE + ' ' + ACTIVE);
+            });
+
+            removeAnimation(container);
+
+            //Unwrapping content
+            container.find(TABLE_CELL_SEL + ', ' + SLIDES_CONTAINER_SEL + ', ' + SLIDES_WRAPPER_SEL).each(function(){
+                //unwrap not being use in case there's no child element inside and its just text
+                $(this).replaceWith(this.childNodes);
+            });
+
+            //removing the applied transition from the fullpage wrapper
+            container.css({
+                '-webkit-transition': 'none',
+                'transition': 'none'
+            });
+
+            //scrolling the page to the top with no animation
+            $htmlBody.scrollTop(0);
+
+            //removing selectors
+            var usedSelectors = [SECTION, SLIDE, SLIDES_CONTAINER];
+            $.each(usedSelectors, function(index, value){
+                $('.' + value).removeClass(value);
+            });
+        }
+
+        /*
+        * Sets the state for a variable with multiple states (original, and temporal)
+        * Some variables such as `autoScrolling` or `recordHistory` might change automatically its state when using `responsive` or `autoScrolling:false`.
+        * This function is used to keep track of both states, the original and the temporal one.
+        * If type is not 'internal', then we assume the user is globally changing the variable.
+        */
+        function setVariableState(variable, value, type){
+            options[variable] = value;
+            if(type !== 'internal'){
+                originals[variable] = value;
+            }
+        }
+
+        /**
+        * Displays warnings
+        */
+        function displayWarnings(){
+            var extensions = ['fadingEffect', 'continuousHorizontal', 'scrollHorizontally', 'interlockedSlides', 'resetSliders', 'responsiveSlides', 'offsetSections', 'dragAndMove', 'scrollOverflowReset', 'parallax'];
+            //UNCODE.addition
+            // if($('html').hasClass(ENABLED)){
+            //     showError('error', 'Fullpage.js can only be initialized once and you are doing it multiple times!');
+            //     return;
+            // }
+
+            // Disable mutually exclusive settings
+            //UNCODE.addition
+            // if (options.continuousVertical &&
+            //     (options.loopTop || options.loopBottom)) {
+            //     options.continuousVertical = false;
+            //     showError('warn', 'Option `loopTop/loopBottom` is mutually exclusive with `continuousVertical`; `continuousVertical` disabled');
+            // }
+
+            // if(options.scrollBar && options.scrollOverflow){
+            //     showError('warn', 'Option `scrollBar` is mutually exclusive with `scrollOverflow`. Sections with scrollOverflow might not work well in Firefox');
+            // }
+
+            // if(options.continuousVertical && (options.scrollBar || !options.autoScrolling)){
+            //     options.continuousVertical = false;
+            //     showError('warn', 'Scroll bars (`scrollBar:true` or `autoScrolling:false`) are mutually exclusive with `continuousVertical`; `continuousVertical` disabled');
+            // }
+
+            //using extensions? Wrong file!
+            $.each(extensions, function(index, extension){
+                //is the option set to true?
+                if(options[extension]){
+                    showError('warn', 'fullpage.js extensions require jquery.fullpage.extensions.min.js file instead of the usual jquery.fullpage.js. Requested: '+ extension);
+                }
+            });
+
+            //anchors can not have the same value as any element ID or NAME
+            $.each(options.anchors, function(index, name){
+
+                //case insensitive selectors (http://stackoverflow.com/a/19465187/1081396)
+                var nameAttr = $document.find('[name]').filter(function() {
+                    return $(this).attr('name') && $(this).attr('name').toLowerCase() == name.toLowerCase();
+                });
+
+                var idAttr = $document.find('[id]').filter(function() {
+                    return $(this).attr('id') && $(this).attr('id').toLowerCase() == name.toLowerCase();
+                });
+
+                if(idAttr.length || nameAttr.length ){
+                    showError('error', 'data-anchor tags can not have the same value as any `id` element on the site (or `name` element for IE).');
+                    idAttr.length && showError('error', '"' + name + '" is is being used by another element `id` property');
+                    nameAttr.length && showError('error', '"' + name + '" is is being used by another element `name` property');
+                }
+            });
+        }
+
+        /**
+        * Shows a message in the console of the given type.
+        */
+        function showError(type, text){
+            console && console[type] && console[type]('fullPage: ' + text);
+        }
+
+    }; //end of $.fn.fullpage
+
+    if(typeof IScroll !== 'undefined'){
+        /*
+        * Turns iScroll `mousewheel` option off dynamically
+        * https://github.com/cubiq/iscroll/issues/1036
+        */
+        IScroll.prototype.wheelOn = function () {
+            this.wrapper.addEventListener('wheel', this);
+            this.wrapper.addEventListener('mousewheel', this);
+            this.wrapper.addEventListener('DOMMouseScroll', this);
+        };
+
+        /*
+        * Turns iScroll `mousewheel` option on dynamically
+        * https://github.com/cubiq/iscroll/issues/1036
+        */
+        IScroll.prototype.wheelOff = function () {
+            this.wrapper.removeEventListener('wheel', this);
+            this.wrapper.removeEventListener('mousewheel', this);
+            this.wrapper.removeEventListener('DOMMouseScroll', this);
+        };
+    }
+
+    /**
+     * An object to handle overflow scrolling.
+     * This uses jquery.slimScroll to accomplish overflow scrolling.
+     * It is possible to pass in an alternate scrollOverflowHandler
+     * to the fullpage.js option that implements the same functions
+     * as this handler.
+     *
+     * @type {Object}
+     */
+    var iscrollHandler = {
+        refreshId: null,
+        iScrollInstances: [],
+
+        // Enables or disables the mouse wheel for the active section or all slides in it
+        toggleWheel: function(value){
+            var scrollable = $(SECTION_ACTIVE_SEL).find(SCROLLABLE_SEL);
+            scrollable.each(function(){
+                var iScrollInstance = $(this).data('iscrollInstance');
+                if(typeof iScrollInstance !== 'undefined' && iScrollInstance){
+                    if(value){
+                        iScrollInstance.wheelOn();
+                    }
+                    else{
+                        iScrollInstance.wheelOff();
+                    }
+                }
+            });
+        },
+
+        /**
+        * Turns off iScroll for the destination section.
+        * When scrolling very fast on some trackpads (and Apple laptops) the inertial scrolling would
+        * scroll the destination section/slide before the sections animations ends.
+        */
+        onLeave: function(){
+            iscrollHandler.toggleWheel(false);
+        },
+
+        // Turns off iScroll for the leaving section
+        beforeLeave: function(){
+            iscrollHandler.onLeave()
+        },
+
+        // Turns on iScroll on section load
+        afterLoad: function(){
+            iscrollHandler.toggleWheel(true);
+        },
+
+        /**
+         * Called when overflow scrolling is needed for a section.
+         *
+         * @param  {Object} element      jQuery object containing current section
+         * @param  {Number} scrollHeight Current window height in pixels
+         */
+        create: function(element, scrollHeight) {
+            var scrollable = element.find(SCROLLABLE_SEL);
+
+            scrollable.height(scrollHeight);
+            scrollable.each(function() {
+                var $this = $(this);
+                var iScrollInstance = $this.data('iscrollInstance');
+                if (iScrollInstance) {
+                    $.each(iscrollHandler.iScrollInstances, function(){
+                        $(this).destroy();
+                    });
+                }
+
+                iScrollInstance = new IScroll($this.get(0), iscrollOptions);
+                iscrollHandler.iScrollInstances.push(iScrollInstance);
+
+                //off by default until the section gets active
+                iScrollInstance.wheelOff();
+
+                $this.data('iscrollInstance', iScrollInstance);
+            });
+        },
+
+        /**
+         * Return a boolean depending on whether the scrollable element is a
+         * the end or at the start of the scrolling depending on the given type.
+         *
+         * @param  {String}  type       Either 'top' or 'bottom'
+         * @param  {Object}  scrollable jQuery object for the scrollable element
+         * @return {Boolean}
+         */
+        isScrolled: function(type, scrollable) {
+            var scroller = scrollable.data('iscrollInstance');
+
+            //no scroller?
+            if (!scroller) {
+                return true;
+            }
+
+            if (type === 'top') {
+                return scroller.y >= 0 && !scrollable.scrollTop();
+            } else if (type === 'bottom') {
+                return (0 - scroller.y) + scrollable.scrollTop() + 1 + scrollable.innerHeight() >= scrollable[0].scrollHeight;
+            }
+        },
+
+        /**
+         * Returns the scrollable element for the given section.
+         * If there are landscape slides, will only return a scrollable element
+         * if it is in the active slide.
+         *
+         * @param  {Object}  activeSection jQuery object containing current section
+         * @return {Boolean}
+         */
+        scrollable: function(activeSection){
+            // if there are landscape slides, we check if the scrolling bar is in the current one or not
+            if (activeSection.find(SLIDES_WRAPPER_SEL).length) {
+                return activeSection.find(SLIDE_ACTIVE_SEL).find(SCROLLABLE_SEL);
+            }
+            return activeSection.find(SCROLLABLE_SEL);
+        },
+
+        /**
+         * Returns the scroll height of the wrapped content.
+         * If this is larger than the window height minus section padding,
+         * overflow scrolling is needed.
+         *
+         * @param  {Object} element jQuery object containing current section
+         * @return {Number}
+         */
+        scrollHeight: function(element) {
+            return element.find(SCROLLABLE_SEL).children().first().get(0).scrollHeight;
+        },
+
+        /**
+         * Called when overflow scrolling is no longer needed for a section.
+         *
+         * @param  {Object} element      jQuery object containing current section
+         */
+        remove: function(element) {
+            var scrollable = element.find(SCROLLABLE_SEL);
+            if (scrollable.length) {
+                var iScrollInstance = scrollable.data('iscrollInstance');
+                iScrollInstance.destroy();
+
+                scrollable.data('iscrollInstance', null);
+            }
+            element.find(SCROLLABLE_SEL).children().first().children().first().unwrap().unwrap();
+        },
+
+        /**
+         * Called when overflow scrolling has already been setup but the
+         * window height has potentially changed.
+         *
+         * @param  {Object} element      jQuery object containing current section
+         * @param  {Number} scrollHeight Current window height in pixels
+         */
+        update: function(element, scrollHeight) {
+            //using a timeout in order to execute the refresh function only once when `update` is called multiple times in a
+            //short period of time.
+            //it also comes on handy because iScroll requires the use of timeout when using `refresh`.
+            clearTimeout(iscrollHandler.refreshId);
+            iscrollHandler.refreshId = setTimeout(function(){
+                $.each(iscrollHandler.iScrollInstances, function(){
+                    $(this).get(0).refresh();
+                });
+            }, 150);
+
+            //updating the wrappers height
+            element.find(SCROLLABLE_SEL).css('height', scrollHeight + 'px').parent().css('height', scrollHeight + 'px');
+        },
+
+        /**
+         * Called to get any additional elements needed to wrap the section
+         * content in order to facilitate overflow scrolling.
+         *
+         * @return {String|Object} Can be a string containing HTML,
+         *                         a DOM element, or jQuery object.
+         */
+        wrapContent: function() {
+            return '<div class="' + SCROLLABLE + '"><div class="fp-scroller"></div></div>';
+        }
+    };
 });
 
 
@@ -22059,168 +22070,168 @@ if ( typeof module != 'undefined' && module.exports ) {
 
 
 +function ($) {
-	'use strict';
+  'use strict';
 
-	// COLLAPSE PUBLIC CLASS DEFINITION
-	// ================================
+  // COLLAPSE PUBLIC CLASS DEFINITION
+  // ================================
 
-	var Collapse = function (element, options) {
-		this.$element      = $(element)
-		this.options       = $.extend({}, Collapse.DEFAULTS, options)
-		this.transitioning = null
+  var Collapse = function (element, options) {
+    this.$element      = $(element)
+    this.options       = $.extend({}, Collapse.DEFAULTS, options)
+    this.transitioning = null
 
-		if (this.options.parent) this.$parent = $(this.options.parent)
-		if (this.options.toggle) this.toggle()
-	}
+    if (this.options.parent) this.$parent = $(this.options.parent)
+    if (this.options.toggle) this.toggle()
+  }
 
-	Collapse.DEFAULTS = {
-		toggle: true
-	}
+  Collapse.DEFAULTS = {
+    toggle: true
+  }
 
-	Collapse.prototype.dimension = function () {
-		var hasWidth = this.$element.hasClass('width')
-		return hasWidth ? 'width' : 'height'
-	}
+  Collapse.prototype.dimension = function () {
+    var hasWidth = this.$element.hasClass('width')
+    return hasWidth ? 'width' : 'height'
+  }
 
-	Collapse.prototype.show = function () {
-		if (this.transitioning || this.$element.hasClass('in')) return
+  Collapse.prototype.show = function () {
+    if (this.transitioning || this.$element.hasClass('in')) return
 
-		var startEvent = $.Event('show.bs.collapse')
-		this.$element.trigger(startEvent)
-		if (startEvent.isDefaultPrevented()) return
+    var startEvent = $.Event('show.bs.collapse')
+    this.$element.trigger(startEvent)
+    if (startEvent.isDefaultPrevented()) return
 
-		var actives = this.$parent && this.$parent.find('> .panel > .in')
+    var actives = this.$parent && this.$parent.find('> .panel > .in')
 
-		if (actives && actives.length) {
-			var hasData = actives.data('bs.collapse')
-			if (hasData && hasData.transitioning) return
-			actives.collapse('hide')
-			hasData || actives.data('bs.collapse', null)
-		}
+    if (actives && actives.length) {
+      var hasData = actives.data('bs.collapse')
+      if (hasData && hasData.transitioning) return
+      actives.collapse('hide')
+      hasData || actives.data('bs.collapse', null)
+    }
 
-		var dimension = this.dimension()
+    var dimension = this.dimension()
 
-		this.$element
-			.removeClass('collapse')
-			.addClass('collapsing')[dimension](0)
+    this.$element
+      .removeClass('collapse')
+      .addClass('collapsing')[dimension](0)
 
-		this.transitioning = 1
+    this.transitioning = 1
 
-		var complete = function (e) {
-			if (e && e.target != this.$element[0]) return
-			this.$element
-				.removeClass('collapsing')
-				.addClass('collapse in')[dimension]('auto')
-			this.transitioning = 0
-			this.$element.trigger('shown.bs.collapse')
-		}
+    var complete = function (e) {
+      if (e && e.target != this.$element[0]) return
+      this.$element
+        .removeClass('collapsing')
+        .addClass('collapse in')[dimension]('auto')
+      this.transitioning = 0
+      this.$element.trigger('shown.bs.collapse')
+    }
 
-		if (!$.support.transition) return complete.call(this)
+    if (!$.support.transition) return complete.call(this)
 
-		var scrollSize = $.camelCase(['scroll', dimension].join('-'))
+    var scrollSize = $.camelCase(['scroll', dimension].join('-'))
 
-		this.$element
-			.one($.support.transition.end, $.proxy(complete, this))
-			.emulateTransitionEnd(350)[dimension](this.$element[0][scrollSize])
-	}
+    this.$element
+      .one($.support.transition.end, $.proxy(complete, this))
+      .emulateTransitionEnd(350)[dimension](this.$element[0][scrollSize])
+  }
 
-	Collapse.prototype.hide = function () {
-		if (this.transitioning || !this.$element.hasClass('in')) return
+  Collapse.prototype.hide = function () {
+    if (this.transitioning || !this.$element.hasClass('in')) return
 
-		var startEvent = $.Event('hide.bs.collapse')
-		this.$element.trigger(startEvent)
-		if (startEvent.isDefaultPrevented()) return
+    var startEvent = $.Event('hide.bs.collapse')
+    this.$element.trigger(startEvent)
+    if (startEvent.isDefaultPrevented()) return
 
-		var dimension = this.dimension()
+    var dimension = this.dimension()
 
-		this.$element[dimension](this.$element[dimension]())[0].offsetHeight
+    this.$element[dimension](this.$element[dimension]())[0].offsetHeight
 
-		this.$element
-			.addClass('collapsing')
-			.removeClass('collapse')
-			.removeClass('in')
+    this.$element
+      .addClass('collapsing')
+      .removeClass('collapse')
+      .removeClass('in')
 
-		this.transitioning = 1
+    this.transitioning = 1
 
-		var complete = function (e) {
-			if (e && e.target != this.$element[0]) return
-			this.transitioning = 0
-			this.$element
-				.trigger('hidden.bs.collapse')
-				.removeClass('collapsing')
-				.addClass('collapse')
-		}
+    var complete = function (e) {
+      if (e && e.target != this.$element[0]) return
+      this.transitioning = 0
+      this.$element
+        .trigger('hidden.bs.collapse')
+        .removeClass('collapsing')
+        .addClass('collapse')
+    }
 
-		if (!$.support.transition) return complete.call(this)
+    if (!$.support.transition) return complete.call(this)
 
-		this.$element
-			[dimension](0)
-			.one($.support.transition.end, $.proxy(complete, this))
-			.emulateTransitionEnd(350)
-	}
+    this.$element
+      [dimension](0)
+      .one($.support.transition.end, $.proxy(complete, this))
+      .emulateTransitionEnd(350)
+  }
 
-	Collapse.prototype.toggle = function () {
-		this[this.$element.hasClass('in') ? 'hide' : 'show']()
-	}
-
-
-	// COLLAPSE PLUGIN DEFINITION
-	// ==========================
-
-	var old = $.fn.collapse
-
-	$.fn.collapse = function (option) {
-		return this.each(function () {
-			var $this   = $(this)
-			var data    = $this.data('bs.collapse')
-			var options = $.extend({}, Collapse.DEFAULTS, $this.data(), typeof option == 'object' && option)
-
-			if (!data && options.toggle && option == 'show') option = !option
-			if (!data) $this.data('bs.collapse', (data = new Collapse(this, options)))
-			if (typeof option == 'string') data[option]()
-		})
-	}
-
-	$.fn.collapse.Constructor = Collapse
+  Collapse.prototype.toggle = function () {
+    this[this.$element.hasClass('in') ? 'hide' : 'show']()
+  }
 
 
-	// COLLAPSE NO CONFLICT
-	// ====================
+  // COLLAPSE PLUGIN DEFINITION
+  // ==========================
 
-	$.fn.collapse.noConflict = function () {
-		$.fn.collapse = old
-		return this
-	}
+  var old = $.fn.collapse
+
+  $.fn.collapse = function (option) {
+    return this.each(function () {
+      var $this   = $(this)
+      var data    = $this.data('bs.collapse')
+      var options = $.extend({}, Collapse.DEFAULTS, $this.data(), typeof option == 'object' && option)
+
+      if (!data && options.toggle && option == 'show') option = !option
+      if (!data) $this.data('bs.collapse', (data = new Collapse(this, options)))
+      if (typeof option == 'string') data[option]()
+    })
+  }
+
+  $.fn.collapse.Constructor = Collapse
 
 
-	// COLLAPSE DATA-API
-	// =================
+  // COLLAPSE NO CONFLICT
+  // ====================
 
-	$(document).on('click.bs.collapse.data-api', '[data-toggle="collapse"]', function (e) {
-		var $this   = $(this), href
-		var target  = $this.attr('data-target')
-				|| e.preventDefault()
-				|| (href = $this.attr('href')) && href.replace(/.*(?=#[^\s]+$)/, '') //strip for ie7
-		//Edited by Uncode to replace ID in panel [START]
-		var _target = href.replace(/^#/, "");
-		if ( $('[data-id="' + _target + '"]').length ) {
-			var $target = $('[data-id="' + _target + '"]')
-		} else {
-			var $target = $(target)
-		}
-		//Edited by Uncode to replace ID in panel [END]
-		var data    = $target.data('bs.collapse')
-		var option  = data ? 'toggle' : $this.data()
-		var parent  = $this.attr('data-parent')
-		var $parent = parent && $(parent)
+  $.fn.collapse.noConflict = function () {
+    $.fn.collapse = old
+    return this
+  }
 
-		if (!data || !data.transitioning) {
-			if ($parent) $parent.find('[data-toggle="collapse"][data-parent="' + parent + '"]').not($this).addClass('collapsed')
-			$this[$target.hasClass('in') ? 'addClass' : 'removeClass']('collapsed')
-		}
 
-		$target.collapse(option)
-	})
+  // COLLAPSE DATA-API
+  // =================
+
+  $(document).on('click.bs.collapse.data-api', '[data-toggle="collapse"]', function (e) {
+    var $this   = $(this), href
+    var target  = $this.attr('data-target')
+        || e.preventDefault()
+        || (href = $this.attr('href')) && href.replace(/.*(?=#[^\s]+$)/, '') //strip for ie7
+    //Edited by Uncode to replace ID in panel [START]
+    var _target = href.replace(/^#/, "");
+    if ( $('[data-id="' + _target + '"]').length ) {
+      var $target = $('[data-id="' + _target + '"]')
+    } else {
+      var $target = $(target)
+    }
+    //Edited by Uncode to replace ID in panel [END]
+    var data    = $target.data('bs.collapse')
+    var option  = data ? 'toggle' : $this.data()
+    var parent  = $this.attr('data-parent')
+    var $parent = parent && $(parent)
+
+    if (!data || !data.transitioning) {
+      if ($parent) $parent.find('[data-toggle="collapse"][data-parent="' + parent + '"]').not($this).addClass('collapsed')
+      $this[$target.hasClass('in') ? 'addClass' : 'removeClass']('collapsed')
+    }
+
+    $target.collapse(option)
+  })
 
 }(jQuery);
 
@@ -22235,125 +22246,125 @@ if ( typeof module != 'undefined' && module.exports ) {
 
 
 +function ($) {
-	'use strict';
+  'use strict';
 
-	// TAB CLASS DEFINITION
-	// ====================
+  // TAB CLASS DEFINITION
+  // ====================
 
-	var Tab = function (element) {
-		this.element = $(element)
-	}
+  var Tab = function (element) {
+    this.element = $(element)
+  }
 
-	Tab.prototype.show = function () {
-		var $this    = this.element
-		var $ul      = $this.closest('ul:not(.dropdown-menu)')
-		var selector = $this.data('target')
+  Tab.prototype.show = function () {
+    var $this    = this.element
+    var $ul      = $this.closest('ul:not(.dropdown-menu)')
+    var selector = $this.data('target')
 
-		if (!selector) {
-			selector = $this.attr('href')
-			selector = selector && selector.replace(/.*(?=#[^\s]*$)/, '') //strip for ie7
-		}
+    if (!selector) {
+      selector = $this.attr('href')
+      selector = selector && selector.replace(/.*(?=#[^\s]*$)/, '') //strip for ie7
+    }
 
-		if ($this.parent('li').hasClass('active')) return
+    if ($this.parent('li').hasClass('active')) return
 
-		var previous = $ul.find('.active:last a')[0]
-		var e        = $.Event('show.bs.tab', {
-			relatedTarget: previous
-		})
+    var previous = $ul.find('.active:last a')[0]
+    var e        = $.Event('show.bs.tab', {
+      relatedTarget: previous
+    })
 
-		$this.trigger(e)
+    $this.trigger(e)
 
-		if (e.isDefaultPrevented()) return
+    if (e.isDefaultPrevented()) return
 
-		//Edited by Uncode to replace ID in panel [START]
-		var _target = selector.replace(/^#/, "");
-		if ( $('[data-id="' + _target + '"]').length )
-			var $target = $('[data-id="' + _target + '"]')
-		else
-			var $target = $(selector)
-		//Edited by Uncode to replace ID in panel [END]
+    //Edited by Uncode to replace ID in panel [START]
+    var _target = selector.replace(/^#/, "");
+    if ( $('[data-id="' + _target + '"]').length )
+      var $target = $('[data-id="' + _target + '"]')
+    else
+      var $target = $(selector)
+    //Edited by Uncode to replace ID in panel [END]
 
-		this.activate($this.parent('li'), $ul)
-		this.activate($target, $target.parent(), function () {
-			$this.trigger({
-				type: 'shown.bs.tab',
-				relatedTarget: previous
-			})
-		})
-	}
+    this.activate($this.parent('li'), $ul)
+    this.activate($target, $target.parent(), function () {
+      $this.trigger({
+        type: 'shown.bs.tab',
+        relatedTarget: previous
+      })
+    })
+  }
 
-	Tab.prototype.activate = function (element, container, callback) {
-		var $active    = container.find('> .active')
-		var transition = callback
-			&& $.support.transition
-			&& $active.hasClass('fade')
+  Tab.prototype.activate = function (element, container, callback) {
+    var $active    = container.find('> .active')
+    var transition = callback
+      && $.support.transition
+      && $active.hasClass('fade')
 
-		function next() {
-			$active
-				.removeClass('active')
-				.find('> .dropdown-menu > .active')
-				.removeClass('active')
+    function next() {
+      $active
+        .removeClass('active')
+        .find('> .dropdown-menu > .active')
+        .removeClass('active')
 
-			element.addClass('active')
+      element.addClass('active')
 
-			if (transition) {
-				element[0].offsetWidth // reflow for transition
-				element.addClass('in')
-			} else {
-				element.removeClass('fade')
-			}
+      if (transition) {
+        element[0].offsetWidth // reflow for transition
+        element.addClass('in')
+      } else {
+        element.removeClass('fade')
+      }
 
-			if (element.parent('.dropdown-menu')) {
-				element.closest('li.dropdown').addClass('active')
-			}
+      if (element.parent('.dropdown-menu')) {
+        element.closest('li.dropdown').addClass('active')
+      }
 
-			callback && callback()
-		}
+      callback && callback()
+    }
 
-		transition ?
-			$active
-				.one($.support.transition.end, next)
-				.emulateTransitionEnd(150) :
-			next()
+    transition ?
+      $active
+        .one($.support.transition.end, next)
+        .emulateTransitionEnd(150) :
+      next()
 
-		$active.removeClass('in')
-	}
-
-
-	// TAB PLUGIN DEFINITION
-	// =====================
-
-	var old = $.fn.tab
-
-	$.fn.tab = function ( option ) {
-		return this.each(function () {
-			var $this = $(this)
-			var data  = $this.data('bs.tab')
-
-			if (!data) $this.data('bs.tab', (data = new Tab(this)))
-			if (typeof option == 'string') data[option]()
-		})
-	}
-
-	$.fn.tab.Constructor = Tab
+    $active.removeClass('in')
+  }
 
 
-	// TAB NO CONFLICT
-	// ===============
+  // TAB PLUGIN DEFINITION
+  // =====================
 
-	$.fn.tab.noConflict = function () {
-		$.fn.tab = old
-		return this
-	}
+  var old = $.fn.tab
+
+  $.fn.tab = function ( option ) {
+    return this.each(function () {
+      var $this = $(this)
+      var data  = $this.data('bs.tab')
+
+      if (!data) $this.data('bs.tab', (data = new Tab(this)))
+      if (typeof option == 'string') data[option]()
+    })
+  }
+
+  $.fn.tab.Constructor = Tab
 
 
-	// TAB DATA-API
-	// ============
+  // TAB NO CONFLICT
+  // ===============
 
-	$(document).on('click.bs.tab.data-api', '[data-toggle="tab"], [data-toggle="pill"]', function (e) {
-		e.preventDefault()
-		$(this).tab('show')
-	})
+  $.fn.tab.noConflict = function () {
+    $.fn.tab = old
+    return this
+  }
+
+
+  // TAB DATA-API
+  // ============
+
+  $(document).on('click.bs.tab.data-api', '[data-toggle="tab"], [data-toggle="pill"]', function (e) {
+    e.preventDefault()
+    $(this).tab('show')
+  })
 
 }(jQuery);
 
@@ -22369,415 +22380,415 @@ if ( typeof module != 'undefined' && module.exports ) {
 
 
 +function ($) {
-	'use strict';
-
-	// TOOLTIP PUBLIC CLASS DEFINITION
-	// ===============================
-
-	var Tooltip = function (element, options) {
-		this.type       =
-		this.options    =
-		this.enabled    =
-		this.timeout    =
-		this.hoverState =
-		this.$element   = null
-
-		this.init('tooltip', element, options)
-	}
-
-	Tooltip.DEFAULTS = {
-		animation: true,
-		placement: 'top',
-		selector: false,
-		template: '<div class="tooltip" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>',
-		trigger: 'hover focus',
-		title: '',
-		delay: 0,
-		html: false,
-		container: false,
-		viewport: {
-			selector: 'body',
-			padding: 0
-		}
-	}
+  'use strict';
+
+  // TOOLTIP PUBLIC CLASS DEFINITION
+  // ===============================
+
+  var Tooltip = function (element, options) {
+    this.type       =
+    this.options    =
+    this.enabled    =
+    this.timeout    =
+    this.hoverState =
+    this.$element   = null
+
+    this.init('tooltip', element, options)
+  }
+
+  Tooltip.DEFAULTS = {
+    animation: true,
+    placement: 'top',
+    selector: false,
+    template: '<div class="tooltip" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>',
+    trigger: 'hover focus',
+    title: '',
+    delay: 0,
+    html: false,
+    container: false,
+    viewport: {
+      selector: 'body',
+      padding: 0
+    }
+  }
 
-	Tooltip.prototype.init = function (type, element, options) {
-		this.enabled   = true
-		this.type      = type
-		this.$element  = $(element)
-		this.options   = this.getOptions(options)
-		this.$viewport = this.options.viewport && $(this.options.viewport.selector || this.options.viewport)
+  Tooltip.prototype.init = function (type, element, options) {
+    this.enabled   = true
+    this.type      = type
+    this.$element  = $(element)
+    this.options   = this.getOptions(options)
+    this.$viewport = this.options.viewport && $(this.options.viewport.selector || this.options.viewport)
 
-		var triggers = this.options.trigger.split(' ')
+    var triggers = this.options.trigger.split(' ')
 
-		for (var i = triggers.length; i--;) {
-			var trigger = triggers[i]
+    for (var i = triggers.length; i--;) {
+      var trigger = triggers[i]
 
-			if (trigger == 'click') {
-				this.$element.on('click.' + this.type, this.options.selector, $.proxy(this.toggle, this))
-			} else if (trigger != 'manual') {
-				var eventIn  = trigger == 'hover' ? 'mouseenter' : 'focusin'
-				var eventOut = trigger == 'hover' ? 'mouseleave' : 'focusout'
+      if (trigger == 'click') {
+        this.$element.on('click.' + this.type, this.options.selector, $.proxy(this.toggle, this))
+      } else if (trigger != 'manual') {
+        var eventIn  = trigger == 'hover' ? 'mouseenter' : 'focusin'
+        var eventOut = trigger == 'hover' ? 'mouseleave' : 'focusout'
 
-				this.$element.on(eventIn  + '.' + this.type, this.options.selector, $.proxy(this.enter, this))
-				this.$element.on(eventOut + '.' + this.type, this.options.selector, $.proxy(this.leave, this))
-			}
-		}
+        this.$element.on(eventIn  + '.' + this.type, this.options.selector, $.proxy(this.enter, this))
+        this.$element.on(eventOut + '.' + this.type, this.options.selector, $.proxy(this.leave, this))
+      }
+    }
 
-		this.options.selector ?
-			(this._options = $.extend({}, this.options, { trigger: 'manual', selector: '' })) :
-			this.fixTitle()
-	}
+    this.options.selector ?
+      (this._options = $.extend({}, this.options, { trigger: 'manual', selector: '' })) :
+      this.fixTitle()
+  }
 
-	Tooltip.prototype.getDefaults = function () {
-		return Tooltip.DEFAULTS
-	}
+  Tooltip.prototype.getDefaults = function () {
+    return Tooltip.DEFAULTS
+  }
 
-	Tooltip.prototype.getOptions = function (options) {
-		options = $.extend({}, this.getDefaults(), this.$element.data(), options)
-
-		if (options.delay && typeof options.delay == 'number') {
-			options.delay = {
-				show: options.delay,
-				hide: options.delay
-			}
-		}
+  Tooltip.prototype.getOptions = function (options) {
+    options = $.extend({}, this.getDefaults(), this.$element.data(), options)
+
+    if (options.delay && typeof options.delay == 'number') {
+      options.delay = {
+        show: options.delay,
+        hide: options.delay
+      }
+    }
 
-		return options
-	}
+    return options
+  }
 
-	Tooltip.prototype.getDelegateOptions = function () {
-		var options  = {}
-		var defaults = this.getDefaults()
+  Tooltip.prototype.getDelegateOptions = function () {
+    var options  = {}
+    var defaults = this.getDefaults()
 
-		this._options && $.each(this._options, function (key, value) {
-			if (defaults[key] != value) options[key] = value
-		})
-
-		return options
-	}
-
-	Tooltip.prototype.enter = function (obj) {
-		var self = obj instanceof this.constructor ?
-			obj : $(obj.currentTarget)[this.type](this.getDelegateOptions()).data('bs.' + this.type)
-
-		clearTimeout(self.timeout)
-
-		self.hoverState = 'in'
-
-		if (!self.options.delay || !self.options.delay.show) return self.show()
-
-		self.timeout = setTimeout(function () {
-			if (self.hoverState == 'in') self.show()
-		}, self.options.delay.show)
-	}
+    this._options && $.each(this._options, function (key, value) {
+      if (defaults[key] != value) options[key] = value
+    })
+
+    return options
+  }
+
+  Tooltip.prototype.enter = function (obj) {
+    var self = obj instanceof this.constructor ?
+      obj : $(obj.currentTarget)[this.type](this.getDelegateOptions()).data('bs.' + this.type)
+
+    clearTimeout(self.timeout)
+
+    self.hoverState = 'in'
+
+    if (!self.options.delay || !self.options.delay.show) return self.show()
+
+    self.timeout = setTimeout(function () {
+      if (self.hoverState == 'in') self.show()
+    }, self.options.delay.show)
+  }
 
-	Tooltip.prototype.leave = function (obj) {
-		var self = obj instanceof this.constructor ?
-			obj : $(obj.currentTarget)[this.type](this.getDelegateOptions()).data('bs.' + this.type)
+  Tooltip.prototype.leave = function (obj) {
+    var self = obj instanceof this.constructor ?
+      obj : $(obj.currentTarget)[this.type](this.getDelegateOptions()).data('bs.' + this.type)
 
-		clearTimeout(self.timeout)
+    clearTimeout(self.timeout)
 
-		self.hoverState = 'out'
+    self.hoverState = 'out'
 
-		if (!self.options.delay || !self.options.delay.hide) return self.hide()
+    if (!self.options.delay || !self.options.delay.hide) return self.hide()
 
-		self.timeout = setTimeout(function () {
-			if (self.hoverState == 'out') self.hide()
-		}, self.options.delay.hide)
-	}
+    self.timeout = setTimeout(function () {
+      if (self.hoverState == 'out') self.hide()
+    }, self.options.delay.hide)
+  }
 
-	Tooltip.prototype.show = function () {
-		var e = $.Event('show.bs.' + this.type)
+  Tooltip.prototype.show = function () {
+    var e = $.Event('show.bs.' + this.type)
 
-		if (this.hasContent() && this.enabled) {
-			this.$element.trigger(e)
+    if (this.hasContent() && this.enabled) {
+      this.$element.trigger(e)
 
-			if (e.isDefaultPrevented()) return
-			var that = this;
+      if (e.isDefaultPrevented()) return
+      var that = this;
 
-			var $tip = this.tip()
+      var $tip = this.tip()
 
-			this.setContent()
+      this.setContent()
 
-			if (this.options.animation) $tip.addClass('fade')
+      if (this.options.animation) $tip.addClass('fade')
 
-			var placement = typeof this.options.placement == 'function' ?
-				this.options.placement.call(this, $tip[0], this.$element[0]) :
-				this.options.placement
+      var placement = typeof this.options.placement == 'function' ?
+        this.options.placement.call(this, $tip[0], this.$element[0]) :
+        this.options.placement
 
-			var autoToken = /\s?auto?\s?/i
-			var autoPlace = autoToken.test(placement)
-			if (autoPlace) placement = placement.replace(autoToken, '') || 'top'
+      var autoToken = /\s?auto?\s?/i
+      var autoPlace = autoToken.test(placement)
+      if (autoPlace) placement = placement.replace(autoToken, '') || 'top'
 
-			$tip
-				.detach()
-				.css({ top: 0, left: 0, display: 'block' })
-				.addClass(placement)
+      $tip
+        .detach()
+        .css({ top: 0, left: 0, display: 'block' })
+        .addClass(placement)
 
-			this.options.container ? $tip.appendTo(this.options.container) : $tip.insertAfter(this.$element)
+      this.options.container ? $tip.appendTo(this.options.container) : $tip.insertAfter(this.$element)
 
-			var pos          = this.getPosition()
-			var actualWidth  = $tip[0].offsetWidth
-			var actualHeight = $tip[0].offsetHeight
+      var pos          = this.getPosition()
+      var actualWidth  = $tip[0].offsetWidth
+      var actualHeight = $tip[0].offsetHeight
 
-			if (autoPlace) {
-				var orgPlacement = placement
-				var $parent      = this.$element.parent()
-				var parentDim    = this.getPosition($parent)
+      if (autoPlace) {
+        var orgPlacement = placement
+        var $parent      = this.$element.parent()
+        var parentDim    = this.getPosition($parent)
 
-				placement = placement == 'bottom' && pos.top   + pos.height       + actualHeight - parentDim.scroll > parentDim.height ? 'top'    :
-										placement == 'top'    && pos.top   - parentDim.scroll - actualHeight < 0                                   ? 'bottom' :
-										placement == 'right'  && pos.right + actualWidth      > parentDim.width                                    ? 'left'   :
-										placement == 'left'   && pos.left  - actualWidth      < parentDim.left                                     ? 'right'  :
-										placement
+        placement = placement == 'bottom' && pos.top   + pos.height       + actualHeight - parentDim.scroll > parentDim.height ? 'top'    :
+                    placement == 'top'    && pos.top   - parentDim.scroll - actualHeight < 0                                   ? 'bottom' :
+                    placement == 'right'  && pos.right + actualWidth      > parentDim.width                                    ? 'left'   :
+                    placement == 'left'   && pos.left  - actualWidth      < parentDim.left                                     ? 'right'  :
+                    placement
 
-				$tip
-					.removeClass(orgPlacement)
-					.addClass(placement)
-			}
+        $tip
+          .removeClass(orgPlacement)
+          .addClass(placement)
+      }
 
-			var calculatedOffset = this.getCalculatedOffset(placement, pos, actualWidth, actualHeight)
+      var calculatedOffset = this.getCalculatedOffset(placement, pos, actualWidth, actualHeight)
 
-			this.applyPlacement(calculatedOffset, placement)
-			this.hoverState = null
+      this.applyPlacement(calculatedOffset, placement)
+      this.hoverState = null
 
-			var complete = function() {
-				that.$element.trigger('shown.bs.' + that.type)
-			}
+      var complete = function() {
+        that.$element.trigger('shown.bs.' + that.type)
+      }
 
-			$.support.transition && this.$tip.hasClass('fade') ?
-				$tip
-					.one($.support.transition.end, complete)
-					.emulateTransitionEnd(150) :
-				complete()
-		}
-	}
+      $.support.transition && this.$tip.hasClass('fade') ?
+        $tip
+          .one($.support.transition.end, complete)
+          .emulateTransitionEnd(150) :
+        complete()
+    }
+  }
 
-	Tooltip.prototype.applyPlacement = function (offset, placement) {
-		var $tip   = this.tip()
-		var width  = $tip[0].offsetWidth
-		var height = $tip[0].offsetHeight
+  Tooltip.prototype.applyPlacement = function (offset, placement) {
+    var $tip   = this.tip()
+    var width  = $tip[0].offsetWidth
+    var height = $tip[0].offsetHeight
 
-		// manually read margins because getBoundingClientRect includes difference
-		var marginTop = parseInt($tip.css('margin-top'), 10)
-		var marginLeft = parseInt($tip.css('margin-left'), 10)
+    // manually read margins because getBoundingClientRect includes difference
+    var marginTop = parseInt($tip.css('margin-top'), 10)
+    var marginLeft = parseInt($tip.css('margin-left'), 10)
 
-		// we must check for NaN for ie 8/9
-		if (isNaN(marginTop))  marginTop  = 0
-		if (isNaN(marginLeft)) marginLeft = 0
+    // we must check for NaN for ie 8/9
+    if (isNaN(marginTop))  marginTop  = 0
+    if (isNaN(marginLeft)) marginLeft = 0
 
-		offset.top  = offset.top  + marginTop
-		offset.left = offset.left + marginLeft
+    offset.top  = offset.top  + marginTop
+    offset.left = offset.left + marginLeft
 
-		// $.fn.offset doesn't round pixel values
-		// so we use setOffset directly with our own function B-0
-		$.offset.setOffset($tip[0], $.extend({
-			using: function (props) {
-				$tip.css({
-					top: Math.round(props.top),
-					left: Math.round(props.left)
-				})
-			}
-		}, offset), 0)
+    // $.fn.offset doesn't round pixel values
+    // so we use setOffset directly with our own function B-0
+    $.offset.setOffset($tip[0], $.extend({
+      using: function (props) {
+        $tip.css({
+          top: Math.round(props.top),
+          left: Math.round(props.left)
+        })
+      }
+    }, offset), 0)
 
-		$tip.addClass('in')
+    $tip.addClass('in')
 
-		// check to see if placing tip in new offset caused the tip to resize itself
-		var actualWidth  = $tip[0].offsetWidth
-		var actualHeight = $tip[0].offsetHeight
-
-		if (placement == 'top' && actualHeight != height) {
-			offset.top = offset.top + height - actualHeight
-		}
-
-		var delta = this.getViewportAdjustedDelta(placement, offset, actualWidth, actualHeight)
-
-		if (delta.left) offset.left += delta.left
-		else offset.top += delta.top
-
-		var arrowDelta          = delta.left ? delta.left * 2 - width + actualWidth : delta.top * 2 - height + actualHeight
-		var arrowPosition       = delta.left ? 'left'        : 'top'
-		var arrowOffsetPosition = delta.left ? 'offsetWidth' : 'offsetHeight'
-
-		$tip.offset(offset)
-		this.replaceArrow(arrowDelta, $tip[0][arrowOffsetPosition], arrowPosition)
-	}
-
-	Tooltip.prototype.replaceArrow = function (delta, dimension, position) {
-		this.arrow().css(position, delta ? (50 * (1 - delta / dimension) + '%') : '')
-	}
-
-	Tooltip.prototype.setContent = function () {
-		var $tip  = this.tip()
-		var title = this.getTitle()
-
-		$tip.find('.tooltip-inner')[this.options.html ? 'html' : 'text'](title)
-		$tip.removeClass('fade in top bottom left right')
-	}
-
-	Tooltip.prototype.hide = function () {
-		var that = this
-		var $tip = this.tip()
-		var e    = $.Event('hide.bs.' + this.type)
-
-		function complete() {
-			if (that.hoverState != 'in') $tip.detach()
-			that.$element.trigger('hidden.bs.' + that.type)
-		}
-
-		this.$element.trigger(e)
-
-		if (e.isDefaultPrevented()) return
-
-		$tip.removeClass('in')
-
-		$.support.transition && this.$tip.hasClass('fade') ?
-			$tip
-				.one($.support.transition.end, complete)
-				.emulateTransitionEnd(150) :
-			complete()
-
-		this.hoverState = null
-
-		return this
-	}
-
-	Tooltip.prototype.fixTitle = function () {
-		var $e = this.$element
-		if ($e.attr('title') || typeof($e.attr('data-original-title')) != 'string') {
-			$e.attr('data-original-title', $e.attr('title') || '').attr('title', '')
-		}
-	}
-
-	Tooltip.prototype.hasContent = function () {
-		return this.getTitle()
-	}
-
-	Tooltip.prototype.getPosition = function ($element) {
-		$element   = $element || this.$element
-		var el     = $element[0]
-		var isBody = el.tagName == 'BODY'
-		return $.extend({}, (typeof el.getBoundingClientRect == 'function') ? el.getBoundingClientRect() : null, {
-			scroll: isBody ? document.documentElement.scrollTop || document.body.scrollTop : $element.scrollTop(),
-			width:  isBody ? $(window).width()  : $element.outerWidth(),
-			height: isBody ? $(window).height() : $element.outerHeight()
-		}, isBody ? {top: 0, left: 0} : $element.offset())
-	}
-
-	Tooltip.prototype.getCalculatedOffset = function (placement, pos, actualWidth, actualHeight) {
-		return placement == 'bottom' ? { top: pos.top + pos.height,   left: pos.left + pos.width / 2 - actualWidth / 2  } :
-					 placement == 'top'    ? { top: pos.top - actualHeight, left: pos.left + pos.width / 2 - actualWidth / 2  } :
-					 placement == 'left'   ? { top: pos.top + pos.height / 2 - actualHeight / 2, left: pos.left - actualWidth } :
-				/* placement == 'right' */ { top: pos.top + pos.height / 2 - actualHeight / 2, left: pos.left + pos.width   }
-
-	}
-
-	Tooltip.prototype.getViewportAdjustedDelta = function (placement, pos, actualWidth, actualHeight) {
-		var delta = { top: 0, left: 0 }
-		if (!this.$viewport) return delta
-
-		var viewportPadding = this.options.viewport && this.options.viewport.padding || 0
-		var viewportDimensions = this.getPosition(this.$viewport)
-
-		if (/right|left/.test(placement)) {
-			var topEdgeOffset    = pos.top - viewportPadding - viewportDimensions.scroll
-			var bottomEdgeOffset = pos.top + viewportPadding - viewportDimensions.scroll + actualHeight
-			if (topEdgeOffset < viewportDimensions.top) { // top overflow
-				delta.top = viewportDimensions.top - topEdgeOffset
-			} else if (bottomEdgeOffset > viewportDimensions.top + viewportDimensions.height) { // bottom overflow
-				delta.top = viewportDimensions.top + viewportDimensions.height - bottomEdgeOffset
-			}
-		} else {
-			var leftEdgeOffset  = pos.left - viewportPadding
-			var rightEdgeOffset = pos.left + viewportPadding + actualWidth
-			if (leftEdgeOffset < viewportDimensions.left) { // left overflow
-				delta.left = viewportDimensions.left - leftEdgeOffset
-			} else if (rightEdgeOffset > viewportDimensions.width) { // right overflow
-				delta.left = viewportDimensions.left + viewportDimensions.width - rightEdgeOffset
-			}
-		}
-
-		return delta
-	}
-
-	Tooltip.prototype.getTitle = function () {
-		var title
-		var $e = this.$element
-		var o  = this.options
-
-		title = $e.attr('data-original-title')
-			|| (typeof o.title == 'function' ? o.title.call($e[0]) :  o.title)
-
-		return title
-	}
-
-	Tooltip.prototype.tip = function () {
-		return this.$tip = this.$tip || $(this.options.template)
-	}
-
-	Tooltip.prototype.arrow = function () {
-		return this.$arrow = this.$arrow || this.tip().find('.tooltip-arrow')
-	}
-
-	Tooltip.prototype.validate = function () {
-		if (!this.$element[0].parentNode) {
-			this.hide()
-			this.$element = null
-			this.options  = null
-		}
-	}
-
-	Tooltip.prototype.enable = function () {
-		this.enabled = true
-	}
-
-	Tooltip.prototype.disable = function () {
-		this.enabled = false
-	}
-
-	Tooltip.prototype.toggleEnabled = function () {
-		this.enabled = !this.enabled
-	}
-
-	Tooltip.prototype.toggle = function (e) {
-		var self = e ? $(e.currentTarget)[this.type](this.getDelegateOptions()).data('bs.' + this.type) : this
-		self.tip().hasClass('in') ? self.leave(self) : self.enter(self)
-	}
-
-	Tooltip.prototype.destroy = function () {
-		clearTimeout(this.timeout)
-		this.hide().$element.off('.' + this.type).removeData('bs.' + this.type)
-	}
-
-
-	// TOOLTIP PLUGIN DEFINITION
-	// =========================
-
-	var old = $.fn.tooltip
-
-	$.fn.tooltip = function (option) {
-		return this.each(function () {
-			var $this   = $(this)
-			var data    = $this.data('bs.tooltip')
-			var options = typeof option == 'object' && option
-
-			if (!data && option == 'destroy') return
-			if (!data) $this.data('bs.tooltip', (data = new Tooltip(this, options)))
-			if (typeof option == 'string') data[option]()
-		})
-	}
-
-	$.fn.tooltip.Constructor = Tooltip
-
-
-	// TOOLTIP NO CONFLICT
-	// ===================
-
-	$.fn.tooltip.noConflict = function () {
-		$.fn.tooltip = old
-		return this
-	}
+    // check to see if placing tip in new offset caused the tip to resize itself
+    var actualWidth  = $tip[0].offsetWidth
+    var actualHeight = $tip[0].offsetHeight
+
+    if (placement == 'top' && actualHeight != height) {
+      offset.top = offset.top + height - actualHeight
+    }
+
+    var delta = this.getViewportAdjustedDelta(placement, offset, actualWidth, actualHeight)
+
+    if (delta.left) offset.left += delta.left
+    else offset.top += delta.top
+
+    var arrowDelta          = delta.left ? delta.left * 2 - width + actualWidth : delta.top * 2 - height + actualHeight
+    var arrowPosition       = delta.left ? 'left'        : 'top'
+    var arrowOffsetPosition = delta.left ? 'offsetWidth' : 'offsetHeight'
+
+    $tip.offset(offset)
+    this.replaceArrow(arrowDelta, $tip[0][arrowOffsetPosition], arrowPosition)
+  }
+
+  Tooltip.prototype.replaceArrow = function (delta, dimension, position) {
+    this.arrow().css(position, delta ? (50 * (1 - delta / dimension) + '%') : '')
+  }
+
+  Tooltip.prototype.setContent = function () {
+    var $tip  = this.tip()
+    var title = this.getTitle()
+
+    $tip.find('.tooltip-inner')[this.options.html ? 'html' : 'text'](title)
+    $tip.removeClass('fade in top bottom left right')
+  }
+
+  Tooltip.prototype.hide = function () {
+    var that = this
+    var $tip = this.tip()
+    var e    = $.Event('hide.bs.' + this.type)
+
+    function complete() {
+      if (that.hoverState != 'in') $tip.detach()
+      that.$element.trigger('hidden.bs.' + that.type)
+    }
+
+    this.$element.trigger(e)
+
+    if (e.isDefaultPrevented()) return
+
+    $tip.removeClass('in')
+
+    $.support.transition && this.$tip.hasClass('fade') ?
+      $tip
+        .one($.support.transition.end, complete)
+        .emulateTransitionEnd(150) :
+      complete()
+
+    this.hoverState = null
+
+    return this
+  }
+
+  Tooltip.prototype.fixTitle = function () {
+    var $e = this.$element
+    if ($e.attr('title') || typeof($e.attr('data-original-title')) != 'string') {
+      $e.attr('data-original-title', $e.attr('title') || '').attr('title', '')
+    }
+  }
+
+  Tooltip.prototype.hasContent = function () {
+    return this.getTitle()
+  }
+
+  Tooltip.prototype.getPosition = function ($element) {
+    $element   = $element || this.$element
+    var el     = $element[0]
+    var isBody = el.tagName == 'BODY'
+    return $.extend({}, (typeof el.getBoundingClientRect == 'function') ? el.getBoundingClientRect() : null, {
+      scroll: isBody ? document.documentElement.scrollTop || document.body.scrollTop : $element.scrollTop(),
+      width:  isBody ? $(window).width()  : $element.outerWidth(),
+      height: isBody ? $(window).height() : $element.outerHeight()
+    }, isBody ? {top: 0, left: 0} : $element.offset())
+  }
+
+  Tooltip.prototype.getCalculatedOffset = function (placement, pos, actualWidth, actualHeight) {
+    return placement == 'bottom' ? { top: pos.top + pos.height,   left: pos.left + pos.width / 2 - actualWidth / 2  } :
+           placement == 'top'    ? { top: pos.top - actualHeight, left: pos.left + pos.width / 2 - actualWidth / 2  } :
+           placement == 'left'   ? { top: pos.top + pos.height / 2 - actualHeight / 2, left: pos.left - actualWidth } :
+        /* placement == 'right' */ { top: pos.top + pos.height / 2 - actualHeight / 2, left: pos.left + pos.width   }
+
+  }
+
+  Tooltip.prototype.getViewportAdjustedDelta = function (placement, pos, actualWidth, actualHeight) {
+    var delta = { top: 0, left: 0 }
+    if (!this.$viewport) return delta
+
+    var viewportPadding = this.options.viewport && this.options.viewport.padding || 0
+    var viewportDimensions = this.getPosition(this.$viewport)
+
+    if (/right|left/.test(placement)) {
+      var topEdgeOffset    = pos.top - viewportPadding - viewportDimensions.scroll
+      var bottomEdgeOffset = pos.top + viewportPadding - viewportDimensions.scroll + actualHeight
+      if (topEdgeOffset < viewportDimensions.top) { // top overflow
+        delta.top = viewportDimensions.top - topEdgeOffset
+      } else if (bottomEdgeOffset > viewportDimensions.top + viewportDimensions.height) { // bottom overflow
+        delta.top = viewportDimensions.top + viewportDimensions.height - bottomEdgeOffset
+      }
+    } else {
+      var leftEdgeOffset  = pos.left - viewportPadding
+      var rightEdgeOffset = pos.left + viewportPadding + actualWidth
+      if (leftEdgeOffset < viewportDimensions.left) { // left overflow
+        delta.left = viewportDimensions.left - leftEdgeOffset
+      } else if (rightEdgeOffset > viewportDimensions.width) { // right overflow
+        delta.left = viewportDimensions.left + viewportDimensions.width - rightEdgeOffset
+      }
+    }
+
+    return delta
+  }
+
+  Tooltip.prototype.getTitle = function () {
+    var title
+    var $e = this.$element
+    var o  = this.options
+
+    title = $e.attr('data-original-title')
+      || (typeof o.title == 'function' ? o.title.call($e[0]) :  o.title)
+
+    return title
+  }
+
+  Tooltip.prototype.tip = function () {
+    return this.$tip = this.$tip || $(this.options.template)
+  }
+
+  Tooltip.prototype.arrow = function () {
+    return this.$arrow = this.$arrow || this.tip().find('.tooltip-arrow')
+  }
+
+  Tooltip.prototype.validate = function () {
+    if (!this.$element[0].parentNode) {
+      this.hide()
+      this.$element = null
+      this.options  = null
+    }
+  }
+
+  Tooltip.prototype.enable = function () {
+    this.enabled = true
+  }
+
+  Tooltip.prototype.disable = function () {
+    this.enabled = false
+  }
+
+  Tooltip.prototype.toggleEnabled = function () {
+    this.enabled = !this.enabled
+  }
+
+  Tooltip.prototype.toggle = function (e) {
+    var self = e ? $(e.currentTarget)[this.type](this.getDelegateOptions()).data('bs.' + this.type) : this
+    self.tip().hasClass('in') ? self.leave(self) : self.enter(self)
+  }
+
+  Tooltip.prototype.destroy = function () {
+    clearTimeout(this.timeout)
+    this.hide().$element.off('.' + this.type).removeData('bs.' + this.type)
+  }
+
+
+  // TOOLTIP PLUGIN DEFINITION
+  // =========================
+
+  var old = $.fn.tooltip
+
+  $.fn.tooltip = function (option) {
+    return this.each(function () {
+      var $this   = $(this)
+      var data    = $this.data('bs.tooltip')
+      var options = typeof option == 'object' && option
+
+      if (!data && option == 'destroy') return
+      if (!data) $this.data('bs.tooltip', (data = new Tooltip(this, options)))
+      if (typeof option == 'string') data[option]()
+    })
+  }
+
+  $.fn.tooltip.Constructor = Tooltip
+
+
+  // TOOLTIP NO CONFLICT
+  // ===================
+
+  $.fn.tooltip.noConflict = function () {
+    $.fn.tooltip = old
+    return this
+  }
 
 }(jQuery);
 
@@ -22792,41 +22803,43 @@ if ( typeof module != 'undefined' && module.exports ) {
 
 
 +function ($) {
-	'use strict';
+  'use strict';
 
-	// CSS TRANSITION SUPPORT (Shoutout: http://www.modernizr.com/)
-	// ============================================================
+  // CSS TRANSITION SUPPORT (Shoutout: http://www.modernizr.com/)
+  // ============================================================
 
-	function transitionEnd() {
-		var el = document.createElement('bootstrap')
+  function transitionEnd() {
+    var el = document.createElement('bootstrap')
 
-		var transEndEventNames = {
-			WebkitTransition : 'webkitTransitionEnd',
-			MozTransition    : 'transitionend',
-			OTransition      : 'oTransitionEnd otransitionend',
-			transition       : 'transitionend'
-		}
+    var transEndEventNames = {
+      WebkitTransition : 'webkitTransitionEnd',
+      MozTransition    : 'transitionend',
+      OTransition      : 'oTransitionEnd otransitionend',
+      transition       : 'transitionend'
+    }
 
-		for (var name in transEndEventNames) {
-			if (el.style[name] !== undefined) {
-				return { end: transEndEventNames[name] }
-			}
-		}
+    for (var name in transEndEventNames) {
+      if (el.style[name] !== undefined) {
+        return { end: transEndEventNames[name] }
+      }
+    }
 
-		return false // explicit for ie8 (  ._.)
-	}
+    return false // explicit for ie8 (  ._.)
+  }
 
-	// http://blog.alexmaccaw.com/css-transitions
-	$.fn.emulateTransitionEnd = function (duration) {
-		var called = false, $el = this
-		$(this).one($.support.transition.end, function () { called = true })
-		var callback = function () { if (!called) $($el).trigger($.support.transition.end) }
-		setTimeout(callback, duration)
-		return this
-	}
+  // http://blog.alexmaccaw.com/css-transitions
+  $.fn.emulateTransitionEnd = function (duration) {
+    var called = false, $el = this
+    $(this).one($.support.transition.end, function () { called = true })
+    var callback = function () { if (!called) $($el).trigger($.support.transition.end) }
+    setTimeout(callback, duration)
+    return this
+  }
 
-	$(function () {
-		$.support.transition = transitionEnd()
-	})
+  $(function () {
+    $.support.transition = transitionEnd()
+  })
 
 }(jQuery);
+
+

@@ -64,11 +64,11 @@ class Uncode_Toolkit_Privacy_Public {
 
 		$accent_color = false;
 
-		if ( function_exists( 'uncode_id' ) ) {
+		if ( function_exists( 'ot_options_id' ) ) {
 			if ( is_multisite() ) {
-				$uncode_option = get_blog_option( get_current_blog_id(), uncode_id() );
+				$uncode_option = get_blog_option( get_current_blog_id(), ot_options_id() );
 			} else {
-				$uncode_option = get_option(uncode_id());
+				$uncode_option = get_option( ot_options_id() );
 			}
 
 			global $front_background_colors;
@@ -98,15 +98,15 @@ class Uncode_Toolkit_Privacy_Public {
 				setcookie( 'uncode_privacy[consent_types]', '[]', time() + YEAR_IN_SECONDS, "/" );
 			} else {
 				$user_consents = get_user_meta( $user_id, 'uncode_privacy_consents' );
+
 				setcookie( "uncode_privacy[consent_types]", json_encode( $user_consents ), time() + YEAR_IN_SECONDS, "/" );
 			}
 		} else {
 			if ( $user_id ) {
-				$user_consents = (array) get_user_meta( $user_id, 'uncode_privacy_consents' );
+				$user_consents   = (array) get_user_meta( $user_id, 'uncode_privacy_consents' );
 				$cookie_consents = (array) json_decode( wp_unslash( $_COOKIE['uncode_privacy']['consent_types'] ) );
-
-				$intersect = array_intersect( $user_consents, $cookie_consents );
-				$diff = array_merge( array_diff( $user_consents, $intersect ), array_diff( $cookie_consents, $intersect ) );
+				$intersect       = array_intersect( $user_consents, $cookie_consents );
+				$diff            = array_merge( array_diff( $user_consents, $intersect ), array_diff( $cookie_consents, $intersect ) );
 
 				if ( ! empty( $diff ) ) {
 					setcookie( "uncode_privacy[consent_types]", json_encode( $user_consents ), time() + YEAR_IN_SECONDS, "/" );
@@ -141,9 +141,9 @@ class Uncode_Toolkit_Privacy_Public {
 	 */
 	public function privacy_preferences_modal() {
 		$cookie_privacy_excerpt = get_option( 'uncode_privacy_cookie_privacy_excerpt', '' );
-		$consent_types = get_option( 'uncode_privacy_consent_types', array() );
-		$privacy_policy_page = get_option( 'uncode_privacy_privacy_policy_page', 0 );
-		$user_consents = isset( $_COOKIE['uncode_privacy']['consent_types'] ) ? json_decode( wp_unslash( $_COOKIE['uncode_privacy']['consent_types'] ) ) : array();
+		$consent_types          = uncode_toolkit_privacy_get_consent_types();
+		$privacy_policy_page    = get_option( 'uncode_privacy_privacy_policy_page', 0 );
+		$user_consents          = isset( $_COOKIE['uncode_privacy']['consent_types'] ) ? json_decode( wp_unslash( $_COOKIE['uncode_privacy']['consent_types'] ) ) : array();
 
 		include plugin_dir_path( __FILE__ ) . 'views/public/privacy-preferences-modal.php';
 	}
@@ -153,20 +153,41 @@ class Uncode_Toolkit_Privacy_Public {
 	 * If the user is logged in, we also save consent to user meta.
 	 */
 	public function update_privacy_preferences() {
-		if ( ! isset( $_POST['update-privacy-preferences-nonce'] ) || ! wp_verify_nonce( sanitize_key( $_POST['update-privacy-preferences-nonce'] ), 'uncode-privacy-update_privacy_preferences' ) ) {
+		if ( ! isset( $_POST[ 'update-privacy-preferences-nonce' ] ) || ! wp_verify_nonce( sanitize_key( $_POST[ 'update-privacy-preferences-nonce' ] ), 'uncode-privacy-update_privacy_preferences' ) ) {
 			wp_die( esc_html__( 'We could not verify the the security token. Please try again.', 'uncode-privacy' ) );
 		}
 
-		$consents         = array_map( 'sanitize_text_field', (array) $_POST['user_consents'] );
-		$consents_as_json = json_encode( $consents );
+		$consents_default_on_list = array_map( 'sanitize_text_field', (array) $_POST[ 'consents_default_on_list' ] );
+		$consents                 = array_map( 'sanitize_text_field', (array) $_POST[ 'user_consents' ] );
+		$consents_to_save         = array();
+
+		// First save all consents that are on by default to off (if unchecked)
+		foreach ( $consents_default_on_list as $consents_on ) {
+			if ( ! in_array( $consents_on, $consents ) ) {
+				$consents_to_save[] = $consents_on . '-off';
+			}
+		}
+
+		// Then save the other consents
+		foreach ( $consents as $consent_id ) {
+			if ( in_array( $consent_id, $consents_default_on_list ) ) {
+				$consents_to_save[] = $consent_id . '-on';
+			} else {
+				$consents_to_save[] = $consent_id;
+			}
+		}
+
+		$consents_as_json = json_encode( $consents_to_save );
 
 		setcookie( "uncode_privacy[consent_types]", $consents_as_json, time() + YEAR_IN_SECONDS, "/" );
 
 		if ( is_user_logged_in() ) {
 			$user = wp_get_current_user();
-			if ( ! empty( $consents ) ) {
+
+			if ( ! empty( $consents_to_save ) ) {
 				delete_user_meta( $user->ID, 'uncode_privacy_consents' );
-				foreach ( $consents as $consent ) {
+
+				foreach ( $consents_to_save as $consent ) {
 					$consent = sanitize_text_field( wp_unslash( $consent ) );
 					add_user_meta( $user->ID, 'uncode_privacy_consents', $consent );
 				}

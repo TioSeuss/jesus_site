@@ -33,10 +33,11 @@ if ( $_uncode_thumb_layout == 'stack' ) {
 	$th_size = 'shop_single';
 	$th_val = $col_size;
 } else {
-	if ( uncode_woocommerce_single_product_slider_enabled(true) )
+	if ( uncode_woocommerce_single_product_slider_enabled(true) ) {
 		$th_size = 'shop_single';
-	else
+	} else {
 		$th_size = 'shop_thumbnail';
+	}
 	$th_val = 2;
 }
 
@@ -55,70 +56,74 @@ if (isset($th_shop_thumbnail['crop']) && $th_shop_thumbnail['crop'] === 1) {
 }
 
 if ( $attachment_ids ) {
-	if ( !uncode_woocommerce_single_product_slider_enabled(true) && $_uncode_thumb_layout === '' )
+	if ( !uncode_woocommerce_single_product_slider_enabled(true) && $_uncode_thumb_layout === '' ) {
 		echo '<div class="thumbnails">';
+	}
 
-		foreach ( $attachment_ids as $attachment_id ) {
+	foreach ( $attachment_ids as $attachment_id ) {
 
-			$classes = array( 'zoom' );
+		$classes = array( 'zoom' );
 
-			$image_link = wp_get_attachment_url( $attachment_id );
+		$image_link = wp_get_attachment_url( $attachment_id );
 
-			if ( ! $image_link )
-				continue;
-
-			$image_attributes = uncode_get_media_info($attachment_id);
-			$image_metavalues = unserialize($image_attributes->metadata);
-			if ($image_attributes->post_mime_type === 'image/gif' || $image_attributes->post_mime_type === 'image/url') $crop = false;
-			$image_resized = uncode_resize_image($image_attributes->id, $image_attributes->guid, $image_attributes->path, $image_metavalues['width'], $image_metavalues['height'], $th_val, ($crop ? $th_val / $thumb_ratio : null), $crop);
-			$small_image_resized = uncode_resize_image($image_attributes->id, $image_attributes->guid, $image_attributes->path, $image_metavalues['width'], $image_metavalues['height'], 2, ($th_crop ? 2 / $small_ratio : null), $th_crop);
-			global $adaptive_images, $adaptive_images_async, $adaptive_images_async_blur;
-			$media_class = '';
-			$media_data = '';
-			if ($adaptive_images === 'on' && $adaptive_images_async === 'on') {
-				$media_class = ' adaptive-async'.(($adaptive_images_async_blur === 'on') ? ' async-blurred' : '');
-				$media_data = ' data-uniqueid="'.$attachment_id.'-'.big_rand().'" data-guid="'.$image_attributes->guid.'" data-path="'.$image_attributes->path.'" data-width="'.$image_metavalues['width'].'" data-height="'.$image_metavalues['height'].'" data-singlew="' . $th_val . '" data-singleh="'.($crop ? $th_val / $thumb_ratio : null).'" data-crop="'.$crop.'"';
-			}
-			$image_link = wp_get_attachment_image_src( $attachment_id, 'full' )[0];
-
-			$image_class = esc_attr( implode( ' ', $classes ) );
-			$image_title = esc_attr( get_the_title( $attachment_id ) );
-
-			$thumbnail = wp_get_attachment_image_src( $attachment_id, 'shop_thumbnail' );
-
-			$attributes = array(
-				'src'					  => $image_resized['url'],
-				'title'                   => $image_title,
-				'data-caption'            => esc_attr( get_post_field( 'post_excerpt', $attachment_id ) ),
-				'data-src'                => $image_link,
-				'data-large_image'        => $image_link,
-				'data-large_image_width'  => $image_metavalues['width'],
-				'data-large_image_height' => $image_metavalues['height'],
-				'sizes'					  => 'false',
-			);
-
-			if ($adaptive_images === 'on' && $adaptive_images_async === 'on') {
-				$attributes['class'] = 'adaptive-async'.(($adaptive_images_async_blur === 'on') ? ' async-blurred' : '');
-				$attributes['data-uniqueid'] = $attachment_id.'-'.big_rand();
-				$attributes['data-guid'] = $image_attributes->guid;
-				$attributes['data-path'] = $image_attributes->path;
-				$attributes['data-width'] = $image_metavalues['width'];
-				$attributes['data-height'] = $image_metavalues['height'];
-				$attributes['data-singlew'] = $col_size;
-				$attributes['data-singleh'] = ($crop ? $col_size / $thumb_ratio : null);
-				$attributes['data-crop'] = $crop;
-			}
-
-			$data_thumb = uncode_woocommerce_single_product_slider_enabled(true) ? $small_image_resized['url'] : $thumbnail[0];
-
-			$html  = '<div data-thumb="' .  esc_url( $data_thumb ) . '" class="woocommerce-product-gallery__image"><a href="' . esc_url( $image_link ) . '" class="' . esc_attr( $image_class ) . '" title="' . esc_attr( $image_title ) . '" data-options="thumbnail: \''.$small_image_resized['url'].'\'" data-lbox="ilightbox_gallery-' . $gallery_id . '">';
-			$html .= wp_get_attachment_image( $attachment_id, $th_size, false, $attributes );
-	 		$html .= '</a></div>';
-
-			echo apply_filters( 'woocommerce_single_product_image_thumbnail_html', $html, $attachment_id );
-
+		if ( ! $image_link ) {
+			continue;
 		}
 
-	if ( !uncode_woocommerce_single_product_slider_enabled(true) && $_uncode_thumb_layout === '' )
+		$image_attributes = uncode_get_media_info($attachment_id);
+		$image_metavalues = unserialize($image_attributes->metadata);
+		if ($image_attributes->post_mime_type === 'image/gif' || $image_attributes->post_mime_type === 'image/url') {
+			$crop = false;
+		}
+		$image_resized = uncode_resize_image($image_attributes->id, $image_attributes->guid, $image_attributes->path, $image_metavalues['width'], $image_metavalues['height'], $th_val, ($crop ? $th_val / $thumb_ratio : null), $crop);
+		$small_image_resized = uncode_resize_image($image_attributes->id, $image_attributes->guid, $image_attributes->path, $image_metavalues['width'], $image_metavalues['height'], 2, ($th_crop ? 2 / $small_ratio : null), $th_crop);
+		global $adaptive_images, $adaptive_images_async, $adaptive_images_async_blur;
+		$media_class = '';
+		$media_data = '';
+		if ($adaptive_images === 'on' && $adaptive_images_async === 'on') {
+			$media_class = ' adaptive-async'.(($adaptive_images_async_blur === 'on') ? ' async-blurred' : '');
+			$media_data = ' data-uniqueid="'.$attachment_id.'-'.uncode_big_rand().'" data-guid="'.$image_attributes->guid.'" data-path="'.$image_attributes->path.'" data-width="'.$image_metavalues['width'].'" data-height="'.$image_metavalues['height'].'" data-singlew="' . $th_val . '" data-singleh="'.($crop ? $th_val / $thumb_ratio : null).'" data-crop="'.$crop.'"';
+		}
+		$image_link = wp_get_attachment_image_src( $attachment_id, 'full' )[0];
+		$image_class = esc_attr( implode( ' ', $classes ) );
+		$image_title = esc_attr( get_the_title( $attachment_id ) );
+
+		$thumbnail = wp_get_attachment_image_src( $attachment_id, 'shop_thumbnail' );
+
+		$attributes = array(
+			'src'					  => $image_resized['url'],
+			'title'                   => $image_title,
+			'data-caption'            => esc_attr( get_post_field( 'post_excerpt', $attachment_id ) ),
+			'data-src'                => $image_link,
+			'data-large_image'        => $image_link,
+			'data-large_image_width'  => $image_metavalues['width'],
+			'data-large_image_height' => $image_metavalues['height'],
+			'sizes'					  => 'false',
+		);
+
+		if ($adaptive_images === 'on' && $adaptive_images_async === 'on') {
+			$attributes['class'] = 'adaptive-async'.(($adaptive_images_async_blur === 'on') ? ' async-blurred' : '');
+			$attributes['data-uniqueid'] = $attachment_id.'-'.uncode_big_rand();
+			$attributes['data-guid'] = $image_attributes->guid;
+			$attributes['data-path'] = $image_attributes->path;
+			$attributes['data-width'] = $image_metavalues['width'];
+			$attributes['data-height'] = $image_metavalues['height'];
+			$attributes['data-singlew'] = $col_size;
+			$attributes['data-singleh'] = ($crop ? $col_size / $thumb_ratio : null);
+			$attributes['data-crop'] = $crop;
+		}
+
+		$data_thumb = uncode_woocommerce_single_product_slider_enabled(true) ? $small_image_resized['url'] : $thumbnail[0];
+
+		$html  = '<div data-thumb="' .  esc_url( $data_thumb ) . '" class="woocommerce-product-gallery__image"><a href="' . esc_url( $image_link ) . '" class="' . esc_attr( $image_class ) . '" title="' . esc_attr( $image_title ) . '" data-options="thumbnail: \''.$small_image_resized['url'].'\'" data-lbox="ilightbox_gallery-' . $gallery_id . '">';
+		$html .= wp_get_attachment_image( $attachment_id, $th_size, false, $attributes );
+ 		$html .= '</a></div>';
+
+		echo apply_filters( 'woocommerce_single_product_image_thumbnail_html', $html, $attachment_id );
+
+	}
+
+	if ( !uncode_woocommerce_single_product_slider_enabled(true) && $_uncode_thumb_layout === '' ) {
 		echo '</div>';//.thumbnails
+	}
 }

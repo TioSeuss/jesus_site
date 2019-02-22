@@ -9,6 +9,8 @@ if( !defined( 'ABSPATH') ) exit();
 
 class RevSliderWpml{
 	
+	private static $sitepress;
+	
 	/**
 	 * 
 	 * true / false if the wpml plugin exists
@@ -171,6 +173,48 @@ class RevSliderWpml{
         return apply_filters( 'wpml_current_language', null );
 		
 		return($lang);
+	}
+	
+	
+	public static function svg_val_filter( $svg_val ) {
+
+		$current_language = apply_filters( 'wpml_current_language', null );
+
+		if ( is_array( $svg_val ) && array_key_exists( 'src', $svg_val )
+		     && $current_language != apply_filters( 'wpml_default_language', null )
+		     && apply_filters( 'wpml_setting', null, 'language_negotiation_type' ) == 2
+		) {
+
+			$svg_val['src'] = self::convert_url( $svg_val['src'], $current_language );
+
+		}
+
+		return $svg_val;
+	}
+
+	public static function convert_url( $url, $language ){
+
+		if ( self::$sitepress instanceof SitePress ) {
+			$url = self::$sitepress->convert_url( $url, $language );
+		}
+
+		return $url;
+	}
+
+	private static function set_sitepress() {
+
+		if ( ! self::$sitepress instanceof SitePress ) {
+			global $sitepress;
+			self::$sitepress = $sitepress;
+		}
+	}
+
+	public static function add_hooks() {
+
+		if ( self::isWpmlExists() ) {
+			self::set_sitepress();
+			add_filter( 'revslider_svg_val', array( 'RevSliderWpml', 'svg_val_filter' ) );
+		}
 	}
 }
 

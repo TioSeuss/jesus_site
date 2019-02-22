@@ -18,14 +18,22 @@ $el_class = $this->getExtraClass( $el_class );
 
 if ($css_animation !== '') {
 	$container_class[] = 'animate_when_almost_visible ' . $css_animation;
-	if ($animation_delay !== '') $div_data['data-delay'] = $animation_delay;
-	if ($animation_speed !== '') $div_data['data-speed'] = $animation_speed;
+	if ($animation_delay !== '') {
+		$div_data['data-delay'] = $animation_delay;
+	}
+	if ($animation_speed !== '') {
+		$div_data['data-speed'] = $animation_speed;
+	}
 }
 
 $bar_options = '';
 $options = explode( ",", $options );
-if ( in_array( "animated", $options ) ) $bar_options .= " animated";
-if ( in_array( "striped", $options ) ) $bar_options .= " striped";
+if ( in_array( "animated", $options ) ) {
+	$bar_options .= " animated";
+}
+if ( in_array( "striped", $options ) ) {
+	$bar_options .= " striped";
+}
 
 $css_class = apply_filters( VC_SHORTCODE_CUSTOM_CSS_FILTER_TAG, 'vc_progress_bar wpb_content_element' . $el_class, $this->settings['base'], $atts );
 $output = '<div class="' . esc_attr($css_class) . '">';
@@ -67,4 +75,4 @@ foreach ( $graph_lines_data as $line ) {
 
 $output .= '</div>';
 
-echo uncode_remove_wpautop($output);
+echo uncode_remove_p_tag($output);

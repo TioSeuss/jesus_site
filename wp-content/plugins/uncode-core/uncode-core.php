@@ -3,12 +3,15 @@
 Plugin Name: Uncode Core
 Plugin URI: http://www.undsgn.com
 Description: Uncode Core Plugin for Undsgn Themes.
-Version: 1.7.3
+Version: 2.0.0
 Author: Undsgn
 Author URI: http://www.undsgn.com
 */
 
 define( 'UNCODE_CORE_FILE', __FILE__ );
+define( 'UNCODE_CORE_PLUGIN_DIR', dirname(__FILE__) );
+define( 'UNCODE_CORE_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+define( 'UNCODE_CORE_ADVANCED', true );
 
 // Blocking direct access
 if( ! function_exists( 'uncode_block_direct_access' ) ) {
@@ -22,7 +25,7 @@ if( ! function_exists( 'uncode_block_direct_access' ) ) {
 if( ! class_exists( 'UncodeCore_Plugin' ) ) {
 	class UncodeCore_Plugin {
 
-		const VERSION = '1.7.3';
+		const VERSION = '2.0.0';
 		protected static $instance = null;
 
 		private function __construct() {
@@ -61,6 +64,10 @@ require_once dirname(__FILE__) . '/custom-post-type.php';
 * Customizer Visual Composer
 */
 function before_visual_composer() {
+	if ( ! defined( 'UNCODE_SLIM' ) ) {
+		return;
+	}
+
 	$ok_php = true;
 	if ( function_exists( 'phpversion' ) ) {
 		$php_version = phpversion();
@@ -192,13 +199,71 @@ function uncode_core_override_woocommerce_widgets() {
 add_action( 'widgets_init', 'uncode_core_override_woocommerce_widgets', 15 );
 
 /**
+ * Shared functions.
+ */
+require_once UNCODE_CORE_PLUGIN_DIR . '/includes/shared-functions.php';
+
+/**
+ * Admin functions.
+ */
+require_once UNCODE_CORE_PLUGIN_DIR . '/includes/admin.php';
+
+/**
 * I recommend this implementation.
 */
-
-require_once dirname(__FILE__) . '/i-recommend-this/i-recommend-this.php';
+require_once UNCODE_CORE_PLUGIN_DIR . '/i-recommend-this/i-recommend-this.php';
 
 /**
  * System status page.
  */
+require_once UNCODE_CORE_PLUGIN_DIR . '/includes/system-status.php';
 
-require_once dirname(__FILE__) . '/includes/system-status.php';
+/**
+ * Required: set 'ot_theme_mode' filter to true.
+ */
+require_once UNCODE_CORE_PLUGIN_DIR . '/includes/theme-options/assets/theme-mode/functions.php';
+
+/**
+ * Required: include OptionTree.
+ */
+require_once UNCODE_CORE_PLUGIN_DIR . '/includes/theme-options/ot-loader.php';
+
+/**
+ * Load the theme options.
+ */
+require_once UNCODE_CORE_PLUGIN_DIR . '/includes/theme-options/assets/theme-mode/theme-options.php';
+
+/**
+ * Performance functions.
+ */
+require_once UNCODE_CORE_PLUGIN_DIR . '/includes/performance/performance.php';
+
+/**
+ * Load the theme meta boxes.
+ */
+require_once UNCODE_CORE_PLUGIN_DIR . '/includes/theme-options/assets/theme-mode/meta-boxes.php';
+
+/**
+ * Load one click demo
+ */
+require_once UNCODE_CORE_PLUGIN_DIR . '/includes/one-click-demo/init.php';
+
+/**
+ * Font system.
+ */
+require_once UNCODE_CORE_PLUGIN_DIR . '/includes/font-system/font-system.php';
+
+/**
+ * Third-party related functions.
+ */
+require_once UNCODE_CORE_PLUGIN_DIR . '/includes/compatibility.php';
+
+/**
+ * Native shortcodes.
+ */
+require_once UNCODE_CORE_PLUGIN_DIR . '/includes/shortcodes.php';
+
+/**
+ * Deprecated function.
+ */
+require_once UNCODE_CORE_PLUGIN_DIR . '/includes/deprecated-functions.php';

@@ -17,16 +17,14 @@ $history_tab = $history;
 $el_id = 'accordion_' . rand();
 preg_match_all('/vc_accordion_tab([^\]]+)/i', $content, $matches, PREG_OFFSET_CAPTURE);
 $accordion_tab = array();
-if (isset($matches[0]))
-{
+if (isset($matches[0])) {
 	$accordion_tab = $matches[0];
 }
 $counter = 1;
-foreach ($accordion_tab as $tab)
-{
-	if ($counter == $active_tab) $content = str_replace($tab[0], $tab[0] . ' id="' . esc_attr( $el_id ) . '" active="1"', $content);
-	else
-	{
+foreach ($accordion_tab as $tab) {
+	if ($counter == $active_tab) {
+		$content = str_replace($tab[0], $tab[0] . ' id="' . esc_attr( $el_id ) . '" active="1"', $content);
+	} else {
 		$content = str_replace($tab[0], $tab[0] . ' id="' . esc_attr( $el_id ) . '"', $content);
 	}
 	$counter++;
@@ -45,5 +43,5 @@ $output.= $content;
 $output.= '</div>';
 $output.= '</div>';
 
-echo uncode_remove_wpautop($output);
+echo uncode_remove_p_tag($output);
 $history_tab = '';

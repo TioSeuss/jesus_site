@@ -9,7 +9,16 @@
 					<th><label for="required-{{data.key}}"><?php esc_html_e( 'Required', 'uncode-privacy' ); ?></label></th>
 					<td>
 						<label class="uncode-privacy-switch">
-							<input type="checkbox" name="{{data.option_name}}[{{data.key}}][required]" id="required-{{data.key}}">
+							<input class="uncode-privacy-switch-checkbox" type="checkbox" name="{{data.option_name}}[{{data.key}}][required]" id="required-{{data.key}}">
+							<span class="uncode-privacy-slider round"></span>
+						</label>
+					</td>
+				</tr>
+				<tr>
+					<th><label for="default-state-{{data.key}}"><?php esc_html_e( 'Active by default', 'uncode-privacy' ); ?></label></th>
+					<td>
+						<label class="uncode-privacy-switch">
+							<input type="checkbox" name="{{data.option_name}}[{{data.key}}][state]" id="default-state-{{data.key}}">
 							<span class="uncode-privacy-slider round"></span>
 						</label>
 					</td>

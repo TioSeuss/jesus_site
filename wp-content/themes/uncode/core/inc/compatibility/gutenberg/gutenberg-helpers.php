@@ -34,6 +34,26 @@ if ( ! function_exists( 'uncode_gutenberg_can_edit_post_type' ) ) :
 
 endif;
 
+if ( ! function_exists( 'uncode_is_wpb_content' ) ) :
+/**
+ * @since Uncode 2.0.0
+ */
+function uncode_is_wpb_content() {
+	$post_id = isset( $_GET['post'] ) ? $_GET['post'] : ( isset( $_POST['post_ID'] ) ? $_POST['post_ID'] : false );
+
+	if ( ! $post_id ) {
+		return false;
+	}
+
+	$post = get_post($post_id);
+	if ( ! empty( $post ) && isset( $post->post_content ) && preg_match( '/\[vc_row/', $post->post_content ) ) {
+		return true;
+	}
+
+	return false;
+}
+endif; //endif;
+
 if ( ! function_exists( 'uncode_is_gutenberg_current_editor' ) ) :
 
 	/**
@@ -54,7 +74,7 @@ if ( ! function_exists( 'uncode_is_gutenberg_current_editor' ) ) :
 			return false;
 		}
 
-		if ( function_exists( 'vc_is_wpb_content' ) && vc_is_wpb_content() ) {
+		if ( function_exists( 'vc_is_wpb_content' ) && uncode_is_wpb_content() ) {
 			return false;
 		}
 

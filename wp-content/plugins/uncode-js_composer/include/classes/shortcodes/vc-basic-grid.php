@@ -177,7 +177,7 @@ class WPBakeryShortCode_VC_Basic_Grid extends WPBakeryShortCode_Vc_Pageable {
 			) ) );
 		}
 
-		$id_pattern = '/' . $this->grid_id_unique_name . '\:([\w-_]+)/';
+		$id_pattern = '/' . $this->grid_id_unique_name . '\:([\w\-_]+)/';
 
 		$id_value = isset( $atts['grid_id'] ) ? $atts['grid_id'] : '';
 

@@ -46,7 +46,18 @@ class Vc_Vendor_Woocommerce implements Vc_Vendor_Interface {
 				$this,
 				'addContentTabPageEditable',
 			) );
+
+			add_filter( 'woocommerce_shop_manager_editable_roles', array(
+				$this,
+				'addShopManagerRoleToEditable',
+			) );
 		}
+	}
+
+	public function addShopManagerRoleToEditable( $rules ) {
+		$rules[] = 'shop_manager';
+
+		return array_unique( $rules );
 	}
 
 	public function addContentTabPageEditable( $tabs ) {

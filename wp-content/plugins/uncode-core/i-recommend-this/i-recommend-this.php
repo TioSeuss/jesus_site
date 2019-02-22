@@ -237,13 +237,29 @@ if ( ! function_exists( 'uncode_dot_irecommendthis' ) ) {
 
 if ( ! function_exists( 'uncode_most_recommended_posts' ) ) {
 	function uncode_most_recommended_posts($numberOf, $before, $after, $show_count, $post_type="post", $raw=false) {
-		global $wpdb;
+		$args = array(
+			'post_type'        => $post_type,
+			'post_status'      => 'publish',
+			'posts_per_page'   => $numberOf,
+			'orderby'          => 'meta_value_num',
+			'order'            => 'DESC',
+			'meta_query'       => array(
+				'relation' => 'OR',
+				array(
+					'key'     => '_recommended',
+					'compare' => 'NOT EXISTS'
+				),
+				array(
+					'key'     => '_recommended',
+					'type'    => 'numeric',
+					'compare' => 'EXISTS'
+				)
+			),
+			'suppress_filters' => false,
+		);
 
-		$request = "SELECT * FROM $wpdb->posts, $wpdb->postmeta";
-		$request .= " WHERE $wpdb->posts.ID = $wpdb->postmeta.post_id";
-		$request .= " AND post_status='publish' AND post_type='$post_type' AND meta_key='_recommended'";
-		$request .= " ORDER BY $wpdb->postmeta.meta_value+0 DESC LIMIT $numberOf";
-		$posts = $wpdb->get_results($request);
+		$wp_query = new WP_Query( $args );
+		$posts    = $wp_query->get_posts();
 
 		if ($raw):
 			return $posts;

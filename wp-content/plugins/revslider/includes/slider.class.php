@@ -1012,6 +1012,10 @@ class RevSliderSlider extends RevSliderElementsBase{
 		header("Content-Disposition: attachment; filename=".$exportname);
 		header("Pragma: no-cache");
 		header("Expires: 0");
+		
+		ob_clean();
+		flush();
+		
 		readfile(RevSliderGlobals::$uploadsUrlExportZip);
 		
 		@unlink(RevSliderGlobals::$uploadsUrlExportZip); //delete file after sending it to user

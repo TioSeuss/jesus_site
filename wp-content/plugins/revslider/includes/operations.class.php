@@ -1972,6 +1972,10 @@ ob_end_clean();
 		header("Content-Disposition: attachment; filename=".sanitize_title($slider->getAlias()).".zip");
 		header("Pragma: no-cache");
 		header("Expires: 0");
+		
+		ob_clean();
+		flush();
+		
 		readfile(RevSliderGlobals::$uploadsUrlExportZip);
 		
 		@unlink(RevSliderGlobals::$uploadsUrlExportZip); //delete file after sending it to user
@@ -2851,11 +2855,11 @@ ob_end_clean();
 											break;
 											case 'youtube':
 												$infos['id'] = 'external';
-												if(!isset($layer['video_data']->id) || empty($layer['video_data']->id)) continue;
+												if(!isset($layer['video_data']->id) || empty($layer['video_data']->id)) continue 2;
 												$used_videos[$do_ssl.'//www.youtube.com/watch?v='.$layer['video_data']->id] = $infos;
 											break;
 											case 'vimeo':
-												if(!isset($layer['video_data']->id) || empty($layer['video_data']->id)) continue;
+												if(!isset($layer['video_data']->id) || empty($layer['video_data']->id)) continue 2;
 												$infos['id'] = 'external';
 												$used_videos[$do_ssl.'//vimeo.com/'.$layer['video_data']->id] = $infos;
 											break;

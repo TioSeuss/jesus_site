@@ -47,7 +47,7 @@ global $woo_title;
 					break;
 			} ?>
 			<li class="<?php echo wc_get_account_menu_item_classes( $endpoint ); ?>">
-				<a href="<?php echo esc_url( wc_get_account_endpoint_url( $endpoint ) ); ?>"><?php echo esc_html( $label ); ?><i class="fa fa-fw pull-right fa-<?php echo esc_attr($icon); if ($label === $woo_title) echo ' active'; ?>"></i></a>
+				<a href="<?php echo esc_url( wc_get_account_endpoint_url( $endpoint ) ); ?>"><?php echo esc_html( $label ); ?><i class="fa fa-fw pull-right fa-<?php echo esc_attr($icon); if ($label === $woo_title) { echo ' active'; } ?>"></i></a>
 			</li>
 		<?php endforeach; ?>
 	</ul>

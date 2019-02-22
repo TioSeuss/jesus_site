@@ -38,10 +38,14 @@ if (!empty($back_image) || $overlay_color !== '') {
 		$back_attachment = '';
 		$back_size = 'cover';
 	} else {
-		if ($back_size === '') $back_size = 'cover';
+		if ($back_size === '') {
+			$back_size = 'cover';
+		}
 	}
 
-	if ($back_repeat === '') $back_repeat = 'no-repeat';
+	if ($back_repeat === '') {
+		$back_repeat = 'no-repeat';
+	}
 
 	$back_array = array (
 		'background-image' => $back_image,
@@ -64,17 +68,28 @@ $row_classes[] = 'no-h-padding';
 
 $boxed = ot_get_option('_uncode_boxed');
 
-if ($boxed !== 'on')
+if ($boxed !== 'on') {
 	$row_classes[] = 'full-width';
+}
 
 $row_classes[] = 'row-parent';
 $row_cont_classes[] = 'row-container';
-if ($parallax === 'yes') $row_cont_classes[] = 'with-parallax';
-if ($is_header === 'yes') $row_classes[] = 'row-header';
+if ($parallax === 'yes') {
+	$row_cont_classes[] = 'with-parallax';
+}
+if ($is_header === 'yes'){
+	$row_classes[] = 'row-header';
+}
 
-if ($desktop_visibility === 'yes') $row_cont_classes[] = 'desktop-hidden';
-if ($medium_visibility === 'yes') $row_cont_classes[] = 'tablet-hidden';
-if ($mobile_visibility === 'yes') $row_cont_classes[] = 'mobile-hidden';
+if ($desktop_visibility === 'yes') {
+	$row_cont_classes[] = 'desktop-hidden';
+}
+if ($medium_visibility === 'yes') {
+	$row_cont_classes[] = 'tablet-hidden';
+}
+if ($mobile_visibility === 'yes') {
+	$row_cont_classes[] = 'mobile-hidden';
+}
 
 global $uncode_row_parent;
 $uncode_row_parent = 12;
@@ -83,9 +98,9 @@ $output.= '<section data-parent="true" class="' . esc_attr(trim($css_class)) . '
 $output.= $background_div;
 $output.= '<div class="' . esc_attr(trim(implode(' ', $row_classes))) . '"' . $row_inline_style . '>';
 $output.= $content;
-echo uncode_remove_wpautop($output);
+echo uncode_remove_p_tag($output);
 $output = '';
 $output.= '</div>';
 $output.= '</section>';
 
-echo uncode_remove_wpautop($output);
+echo uncode_remove_p_tag($output);

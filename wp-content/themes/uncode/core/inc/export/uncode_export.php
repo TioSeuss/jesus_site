@@ -2,8 +2,9 @@
 
 function export_submenu_page_callback() {
 
-	if ( !current_user_can('export') )
+	if ( !current_user_can('export') ) {
 		wp_die(esc_html__('You do not have sufficient permissions to export the content of this site.','uncode'));
+	}
 
 	global $wpdb;
 	/** Load WordPress export API */
@@ -64,12 +65,14 @@ function export_submenu_page_callback() {
 		$months = $wpdb->get_results( $wpdb->prepare("SELECT DISTINCT YEAR( post_date ) AS year, MONTH( post_date ) AS month FROM $wpdb->posts WHERE post_type = %s AND post_status != 'auto-draft' ORDER BY post_date DESC", $post_type ) );
 
 		$month_count = count( $months );
-		if ( !$month_count || ( 1 == $month_count && 0 == $months[0]->month ) )
+		if ( !$month_count || ( 1 == $month_count && 0 == $months[0]->month ) ) {
 			return;
+		}
 
 		foreach ( $months as $date ) {
-			if ( 0 == $date->year )
+			if ( 0 == $date->year ) {
 				continue;
+			}
 
 			$month = zeroise( $date->month, 2 );
 			echo '<option value="' . $date->year . '-' . $month . '">' . $wp_locale->get_month( $month ) . ' ' . $date->year . '</option>';

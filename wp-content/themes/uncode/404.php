@@ -33,7 +33,9 @@ get_header();
 
 		$page_header_title = ot_get_option('_uncode_404_header_title');
 		$page_header_title_text = ot_get_option('_uncode_404_header_title_text');
-		if ($page_header_title === 'off') $page_header_title_text = '404';
+		if ($page_header_title === 'off') {
+			$page_header_title_text = '404';
+		}
 		$metabox_data['_uncode_header_title'] = array('on');
 		$metabox_data['_uncode_header_title_custom'] = array('on');
 		$metabox_data['_uncode_header_text'] = array($page_header_title_text);
@@ -43,7 +45,7 @@ get_header();
 		$header_html = $page_header->html;
 		if ($header_html !== '') {
 			echo '<div id="page-header">';
-			echo uncode_remove_wpautop( $page_header->html );
+			echo uncode_remove_p_tag( $page_header->html );
 			echo '</div>';
 		}
 	}
@@ -53,8 +55,11 @@ get_header();
 	$page_body_type = ot_get_option('_uncode_404_body');
 
 	if ($page_body_type === '') {
-		if ($page_header_type === 'none') $page_title = '<div class="heading-text el-text heading-bigtext"><h1 class="bigtext"><span>404</span></h1></div>';
-		else $page_title = '';
+		if ($page_header_type === 'none') {
+			$page_title = '<div class="heading-text el-text heading-bigtext"><h1 class="bigtext"><span>404</span></h1></div>';
+		} else {
+			$page_title = '';
+		}
 		$partial_content =
 			'<div class="row-inner">
 				<div class="pos-middle pos-center align_center column_parent col-lg-12 single-internal-gutter">

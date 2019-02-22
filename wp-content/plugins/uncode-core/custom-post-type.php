@@ -106,6 +106,8 @@ function uncode_custom_post_type()
 				'new_item_name' => sprintf(esc_html__( 'New %s Category Name', 'uncode'), $label) /* name title for taxonomy */
 			),
 			'rewrite' => array( 'slug' => $base . '_cat' ),
+			// For Gutenberg
+			'show_in_rest' => true
 		)
 	);
 

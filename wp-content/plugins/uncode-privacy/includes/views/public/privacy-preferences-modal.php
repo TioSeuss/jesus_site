@@ -26,10 +26,25 @@
 												<span class="gdpr-always-active"><?php esc_html_e( 'Required', 'uncode-privacy' ); ?></span>
 												<input type="hidden" name="user_consents[]" value="<?php echo esc_attr( $consent_key ); ?>" checked style="display:none;">
 											<?php else : ?>
-												<label class="gdpr-switch">
-													<input type="checkbox" name="user_consents[]" value="<?php echo esc_attr( $consent_key ); ?>" <?php echo ! empty( $user_consents ) ? checked( in_array( $consent_key, $user_consents, true ), 1, false ) : ''; ?>>
-													<span class="gdpr-slider round"></span>
-												</label>
+												<?php if ( isset( $type[ 'state' ] ) && $type[ 'state' ] ) : ?>
+
+													<?php $has_consent_off = in_array( $consent_key . '-off', $user_consents ) ? true : false;
+													?>
+													<input type="hidden" name="consents_default_on_list[]" value="<?php echo esc_attr( $consent_key ); ?>">
+
+													<label class="gdpr-switch">
+														<input id="gdpr-consent-<?php echo esc_attr( $consent_key ); ?>" class="gdpr-consent-switch" type="checkbox" name="user_consents[]" value="<?php echo esc_attr( $consent_key ); ?>" <?php echo checked( ! $has_consent_off , 1, false ); ?> data-default-on="true">
+														<span class="gdpr-slider round"></span>
+													</label>
+
+												<?php else: ?>
+
+													<label class="gdpr-switch">
+														<input id="gdpr-consent-<?php echo esc_attr( $consent_key ); ?>" class="gdpr-consent-switch" type="checkbox" name="user_consents[]" value="<?php echo esc_attr( $consent_key ); ?>" <?php echo ! empty( $user_consents ) ? checked( in_array( $consent_key, $user_consents, true ), 1, false ) : ''; ?> data-default-on="false">
+														<span class="gdpr-slider round"></span>
+													</label>
+
+												<?php endif; ?>
 											<?php endif; ?>
 										</div>
 										<div class="gdpr-cookies">

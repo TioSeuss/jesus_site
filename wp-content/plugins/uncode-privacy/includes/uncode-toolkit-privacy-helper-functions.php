@@ -8,9 +8,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
+ * Gets an array of consent types.
+ */
+function uncode_toolkit_privacy_get_consent_types() {
+	$consent_types = is_array( get_option( 'uncode_privacy_consent_types' ) ) ? get_option( 'uncode_privacy_consent_types' ) : array();
+
+	return $consent_types;
+}
+
+/**
  * Checks if a user gave consent.
  */
 function uncode_toolkit_privacy_has_consent( $consent ) {
+	$is_consent_on_by_default = uncode_toolkit_privacy_is_consent_on_by_default( $consent );
 
 	if ( is_user_logged_in() ) {
 		$user     = wp_get_current_user();
@@ -20,9 +30,19 @@ function uncode_toolkit_privacy_has_consent( $consent ) {
 	}
 
 	if ( isset( $consents ) && ! empty( $consents ) ) {
+		// Handle default enabled consents. Consent is disabled only if is set to off
+		// (ie. we have the record 'consent_id-off'). Otherwise is always enabled.
+		if ( $is_consent_on_by_default && ! in_array( $consent . '-off', $consents ) ) {
+			return true;
+		}
+
 		if ( in_array( $consent, $consents ) ) {
 			return true;
 		}
+
+	} else if ( $is_consent_on_by_default ) {
+		// Empty consents but consent enabled by default = allowed
+		return true;
 	}
 
 	return false;
@@ -66,3 +86,16 @@ function uncode_toolkit_privacy_box_shortcode( $atts, $content = null ) {
 	return '<a href="#" class="gdpr-preferences ' . esc_attr( $atts[ 'class' ] ) . '">' . esc_html( $atts[ 'content' ] ) . '</a>';
 }
 add_shortcode( 'uncode_privacy_box', 'uncode_toolkit_privacy_box_shortcode' );
+
+/**
+ * Checks if a consent is on by default.
+ */
+function uncode_toolkit_privacy_is_consent_on_by_default( $consent_id ) {
+	$consent_types = uncode_toolkit_privacy_get_consent_types();
+
+	if ( array_key_exists( $consent_id, $consent_types ) && $consent_types[ $consent_id ][ 'state' ] ) {
+		return true;
+	}
+
+	return false;
+}

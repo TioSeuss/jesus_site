@@ -8,8 +8,7 @@
  * @version     3.3.1
  */
 
-if (!defined('ABSPATH'))
-{
+if (!defined('ABSPATH')) {
 	exit;
 }
 
@@ -20,8 +19,7 @@ $format  = isset( $format ) ? $format : '';
 
 global $wp_query;
 
-if ($wp_query->max_num_pages <= 1)
-{
+if ($wp_query->max_num_pages <= 1) {
 	return;
 }
 
@@ -36,24 +34,22 @@ $paginate_links = paginate_links(apply_filters('woocommerce_pagination_args', ar
 	'mid_size' => 3
 )));
 
-if (is_array($paginate_links))
-{
+if (is_array($paginate_links)) {
 	$output = "<ul class='pagination'>";
 	$prev = get_previous_posts_link('<i class="fa-fw fa fa-angle-left"></i>');
-	if ($prev !== NULL) $output.= '<li class="page-prev">' . $prev . '</li>';
-	else
-	{
+	if ($prev !== NULL) {
+		$output.= '<li class="page-prev">' . $prev . '</li>';
+	} else {
 		$output.= '<li class="page-prev"><span class="btn btn-link text-gray-x11-color btn-icon-left btn-disable-hover"><i class="fa-fw fa fa-angle-left"></i></span></li>';
 	}
 
-	foreach ($paginate_links as $page)
-	{
+	foreach ($paginate_links as $page) {
 		$output.= '<li><span class="btn-container">' . $page . '</span></li>';
 	}
 	$next = get_next_posts_link('<i class="fa-fw fa fa-angle-right"></i>');
-	if ($next !== NULL) $output.= '<li class="page-next">' . $next . '</li>';
-	else
-	{
+	if ($next !== NULL) {
+		$output.= '<li class="page-next">' . $next . '</li>';
+	} else {
 		$output.= '<li class="page-next"><span class="btn btn-link text-gray-x11-color btn-icon-right btn-disable-hover"><i class="fa-fw fa fa-angle-right"></i></span></li>';
 	}
 

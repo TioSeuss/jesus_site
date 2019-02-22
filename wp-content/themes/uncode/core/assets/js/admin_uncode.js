@@ -127,24 +127,7 @@
 			} catch (e) {}
 		});
 	});
-	$('.vc_welcome-header').html('Welcome to Uncode<br>Visual Composer Version');
-	$('a.deactivate-jscomposer').on('click', function(e) {
-		e.preventDefault();
-		$.ajax({
-			type: 'post',
-			dataType: "json",
-			data: {
-				action: 'deactivate_js_composer',
-			},
-			url: ajaxurl,
-			success: function(data) {
-				if (data == 1) {
-					$('a.deactivate-jscomposer').addClass('button-disabled');
-					window.location = 'admin.php?page=uncode-plugins';
-				}
-			}
-		});
-	});
+	$('.vc_welcome-header').html('Welcome to Uncode<br>WPBakery Page Builder Version');
 })(jQuery);
 
 /*
@@ -934,10 +917,15 @@
 				});
 			}, 3000);
 
-			console.log(xhr); // We can leave this line for debugging purposes
+			if (SiteParameters.enable_debug == true) {
+				// This console log is disabled by default
+				// So nothing is printed in a typical installation
+				//
+				// It can be enabled for debugging purposes setting
+				// the 'uncode_enable_debug_on_js_scripts' filter to true
+				console.log(xhr);
+			}
 		}).done(function(res) {
-
-			//console.log(res);
 
 			if ( res.indexOf('<body id="error-page">') !== -1 ) {
 
@@ -1215,6 +1203,102 @@
 			return uri + separator + key + "=" + value;
 		}
 	}
+
+	//////////////////////////////////////////////////////
+	/// Theme registration
+	//////////////////////////////////////////////////////
+
+	var themeRegistrationForm = $('#uncode-registration-form');
+	var themeRegistrationTermsCheckbox = $('#uncode-registration-accept-terms');
+	var themeRegistrationButton = $('#envato_update_info');
+
+	if (themeRegistrationTermsCheckbox.prop('checked')) {
+		themeRegistrationButton.prop('disabled', false);
+	}
+
+	themeRegistrationTermsCheckbox.on('click', function() {
+		if (themeRegistrationTermsCheckbox.prop('checked')) {
+			themeRegistrationButton.prop('disabled', false);
+		} else {
+			themeRegistrationButton.prop('disabled', true);
+		}
+	});
+
+	// Save purchase code via AJAX
+	themeRegistrationButton.on('click', function(e) {
+		e.preventDefault();
+
+		var _this = $(this);
+		var purchaseCode = themeRegistrationForm.find('#envato-purchase-code');
+		var noticesContainer = themeRegistrationForm.find('#uncode-admin-registration-notice-container');
+
+		// Return early if it as alreading doing AJAX request
+		if (themeRegistrationButton.hasClass('uncode-ajax-loading')) {
+			return false;
+		}
+
+		// Remove classes
+		themeRegistrationButton.removeClass('uncode-ajax-saved uncode-ajax-error');
+
+		// Hide notices
+		themeRegistrationForm.find('.uncode-ui-notice').remove();
+
+		// Check if we have a purchase code
+		if (!purchaseCode.val()) {
+			noticesContainer.append('<p class="uncode-ui-notice uncode-ui-notice--error">' + SiteParameters.theme_registration.locale.empty_purchase_code + '</p>');
+
+			return false;
+		}
+
+		// Validate terms
+		if (!themeRegistrationTermsCheckbox.prop('checked')) {
+			noticesContainer.append('<p class="uncode-ui-notice uncode-ui-notice--error">' + SiteParameters.theme_registration.locale.empty_terms + '</p>');
+
+			return false;
+		}
+
+		// Add loading class to the button
+		themeRegistrationButton.addClass('uncode-ajax-loading');
+
+		var post_data = {
+			uncode_theme_registration_purchase_code: purchaseCode.val(),
+			action: 'save_purchase_code',
+			uncode_theme_registration_nonce: SiteParameters.theme_registration.nonce
+		};
+
+		$.post(ajaxurl, post_data, function (response) {
+			if (response) {
+				if (response.success === false) {
+					noticesContainer.append('<p class="uncode-ui-notice uncode-ui-notice--error">' + response.data.message + '</p>');
+				} else {
+					noticesContainer.append('<p class="uncode-ui-notice uncode-ui-notice--success">' + response.data.message + '</p>');
+
+					// Show deregister form and hide the other fields
+					setTimeout(function () {
+						noticesContainer.hide();
+						$('.deregister-product-fields-container').show();
+						themeRegistrationForm.find('.register-product-fields-container').hide();
+						$('.registration-error-message').hide();
+						$('.registration-ok-message').show();
+					}, 3500);
+				}
+			}
+		}).done(function () {
+			// Add success class to the button
+			themeRegistrationButton.addClass('uncode-ajax-saved');
+
+		}).fail(function () {
+			// Add error class to the button
+			themeRegistrationButton.addClass('uncode-ajax-error');
+		}).always(function () {
+			// Remove loading class
+			themeRegistrationButton.removeClass('uncode-ajax-loading');
+
+			setTimeout(function () {
+				themeRegistrationButton.removeClass('uncode-ajax-saved uncode-ajax-error');
+			}, 3000);
+		});
+	});
 })(jQuery);
 
 
@@ -1476,29 +1560,3 @@ $(function(){
 });
 
 })(jQuery);
-
-//////////////////////////////////////////////////////
-/// Create a modal on the fly
-//////////////////////////////////////////////////////
-
-// (function($) {
-// 	"use strict";
-
-// 	$.fn.uncode_modal = function(action, content) {
-// 		if (action === "open") {
-// 			$('body').append('<div class="uncode-ui-modal"></div><div class="uncode-ui-overlay"></div>');
-
-// 			var modal = $('.uncode-ui-modal');
-// 			content.push('<button type="button" id="uncode-cancel-modal" class="uncode-ui-button uncode-ui-button--modal uncode-ui-button--cancel">' + SiteParameters.modal_buttons.cancel + '</button>');
-// 			content.push('<button type="button" id="uncode-confirm-modal" class="uncode-ui-button uncode-ui-button--modal uncode-ui-button--confirm">' + SiteParameters.modal_buttons.confirm + '</button>');
-// 			modal.append(content);
-// 		}
-
-// 		if (action === "close") {
-// 			// Unbind handlers
-// 			$(document).off('click', '#uncode-confirm-modal');
-
-// 			$('.uncode-ui-modal, .uncode-ui-overlay').remove();
-// 		}
-// 	};
-// })(jQuery);

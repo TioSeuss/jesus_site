@@ -101,18 +101,6 @@
 							saturation: saturation_value
 						}]
 					}, {
-						featureType: "poi.sport_complex",
-						elementType: "geometry.fill",
-						stylers: [{
-							hue: main_color
-						}, {
-							visibility: "off"
-						}, {
-							lightness: brightness_value
-						}, {
-							saturation: saturation_value
-						}]
-					}, {
 						featureType: "poi.attraction",
 						elementType: "geometry.fill",
 						stylers: [{
