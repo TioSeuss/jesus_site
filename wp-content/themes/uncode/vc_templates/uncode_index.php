@@ -1240,8 +1240,11 @@ $main_container_classes[] = trim($this->getExtraClass( $el_class ));
 						}
 					} else {
 						$format = 'page/%#%';
-						if ($paged - 1 > 0) {
-							$prev_link = $page_url[0] . 'page/' . ($paged - 1) ;
+						if ($paged > 1) {
+							$prev_link = $page_url[0] . 'page/' . ($paged - 1);
+						}
+						if ($paged == 2) {
+							$prev_link = $page_url[0];
 						}
 						if ($paged < $my_query->max_num_pages) {
 							$next_link = $page_url[0] . 'page/' . ($paged + 1);
@@ -1259,6 +1262,11 @@ $main_container_classes[] = trim($this->getExtraClass( $el_class ));
 						'add_fragment'	=> ''
 					);
 
+					if ( isset( $_GET['s'] ) ) {
+						$next_link = add_query_arg( 's', $_GET['s'], $next_link );
+						$prev_link = add_query_arg( 's', $_GET['s'], $prev_link );
+					}
+
 					if ( is_archive() ) {
 						$pagination_args['base'] = str_replace( 999999999, '%#%', get_pagenum_link( 999999999 ) );
 					}
@@ -1266,11 +1274,19 @@ $main_container_classes[] = trim($this->getExtraClass( $el_class ));
 					$paginate_links = paginate_links($pagination_args);
 						if (is_array($paginate_links)) {
 							echo "<ul class='pagination'>";
-							echo '<li class="page-prev"><a class="btn btn-link text-default-color" href="' . esc_url( $prev_link ) . '"><i class="fa fa-angle-left"></i></a></li>';
-							foreach ( $paginate_links as $page ) {
-									echo '<li><span class="btn btn-link text-default-color">'.$page.'</span></li>';
+							if ( $paged > 1 ) {
+								echo '<li class="page-prev"><a class="btn btn-link text-default-color" href="' . esc_url( $prev_link ) . '"><i class="fa fa-angle-left"></i></a></li>';
+							} else {
+								echo '<li class="page-prev"><span class="btn btn-link btn-disable-hover"><i class="fa fa-angle-left"></i></a></li>';
 							}
-							echo '<li class="page-next"><a class="btn btn-link text-default-color" href="' . esc_url( $next_link ) . '"><i class="fa fa-angle-right"></i></a></li>';
+							foreach ( $paginate_links as $page ) {
+								echo '<li><span class="btn btn-link text-default-color">'.$page.'</span></li>';
+							}
+							if ( $paged < $my_query->max_num_pages ) {
+								echo '<li class="page-next"><a class="btn btn-link text-default-color" href="' . esc_url( $next_link ) . '"><i class="fa fa-angle-right"></i></a></li>';
+							} else {
+								echo '<li class="page-next"><span class="btn btn-link btn-disable-hover"><i class="fa fa-angle-right"></i></a></li>';
+							}
 							echo "</ul>";
 						}
 				endif;

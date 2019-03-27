@@ -16,6 +16,19 @@ if(has_filter('layerslider_override_defaults')) {
 	}
 }
 
+// Allow overriding slider settings from the embed code like skins.
+//
+// This is a generic solution. To keep things simple and flexible,
+// this takes place before filtering with defaults.
+//
+// As such, some keys might still use their legacy form.
+foreach( $embed as $key => $val ) {
+
+	if( $key !== 'id' ) {
+		$slides['properties'][ $key ] = $val;
+	}
+}
+
 // Hook to alter slider data *before* filtering with defaults
 if(has_filter('layerslider_pre_parse_defaults')) {
 	$result = apply_filters('layerslider_pre_parse_defaults', $slides);
@@ -66,7 +79,6 @@ if( empty($slides['properties']['attrs']['sliderVersion']) && empty($slides['pro
 		$slides['properties']['attrs']['type'] = 'responsive';
 	}
 }
-
 
 // Override firstSlide if it is specified in embed params
 if( ! empty( $embed['firstslide'] ) ) {

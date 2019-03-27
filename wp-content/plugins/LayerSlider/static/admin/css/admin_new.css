@@ -602,12 +602,12 @@ select:-ms-input-placeholder {
 
 .km-combo-input.opened {
   position: relative !important;
-  z-index: 101 !important;
+  z-index: 102 !important;
   border-color: #dedede !important; }
 
 .km-combo-box {
-  position: absolute;
-  z-index: 100;
+  position: absolute !important;
+  z-index: 101;
   height: 0;
   display: block;
   overflow: hidden;
@@ -615,13 +615,13 @@ select:-ms-input-placeholder {
   box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3);
   transition: height .3s ease-in-out;
   margin: 0 !important;
-  text-align: left; }
+  text-align: left;
+  background: white; }
 
 .km-combo-box ul {
   padding: 10px;
   border-radius: 5px;
   list-style-type: none;
-  background: white;
   margin: 0 !important; }
 
 .km-combo-box li {
@@ -648,6 +648,24 @@ select:-ms-input-placeholder {
 
 .km-combo-box li:hover {
   background: #efefef; }
+
+.km-combo-box li.group {
+  height: 18px;
+  line-height: 18px;
+  font-size: 13px;
+  text-align: center;
+  background: #eee;
+  cursor: default; }
+
+.km-combo-box li.button {
+  display: block;
+  height: 24px;
+  line-height: 22px;
+  margin: 0 10px 10px 10px;
+  text-align: center;
+  box-shadow: none;
+  -webkit-box-shadow: none;
+  cursor: default; }
 
 .ls-pointer {
   width: 330px;
@@ -3423,6 +3441,7 @@ div.ls-image {
     background-color: white;
     border-radius: 50%; }
   div.ls-image.hover a.aviary {
+    display: none !important;
     top: -6px;
     left: -10px;
     width: 27px;
@@ -4072,7 +4091,7 @@ select.sublayerprop.connect-hover {
 #ls-preview-layers {
   transform-origin: 0 0;
   pointer-events: none; }
-  #ls-preview-layers iframe {
+  #ls-preview-layers iframe, #ls-preview-layers video {
     width: 100%;
     height: 100%; }
   #ls-preview-layers .bgvideo {
@@ -4086,6 +4105,8 @@ select.sublayerprop.connect-hover {
     #ls-preview-layers .bgvideo iframe, #ls-preview-layers .bgvideo video {
       width: 100% !important;
       height: 100% !important; }
+    #ls-preview-layers .bgvideo video {
+      object-fit: cover; }
     #ls-preview-layers .bgvideo .video-overlay {
       position: absolute;
       top: 0;
@@ -5299,6 +5320,7 @@ tr.ls-separator td {
       margin-left: 0 !important; }
 
 .ls-media-options td {
+  width: 33%;
   text-align: center; }
   .ls-media-options td input, .ls-media-options td select, .ls-media-options td .ls-checkbox {
     margin-top: 5px; }

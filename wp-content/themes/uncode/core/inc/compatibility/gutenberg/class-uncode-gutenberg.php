@@ -406,12 +406,28 @@ class Uncode_Gutenberg {
 				-webkit-font-smoothing: antialiased;
 			}
 
+			.block-editor .edit-post-visual-editor a {
+				color: <?php echo sanitize_text_field( $dark_text_color ); ?>;
+				text-decoration: none;
+				transition: color 200ms cubic-bezier(0.785, 0.135, 0.15, 0.86);
+			}
+
+			.block-editor .edit-post-visual-editor a:hover {
+				color: <?php echo sanitize_text_field( $accent_color ); ?>;
+			}
+
 			.block-editor p,
 			.block-editor ul,
 			.block-editor ol,
 			.block-editor .wp-block-pullquote,
 			.block-editor .wp-block-quote__citation {
 				color: <?php echo sanitize_text_field( $text_color ); ?>;
+			}
+
+			.block-editor .wp-block-quote__citation,
+			.block-editor .wp-block-quote cite,
+			.block-editor .wp-block-quote footer {
+				margin-top: 0;
 			}
 
 			.block-editor strong,
@@ -425,7 +441,8 @@ class Uncode_Gutenberg {
 			}
 
 			.block-editor .wp-block-quote {
-				border-left-color: <?php echo sanitize_text_field( $accent_color ); ?>!important;
+				border-left: 2px solid <?php echo sanitize_text_field( $accent_color ); ?>!important;
+				padding-left: 27px;
 			}
 
 			.block-editor .wp-block-quote p,
@@ -433,6 +450,15 @@ class Uncode_Gutenberg {
 				color: <?php echo sanitize_text_field( $dark_text_color ); ?>;
 				font-size: 18px;
 				line-height: 1.75;
+			}
+
+			.block-editor .wp-block-quote.is-large p,
+			.block-editor .wp-block-quote.is-style-large p {
+				font-size: 24px;
+			}
+
+			.block-editor .wp-block-quote p:last-child {
+				margin-bottom: 0;
 			}
 
 			.block-editor .wp-block-pullquote {
@@ -445,9 +471,12 @@ class Uncode_Gutenberg {
 			}
 
 			/* Separator */
-			.block-editor .wp-block-separator {
+			.block-editor .wp-block-separator:not(.is-style-dots) {
 				border-bottom: 1px solid #eaeaea !important;
 				max-width: none !important;
+			}
+			.block-editor .wp-block-separator.is-style-wide {
+				border-top: 1px solid #eaeaea !important;
 			}
 
 			/* Links */

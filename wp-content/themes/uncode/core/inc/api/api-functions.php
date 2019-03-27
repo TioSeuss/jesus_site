@@ -15,7 +15,7 @@ if ( ! function_exists( 'uncode_get_domain' ) ) :
 	function uncode_get_domain() {
 		$hostname = uncode_get_server_hostname();
 
-		// Skip IP addresses
+		// IP address, return hostname
 		if ( filter_var( $hostname, FILTER_VALIDATE_IP ) ) {
 			return $hostname;
 		}
@@ -23,8 +23,14 @@ if ( ! function_exists( 'uncode_get_domain' ) ) :
 		$pieces = parse_url( $hostname );
 		$domain = isset( $pieces[ 'path' ] ) ? $pieces[ 'path' ] : '';
 
-		if ( preg_match( '/(?P<domain>[a-z0-9][a-z0-9\-]{1,63}\.[a-z\.]{2,6})$/i', $domain, $regs ) ) {
+		// Real domain
+		if ( preg_match( '/(?P<domain>[a-z0-9][a-z0-9\-]{1,100}\.[a-z\.]{2,40})$/i', $domain, $regs ) ) {
 			return $regs[ 'domain' ];
+		}
+
+		// Localhost
+		if ( $hostname ) {
+			return $hostname;
 		}
 
 		return false;
@@ -198,10 +204,10 @@ if ( ! function_exists( 'uncode_upgrader_pre_download' ) ) :
 
 				if ( $response_code === 23 ) {
 					// Purchase code not found
-					return new WP_Error( 'uncode_premium_plugin_activation_error', wp_kses_post( __( '<span class="uncode-premium-plugin-activation-error">The Envato Purchase Code seems to be invalid. <a href="https://support.undsgn.com/hc/en-us/articles/360000836318" target="_blank">Please contact the author.</a> (Error 23)</span>', 'uncode' ) ) );
+					return new WP_Error( 'uncode_premium_plugin_activation_error', wp_kses_post( __( '<span class="uncode-premium-plugin-activation-error">The Envato Purchase Code seems to be invalid. Please try to unregister and register the product again. If the issue persists <a href="https://support.undsgn.com/hc/en-us/articles/360000836318" target="_blank">contact the theme author.</a> (Error 23)</span>', 'uncode' ) ) );
 				} else if ( $response_code !== 3 ) {
 					// General message
-					return new WP_Error( 'uncode_premium_plugin_activation_error', sprintf( wp_kses_post( __( '<span class="uncode-premium-plugin-activation-error">Purchase code verification failed. <a href="https://support.undsgn.com/hc/en-us/articles/360000836318" target="_blank">Please contact the author.</a> (Error %s)</span>', 'uncode' ) ), $response_code ) );
+					return new WP_Error( 'uncode_premium_plugin_activation_error', sprintf( wp_kses_post( __( '<span class="uncode-premium-plugin-activation-error">Purchase code verification failed. <a href="https://support.undsgn.com/hc/en-us/articles/360000836318" target="_blank">Please contact the theme author.</a> (Error %s)</span>', 'uncode' ) ), $response_code ) );
 				}
 			}
 		}
@@ -298,7 +304,7 @@ if ( ! function_exists( 'uncode_get_premium_plugins' ) ) :
 				'remote_url'         => 'https://api.undsgn.com/downloads/uncode/plugins/vc-clipboard/api.json',
 				'zip_url'            => 'https://api.undsgn.com/downloads/uncode/plugins/vc-clipboard/vc_clipboard.zip',
 				'required'           => false,
-				'version'            => '4.5.0',
+				'version'            => '4.5.1',
 				'force_activation'   => false,
 				'force_deactivation' => false,
 			),
@@ -322,7 +328,7 @@ if ( ! function_exists( 'uncode_get_premium_plugins' ) ) :
 				'remote_url'         => 'https://api.undsgn.com/downloads/uncode/plugins/revslider/api.json',
 				'zip_url'            => 'https://api.undsgn.com/downloads/uncode/plugins/revslider/revslider.zip',
 				'required'           => false,
-				'version'            => '5.4.8.2',
+				'version'            => '5.4.8.3',
 				'force_activation'   => false,
 				'force_deactivation' => false,
 			),
@@ -334,7 +340,7 @@ if ( ! function_exists( 'uncode_get_premium_plugins' ) ) :
 				'remote_url'         => 'https://api.undsgn.com/downloads/uncode/plugins/layerslider/api.json',
 				'zip_url'            => 'https://api.undsgn.com/downloads/uncode/plugins/layerslider/layersliderwp.zip',
 				'required'           => false,
-				'version'            => '6.7.6',
+				'version'            => '6.8.1',
 				'force_activation'   => false,
 				'force_deactivation' => false,
 			),

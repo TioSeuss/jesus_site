@@ -2,11 +2,11 @@
 
 /*
 Plugin Name: LayerSlider WP
-Plugin URI: https://codecanyon.net/item/layerslider-responsive-wordpress-slider-plugin-/1362246
+Plugin URI: https://layerslider.kreaturamedia.com
 Description: LayerSlider is a premium multi-purpose content creation and animation platform. Easily create sliders, image galleries, slideshows with mind-blowing effects, popups, landing pages, animated page blocks, or even a full website. It empowers more than 1.5 million active websites on a daily basis with stunning visuals and eye-catching effects.
-Version: 6.7.6
+Version: 6.8.1
 Author: Kreatura Media
-Author URI: https://layerslider.kreaturamedia.com
+Author URI: https://kreaturamedia.com
 Text Domain: LayerSlider
 */
 
@@ -28,7 +28,7 @@ if( defined('LS_PLUGIN_VERSION') || isset($GLOBALS['lsPluginPath']) ) {
 // Basic configuration
 define('LS_DB_TABLE', 'layerslider');
 define('LS_DB_VERSION', '6.5.5');
-define('LS_PLUGIN_VERSION', '6.7.6');
+define('LS_PLUGIN_VERSION', '6.8.1');
 
 
 // Path info
@@ -106,7 +106,8 @@ $GLOBALS['LS_AutoUpdate'] = new KM_PluginUpdatesV3( array(
 	'itemID' 		=> LS_MARKETPLACE_ID,
 	'codeKey' 		=> 'layerslider-purchase-code',
 	'authKey' 		=> 'layerslider-authorized-site',
-	'channelKey' 	=> 'layerslider-release-channel'
+	'channelKey' 	=> 'layerslider-release-channel',
+	'activationKey' => 'layerslider-activation-id'
 ));
 
 

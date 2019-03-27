@@ -62,10 +62,16 @@ UNCODE.utils = function() {
 	}, function() {
 		$(this).attr('title', $(this).attr('data-title'));
 	});
-	$('.counter').counterUp({
-		delay: 10,
-		time: 1500
-	});
+	$('.counter').each(function(){
+		var $counter = $(this);
+		if ( $counter.closest( '.owl-carousel' ).length ) {
+			return;
+		} 
+		$counter.addClass('started').counterUp({
+			delay: 10,
+			time: 1500
+		});
+	})
 	$('[data-countdown]').each(function() {
 		var $this = $(this),
 			finalDate = $(this).data('countdown');
@@ -110,7 +116,7 @@ UNCODE.utils = function() {
 		return scroll_offset;
 	}
 
-	if ( !UNCODE.isFullPage || UNCODE.isMobile ) {
+	if ( !UNCODE.isFullPage ) {
 		$('a[href*="#"]').click(function(e) {
 
 			var hash = (e.currentTarget).hash,
@@ -1904,6 +1910,13 @@ UNCODE.carousel = function(container) {
 						}
 						$elSelector.find('.owl-item:not(.new-indexed)').removeClass('index-active');
 						$elSelector.find('.owl-item[data-index="' + itendIndex + '"]').addClass('index-active').addClass('new-indexed');
+						$elSelector.find('.owl-item[data-index="' + itendIndex + '"] .counter').each(function(){
+							var $counter = $(this);
+							$counter.addClass('started').counterUp({
+								delay: 10,
+								time: 1500
+							});
+						});
 					}
 					$elSelector.find('.owl-item.new-indexed').removeClass('new-indexed');
 				}, 200);
@@ -4015,7 +4028,11 @@ UNCODE.preventDoubleTransition = function() {
 
 UNCODE.checkScrollForTabs = function(){
 	var goToSection = window.location.hash.replace('#', ''),
-		$index = $('[data-id="' + goToSection + '"]').closest('.uncode-tabs');
+		$index;
+
+	goToSection = goToSection.replace(/[^-A-Za-z0-9+&@#/%?=~_]/g, "");
+	goToSection = encodeURIComponent(goToSection);
+	$index = $('[data-id="' + goToSection + '"]').closest('.uncode-tabs');
 
 	$index.attr('data-parent', 'parent-' + goToSection);
 

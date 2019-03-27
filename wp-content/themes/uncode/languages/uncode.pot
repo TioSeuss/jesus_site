@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 "Project-Id-Version: Uncode\n"
-"POT-Creation-Date: 2019-02-20 19:00+0100\n"
+"POT-Creation-Date: 2019-02-27 15:28+0100\n"
 "PO-Revision-Date: 2015-11-10 22:17+0100\n"
 "Last-Translator: Undsgn Team <info@undsgn.com>\n"
 "Language-Team: Undsgn <info@undsgn.com>\n"
@@ -1062,7 +1062,7 @@ msgstr ""
 msgid "This theme requires the following plugin: <em>Uncode Core</em>."
 msgstr ""
 
-#: core/inc/api/api-functions.php:190
+#: core/inc/api/api-functions.php:196
 #, php-format
 msgid ""
 "<span class=\"uncode-premium-plugin-activation-error\">You need to register "
@@ -1070,21 +1070,22 @@ msgid ""
 "span>"
 msgstr ""
 
-#: core/inc/api/api-functions.php:201
+#: core/inc/api/api-functions.php:207
 msgid ""
 "<span class=\"uncode-premium-plugin-activation-error\">The Envato Purchase "
-"Code seems to be invalid. <a href=\"https://support.undsgn.com/hc/en-us/"
-"articles/360000836318\" target=\"_blank\">Please contact the author.</a> "
+"Code seems to be invalid. Please try to unregister and register the product "
+"again. If the issue persists <a href=\"https://support.undsgn.com/hc/en-us/"
+"articles/360000836318\" target=\"_blank\">contact the theme author.</a> "
 "(Error 23)</span>"
 msgstr ""
 
-#: core/inc/api/api-functions.php:204
+#: core/inc/api/api-functions.php:210
 #, php-format
 msgid ""
 "<span class=\"uncode-premium-plugin-activation-error\">Purchase code "
 "verification failed. <a href=\"https://support.undsgn.com/hc/en-us/"
-"articles/360000836318\" target=\"_blank\">Please contact the author.</a> "
-"(Error %s)</span>"
+"articles/360000836318\" target=\"_blank\">Please contact the theme author.</"
+"a> (Error %s)</span>"
 msgstr ""
 
 #: core/inc/api/class-theme-registration.php:64
@@ -1119,11 +1120,12 @@ msgstr ""
 msgid ""
 "There is a problem contacting the Undsgn server for the Purchase Code "
 "verification. Please disable any firewall service, deactivate any possible "
-"server authentication, verify if your host is blocking connections to "
-"external domains and make sure to whitelist 'api.undsgn.com'. If the problem "
-"persists, <a href=\"https://support.undsgn.com/hc/en-us/"
-"articles/360000836318\" target=\"_blank\">please contact the theme author.</"
-"a>"
+"server authentication, verify you have an updated cURL module, verify if "
+"your host is blocking connections to external domains and make sure to "
+"whitelist 'api.undsgn.com'. Please consult <a href=\"https://support.undsgn."
+"com/hc/en-us/articles/115004287985\" target=\"_blank\">this page</a> and if "
+"the problem persists, <a href=\"https://support.undsgn.com/hc/en-us/"
+"articles/360000836318\" target=\"_blank\"> contact the theme author.</a>"
 msgstr ""
 
 #: core/inc/api/class-theme-registration.php:153

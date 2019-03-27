@@ -2216,9 +2216,9 @@ button[type="submit"],
   background-color: #303133 !important;
   border-color: #303133 !important;
 }
-.style-light .btn-default:not(.btn-hover-nobg):not(.icon-animated):hover,
-.style-dark .style-light.style-override .btn-default:not(.btn-hover-nobg):not(.icon-animated):hover,
-.style-dark .style-light .btn-default:not(.btn-hover-nobg):not(.icon-animated):hover,
+.style-light .btn-default:not(.btn-hover-nobg):not(.icon-animated):not(.btn-flat):hover,
+.style-dark .style-light.style-override .btn-default:not(.btn-hover-nobg):not(.icon-animated):not(.btn-flat):hover,
+.style-dark .style-light .btn-default:not(.btn-hover-nobg):not(.icon-animated):not(.btn-flat):hover,
 .style-light .btn-default.active,
 .style-dark .style-light.style-override .btn-default.active,
 .style-dark .style-light .btn-default.active {

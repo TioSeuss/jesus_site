@@ -11,8 +11,7 @@ include LS_ROOT_PATH . '/helpers/admin.ui.tools.php';
 $custom_capability = $custom_role = get_option('layerslider_custom_capability', 'manage_options');
 
 // Privacy
-$gdpr_google_fonts 	= get_option('layerslider-google-fonts-enabled', true );
-$gdpr_aviary 		= get_option('layerslider-aviary-enabled', true );
+$gdpr_google_fonts = get_option('layerslider-google-fonts-enabled', true );
 
 
 $default_capabilities = array(
@@ -122,15 +121,6 @@ $notifications = array(
 						</td>
 						<td class="desc">
 							<?php echo sprintf( __('Google Fonts offers hundreds of custom fonts and is one of the most popular web services to customize website appearance with beautiful typography. Many of our importable content in the Template Store use and rely on Google Fonts. If you disable this feature, you may not be able to add custom fonts and it might compromise the appearance of textual content in sliders. Google might be able to track your activity when using their services. Please review Google’s %sPrivacy Policy%s and %sGDPR Compliance%s. As an external service, you can choose to disable Google Fonts if you disagree with Google’s data processing methods.', 'LayerSlider'), '<a href="https://privacy.google.com/" target="_blank">', '</a>', '<a href="https://privacy.google.com/businesses/compliance" target="_blank">', '</a>') ?>
-						</td>
-					</tr>
-					<tr>
-						<td><?php _e('Enable Image Editor', 'LayerSlider') ?></td>
-						<td data-warning="<?php _e("If you disable this feature, you may need to use a dedicated software installed on your computer (e. g. Photoshop) to perform common image editing tasks such as resizing, cropping, rotating images etc. \n\n Are you sure you want to disable the Image Editor?", 'LayerSlider') ?>">
-							<?php echo lsGetOptionField('checkbox', 'ls_gdpr_aviary', $gdpr_aviary) ?>
-						</td>
-						<td class="desc">
-							<?php echo sprintf(__('As part of the Adobe Creative SDK, Adobe offers a Photoshop-like image editor for the web. LayerSlider uses this service, so you can perform common tasks like resizing, cropping, rotating images, as well as photo retouching, adding frames, text, effects, stickers and a lot more. If you disable this feature, you may need to use a dedicated software installed on your computer (e. g. Photoshop) to perform these tasks. Adobe might be able to track your activity when using their services. Please review Adobe’s %sPrivacy Policy%s and %sGDPR Compliance%s. As an external service, you can choose to disable the image editor feature if you disagree with Adobe’s data processing methods.', 'LayerSlider'), '<a href="https://www.adobe.com/privacy/policy.html" target="_blank">', '</a>', '<a href="https://www.adobe.com/privacy/general-data-protection-regulation.html" target="_blank">', '</a>') ?>
 						</td>
 					</tr>
 				</table>

@@ -125,24 +125,17 @@
 								<?php echo $lsDefaults['layers']['mediaAutoPlay']['name'] ?> <br>
 								<?php lsGetSelect($lsDefaults['layers']['mediaAutoPlay'], null, array('class' => 'sublayerprop')) ?>
 							</td>
-							<td>
-								<?php echo $lsDefaults['layers']['mediaFillMode']['name'] ?> <br>
-								<?php lsGetSelect($lsDefaults['layers']['mediaFillMode'], null, array('class' => 'sublayerprop')) ?>
-							</td>
-							<td>
-								<?php echo $lsDefaults['layers']['mediaControls']['name'] ?> <br>
-								<?php lsGetSelect($lsDefaults['layers']['mediaControls'], null, array('class' => 'sublayerprop')) ?>
-							</td>
-							<td>
-								<?php echo $lsDefaults['layers']['mediaInfo']['name'] ?> <br>
-								<?php lsGetSelect($lsDefaults['layers']['mediaInfo'], null, array('class' => 'sublayerprop')) ?>
+
+
+							<td class="muted">
+								<?php echo $lsDefaults['layers']['mediaMuted']['name'] ?> <br>
+								<?php lsGetSelect($lsDefaults['layers']['mediaMuted'], null, array('class' => 'sublayerprop')) ?>
 							</td>
 
 							<td class="volume">
 								<?php echo $lsDefaults['layers']['mediaVolume']['name'] ?> <br>
 								<?php lsGetInput($lsDefaults['layers']['mediaVolume'], null, array('class' => 'sublayerprop')) ?>
 							</td>
-
 							<td class="overlay">
 								<?php echo $lsDefaults['layers']['mediaOverlay']['name']; ?><br>
 								<?php
@@ -160,6 +153,33 @@
 									lsGetSelect($lsDefaults['layers']['mediaOverlay'], null, array('class' => 'sublayerprop', 'options' => $overlays ));
 								?>
 							</td>
+						</tr>
+					</table>
+					<table class="ls-media-options">
+						<tr>
+							<td>
+								<?php echo $lsDefaults['layers']['mediaFillMode']['name'] ?> <br>
+								<?php lsGetSelect($lsDefaults['layers']['mediaFillMode'], null, array('class' => 'sublayerprop')) ?>
+							</td>
+							<td>
+								<?php echo $lsDefaults['layers']['mediaControls']['name'] ?> <br>
+								<?php lsGetSelect($lsDefaults['layers']['mediaControls'], null, array('class' => 'sublayerprop')) ?>
+							</td>
+							<td>
+								<?php echo $lsDefaults['layers']['mediaInfo']['name'] ?> <br>
+								<?php lsGetSelect($lsDefaults['layers']['mediaInfo'], null, array('class' => 'sublayerprop')) ?>
+							</td>
+						</tr>
+					</table>
+
+					<table class="ls-media-options">
+						<tr>
+							<td class="loop">
+								<?php echo $lsDefaults['layers']['mediaLoop']['name'] ?> <br>
+								<?php lsGetSelect($lsDefaults['layers']['mediaLoop'], null, array('class' => 'sublayerprop')) ?>
+							</td>
+							<td class="loop"></td>
+							<td class="loop"></td>
 						</tr>
 					</table>
 				</div>

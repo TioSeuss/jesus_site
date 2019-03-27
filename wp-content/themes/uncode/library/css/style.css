@@ -5700,7 +5700,7 @@ body.uncode-scroll-snap .post-content > div:not(#colophon) ul {
   padding: 0px 0px 0px 18px;
 }
 .firefox body.uncode-fullpage .main-wrapper {
-  display: table;
+  display: table-row;
 }
 .post-wrapper .post-share {
   border-bottom-width: 1px;
@@ -10863,11 +10863,12 @@ div[class*=shift_y_neg].shift_y_neg_single .isotope-filters ul.menu-smart > li >
   letter-spacing: inherit;
 }
 .textual-carousel .tmb .regular-text .pullquote img.avatar {
-  max-width: 36px;
-  min-height: 36px;
+  max-width: 72px;
+  min-height: 72px;
   margin-left: auto;
   margin-right: auto;
   margin-top: 0;
+  margin-bottom: 27px;
   padding: 0px;
   border: 0px;
 }
@@ -11420,6 +11421,9 @@ html.fp-enabled .post-footer {
 .el-text + .clear {
   margin-top: 0 !important;
 }
+.counter:not(.started) {
+  opacity: 0;
+}
 .countdown {
   line-height: 1;
 }
@@ -11571,6 +11575,9 @@ body .header-wrapper .style-light.owl-prev .owl-nav-container {
   background-position: center center;
   background-size: cover;
   overflow: hidden;
+}
+.header-wrapper .header-bg.video {
+  pointer-events: none;
 }
 .header-wrapper .header-bg-overlay {
   position: absolute;

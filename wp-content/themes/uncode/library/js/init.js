@@ -562,13 +562,13 @@ OKEvents = {
 	var hasClass, addClass, removeClass;
 	if ('classList' in document.documentElement) {
 		hasClass = function(elem, c) {
-			if (elem !== null) return elem.classList.contains(c);
+			if ( elem !== null && typeof elem.classList !== 'undefined' ) return elem.classList.contains(c);
 		};
 		addClass = function(elem, c) {
-			if (elem !== null) elem.classList.add(c);
+			if ( elem !== null && typeof elem.classList !== 'undefined' ) elem.classList.add(c);
 		};
 		removeClass = function(elem, c) {
-			if (elem !== null) elem.classList.remove(c);
+			if ( elem !== null && typeof elem.classList !== 'undefined' ) elem.classList.remove(c);
 		};
 	} else {
 		hasClass = function(elem, c) {
@@ -1531,7 +1531,9 @@ function whichAnimationEvent() {
 						createNewLines();
 					});
 
-					document.body.dispatchEvent(new CustomEvent('uncode_waypoints'));
+					if ( event !== 'resize' ) {
+						document.body.dispatchEvent(new CustomEvent('uncode_waypoints'));
+					}
 
 				}
 			}

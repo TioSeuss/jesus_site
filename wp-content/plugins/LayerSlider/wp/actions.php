@@ -240,7 +240,6 @@ function ls_gdpr_settings( $redirect = false ) {
 
 	update_option('layerslider-gdpr-consent', 1 );
 	update_option('layerslider-google-fonts-enabled', (int) array_key_exists('ls_gdpr_goole_fonts', $_POST) );
-	update_option('layerslider-aviary-enabled', (int) array_key_exists('ls_gdpr_aviary', $_POST) );
 
 	if( $redirect ) {
 		wp_redirect( admin_url('admin.php?page=layerslider-options&message=privacySuccess') );
@@ -426,7 +425,7 @@ function ls_save_screen_options() {
 
 function ls_get_mce_sliders() {
 
-	$sliders = LS_Sliders::find( array( 'limit' => 100 ) );
+	$sliders = LS_Sliders::find( array( 'limit' => 200 ) );
 	foreach($sliders as $key => $item) {
 		$sliders[$key]['preview'] = apply_filters('ls_preview_for_slider', $item );
 		$sliders[$key]['name'] = ! empty($item['name']) ? htmlspecialchars(stripslashes($item['name'])) : 'Unnamed';

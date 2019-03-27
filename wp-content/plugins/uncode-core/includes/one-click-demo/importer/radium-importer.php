@@ -192,6 +192,10 @@ class Radium_Theme_Importer {
 									$portfolio_array = array();
 									$gallery_array = array();
 									$product_array = array();
+									$original_array = array();
+									foreach ($parsed_xml['posts'] as $key => $value) {
+										$original_array[$value['post_id']] = $value['post_title'];
+									}
 									foreach ($parsed_xml['posts'] as $key => $value) {
 										switch ($value['post_type']) {
 											case 'post':
@@ -207,12 +211,17 @@ class Radium_Theme_Importer {
 												break;
 											case 'page':
 												$ids = array($value['post_id']);
+												$parent = $value['post_parent'];
 												if (isset($value['postmeta'])) {
 													foreach ($value['postmeta'] as $meta_key => $meta_value) {
 														if ($meta_value['key'] === '_uncode_blocks_list') $ids[] = $meta_value['value'];
 													}
 												}
-												$page_array[$value['post_title']] = array(
+												$value_post_title = $value['post_title'];
+												if ( isset( $original_array[$parent] ) && $original_array[$parent] === 'Homepages' ) {
+													$value_post_title = $value_post_title . ' (Homepage)';
+												}
+												$page_array[$value_post_title] = array(
 													'ids' => $ids,
 												);
 												break;

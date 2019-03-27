@@ -19,7 +19,7 @@
 	border: none;
 	border-bottom: 1px dotted #ccc;
 
-	img {
+	.ls-product-icon {
 		margin-right: 15px;
 		float: left;
 	}
@@ -60,50 +60,91 @@
 	padding: 0;
 	background: none;
 	border: none;
+	overflow: hidden;
 
-	background-size: cover;
 	background-position: left center;
 	border-radius: 10px;
+
+	.banner_link {
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		z-index: 98;
+	}
 
 	.dashicons-dismiss {
 		position: absolute;
 		top: 10px;
 		right: 10px;
+		z-index: 99;
+
 		width: 30px;
 		height: 30px;
 		line-height: 30px;
 
 		font-size: 24px;
 		color: white;
-		opacity: 0.8;
+		color: rgba( 255, 255, 255, 0.7 );
+
+		transition: color 200ms;
 
 		&:hover {
-			opacity: 1;
+			color: rgba( 255, 255, 255, 1 );
 		}
 	}
 
-	.button-install {
+	.button-install,
+	.button-read-more {
 		position: absolute;
 		right: 10px;
 		bottom: 10px;
+		z-index: 99;
 
 		height: 38px;
 		padding: 0 20px;
 		border-radius: 38px;
-		border: 2px solid rgba(255,255,255,0.2);
+		border: 2px solid white;
+		border: 2px solid rgba(255,255,255,0.5);
 		background: transparent !important;
 		box-shadow: none;
 
 		color: white !important;
+		color: rgba( 255, 255, 255, 0.8 ) !important;
 		font-family: Nunito;
 		font-size: 14px;
 		font-weight: 500;
 		line-height: 36px;
 		text-transform: uppercase;
 
+		transition: color 200ms, border 200ms;
+
 		&:hover {
-			background: transparent;
-			color: white;
+			border: 2px solid rgba(255,255,255, 0.9);
+			color: rgba( 255, 255, 255, 1 ) !important;
+		}
+	}
+
+	&.dark {
+
+		.dashicons-dismiss {
+			color: rgba( 0, 0, 0, 0.6 ) !important;
+
+			&:hover {
+				color: rgba( 0, 0, 0, 0.8 ) !important;
+			}
+		}
+
+		.button-install,
+		.button-read-more {
+			border: 2px solid rgba( 0, 0, 0, 0.4 ) !important;
+			color: rgba( 0, 0, 0, 0.5 ) !important;
+
+			&:hover {
+				border: 2px solid rgba( 0, 0, 0, 0.6 ) !important;
+				color: rgba( 0, 0, 0, 0.7 ) !important;
+			}
 		}
 	}
 }

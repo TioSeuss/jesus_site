@@ -352,10 +352,9 @@ if ( $hover_fx == '' || $hover_fx == 'outlined' ) {
 
 // Shadow class
 if ($shadow === 'yes') {
+	$classes[] = 'btn-shadow';
 	if ( $shadow_weight !== '' ) {
 		$classes[] = 'btn-shadow-' . $shadow_weight;
-	} else {
-		$classes[] = 'btn-shadow';
 	}
 }
 

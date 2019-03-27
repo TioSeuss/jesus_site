@@ -98,11 +98,11 @@
 			<li class="divider"></li>
 			<li class="ls-context-menu-copy-layer">
 				<i class="dashicons dashicons-clipboard"></i>
-				<?php _e('Copy Layer') ?>
+				<?php _e('Copy Layer', 'LayerSlider') ?>
 			</li>
 			<li class="ls-context-menu-paste-layer">
 				<i class="dashicons dashicons-admin-page"></i>
-				<?php _e('Paste Layer') ?>
+				<?php _e('Paste Layer', 'LayerSlider') ?>
 			</li>
 			<li class="divider"></li>
 			<li class="ls-context-menu-hide">
@@ -116,11 +116,11 @@
 			<li class="divider"></li>
 			<li class="ls-context-menu-copy-styles">
 				<i class="dashicons dashicons-clipboard"></i>
-				<?php _e('Copy Layer Styles') ?>
+				<?php _e('Copy Layer Styles', 'LayerSlider') ?>
 			</li>
 			<li class="ls-context-menu-paste-styles">
 				<i class="dashicons dashicons-admin-page"></i>
-				<?php _e('Paste Layer Styles') ?>
+				<?php _e('Paste Layer Styles', 'LayerSlider') ?>
 			</li>
 		</ul>
 	</div>

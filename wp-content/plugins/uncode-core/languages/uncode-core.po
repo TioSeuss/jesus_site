@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Uncode Core\n"
-"POT-Creation-Date: 2019-02-21 05:44+0100\n"
-"PO-Revision-Date: 2019-02-21 05:45+0100\n"
+"POT-Creation-Date: 2019-02-27 15:21+0100\n"
+"PO-Revision-Date: 2019-02-27 15:23+0100\n"
 "Last-Translator: Manuel Masia | Pixedelic <manu@pixedelic.com>\n"
 "Language-Team: Undsgn Team <info@undsgn.com>\n"
 "Language: en\n"
@@ -549,8 +549,8 @@ msgstr ""
 #: includes/one-click-demo/importer/radium-importer.php:98
 #: includes/one-click-demo/importer/radium-importer.php:167
 #: includes/one-click-demo/importer/radium-importer.php:172
-#: includes/one-click-demo/importer/radium-importer.php:585
-#: includes/one-click-demo/importer/radium-importer.php:602
+#: includes/one-click-demo/importer/radium-importer.php:594
+#: includes/one-click-demo/importer/radium-importer.php:611
 msgid "Import Demo"
 msgstr ""
 
@@ -571,7 +571,7 @@ msgid "More info here"
 msgstr ""
 
 #: includes/one-click-demo/importer/radium-importer.php:130
-#: includes/one-click-demo/importer/radium-importer.php:524
+#: includes/one-click-demo/importer/radium-importer.php:533
 msgid "Important"
 msgstr ""
 
@@ -623,92 +623,92 @@ msgstr ""
 msgid "The file %s can't be read. Please change file permission to 775."
 msgstr ""
 
-#: includes/one-click-demo/importer/radium-importer.php:261
-#: includes/one-click-demo/importer/radium-importer.php:487
-#: includes/one-click-demo/importer/radium-importer.php:583
-#: includes/one-click-demo/importer/radium-importer.php:605
+#: includes/one-click-demo/importer/radium-importer.php:270
+#: includes/one-click-demo/importer/radium-importer.php:496
+#: includes/one-click-demo/importer/radium-importer.php:592
+#: includes/one-click-demo/importer/radium-importer.php:614
 msgid "Import Single Layouts"
 msgstr ""
 
-#: includes/one-click-demo/importer/radium-importer.php:262
+#: includes/one-click-demo/importer/radium-importer.php:271
 msgid "Import selected layouts and create your own custom Uncode import."
 msgstr ""
 
-#: includes/one-click-demo/importer/radium-importer.php:265
+#: includes/one-click-demo/importer/radium-importer.php:274
 #: includes/theme-options/includes/ot-functions-settings-page.php:221
 msgid "Import Layouts"
 msgstr ""
 
-#: includes/one-click-demo/importer/radium-importer.php:273
-#: includes/one-click-demo/importer/radium-importer.php:278
-#: includes/one-click-demo/importer/radium-importer.php:574
-#: includes/one-click-demo/importer/radium-importer.php:609
+#: includes/one-click-demo/importer/radium-importer.php:282
+#: includes/one-click-demo/importer/radium-importer.php:287
+#: includes/one-click-demo/importer/radium-importer.php:583
+#: includes/one-click-demo/importer/radium-importer.php:618
 msgid "Import Menu"
 msgstr ""
 
-#: includes/one-click-demo/importer/radium-importer.php:274
+#: includes/one-click-demo/importer/radium-importer.php:283
 msgid "Import the menus from the Uncode demo site."
 msgstr ""
 
-#: includes/one-click-demo/importer/radium-importer.php:287
-#: includes/one-click-demo/importer/radium-importer.php:568
-#: includes/one-click-demo/importer/radium-importer.php:607
+#: includes/one-click-demo/importer/radium-importer.php:296
+#: includes/one-click-demo/importer/radium-importer.php:577
+#: includes/one-click-demo/importer/radium-importer.php:616
 #: includes/theme-options/includes/ot-functions-settings-page.php:174
 msgid "Import Theme Options"
 msgstr ""
 
-#: includes/one-click-demo/importer/radium-importer.php:288
+#: includes/one-click-demo/importer/radium-importer.php:297
 msgid "Import the theme options from the Uncode demo site."
 msgstr ""
 
-#: includes/one-click-demo/importer/radium-importer.php:292
+#: includes/one-click-demo/importer/radium-importer.php:301
 msgid "Import Options"
 msgstr ""
 
-#: includes/one-click-demo/importer/radium-importer.php:301
-#: includes/one-click-demo/importer/radium-importer.php:306
-#: includes/one-click-demo/importer/radium-importer.php:571
-#: includes/one-click-demo/importer/radium-importer.php:611
+#: includes/one-click-demo/importer/radium-importer.php:310
+#: includes/one-click-demo/importer/radium-importer.php:315
+#: includes/one-click-demo/importer/radium-importer.php:580
+#: includes/one-click-demo/importer/radium-importer.php:620
 msgid "Import Widgets"
 msgstr ""
 
-#: includes/one-click-demo/importer/radium-importer.php:302
+#: includes/one-click-demo/importer/radium-importer.php:311
 msgid "Import the widgets from the Uncode demo site."
 msgstr ""
 
-#: includes/one-click-demo/importer/radium-importer.php:320
-#: includes/one-click-demo/importer/radium-importer.php:565
-#: includes/one-click-demo/importer/radium-importer.php:614
+#: includes/one-click-demo/importer/radium-importer.php:329
+#: includes/one-click-demo/importer/radium-importer.php:574
+#: includes/one-click-demo/importer/radium-importer.php:623
 msgid "Delete Demo Media"
 msgstr ""
 
-#: includes/one-click-demo/importer/radium-importer.php:331
+#: includes/one-click-demo/importer/radium-importer.php:340
 #: includes/theme-options/assets/theme-mode/theme-options.php:1972
 #: vc_extend/config/override_map.php:8059 vc_extend/config/uncode_map.php:803
 msgid "Pages"
 msgstr ""
 
-#: includes/one-click-demo/importer/radium-importer.php:342
+#: includes/one-click-demo/importer/radium-importer.php:351
 #: includes/theme-options/assets/theme-mode/theme-options.php:1966
 #: vc_extend/config/uncode_map.php:494 vc_extend/config/uncode_map.php:3242
 msgid "Posts"
 msgstr ""
 
-#: includes/one-click-demo/importer/radium-importer.php:353
+#: includes/one-click-demo/importer/radium-importer.php:362
 msgid "Portfolios"
 msgstr ""
 
-#: includes/one-click-demo/importer/radium-importer.php:376
+#: includes/one-click-demo/importer/radium-importer.php:385
 #: includes/theme-options/assets/theme-mode/theme-options.php:4695
 #: vc_extend/config/uncode_map.php:1058
 msgid "Products"
 msgstr ""
 
-#: includes/one-click-demo/importer/radium-importer.php:392
+#: includes/one-click-demo/importer/radium-importer.php:401
 msgid "NB."
 msgstr ""
 
-#: includes/one-click-demo/importer/radium-importer.php:392
+#: includes/one-click-demo/importer/radium-importer.php:401
 msgid ""
 "When you import a single layout, you’re only importing the Page Builder "
 "layout. If you need to import a page that includes external elements such as "
@@ -717,48 +717,48 @@ msgid ""
 "command button."
 msgstr ""
 
-#: includes/one-click-demo/importer/radium-importer.php:404
+#: includes/one-click-demo/importer/radium-importer.php:413
 msgid "Back"
 msgstr ""
 
-#: includes/one-click-demo/importer/radium-importer.php:415
+#: includes/one-click-demo/importer/radium-importer.php:424
 msgid "All demo medias deleted!"
 msgstr ""
 
-#: includes/one-click-demo/importer/radium-importer.php:415
+#: includes/one-click-demo/importer/radium-importer.php:424
 #: includes/one-click-demo/importer/wordpress-importer.php:120
 msgid "Import completed!"
 msgstr ""
 
-#: includes/one-click-demo/importer/radium-importer.php:493
+#: includes/one-click-demo/importer/radium-importer.php:502
 #: includes/theme-options/includes/ot-functions-admin.php:144
 msgid "Import"
 msgstr ""
 
-#: includes/one-click-demo/importer/radium-importer.php:498
-#: includes/one-click-demo/importer/radium-importer.php:672
+#: includes/one-click-demo/importer/radium-importer.php:507
+#: includes/one-click-demo/importer/radium-importer.php:681
 msgid "Cancel"
 msgstr ""
 
-#: includes/one-click-demo/importer/radium-importer.php:527
+#: includes/one-click-demo/importer/radium-importer.php:536
 msgid "This action will replace your settings."
 msgstr ""
 
-#: includes/one-click-demo/importer/radium-importer.php:528
+#: includes/one-click-demo/importer/radium-importer.php:537
 msgid "This action will import the Uncode's demo site menus."
 msgstr ""
 
-#: includes/one-click-demo/importer/radium-importer.php:529
+#: includes/one-click-demo/importer/radium-importer.php:538
 msgid "This action will import the Uncode's demo site widgets."
 msgstr ""
 
-#: includes/one-click-demo/importer/radium-importer.php:533
+#: includes/one-click-demo/importer/radium-importer.php:542
 msgid ""
 "This action will not import the Uncode demo site's main menu. If you want to "
 "import that element as well, please use the \"Import Menu\" button."
 msgstr ""
 
-#: includes/one-click-demo/importer/radium-importer.php:534
+#: includes/one-click-demo/importer/radium-importer.php:543
 msgid ""
 "If you are importing demos to an existing installation of Uncode, please "
 "note that this action will also overwrite your \"Theme Options\". If you "
@@ -766,108 +766,108 @@ msgid ""
 "the \"Single Layouts\" button."
 msgstr ""
 
-#: includes/one-click-demo/importer/radium-importer.php:537
+#: includes/one-click-demo/importer/radium-importer.php:546
 msgid "This action will delete your images."
 msgstr ""
 
-#: includes/one-click-demo/importer/radium-importer.php:540
+#: includes/one-click-demo/importer/radium-importer.php:549
 msgid "Contact Form 7 (recommended)"
 msgstr ""
 
-#: includes/one-click-demo/importer/radium-importer.php:541
+#: includes/one-click-demo/importer/radium-importer.php:550
 msgid "WooCommerce (recommended)"
 msgstr ""
 
-#: includes/one-click-demo/importer/radium-importer.php:545
+#: includes/one-click-demo/importer/radium-importer.php:554
 msgid "Plugin is not active"
 msgstr ""
 
-#: includes/one-click-demo/importer/radium-importer.php:547
+#: includes/one-click-demo/importer/radium-importer.php:556
 msgid ""
 "The following plugins are inactive, which will prevent the relevant content "
 "from being imported:"
 msgstr ""
 
-#: includes/one-click-demo/importer/radium-importer.php:589
+#: includes/one-click-demo/importer/radium-importer.php:598
 msgid "Are you sure?"
 msgstr ""
 
-#: includes/one-click-demo/importer/radium-importer.php:629
+#: includes/one-click-demo/importer/radium-importer.php:638
 msgid "Do not close the browser or navigate away from this page."
 msgstr ""
 
-#: includes/one-click-demo/importer/radium-importer.php:630
+#: includes/one-click-demo/importer/radium-importer.php:639
 msgid ""
 "Please be patient. The import procedure can take up to a few minutes, based "
 "on your server's performance."
 msgstr ""
 
-#: includes/one-click-demo/importer/radium-importer.php:633
+#: includes/one-click-demo/importer/radium-importer.php:642
 msgid "Tips"
 msgstr ""
 
-#: includes/one-click-demo/importer/radium-importer.php:633
+#: includes/one-click-demo/importer/radium-importer.php:642
 msgid "Did you know that you can delete all the imported demo media using the"
 msgstr ""
 
-#: includes/one-click-demo/importer/radium-importer.php:633
+#: includes/one-click-demo/importer/radium-importer.php:642
 msgid "delete demo media"
 msgstr ""
 
-#: includes/one-click-demo/importer/radium-importer.php:633
+#: includes/one-click-demo/importer/radium-importer.php:642
 msgid "button inside this page?"
 msgstr ""
 
-#: includes/one-click-demo/importer/radium-importer.php:668
+#: includes/one-click-demo/importer/radium-importer.php:677
 msgid "Confirm"
 msgstr ""
 
-#: includes/one-click-demo/importer/radium-importer.php:695
-#: includes/one-click-demo/importer/radium-importer.php:709
+#: includes/one-click-demo/importer/radium-importer.php:704
+#: includes/one-click-demo/importer/radium-importer.php:718
 msgid "Ooops, the Demo Content couldn't be imported all in once"
 msgstr ""
 
-#: includes/one-click-demo/importer/radium-importer.php:695
-#: includes/one-click-demo/importer/radium-importer.php:709
+#: includes/one-click-demo/importer/radium-importer.php:704
+#: includes/one-click-demo/importer/radium-importer.php:718
 #, php-format
 msgid "Please refer to this %s for a possible workaround."
 msgstr ""
 
-#: includes/one-click-demo/importer/radium-importer.php:695
-#: includes/one-click-demo/importer/radium-importer.php:709
+#: includes/one-click-demo/importer/radium-importer.php:704
+#: includes/one-click-demo/importer/radium-importer.php:718
 msgid "troubleshoot thread"
 msgstr ""
 
-#: includes/one-click-demo/importer/radium-importer.php:900
+#: includes/one-click-demo/importer/radium-importer.php:909
 msgid ""
 "Theme options import data could not be read. Please try a different file."
 msgstr ""
 
-#: includes/one-click-demo/importer/radium-importer.php:1042
+#: includes/one-click-demo/importer/radium-importer.php:1051
 msgid "Widget import data could not be read. Please try a different file."
 msgstr ""
 
-#: includes/one-click-demo/importer/radium-importer.php:1083
+#: includes/one-click-demo/importer/radium-importer.php:1092
 msgid "Sidebar does not exist in theme (using Inactive)"
 msgstr ""
 
-#: includes/one-click-demo/importer/radium-importer.php:1105
+#: includes/one-click-demo/importer/radium-importer.php:1114
 msgid "Site does not support widget"
 msgstr ""
 
-#: includes/one-click-demo/importer/radium-importer.php:1128
+#: includes/one-click-demo/importer/radium-importer.php:1137
 msgid "Widget already exists"
 msgstr ""
 
-#: includes/one-click-demo/importer/radium-importer.php:1177
+#: includes/one-click-demo/importer/radium-importer.php:1186
 msgid "Imported"
 msgstr ""
 
-#: includes/one-click-demo/importer/radium-importer.php:1180
+#: includes/one-click-demo/importer/radium-importer.php:1189
 msgid "Imported to Inactive"
 msgstr ""
 
-#: includes/one-click-demo/importer/radium-importer.php:1187
+#: includes/one-click-demo/importer/radium-importer.php:1196
 msgid "No Title"
 msgstr ""
 
@@ -5578,6 +5578,7 @@ msgstr ""
 #: includes/theme-options/includes/ot-functions-option-types.php:928
 #: includes/theme-options/includes/ot-functions-option-types.php:1468
 #: includes/theme-options/includes/ot-functions-option-types.php:1579
+#: includes/theme-options/includes/ot-functions-option-types.php:1831
 #: includes/theme-options/includes/ot-functions-option-types.php:2308
 #: includes/theme-options/includes/ot-functions-option-types.php:2423
 msgid "Choose One"
@@ -5632,10 +5633,6 @@ msgstr ""
 #: includes/theme-options/includes/ot-functions-option-types.php:1419
 #: includes/theme-options/includes/ot-functions-option-types.php:1474
 msgid "No Pages Found"
-msgstr ""
-
-#: includes/theme-options/includes/ot-functions-option-types.php:1831
-msgid "Default Sidebar"
 msgstr ""
 
 #: includes/theme-options/includes/ot-functions-option-types.php:1836

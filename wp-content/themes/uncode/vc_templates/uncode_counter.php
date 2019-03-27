@@ -60,7 +60,7 @@ $output .= '<p class="' . esc_attr(trim(implode(' ', $counter_class))) . '">';
 if ($prefix !== '') {
 	$output .= '<span class="counter-prefix'.$counter_color.'">'.$prefix.'</span>';
 }
-$output .= '<span class="counter' . esc_attr( $counter_color ) . '">' . $value . '</span>';
+$output .= '<span class="counter' . esc_attr( $counter_color ) . '" data-val="' . $value . '">' . $value . '</span>';
 if ($suffix !== '') {
 	$output .= '<span class="counter-suffix' . esc_attr( $counter_color ) . '">'.$suffix.'</span>';
 }

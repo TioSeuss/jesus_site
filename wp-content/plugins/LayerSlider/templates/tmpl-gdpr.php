@@ -23,7 +23,7 @@
 				<div class="ls-gdpr-bottom">
 
 					<span class="ls-gdpr-steps">
-						<?php echo sprintf(__('%1$s of %2$s steps', 'LayerSlider'), '1', '3') ?>
+						<?php echo sprintf(__('%1$s of %2$s steps', 'LayerSlider'), '1', '2') ?>
 					</span>
 
 					<a href="#" class="button button-hero button-next"><?php _e('Next', 'LayerSlider') ?></a>
@@ -46,15 +46,12 @@
 					<input type="checkbox" name="ls_gdpr_goole_fonts" class="larger" checked>
 					<?php _e('Enable Google Fonts', 'LayerSlider') ?>
 				</p>
-				<p>
-					<img src="<?php echo LS_ROOT_URL.'/static/admin/img/google-fonts.png' ?>" alt="Google Fonts">
-				</p>
 
 
 				<div class="ls-gdpr-bottom">
 
 					<span class="ls-gdpr-steps">
-						<?php echo sprintf(__('%1$s of %2$s steps', 'LayerSlider'), '2', '3') ?>
+						<?php echo sprintf(__('%1$s of %2$s steps', 'LayerSlider'), '2', '2') ?>
 					</span>
 
 					<a href="#" class="button button-hero button-next"><?php _e('Next', 'LayerSlider') ?></a>
@@ -62,40 +59,9 @@
 			</div>
 
 
-			<!-- STEP 3: Adobe Image Editor -->
+
+			<!-- STEP 3: Thank you -->
 			<div id="ls-gdpr-step-3" class="ls-gdpr-step">
-				<h1><?php _e('Adobe Creative SDK: A Photoshop-like Image Editor', 'LayerSlider') ?></h1>
-				<p>
-					<?php echo sprintf( __('%sWhat is it:%s As part of the Adobe Creative SDK, Adobe offers a Photoshop-like image editor for the web. LayerSlider uses this service, so you can perform common tasks like resizing, cropping, rotating images, as well as photo retouching, adding frames, text, effects, stickers and a lot more.', 'LayerSlider'), '<strong>', '</strong>') ?>
-				</p>
-				<p>
-					<?php echo sprintf( __('%sWhy is it important:%s If you disable this feature, you may need to use a dedicated software installed on your computer (e. g. Photoshop) to perform these tasks.', 'LayerSlider'), '<strong>', '</strong>') ?>
-				</p>
-				<p>
-					<?php echo sprintf(__('%sWhy should I care:%s Adobe might be able to track your activity when using their services. Please review Adobe’s %sPrivacy Policy%s and %sGDPR Compliance%s. As an external service, you can choose to disable the image editor feature if you disagree with Adobe’s data processing methods.', 'LayerSlider'), '<strong>', '</strong>', '<a href="https://www.adobe.com/privacy/policy.html" target="_blank">', '</a>', '<a href="https://www.adobe.com/privacy/general-data-protection-regulation.html" target="_blank">', '</a>') ?>
-				</p>
-				<p>
-					<input type="checkbox" name="ls_gdpr_aviary" class="larger" checked>
-					<?php _e('Enable Adobe Image Editor', 'LayerSlider') ?>
-				</p>
-				<p>
-					<img src="<?php echo LS_ROOT_URL.'/static/admin/img/adobe-image-editor.png' ?>" alt="Adobe Creative SDK Image Editor">
-				</p>
-
-
-				<div class="ls-gdpr-bottom">
-
-					<span class="ls-gdpr-steps">
-						<?php echo sprintf(__('%1$s of %2$s steps', 'LayerSlider'), '3', '3') ?>
-					</span>
-
-					<a href="#" class="button button-hero button-next"><?php _e('Next', 'LayerSlider') ?></a>
-				</div>
-			</div>
-
-
-			<!-- STEP 4: Thank you -->
-			<div id="ls-gdpr-step-4" class="ls-gdpr-step">
 				<h1><?php _e('Thank you', 'LayerSlider') ?></h1>
 				<p>
 					<?php echo sprintf( __('Thank you for your time and taking data security seriously. As a reminder, you can update these settings at any time if you ever change your mind. Just navigate to the %sLayerSlider -> Options -> Privacy%s page from your WordPress admin sidebar.', 'LayerSlider'), '<strong>', '</strong>') ?>

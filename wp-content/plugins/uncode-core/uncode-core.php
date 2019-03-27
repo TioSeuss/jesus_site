@@ -3,7 +3,7 @@
 Plugin Name: Uncode Core
 Plugin URI: http://www.undsgn.com
 Description: Uncode Core Plugin for Undsgn Themes.
-Version: 2.0.0
+Version: 2.0.2
 Author: Undsgn
 Author URI: http://www.undsgn.com
 */
@@ -25,7 +25,7 @@ if( ! function_exists( 'uncode_block_direct_access' ) ) {
 if( ! class_exists( 'UncodeCore_Plugin' ) ) {
 	class UncodeCore_Plugin {
 
-		const VERSION = '2.0.0';
+		const VERSION = '2.0.2';
 		protected static $instance = null;
 
 		private function __construct() {

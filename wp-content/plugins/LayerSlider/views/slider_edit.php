@@ -512,7 +512,7 @@ include LS_ROOT_PATH . '/templates/tmpl-activation.php';
 
 			<div class="ls-notification-info">
 				<i class="dashicons dashicons-info"> </i>
-				<?php echo sprintf(__('Please read our %sonline documentation%s before start using the API. LayerSlider 6 introduced an entirely new API model with different events and methods.', 'LayerSlider'), '<a href="https://layerslider.kreaturamedia.com/documentation/#layerslider-api" target="_blank">', '</a>') ?>
+				<?php echo sprintf(__('Please read our %sonline documentation%s for more information about the API.', 'LayerSlider'), '<a href="https://layerslider.kreaturamedia.com/documentation/#layerslider-api" target="_blank">', '</a>') ?>
 			</div>
 
 
@@ -725,6 +725,33 @@ include LS_ROOT_PATH . '/templates/tmpl-activation.php';
 				</div>
 			</div>
 
+			<div class="ls-callback-separator"><?php _e('Media Events', 'LayerSlider') ?></div>
+
+			<div class="ls-box ls-callback-box">
+				<h3 class="header">
+					mediaDidStart
+					<figure><span>|</span> <?php _e('A media element on the current slide has started playback.', 'LayerSlider') ?></figure>
+				</h3>
+				<div>
+					<textarea name="mediaDidStart" cols="20" rows="5" class="ls-codemirror">function( event, slider ) {
+
+}</textarea>
+				</div>
+			</div>
+
+			<div class="ls-box ls-callback-box">
+				<h3 class="header">
+					mediaDidStop
+					<figure><span>|</span> <?php _e('A media element on the current slide has stopped playback.', 'LayerSlider') ?></figure>
+				</h3>
+				<div>
+					<textarea name="mediaDidStop" cols="20" rows="5" class="ls-codemirror">function( event, slider ) {
+
+}</textarea>
+				</div>
+			</div>
+
+
 			<div class="ls-callback-separator"><?php _e('Popup Events', 'LayerSlider') ?></div>
 
 			<div class="ls-box ls-callback-box">
@@ -733,7 +760,7 @@ include LS_ROOT_PATH . '/templates/tmpl-activation.php';
 					<figure><span>|</span> <?php _e('Fires when the Popup starts its opening transition and becomes visible.', 'LayerSlider') ?></figure>
 				</h3>
 				<div>
-					<textarea name="popupWillOpen" data-event-data="false" cols="20" rows="5" class="ls-codemirror">function( event, slider ) {
+					<textarea name="popupWillOpen" cols="20" rows="5" class="ls-codemirror">function( event, slider ) {
 
 }</textarea>
 				</div>
@@ -745,7 +772,7 @@ include LS_ROOT_PATH . '/templates/tmpl-activation.php';
 					<figure><span>|</span> <?php _e('Fires when the Popup completed its opening transition.', 'LayerSlider') ?></figure>
 				</h3>
 				<div>
-					<textarea name="popupDidOpen" data-event-data="false" cols="20" rows="5" class="ls-codemirror">function( event, slider ) {
+					<textarea name="popupDidOpen" cols="20" rows="5" class="ls-codemirror">function( event, slider ) {
 
 }</textarea>
 				</div>
@@ -757,7 +784,7 @@ include LS_ROOT_PATH . '/templates/tmpl-activation.php';
 					<figure><span>|</span> <?php _e('Fires when the Popup stars its closing transition.', 'LayerSlider') ?></figure>
 				</h3>
 				<div>
-					<textarea name="popupWillClose" data-event-data="false" cols="20" rows="5" class="ls-codemirror">function( event, slider ) {
+					<textarea name="popupWillClose" cols="20" rows="5" class="ls-codemirror">function( event, slider ) {
 
 }</textarea>
 				</div>
@@ -769,7 +796,7 @@ include LS_ROOT_PATH . '/templates/tmpl-activation.php';
 					<figure><span>|</span> <?php _e('Fires when the Popup completed its closing transition and became hidden.', 'LayerSlider') ?></figure>
 				</h3>
 				<div>
-					<textarea name="popupDidClose" data-event-data="false" cols="20" rows="5" class="ls-codemirror">function( event, slider ) {
+					<textarea name="popupDidClose" cols="20" rows="5" class="ls-codemirror">function( event, slider ) {
 
 }</textarea>
 				</div>
@@ -800,93 +827,6 @@ include LS_ROOT_PATH . '/templates/tmpl-activation.php';
 					<textarea name="sliderDidRemove" data-event-data="false" cols="20" rows="5" class="ls-codemirror">function( event ) {
 
 }</textarea>
-				</div>
-			</div>
-
-
-			<div class="ls-callback-separator"><?php _e('Old API Events', 'LayerSlider') ?></div>
-			<div class="ls-notification-info">
-				<i class="dashicons dashicons-info"> </i>
-				<?php _e('The events below were used in version 5 and earlier. These events are no longer in use, they cannot be edited. They are shown only to offer you a way of viewing and porting them to the new API.', 'LayerSlider') ?>
-			</div>
-
-			<div class="ls-box ls-callback-box">
-				<h3 class="header">
-					cbInit
-					<figure><span>|</span> <?php _e('Fires when LayerSlider has loaded.', 'LayerSlider') ?></figure>
-				</h3>
-				<div>
-					<textarea readonly name="cbinit" cols="20" rows="5" class="ls-codemirror"><?php echo $slider['properties']['cbinit'] ?></textarea>
-				</div>
-			</div>
-
-			<div class="ls-box ls-callback-box">
-				<h3 class="header">
-					cbStart
-					<figure><span>|</span> <?php _e('Calling when the slideshow has started.', 'LayerSlider') ?></figure>
-				</h3>
-				<div>
-					<textarea readonly name="cbstart" cols="20" rows="5" class="ls-codemirror"><?php echo $slider['properties']['cbstart'] ?></textarea>
-				</div>
-			</div>
-
-			<div class="ls-box ls-callback-box side">
-				<h3 class="header">
-					cbStop
-					<figure><span>|</span> <?php _e('Calling when the slideshow is stopped by the user.', 'LayerSlider') ?></figure>
-				</h3>
-				<div>
-					<textarea readonly name="cbstop" cols="20" rows="5" class="ls-codemirror"><?php echo $slider['properties']['cbstop'] ?></textarea>
-				</div>
-			</div>
-
-			<div class="ls-box ls-callback-box">
-				<h3 class="header">
-					cbPause
-					<figure><span>|</span> <?php _e('Fireing when the slideshow is temporary on hold (e.g.: “Pause on hover” feature).', 'LayerSlider') ?></figure>
-				</h3>
-				<div>
-					<textarea readonly name="cbpause" cols="20" rows="5" class="ls-codemirror"><?php echo $slider['properties']['cbpause'] ?></textarea>
-				</div>
-			</div>
-
-			<div class="ls-box ls-callback-box">
-				<h3 class="header">
-					cbAnimStart
-					<figure><span>|</span> <?php _e('Calling when the slider commencing slide change (animation start).', 'LayerSlider') ?></figure>
-				</h3>
-				<div>
-					<textarea readonly name="cbanimstart" cols="20" rows="5" class="ls-codemirror"><?php echo $slider['properties']['cbanimstart'] ?></textarea>
-				</div>
-			</div>
-
-			<div class="ls-box ls-callback-box side">
-				<h3 class="header">
-					cbAnimStop
-					<figure><span>|</span> <?php _e('Fireing when the slider finished a slide change (animation end).', 'LayerSlider') ?></figure>
-				</h3>
-				<div>
-					<textarea readonly name="cbanimstop" cols="20" rows="5" class="ls-codemirror"><?php echo $slider['properties']['cbanimstop'] ?></textarea>
-				</div>
-			</div>
-
-			<div class="ls-box ls-callback-box">
-				<h3 class="header">
-					cbPrev
-					<figure><span>|</span> <?php _e('Calling when the slider will change to the previous slide by the user.', 'LayerSlider') ?></figure>
-				</h3>
-				<div>
-					<textarea readonly name="cbprev" cols="20" rows="5" class="ls-codemirror"><?php echo $slider['properties']['cbprev'] ?></textarea>
-				</div>
-			</div>
-
-			<div class="ls-box ls-callback-box">
-				<h3 class="header">
-					cbNext
-					<figure><span>|</span> <?php _e('Calling when the slider will change to the next slide by the user.', 'LayerSlider') ?></figure>
-				</h3>
-				<div>
-					<textarea readonly name="cbnext" cols="20" rows="5" class="ls-codemirror"><?php echo $slider['properties']['cbnext'] ?></textarea>
 				</div>
 			</div>
 

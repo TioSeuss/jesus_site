@@ -66,15 +66,17 @@ class KM_UpdatesV3 {
 		if( ! defined('WPLANG')) { define('WPLANG', ''); }
 
 		// Build config
-		$this->config = array_merge($config, array(
-			'slug' => basename(dirname($config['root'])),
-			'base' => plugin_basename($config['root']),
-			'channel' => get_option($config['channelKey'], 'stable'),
-			'license' => get_option($config['codeKey'], ''),
-			'domain' => $_SERVER['SERVER_NAME'],
-			'siteurl' => esc_url( site_url() ),
-			'option' => strtolower(basename(dirname($config['root']))) . '_update_info',
-			'locale' => get_locale()
+		$this->config = array_merge( $config, array(
+
+			'slug' 			=> basename( dirname( $config['root'] ) ),
+			'base' 			=> plugin_basename( $config['root'] ),
+			'channel' 		=> get_option( $config['channelKey'], 'stable' ),
+			'license' 		=> get_option( $config['codeKey'], '' ),
+			'activation_id' => get_option( $config['activationKey'], '' ),
+			'domain' 		=> $_SERVER['SERVER_NAME'],
+			'siteurl' 		=> esc_url( site_url() ),
+			'option' 		=> strtolower( basename( dirname( $config['root'] ) ) ) . '_update_info',
+			'locale' 		=> get_locale()
 		));
 	}
 
@@ -211,10 +213,12 @@ class KM_UpdatesV3 {
 
 		if( get_option( $this->config['authKey'], false ) ) {
 
-			update_option( $this->config['authKey'], 0 );
-			update_option( $this->config['codeKey'], '' );
-			update_option( 'ls-show-canceled_activation_notice', 1);
-			update_option('layerslider_cancellation_update_info', $this->data);
+			delete_option( $this->config['codeKey'] );
+			delete_option( $this->config['authKey'] );
+			delete_option( $this->config['activationKey'] );
+
+			update_option( 'ls-show-canceled_activation_notice', 1 );
+			update_option( 'layerslider_cancellation_update_info', $this->data );
 		}
 	}
 
@@ -268,6 +272,14 @@ class KM_UpdatesV3 {
 				$this->check_activation_state();
 			}
 
+
+			// Use activation_id when
+			if( empty( $this->config['activation_id'] ) ) {
+				if( ! empty( $this->data->activation_id ) ) {
+					update_option( $this->config['activationKey'], $this->data->activation_id );
+				}
+			}
+
 			if( ! empty( $this->data->full->p_url ) ) {
 				update_option('ls-p-url', $this->data->full->p_url );
 			} else {
@@ -299,16 +311,17 @@ class KM_UpdatesV3 {
 			'timeout' => 60,
 			'user-agent' => 'WordPress/'.$GLOBALS['wp_version'].'; '.get_bloginfo('url'),
 			'body' => array(
-				'slug' => $this->config['slug'],
-				'base' => $this->config['base'],
-				'version' => $this->config['version'],
-				'channel' => $this->config['channel'],
-				'license' => $this->config['license'],
-				'item_id' => $this->config['itemID'],
-				'domain' => $this->config['domain'],
-				'siteurl' => $this->config['siteurl'],
-				'locale' => $this->config['locale'],
-				'api_version' => self::API_VERSION
+				'slug' 			=> $this->config['slug'],
+				'base' 			=> $this->config['base'],
+				'version' 		=> $this->config['version'],
+				'channel' 		=> $this->config['channel'],
+				'license' 		=> $this->config['license'],
+				'activation_id' => $this->config['activation_id'],
+				'item_id' 		=> $this->config['itemID'],
+				'domain' 		=> $this->config['domain'],
+				'siteurl' 		=> $this->config['siteurl'],
+				'locale' 		=> $this->config['locale'],
+				'api_version' 	=> self::API_VERSION
 			)
 		));
 
@@ -326,20 +339,21 @@ class KM_UpdatesV3 {
 	 * @param string $response JSON string to be parsed
 	 * @return array Array of the raw and parsed JSON
 	 */
-	public function parseApiResponse($response) {
+	public function parseApiResponse( $response ) {
 
 		// Get response
-		$json = !empty($response) ? json_decode($response) : false;
+		$json = !empty( $response ) ? json_decode( $response ) : false;
 
 		// ERR: Unexpected error
-		if(empty($json)) {
-			die(json_encode(array(
+		if( empty( $json ) ) {
+
+			die( json_encode( array(
 				'message' => 'An unexpected error occurred. Please try again later. If this error persist, it\'s most likely a web server configuration issue. Please contact your web host and ask them to allow external connection to the following domain: repository.kreaturamedia.com. If you need further assistance in resolving this issue, please email us from our CodeCanyon profile page.',
 				'errCode' => 'ERR_UNEXPECTED_ERROR')
-			));
+			) );
 		}
 
-		return array($response, $json);
+		return array( $response, $json );
 	}
 
 
@@ -354,11 +368,11 @@ class KM_UpdatesV3 {
 	public function handleActivation() {
 
 		// Required informations
-		if(empty($_POST['purchase_code']) || empty($_POST['channel'])) {
-			die(json_encode(array(
+		if( empty( $_POST['purchase_code'] ) || empty( $_POST['channel'] ) ) {
+			die( json_encode( array(
 				'status' => 'Please enter your purchase code.',
 				'errCode' => 'ERR_INVALID_DATA_RECEIVED')
-			));
+			) );
 		}
 
 		// Re-validation
@@ -378,19 +392,21 @@ class KM_UpdatesV3 {
 
 		// Validate purchase
 		$this->config['license'] = $_POST['purchase_code'];
-		$data = $this->sendApiRequest($this->config['repoUrl'].'authorize/');
-		list($response, $json) = $this->parseApiResponse($data);
+		$data = $this->sendApiRequest( $this->config['repoUrl'].'authorize/' );
+		list( $response, $json ) = $this->parseApiResponse( $data );
 
 		// Failed authorization
-		if(!empty($json->errCode)) {
-			update_option($this->config['authKey'], 0);
-			update_option($this->config['codeKey'], '');
+		if( ! empty( $json->errCode ) ) {
+			update_option( $this->config['authKey'], 0 );
+			update_option( $this->config['codeKey'], '' );
+			update_option( $this->config['activationKey'], '' );
 
 		// Successful authorization
 		} else {
-			$json->code = base64_encode($_POST['purchase_code']);
-			update_option($this->config['authKey'], 1);
-			update_option($this->config['codeKey'], $_POST['purchase_code']);
+			$json->code = base64_encode( $_POST['purchase_code'] );
+			update_option( $this->config['authKey'], 1 );
+			update_option( $this->config['codeKey'], $_POST['purchase_code'] );
+			update_option( $this->config['activationKey'], $json->activation_id );
 
 
 			// v6.1.5: Make sure to empty the stored update data from cache,
@@ -400,12 +416,12 @@ class KM_UpdatesV3 {
 			// Force checking updates to immediately replace the missing update info
 			// with fresh data. Suppressing error reporting to make sure that nothing
 			// can break the JSON output, as user feedback is crucial here.
-			delete_option($this->config['option']);
+			delete_option( $this->config['option'] );
 			@$this->_check_updates( true );
 
 			// v6.2.0: Automatically hide the "Canceled activation" notice when
 			// re-activating the plugin for the sake of clarity and consistency.
-			update_option('ls-show-canceled_activation_notice', 0);
+			update_option( 'ls-show-canceled_activation_notice', 0 );
 
 			// v6.6.3: Empty slider caches (if any) to immediately hide the premium
 			// notice displayed above sliders on the front-end after activation.
@@ -413,7 +429,7 @@ class KM_UpdatesV3 {
 		}
 
 
-		die(json_encode($json));
+		die( json_encode( $json ) );
 	}
 
 
@@ -432,8 +448,9 @@ class KM_UpdatesV3 {
 		list($response, $json) = $this->parseApiResponse($data);
 
 		// Deauthorize
-		delete_option($this->config['codeKey']);
-		delete_option($this->config['authKey']);
+		delete_option( $this->config['codeKey'] );
+		delete_option( $this->config['authKey'] );
+		delete_option( $this->config['activationKey'] );
 
 		// v6.6.3: Empty slider caches (if any) to re-enable displaying the premium
 		// notice above sliders on the front-end after deactivation.

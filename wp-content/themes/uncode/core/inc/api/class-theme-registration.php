@@ -133,7 +133,7 @@ class Uncode_Theme_Registration {
 				break;
 
 			case 7:
-				$message = __( "There is a problem contacting the Undsgn server for the Purchase Code verification. Please disable any firewall service, deactivate any possible server authentication, verify if your host is blocking connections to external domains and make sure to whitelist 'api.undsgn.com'. If the problem persists, <a href=\"https://support.undsgn.com/hc/en-us/articles/360000836318\" target=\"_blank\">please contact the theme author.</a>", 'uncode' );
+				$message = __( "There is a problem contacting the Undsgn server for the Purchase Code verification. Please disable any firewall service, deactivate any possible server authentication, verify you have an updated cURL module, verify if your host is blocking connections to external domains and make sure to whitelist 'api.undsgn.com'. Please consult <a href=\"https://support.undsgn.com/hc/en-us/articles/115004287985\" target=\"_blank\">this page</a> and if the problem persists, <a href=\"https://support.undsgn.com/hc/en-us/articles/360000836318\" target=\"_blank\"> contact the theme author.</a>", 'uncode' );
 				break;
 
 			case 8:

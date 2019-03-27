@@ -944,7 +944,7 @@ if (!class_exists('unmenu')) {
 				default:
 					$footer_copyright = ot_get_option('_uncode_footer_copyright');
 					$footer_text_content = '';
-					if ($footer_copyright !== 'off') {
+					if ($footer_copyright !== 'off' && ot_get_option('_uncode_copy_hide') !== 'on') {
 						$footer_text_content .= '<p>&copy; '.date("Y").' '.get_bloginfo('name') . ' <span style="white-space:nowrap;">' . esc_html__('All rights reserved','uncode') . '</span></p>';
 					}
 

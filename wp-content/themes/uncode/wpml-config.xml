@@ -243,6 +243,12 @@
 			</attributes>
 		</shortcode>
 		<shortcode>
+			<tag>vc_button</tag>
+			<attributes>
+				<attribute>link</attribute>
+			</attributes>
+		</shortcode>
+		<shortcode>
 			<tag>uncode_list</tag>
 		</shortcode>
 		<shortcode>

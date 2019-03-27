@@ -3,14 +3,14 @@
 /**
  * Plugin Name: WPBakery Page Builder (Visual Composer) Clipboard
  * Description: Clipboard and template manager for WPBakery Page Builder (Visual Composer)
- * Version: 4.5.0
+ * Version: 4.5.1
  * Author: bitorbit
  * Author URI: http://codecanyon.net/user/bitorbit
  */
 
 function vc_clipboard() {
-	wp_enqueue_style( 'vc_clipboard', plugins_url( 'style.css', __FILE__ ) );
-	wp_register_script( 'vc_clipboard', plugins_url( 'script.min.js', __FILE__ ) );
+	wp_enqueue_style( 'vc_clipboard', plugins_url( 'style.css', __FILE__ ), [], filemtime( plugin_dir_path( __FILE__ ) . 'style.css' ) );
+	wp_register_script( 'vc_clipboard', plugins_url( 'script.min.js', __FILE__ ), [], filemtime( plugin_dir_path( __FILE__ ) . 'script.min.js' ) );
 	
 	// Localize the script with new data
 	$translation_array = array(
@@ -118,6 +118,7 @@ function vc_clipboard() {
 		
 		'column_empty' => 'Column is empty!',
 		'section_empty' => 'Section is empty!',
+		'tab_empty' => 'Tab is empty!',
 		'clipboard_empty' => 'Clipboard is empty!',
 		
 		'license_already_activated_on' => 'This purhase code has been already used on: ',

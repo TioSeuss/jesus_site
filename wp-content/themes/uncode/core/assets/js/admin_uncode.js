@@ -1209,23 +1209,23 @@
 	//////////////////////////////////////////////////////
 
 	var themeRegistrationForm = $('#uncode-registration-form');
-	var themeRegistrationTermsCheckbox = $('#uncode-registration-accept-terms');
-	var themeRegistrationButton = $('#envato_update_info');
+	var themeRegistrationTermsCheckbox = document.getElementById('uncode-registration-accept-terms');
+	var themeRegistrationButton = document.getElementById('envato_update_info');
 
-	if (themeRegistrationTermsCheckbox.prop('checked')) {
-		themeRegistrationButton.prop('disabled', false);
+	if (themeRegistrationTermsCheckbox !== null && themeRegistrationTermsCheckbox.checked) {
+		themeRegistrationButton.disabled = false;
 	}
 
-	themeRegistrationTermsCheckbox.on('click', function() {
-		if (themeRegistrationTermsCheckbox.prop('checked')) {
-			themeRegistrationButton.prop('disabled', false);
+	$(themeRegistrationTermsCheckbox).on('change', function() {
+		if (themeRegistrationTermsCheckbox.checked) {
+			themeRegistrationButton.disabled = false;
 		} else {
-			themeRegistrationButton.prop('disabled', true);
+			themeRegistrationButton.disabled = true;
 		}
 	});
 
 	// Save purchase code via AJAX
-	themeRegistrationButton.on('click', function(e) {
+	$(themeRegistrationButton).on('click', function(e) {
 		e.preventDefault();
 
 		var _this = $(this);
@@ -1233,12 +1233,12 @@
 		var noticesContainer = themeRegistrationForm.find('#uncode-admin-registration-notice-container');
 
 		// Return early if it as alreading doing AJAX request
-		if (themeRegistrationButton.hasClass('uncode-ajax-loading')) {
+		if ($(themeRegistrationButton).hasClass('uncode-ajax-loading')) {
 			return false;
 		}
 
 		// Remove classes
-		themeRegistrationButton.removeClass('uncode-ajax-saved uncode-ajax-error');
+		$(themeRegistrationButton).removeClass('uncode-ajax-saved uncode-ajax-error');
 
 		// Hide notices
 		themeRegistrationForm.find('.uncode-ui-notice').remove();
@@ -1251,14 +1251,14 @@
 		}
 
 		// Validate terms
-		if (!themeRegistrationTermsCheckbox.prop('checked')) {
+		if (!themeRegistrationTermsCheckbox.checked) {
 			noticesContainer.append('<p class="uncode-ui-notice uncode-ui-notice--error">' + SiteParameters.theme_registration.locale.empty_terms + '</p>');
 
 			return false;
 		}
 
 		// Add loading class to the button
-		themeRegistrationButton.addClass('uncode-ajax-loading');
+		$(themeRegistrationButton).addClass('uncode-ajax-loading');
 
 		var post_data = {
 			uncode_theme_registration_purchase_code: purchaseCode.val(),
@@ -1285,17 +1285,17 @@
 			}
 		}).done(function () {
 			// Add success class to the button
-			themeRegistrationButton.addClass('uncode-ajax-saved');
+			$(themeRegistrationButton).addClass('uncode-ajax-saved');
 
 		}).fail(function () {
 			// Add error class to the button
-			themeRegistrationButton.addClass('uncode-ajax-error');
+			$(themeRegistrationButton).addClass('uncode-ajax-error');
 		}).always(function () {
 			// Remove loading class
-			themeRegistrationButton.removeClass('uncode-ajax-loading');
+			$(themeRegistrationButton).removeClass('uncode-ajax-loading');
 
 			setTimeout(function () {
-				themeRegistrationButton.removeClass('uncode-ajax-saved uncode-ajax-error');
+				$(themeRegistrationButton).removeClass('uncode-ajax-saved uncode-ajax-error');
 			}, 3000);
 		});
 	});

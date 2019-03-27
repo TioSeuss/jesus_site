@@ -2654,7 +2654,7 @@ var LayerSlider = {
 			$notification 	= jQuery('.ls-sublayer-basic .ls-bgvideo-options');
 
 		if( $input.prop('checked') ) {
-			$options.find('td').hide().filter('.volume,.overlay').show();
+			$options.find('td').hide().filter('.volume,.overlay, .muted,.loop').show();
 			$notification.show();
 
 		} else {
@@ -3138,7 +3138,7 @@ var LayerSlider = {
 
 				item.addClass('disabled bgvideo').css({
 					pointerEvents: 'none'
-				});
+				}).children('video').prop('controls', false);
 
 				if( layerData.transition.overlay ) {
 					if( layerData.transition.overlayer !== 'disabled' ) {
@@ -3170,6 +3170,7 @@ var LayerSlider = {
 
 		// Make sure to override controls for media elements if set by media settings.
 		if( layerData.media === 'media' && item.children('audio,video').length ) {
+
 			if( layerData.transition.controls === 'enabled' ) {
 				item.children('audio,video').prop('controls', true);
 			} else if( layerData.transition.controls === 'disabled' ) {
@@ -9334,6 +9335,10 @@ var kmComboBox = {
 				listItem
 					.data('font-family', optionValue)
 					.css('font-family', optionValue);
+			} else if( option.button ) {
+
+			} else if( option.class ) {
+				listItem.addClass( option.class );
 			}
 		});
 
@@ -9370,6 +9375,10 @@ var kmComboBox = {
 
 
 	select: function( $li ) {
+
+		if( $li.is('.group,.button') ) {
+			return;
+		}
 
 		var $wrapper 	= $li.closest('.km-combo-box'),
 			$input 		= $wrapper.prev('input');

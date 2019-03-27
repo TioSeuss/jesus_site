@@ -392,7 +392,7 @@ if(!empty($slider['slides']) && is_array($slider['slides'])) {
 
 				// Text / HTML layer
 				if($layer['props']['media'] != 'post' || ($first != '<' && $last != '>')) {
-					$inner->html(do_shortcode(stripslashes($layer['props']['html'])));
+					$inner->html(do_shortcode(__(stripslashes($layer['props']['html']))));
 				}
 
 				// Rewrite Youtube/Vimeo iframe src to data-src

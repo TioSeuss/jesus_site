@@ -360,6 +360,7 @@
 				<tbody>
 					<?php
 					lsOptionRow('checkbox', $sDefs['autoPlayVideos'], $sProps );
+					lsOptionRow('checkbox', $sDefs['rememberUnmuteState'], $sProps );
 					lsOptionRow('select', $sDefs['autoPauseSlideshow'], $sProps );
 					lsOptionRow('select', $sDefs['youtubePreviewQuality'], $sProps );
 					?>

@@ -15,7 +15,7 @@
   background: none;
   border: none;
   border-bottom: 1px dotted #ccc; }
-  .layerslider_notice img {
+  .layerslider_notice .ls-product-icon {
     margin-right: 15px;
     float: left; }
   .layerslider_notice h1 {
@@ -46,40 +46,67 @@
   padding: 0;
   background: none;
   border: none;
-  background-size: cover;
+  overflow: hidden;
   background-position: left center;
   border-radius: 10px; }
+  .layerslider_notice_img .banner_link {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 98; }
   .layerslider_notice_img .dashicons-dismiss {
     position: absolute;
     top: 10px;
     right: 10px;
+    z-index: 99;
     width: 30px;
     height: 30px;
     line-height: 30px;
     font-size: 24px;
     color: white;
-    opacity: 0.8; }
+    color: rgba(255, 255, 255, 0.7);
+    transition: color 200ms; }
     .layerslider_notice_img .dashicons-dismiss:hover {
-      opacity: 1; }
-  .layerslider_notice_img .button-install {
+      color: white; }
+  .layerslider_notice_img .button-install,
+  .layerslider_notice_img .button-read-more {
     position: absolute;
     right: 10px;
     bottom: 10px;
+    z-index: 99;
     height: 38px;
     padding: 0 20px;
     border-radius: 38px;
-    border: 2px solid rgba(255, 255, 255, 0.2);
+    border: 2px solid white;
+    border: 2px solid rgba(255, 255, 255, 0.5);
     background: transparent !important;
     box-shadow: none;
     color: white !important;
+    color: rgba(255, 255, 255, 0.8) !important;
     font-family: Nunito;
     font-size: 14px;
     font-weight: 500;
     line-height: 36px;
-    text-transform: uppercase; }
-    .layerslider_notice_img .button-install:hover {
-      background: transparent;
-      color: white; }
+    text-transform: uppercase;
+    transition: color 200ms, border 200ms; }
+    .layerslider_notice_img .button-install:hover,
+    .layerslider_notice_img .button-read-more:hover {
+      border: 2px solid rgba(255, 255, 255, 0.9);
+      color: white !important; }
+  .layerslider_notice_img.dark .dashicons-dismiss {
+    color: rgba(0, 0, 0, 0.6) !important; }
+    .layerslider_notice_img.dark .dashicons-dismiss:hover {
+      color: rgba(0, 0, 0, 0.8) !important; }
+  .layerslider_notice_img.dark .button-install,
+  .layerslider_notice_img.dark .button-read-more {
+    border: 2px solid rgba(0, 0, 0, 0.4) !important;
+    color: rgba(0, 0, 0, 0.5) !important; }
+    .layerslider_notice_img.dark .button-install:hover,
+    .layerslider_notice_img.dark .button-read-more:hover {
+      border: 2px solid rgba(0, 0, 0, 0.6) !important;
+      color: rgba(0, 0, 0, 0.7) !important; }
 
 .ls-theme-notice {
   margin-top: 10px;

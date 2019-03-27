@@ -865,6 +865,14 @@ $lsDefaults = array(
 		),
 
 
+		'rememberUnmuteState' => array(
+			'value' => true,
+			'name' => __('Remember unmute state', 'LayerSlider'),
+			'keys' => 'rememberUnmuteState',
+			'desc' => __('After a visitor has clicked on the Unmute button the slider will assume that all later media can play with sound. Disable this option if you want to display the Unmute button on each slide separately.', 'LayerSlider')
+		),
+
+
 		// =========== //
 		// |  Popup  | //
 		// =========== //
@@ -1790,6 +1798,9 @@ $lsDefaults = array(
 			'tooltip' => __('If you want to link the whole slide, type the URL here. You can choose a WordPress page/post/attachment or use one of the pre-defined options from the dropdown list when you click into this field. You can also type a hash mark followed by a number to link this layer to another slide. Example: #3 - this will switch to the third slide.', 'LayerSlider'),
 			'attrs' => array(
 				'data-options' => '[{
+					"name": "'.__('Switch to a certain slide', 'LayerSlider').'",
+					"value": "#1"
+				},{
 					"name": "'.__('Switch to the next slide', 'LayerSlider').'",
 					"value": "#next",
 					"linkAction": true
@@ -1815,11 +1826,23 @@ $lsDefaults = array(
 					"linkAction": true
 				},{
 					"name": "'.__('Reverse the slide, then replay it', 'LayerSlider').'",
-					"value": "#reverse-replay",
+					"value": "#reverseReplay",
 					"linkAction": true
 				},{
 					"name": "'.__('Close the Popup', 'LayerSlider').'",
-					"value": "#closepopup",
+					"value": "#closePopup",
+					"linkAction": true
+				},{
+					"name": "'.__('Start media playback on slide', 'LayerSlider').'",
+					"value": "#playMedia",
+					"linkAction": true
+				},{
+					"name": "'.__('Pause media playback on slide', 'LayerSlider').'",
+					"value": "#pauseMedia",
+					"linkAction": true
+				},{
+					"name": "'.__('Unmute media playback', 'LayerSlider').'",
+					"value": "#unmuteMedia",
 					"linkAction": true
 				}]'
 			),
@@ -2232,7 +2255,7 @@ $lsDefaults = array(
 
 		'mediaInfo' => array(
 			'value' => 'auto',
-			'name' => __('Show Info', 'LayerSlider'),
+			'name' => __('Show info', 'LayerSlider'),
 			'keys' => 'showinfo',
 			'options' => array(
 				'auto' => __('Auto', 'LayerSlider'),
@@ -2282,16 +2305,40 @@ $lsDefaults = array(
 			)
 		),
 
+		'mediaMuted' => array(
+			'value' => 'auto',
+			'name' => __('Play muted', 'LayerSlider'),
+			'keys' => 'muted',
+			'options' => array(
+				'auto'  => __('Auto', 'LayerSlider'),
+				'enabled'  => __('Enabled', 'LayerSlider'),
+				'disabled'  => __('Disabled', 'LayerSlider'),
+				'offerToUnmute'  => __('Offer to unmute', 'LayerSlider'),
+			)
+		),
+
+
+		'mediaLoop' => array(
+			'value' => 'auto',
+			'name' => __('Loop', 'LayerSlider'),
+			'keys' => 'loopmedia',
+			'options' => array(
+				'auto' => __('Auto', 'LayerSlider'),
+				'enabled' => __('Enabled', 'LayerSlider'),
+				'disabled' => __('Disabled', 'LayerSlider')
+			)
+		),
+
 		'mediaBackgroundVideo' => array(
 			'value' => false,
 			'name' => __('Use this video as slide background', 'LayerSlider'),
 			'keys' => 'backgroundvideo',
-			'tooltip' => __('Forces this layer to act like the slide background by covering the whole slider and ignoring some transitions. Please make sure to provide your own poster image with the option above, so the slider can display it immediately on page load.', 'LayerSlider')
+			'tooltip' => __('Forces this layer to act like the slide background by covering the whole slider and ignoring some transitions. Please make sure to provide your own poster image, so the slider can display it immediately on page load.', 'LayerSlider')
 		),
 
 		'mediaOverlay' => array(
 			'value' => 'disabled',
-			'name' => __('Choose an overlay image:', 'LayerSlider'),
+			'name' => __('Overlay image', 'LayerSlider'),
 			'keys' => 'overlay',
 			'tooltip' => __('Cover your videos with an overlay image to have dotted or striped effects on them.', 'LayerSlider')
 		),
@@ -4216,6 +4263,9 @@ $lsDefaults = array(
 			'tooltip' => __('If you want to link your layer, type the URL here. You can choose a WordPress page/post/attachment or use one of the pre-defined options from the dropdown list when you click into this field. You can also type a hash mark followed by a number to link this layer to another slide. Example: #3 - this will switch to the third slide.', 'LayerSlider'),
 			'attrs' => array(
 				'data-options' => '[{
+					"name": "'.__('Switch to a certain slide', 'LayerSlider').'",
+					"value": "#1"
+				},{
 					"name": "'.__('Switch to the next slide', 'LayerSlider').'",
 					"value": "#next",
 					"linkAction": true
@@ -4241,11 +4291,23 @@ $lsDefaults = array(
 					"linkAction": true
 				},{
 					"name": "'.__('Reverse the slide, then replay it', 'LayerSlider').'",
-					"value": "#reverse-replay",
+					"value": "#reverseReplay",
 					"linkAction": true
 				},{
 					"name": "'.__('Close the Popup', 'LayerSlider').'",
-					"value": "#closepopup",
+					"value": "#closePopup",
+					"linkAction": true
+				},{
+					"name": "'.__('Start media playback on slide', 'LayerSlider').'",
+					"value": "#playMedia",
+					"linkAction": true
+				},{
+					"name": "'.__('Pause media playback on slide', 'LayerSlider').'",
+					"value": "#pauseMedia",
+					"linkAction": true
+				},{
+					"name": "'.__('Unmute media playback', 'LayerSlider').'",
+					"value": "#unmuteMedia",
 					"linkAction": true
 				}]'
 			),

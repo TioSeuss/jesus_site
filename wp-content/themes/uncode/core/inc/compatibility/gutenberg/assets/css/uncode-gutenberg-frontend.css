@@ -216,6 +216,11 @@ ul[class^='wp-block-'] {
 	padding: 18px;
 }
 
+.wp-block-latest-posts.is-grid {
+	list-style: none !important;
+	padding: 0 !important;
+}
+
 /*
 ----------------------------------------------------------
 
@@ -245,6 +250,7 @@ ul[class^='wp-block-'] {
 	.wp-block-text-columns.columns-6 .wp-block-column {
 		width: 100%;
 	}
+
 }
 
 .wp-block-text-columns .wp-block-column {
@@ -253,6 +259,10 @@ ul[class^='wp-block-'] {
 
 .wp-block-text-columns .wp-block-column p {
 	margin-top: 0;
+}
+
+.aligncenter {
+	text-align: center;
 }
 
 /*

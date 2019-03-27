@@ -8,8 +8,6 @@
 $metabox_data = get_post_custom($post->ID);
 $sidebar = (isset($metabox_data['_uncode_page_sidebar'][0])) ? 'uncode-' . $metabox_data['_uncode_page_sidebar'][0] : 'sidebar-1';
 
-echo 'test';
-echo $sidebar;
 if ( ! is_active_sidebar( $sidebar ) ) {
 	return;
 }

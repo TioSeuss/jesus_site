@@ -13861,7 +13861,7 @@ uncode_progress_bar();
 			var counterUpper = function() {
 				var nums = [];
 				var divisions = $settings.time / $settings.delay;
-				var numReal = $this.text(),
+				var numReal = $this.attr('data-val'),
 				num = numReal;
 				var isComma = /[0-9]+,[0-9]+/.test(num);
 				num = num.replace(/,/g, '');

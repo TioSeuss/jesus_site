@@ -1828,7 +1828,7 @@ if ( ! function_exists( 'ot_type_sidebar_select' ) ) {
 
         /* has sidebars */
         if ( count( $sidebars ) ) {
-          echo '<option value="">-- ' . esc_html__( 'Default Sidebar', 'option-tree' ) . ' --</option>';
+          echo '<option value="">-- ' . esc_html__( 'Choose One', 'option-tree' ) . ' --</option>';
           foreach ( $sidebars as $id => $sidebar ) {
             echo '<option value="' . esc_attr( $id ) . '"' . selected( $field_value, $id, false ) . '>' . esc_attr( $sidebar ) . '</option>';
           }

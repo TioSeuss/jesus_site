@@ -21,7 +21,9 @@ if( !empty($slides['properties']['attrs']['type']) && $slides['properties']['att
 }
 
 if( ! empty( $lsPlugins ) ) {
-	$init[] = 'plugins: ' . json_encode( array_unique( $lsPlugins ) );
+	$lsPlugins = array_unique( $lsPlugins );
+	sort( $lsPlugins );
+	$init[] = 'plugins: ' . json_encode( $lsPlugins );
 }
 
 $separator = apply_filters( 'layerslider_init_props_separator', ', ');

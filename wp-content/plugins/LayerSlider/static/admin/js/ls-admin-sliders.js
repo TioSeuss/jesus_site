@@ -776,28 +776,13 @@ var lsDisplayGDPRConsent = function() {
 			$('#ls-gdpr-step-3').css('transform', 'translateX(0px)');
 			$('#ls-gdpr-step-4').css('transform', 'translateX(740px)');
 
+			// Do ajax
+			$nextButton.one('click', function() {
 
-			// Step 4
-			$nextButton.off().one('click', function() {
+				kmUI.modal.close();
+				kmUI.overlay.close();
 
-				$modalH1.fadeOut(500, function() {
-					$modalH1.text( $('#ls-gdpr-step-4 h1').text() );
-				}).fadeIn(500);
-
-				$('#ls-gdpr-step-1').css('transform', 'translateX(-2220px)');
-				$('#ls-gdpr-step-2').css('transform', 'translateX(-1480px)');
-				$('#ls-gdpr-step-3').css('transform', 'translateX(-740px)');
-				$('#ls-gdpr-step-4').css('transform', 'translateX(0px)');
-
-				// Do ajax
-
-				$nextButton.one('click', function() {
-
-					kmUI.modal.close();
-					kmUI.overlay.close();
-
-					$.post( ajaxurl, $('#tmpl-gdpr-modal-window form').serialize() );
-				});
+				$.post( ajaxurl, $('#tmpl-gdpr-modal-window form').serialize() );
 			});
 		});
 	});

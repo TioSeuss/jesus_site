@@ -7,7 +7,7 @@
  *
  * @since 6.3.0
  * @author John Gera
- * @copyright Copyright (c) 2018  John Gera, George Krupa, and Kreatura Media Kft.
+ * @copyright Copyright (c) 2019  John Gera, George Krupa, and Kreatura Media Kft.
  * @license http://codecanyon.net/licenses/faq Envato marketplace licenses
  */
 
