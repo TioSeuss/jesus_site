@@ -86,4 +86,18 @@ class LS_Config {
 			}
 		}
 	}
+
+
+	public static function isActivatedSite() {
+
+		$activated 	= get_option('layerslider-authorized-site', false);
+		$code 		= get_option('layerslider-purchase-code', '');
+
+
+		if( $activated && ! empty( $code ) ) {
+			return true;
+		}
+
+		return false;
+	}
 }

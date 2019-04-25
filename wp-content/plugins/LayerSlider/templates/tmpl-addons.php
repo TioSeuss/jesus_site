@@ -5,7 +5,7 @@ if( ! defined( 'LS_ROOT_FILE' ) ) {
 	exit;
 }
 
-$isActivated = get_option('layerslider-authorized-site', false);
+$isActivated = LS_Config::isActivatedSite();
 
 ?>
 

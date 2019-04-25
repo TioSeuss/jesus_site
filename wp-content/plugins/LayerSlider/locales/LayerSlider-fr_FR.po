@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: LayerSlider WP 6.8.0\n"
-"POT-Creation-Date: 2019-02-22 21:18+0100\n"
+"Project-Id-Version: LayerSlider WP 6.8.2\n"
+"POT-Creation-Date: 2019-03-06 16:12+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: S.Chamusard <conseillerphytoaroma@gmail.com>\n"
@@ -5168,7 +5168,7 @@ msgstr "Enregistre..."
 msgid "Select a slider first."
 msgstr "Sélectionnez les transitions du slide"
 
-#: templates/tmpl-import-layer.php:28 wp/scripts_l10n.php:117
+#: templates/tmpl-import-layer.php:28 wp/scripts_l10n.php:119
 #, fuzzy
 #| msgid "Select slide transitions"
 msgid "Select a slide first."
@@ -5465,7 +5465,7 @@ msgid "Prevent layer dragging in the editor."
 msgstr "Empêchez la couche de glisser dans l'éditeur."
 
 #: templates/tmpl-layer-item.php:10 templates/tmpl-static-layer-item.php:6
-#: wp/scripts_l10n.php:59
+#: wp/scripts_l10n.php:61
 #, php-format
 msgid "Layer #%d"
 msgstr "Layer #%d"
@@ -5479,7 +5479,7 @@ msgid "Remove this layer"
 msgstr "Supprimer ce calque"
 
 #: templates/tmpl-layer.php:10 templates/tmpl-preview-context-menu.php:12
-#: templates/tmpl-slide.php:449 wp/scripts_l10n.php:119
+#: templates/tmpl-slide.php:449 wp/scripts_l10n.php:121
 msgid "Image"
 msgstr "Image"
 
@@ -5488,7 +5488,7 @@ msgid "Press the Add Icon button to insert an icon"
 msgstr ""
 
 #: templates/tmpl-layer.php:11 templates/tmpl-preview-context-menu.php:16
-#: templates/tmpl-slide.php:453 wp/scripts_l10n.php:120
+#: templates/tmpl-slide.php:453 wp/scripts_l10n.php:122
 msgid "Icon"
 msgstr ""
 
@@ -5498,7 +5498,7 @@ msgstr "Entrez le texte uniquement ici..."
 
 #: templates/tmpl-layer.php:12 templates/tmpl-layer.php:1815
 #: templates/tmpl-preview-context-menu.php:20 templates/tmpl-slide.php:457
-#: wp/scripts_l10n.php:121
+#: wp/scripts_l10n.php:123
 msgid "Text"
 msgstr "Texte"
 
@@ -5507,7 +5507,7 @@ msgid "Enter the label of your button"
 msgstr ""
 
 #: templates/tmpl-layer.php:13 templates/tmpl-preview-context-menu.php:24
-#: templates/tmpl-slide.php:461 wp/scripts_l10n.php:122
+#: templates/tmpl-slide.php:461 wp/scripts_l10n.php:124
 msgid "Button"
 msgstr ""
 
@@ -5530,7 +5530,7 @@ msgstr ""
 "apparaîtra sur vos pages frontales ..."
 
 #: templates/tmpl-layer.php:17 templates/tmpl-preview-context-menu.php:32
-#: templates/tmpl-slide.php:469 wp/scripts_l10n.php:124
+#: templates/tmpl-slide.php:469 wp/scripts_l10n.php:126
 msgid "HTML"
 msgstr "HTML"
 
@@ -6343,8 +6343,8 @@ msgstr ""
 msgid "Preview for Selected Revision"
 msgstr "Aperçu pour la révision sélectionnée"
 
-#: templates/tmpl-revisions-history.php:221 views/slider_edit.php:440
-#: wp/scripts_l10n.php:57
+#: templates/tmpl-revisions-history.php:221 views/slider_edit.php:444
+#: wp/scripts_l10n.php:59
 #, php-format
 msgid "Slide #%d"
 msgstr "Slide #%d"
@@ -6353,7 +6353,7 @@ msgstr "Slide #%d"
 msgid "Auto-Fit"
 msgstr "Auto-ajustement"
 
-#: templates/tmpl-revisions-history.php:261 wp/scripts_l10n.php:90
+#: templates/tmpl-revisions-history.php:261 wp/scripts_l10n.php:92
 msgid "Preview Slide"
 msgstr "Aperçu"
 
@@ -6429,33 +6429,33 @@ msgstr "Partager"
 msgid "Tweet"
 msgstr "Tweet"
 
-#: templates/tmpl-slide-tab.php:8 views/slider_edit.php:458
+#: templates/tmpl-slide-tab.php:8 views/slider_edit.php:462
 #: views/slider_list.php:444 wp/tinymce_l10n.php:12
 msgid "No Preview"
 msgstr "Pas d'aperçu"
 
-#: templates/tmpl-slide-tab.php:11 views/slider_edit.php:461
+#: templates/tmpl-slide-tab.php:11 views/slider_edit.php:465
 #, fuzzy
 #| msgid "Type your slider name here"
 msgid "Type slide name here"
 msgstr "Tapez le nom de votre slider ici"
 
-#: templates/tmpl-slide-tab.php:17 views/slider_edit.php:467
+#: templates/tmpl-slide-tab.php:17 views/slider_edit.php:471
 #: views/slider_list.php:375 views/slider_list.php:474
 msgid "Duplicate"
 msgstr "Dupliquer"
 
-#: templates/tmpl-slide-tab.php:23 views/slider_edit.php:473
+#: templates/tmpl-slide-tab.php:23 views/slider_edit.php:477
 #, fuzzy
 #| msgid "Hide over"
 msgid "Hide"
 msgstr "Masquer plus"
 
-#: templates/tmpl-slide-tab.php:27 views/slider_edit.php:477
+#: templates/tmpl-slide-tab.php:27 views/slider_edit.php:481
 msgid "Unhide"
 msgstr ""
 
-#: templates/tmpl-slide-tab.php:33 views/slider_edit.php:483
+#: templates/tmpl-slide-tab.php:33 views/slider_edit.php:487
 #: views/slider_list.php:387 views/slider_list.php:486
 msgid "Remove"
 msgstr "Retirer"
@@ -6653,7 +6653,7 @@ msgstr "Layer"
 msgid "Layers"
 msgstr "Layers"
 
-#: templates/tmpl-slide.php:440 views/slider_edit.php:493
+#: templates/tmpl-slide.php:440 views/slider_edit.php:497
 #: views/transition_builder.php:102 views/transition_builder.php:127
 msgid "Add New"
 msgstr "Ajouter nouveau"
@@ -6689,29 +6689,39 @@ msgstr "Layers statiques d'autres slides"
 msgid "Layers on this slide"
 msgstr "Layers sur ce slide"
 
-#: templates/tmpl-slide.php:510
+#: templates/tmpl-slide.php:515
+msgid "Nothing to see here. <br> We popped out. ;)"
+msgstr ""
+
+#: templates/tmpl-slide.php:520
+#, fuzzy
+#| msgid "Layer editor"
+msgid "Restore editor"
+msgstr "Editeur de layers"
+
+#: templates/tmpl-slide.php:529
 msgid "You can grab me here and drag where you need."
 msgstr "Vous pouvez m'accrocher ici et trainer où vous avez besoin."
 
-#: templates/tmpl-slide.php:515
+#: templates/tmpl-slide.php:534
 msgid "Layer editor"
 msgstr "Editeur de layers"
 
-#: templates/tmpl-slide.php:518
+#: templates/tmpl-slide.php:537
 msgid "Put back"
 msgstr "Remettre"
 
-#: templates/tmpl-slide.php:525
+#: templates/tmpl-slide.php:544
 #, fuzzy
 #| msgid "Multiple selection"
 msgid "Multiple Selection Mode"
 msgstr "Sélection multiple"
 
-#: templates/tmpl-slide.php:526
+#: templates/tmpl-slide.php:545
 msgid "BETA"
 msgstr ""
 
-#: templates/tmpl-slide.php:528
+#: templates/tmpl-slide.php:547
 msgid ""
 "In Multiple Selection Mode you can override specific options on all selected "
 "layers. Each option field has been reset, only the options you change will "
@@ -6719,28 +6729,30 @@ msgid ""
 "use it cautiously."
 msgstr ""
 
-#: templates/tmpl-slide.php:529
+#: templates/tmpl-slide.php:548
 msgid "Changes will be applied on all selected layers."
 msgstr ""
 
-#: templates/tmpl-slide.php:533
+#: templates/tmpl-slide.php:552
 msgid "Content"
 msgstr "Contenu"
 
-#: templates/tmpl-slide.php:534
+#: templates/tmpl-slide.php:553
 msgid "Transitions"
 msgstr "Transitions"
 
-#: templates/tmpl-slide.php:535
+#: templates/tmpl-slide.php:554
 msgid "Link & Attributes"
 msgstr "Lien et attributs"
 
-#: templates/tmpl-slide.php:536
+#: templates/tmpl-slide.php:555
 msgid "Styles"
 msgstr "Styles"
 
-#: templates/tmpl-slide.php:539
-msgid "Pop out editor"
+#: templates/tmpl-slide.php:558
+#, fuzzy
+#| msgid "Pop out editor"
+msgid "Popout editor"
 msgstr "Editeur de pop out"
 
 #: templates/tmpl-slider-settings.php:12
@@ -6762,7 +6774,7 @@ msgid ""
 "setting is optional."
 msgstr ""
 
-#: templates/tmpl-slider-settings.php:21 views/slider_edit.php:397
+#: templates/tmpl-slider-settings.php:21 views/slider_edit.php:401
 msgid "Slider Settings"
 msgstr "Paramètres du slider"
 
@@ -7691,7 +7703,7 @@ msgstr ""
 "d'informations."
 
 #: views/css_editor.php:78 views/settings.php:129 views/settings.php:188
-#: views/settings.php:352 views/skin_editor.php:88 views/slider_edit.php:837
+#: views/settings.php:352 views/skin_editor.php:88 views/slider_edit.php:841
 #: views/transition_builder.php:600 wp/scripts_l10n.php:6
 msgid "Save changes"
 msgstr "Enregistrer les changements"
@@ -7759,7 +7771,7 @@ msgstr "Vos paramètres ont été mis à jour."
 msgid "LayerSlider Settings"
 msgstr "Paramètres du slider"
 
-#: views/settings.php:65 views/slider_edit.php:382
+#: views/settings.php:65 views/slider_edit.php:386
 #, fuzzy
 #| msgid "All Sliders"
 msgid "&larr; Sliders"
@@ -7878,7 +7890,7 @@ msgstr "Supprimer cette police"
 msgid "Load only on admin interface"
 msgstr "Charger uniquement sur l'interface d'administration"
 
-#: views/settings.php:161 wp/scripts_l10n.php:51
+#: views/settings.php:161 wp/scripts_l10n.php:53
 msgid "You haven’t added any Google Font to your collection yet."
 msgstr "Vous n'avez pas encore ajouté de police Google à votre collection."
 
@@ -7890,7 +7902,7 @@ msgstr "Entrez un nom de police pour l'ajouter à votre collection"
 msgid "Search"
 msgstr "Rechercher"
 
-#: views/settings.php:172 wp/scripts_l10n.php:53
+#: views/settings.php:172 wp/scripts_l10n.php:55
 msgid "Choose a font family"
 msgstr "Choisissez une famille de polices"
 
@@ -8104,7 +8116,7 @@ msgstr ""
 
 #: views/settings.php:319
 msgid ""
-"Enable this option to ignore LayerSlider files by CloudFront’s Rocket "
+"Enable this option to ignore LayerSlider files by CloudFlare’s Rocket "
 "Loader, which can help overcoming potential issues."
 msgstr ""
 
@@ -8271,54 +8283,54 @@ msgstr ""
 msgid "Expand Sidebar On Hover"
 msgstr ""
 
-#: views/slider_edit.php:379
+#: views/slider_edit.php:383
 msgid "Editing slider:"
 msgstr "Edité slide:"
 
-#: views/slider_edit.php:401 views/slider_list.php:300
+#: views/slider_edit.php:405 views/slider_list.php:300
 msgid "Slides"
 msgstr "Slides"
 
-#: views/slider_edit.php:405
+#: views/slider_edit.php:409
 msgid "Event Callbacks"
 msgstr "Rappels d'événement"
 
-#: views/slider_edit.php:409
+#: views/slider_edit.php:413
 msgid "FAQ"
 msgstr "FAQ"
 
-#: views/slider_edit.php:413
+#: views/slider_edit.php:417
 msgid "Documentation"
 msgstr "Documentation"
 
-#: views/slider_edit.php:415
+#: views/slider_edit.php:419
 msgid "Need help? Try these:"
 msgstr "Besoin d'aide pour? Essayez-les:"
 
-#: views/slider_edit.php:499 views/transition_builder.php:98
+#: views/slider_edit.php:503 views/transition_builder.php:98
 #: views/transition_builder.php:123
 msgid "Import"
 msgstr "Importer"
 
-#: views/slider_edit.php:515
+#: views/slider_edit.php:519
 #, php-format
 msgid ""
 "Please read our %sonline documentation%s for more information about the API."
 msgstr ""
 
-#: views/slider_edit.php:519
+#: views/slider_edit.php:523
 #, fuzzy
 #| msgid "Old API Events"
 msgid "Init Events"
 msgstr "Tous les API d'événements"
 
-#: views/slider_edit.php:524
+#: views/slider_edit.php:528
 msgid "Fires before parsing user data and rendering the UI."
 msgstr ""
 "Se déclenche avant d'analyser les données utilisateur et de rendre "
 "l'interface utilisateur."
 
-#: views/slider_edit.php:536
+#: views/slider_edit.php:540
 msgid ""
 "Fires when the slider is fully initialized and its DOM nodes become "
 "accessible."
@@ -8326,29 +8338,29 @@ msgstr ""
 "Se déclenche lorsque le curseur est entièrement initialisé et que ses nœuds "
 "DOM sont accessibles."
 
-#: views/slider_edit.php:545
+#: views/slider_edit.php:549
 msgid "Resize Events"
 msgstr ""
 
-#: views/slider_edit.php:551
+#: views/slider_edit.php:555
 msgid "Fires before the slider renders resize events."
 msgstr ""
 "Se déclenche avant que le Slider ne rende les événements de "
 "redimensionnement."
 
-#: views/slider_edit.php:563
+#: views/slider_edit.php:567
 msgid "Fires after the slider has rendered resize events."
 msgstr ""
 "Se déclenche après que le curseur ait rendu des événements de "
 "redimensionnement."
 
-#: views/slider_edit.php:572
+#: views/slider_edit.php:576
 #, fuzzy
 #| msgid "Slideshow timers"
 msgid "Slideshow Events"
 msgstr "Tempo du diaporama"
 
-#: views/slider_edit.php:578
+#: views/slider_edit.php:582
 msgid ""
 "Fires upon every slideshow state change, which may not influence the playing "
 "status."
@@ -8356,21 +8368,21 @@ msgstr ""
 "Se déclenche à chaque changement d'état de diaporama, ce qui peut ne pas "
 "influencer l'état de lecture."
 
-#: views/slider_edit.php:590
+#: views/slider_edit.php:594
 msgid "Fires when the slideshow pauses from playing status."
 msgstr "Se déclenche lorsque le diaporama se met en pause."
 
-#: views/slider_edit.php:602
+#: views/slider_edit.php:606
 msgid "Fires when the slideshow resumes from paused status."
 msgstr "Se déclenche lorsque le diaporama reprend en mode pause."
 
-#: views/slider_edit.php:612
+#: views/slider_edit.php:616
 #, fuzzy
 #| msgid "Old API Events"
 msgid "Slide Change Events"
 msgstr "Tous les API d'événements"
 
-#: views/slider_edit.php:618
+#: views/slider_edit.php:622
 msgid ""
 "Signals when the slider wants to change slides, and is your last chance to "
 "divert it or intervene in any way."
@@ -8378,16 +8390,16 @@ msgstr ""
 "Signale lorsque le curseur veut changer de diapositives, et c'est votre "
 "dernière chance de le détourner ou d'intervenir de quelque façon que ce soit."
 
-#: views/slider_edit.php:630
+#: views/slider_edit.php:634
 msgid "Fires when the slider has started a slide change."
 msgstr ""
 "Se déclenche lorsque le curseur a démarré un changement de diapositive."
 
-#: views/slider_edit.php:642
+#: views/slider_edit.php:646
 msgid "Fires before completing a slide change."
 msgstr "Se déclenche avant de terminer un changement de diapositive."
 
-#: views/slider_edit.php:654
+#: views/slider_edit.php:658
 msgid ""
 "Fires after a slide change has completed and the slide indexes have been "
 "updated. "
@@ -8395,13 +8407,13 @@ msgstr ""
 "Se déclenche après le changement de diapositive ont été terminés et les "
 "index des diapositives ont été mis à jour. "
 
-#: views/slider_edit.php:664
+#: views/slider_edit.php:668
 #, fuzzy
 #| msgid "Slide Timing"
 msgid "Slide Timeline Events"
 msgstr "Timing du slide"
 
-#: views/slider_edit.php:669
+#: views/slider_edit.php:673
 msgid ""
 "Fires when the current slide’s animation timeline (e.g. your layers) becomes "
 "accessible for interfacing."
@@ -8409,7 +8421,7 @@ msgstr ""
 "Se déclenche lorsque le calendrier d'animation actuel de la diapositive (par "
 "exemple vos calques) devient accessible pour l'interface."
 
-#: views/slider_edit.php:682
+#: views/slider_edit.php:686
 msgid ""
 "Fires rapidly (at each frame) throughout the entire slide while playing, "
 "including reverse playback."
@@ -8417,7 +8429,7 @@ msgstr ""
 "Se déclenche rapidement (à chaque image) tout au long de la diapositive "
 "pendant la lecture, y compris la lecture en sens inverse."
 
-#: views/slider_edit.php:695
+#: views/slider_edit.php:699
 msgid ""
 "Fires when the current slide’s animation timeline (e.g. your layers) has "
 "started playing."
@@ -8425,7 +8437,7 @@ msgstr ""
 "Se déclenche lorsque le calendrier d'animation de la diapositive actuelle "
 "(par exemple vos calques) a commencé à jouer."
 
-#: views/slider_edit.php:707
+#: views/slider_edit.php:711
 msgid ""
 "Fires when the current slide’s animation timeline (e.g. layer transitions) "
 "has completed."
@@ -8433,7 +8445,7 @@ msgstr ""
 "Se déclenche lorsque le calendrier d'animation de la diapositive actuelle "
 "(par exemple vos calques) a commencé à jouer."
 
-#: views/slider_edit.php:719
+#: views/slider_edit.php:723
 msgid ""
 "Fires when all reversed animations have reached the beginning of the current "
 "slide."
@@ -8441,27 +8453,27 @@ msgstr ""
 "Se déclenche lorsque toutes les animations inversées ont atteint le début de "
 "la diapositive actuelle."
 
-#: views/slider_edit.php:728
+#: views/slider_edit.php:732
 #, fuzzy
 #| msgid "Old API Events"
 msgid "Media Events"
 msgstr "Tous les API d'événements"
 
-#: views/slider_edit.php:733
+#: views/slider_edit.php:737
 msgid "A media element on the current slide has started playback."
 msgstr ""
 
-#: views/slider_edit.php:745
+#: views/slider_edit.php:749
 msgid "A media element on the current slide has stopped playback."
 msgstr ""
 
-#: views/slider_edit.php:755
+#: views/slider_edit.php:759
 #, fuzzy
 #| msgid "Old API Events"
 msgid "Popup Events"
 msgstr "Tous les API d'événements"
 
-#: views/slider_edit.php:760
+#: views/slider_edit.php:764
 #, fuzzy
 #| msgid ""
 #| "Fires when the slider is fully initialized and its DOM nodes become "
@@ -8471,26 +8483,26 @@ msgstr ""
 "Se déclenche lorsque le curseur est entièrement initialisé et que ses nœuds "
 "DOM sont accessibles."
 
-#: views/slider_edit.php:772
+#: views/slider_edit.php:776
 msgid "Fires when the Popup completed its opening transition."
 msgstr ""
 
-#: views/slider_edit.php:784
+#: views/slider_edit.php:788
 #, fuzzy
 #| msgid "Fires when the slideshow pauses from playing status."
 msgid "Fires when the Popup stars its closing transition."
 msgstr "Se déclenche lorsque le diaporama se met en pause."
 
-#: views/slider_edit.php:796
+#: views/slider_edit.php:800
 msgid ""
 "Fires when the Popup completed its closing transition and became hidden."
 msgstr ""
 
-#: views/slider_edit.php:806
+#: views/slider_edit.php:810
 msgid "Destroy Events"
 msgstr ""
 
-#: views/slider_edit.php:812
+#: views/slider_edit.php:816
 msgid ""
 "Fires when the slider destructor has finished and it is safe to remove the "
 "slider from the DOM."
@@ -8498,7 +8510,7 @@ msgstr ""
 "Se déclenche lorsque le destructeur du curseur est terminé et qu'il est sûr "
 "d'enlever le curseur du DOM."
 
-#: views/slider_edit.php:824
+#: views/slider_edit.php:828
 msgid ""
 "Fires when the slider has been removed from the DOM when using the "
 "<i>destroy</i> API method."
@@ -8506,20 +8518,20 @@ msgstr ""
 "Se déclenche lorsque le curseur a été supprimé du DOM lors de l'utilisation "
 "de la méthode API <i>détruire</ i>."
 
-#: views/slider_edit.php:843
+#: views/slider_edit.php:847
 msgid "Revisions Available:"
 msgstr "Révisions disponibles:"
 
-#: views/slider_edit.php:843
+#: views/slider_edit.php:847
 #, php-format
 msgid "Browse %d Revisions"
 msgstr "Parcourir %d Révisions"
 
-#: views/slider_edit.php:846
+#: views/slider_edit.php:850
 msgid "Use shortcode:"
 msgstr "Utiliser un shortcode:"
 
-#: views/slider_edit.php:847
+#: views/slider_edit.php:851
 msgid "Use PHP function:"
 msgstr "Utiliser une fonction PHP:"
 
@@ -9542,12 +9554,12 @@ msgid "2D Transitions"
 msgstr "Transition 2D"
 
 #: views/transition_builder.php:112 views/transition_builder.php:137
-#: wp/scripts_l10n.php:131
+#: wp/scripts_l10n.php:132
 msgid "Type transition name"
 msgstr "Nom du type de transition"
 
 #: views/transition_builder.php:113 views/transition_builder.php:138
-#: wp/scripts_l10n.php:132
+#: wp/scripts_l10n.php:133
 msgid "Remove transition"
 msgstr "Supprimer la transition"
 
@@ -9899,29 +9911,37 @@ msgstr "Slider enregistré avec succès"
 msgid "Capturing slide. This might take a moment ..."
 msgstr ""
 
-#: wp/scripts_l10n.php:26
+#: wp/scripts_l10n.php:24
+msgid "Saving image. This might take a moment ..."
+msgstr ""
+
+#: wp/scripts_l10n.php:27
+msgid "Something went wrong ..."
+msgstr ""
+
+#: wp/scripts_l10n.php:28
 #, fuzzy
 #| msgid "Activate your site to access premium templates."
 msgid "Product activation is required to access premium templates."
 msgstr "Activez votre site pour accéder aux modèles Premium."
 
-#: wp/scripts_l10n.php:27
+#: wp/scripts_l10n.php:29
 #, fuzzy
 #| msgid "You must be an administrator to use this feature."
 msgid "Product activation is required to access this feature."
 msgstr "Vous devez être administrateur pour utiliser cette fonctionnalité."
 
-#: wp/scripts_l10n.php:28
+#: wp/scripts_l10n.php:30
 #, fuzzy
 #| msgid "Activate your site to access premium templates."
 msgid "Product activation is required to receive automatic updates."
 msgstr "Activez votre site pour accéder aux modèles Premium."
 
-#: wp/scripts_l10n.php:31
+#: wp/scripts_l10n.php:33
 msgid "Are you sure you want to remove this slider?"
 msgstr "Êtes-vous sûr de vouloir supprimer ce slider?"
 
-#: wp/scripts_l10n.php:32
+#: wp/scripts_l10n.php:34
 msgid ""
 "You’re about to export this slider as HTML. This option is for the jQuery "
 "version of LayerSlider and you will *NOT* be able to use the downloaded "
@@ -9933,11 +9953,11 @@ msgid ""
 "potential harm and data loss."
 msgstr ""
 
-#: wp/scripts_l10n.php:33
+#: wp/scripts_l10n.php:35
 msgid "Uploading, please wait ..."
 msgstr "Téléchargement, veuillez patienter..."
 
-#: wp/scripts_l10n.php:34
+#: wp/scripts_l10n.php:36
 msgid ""
 "Please enter a valid Item Purchase Code. For more information, please click "
 "on the “Where’s my purchase code?” button."
@@ -9945,11 +9965,11 @@ msgstr ""
 "Entrez un code d'achat d'article valide. Pour plus d'informations, cliquez "
 "sur le bouton \"Où est mon code d'achat?\"."
 
-#: wp/scripts_l10n.php:35
+#: wp/scripts_l10n.php:37
 msgid "Are you sure you want to deactivate this site?"
 msgstr "Êtes-vous sûr de vouloir désactiver ce site?"
 
-#: wp/scripts_l10n.php:36
+#: wp/scripts_l10n.php:38
 msgid ""
 "WARNING: This option controls who can access to this plugin, you can easily "
 "lock out yourself by accident. Please, make sure that you have entered a "
@@ -9961,7 +9981,7 @@ msgstr ""
 "vous avez entré une capacité valide sans espaces blancs ou d'autres "
 "caractères non valides. Voulez-vous poursuivre?"
 
-#: wp/scripts_l10n.php:37
+#: wp/scripts_l10n.php:39
 msgid ""
 "Do not enable this option unless you’re  experiencing issues with jQuery on "
 "your site. This option can easily cause unexpected issues when used "
@@ -9972,7 +9992,7 @@ msgstr ""
 "inattendus lorsqu'elle est utilisée de façon incorrecte. Voulez-vous "
 "poursuivre?"
 
-#: wp/scripts_l10n.php:38
+#: wp/scripts_l10n.php:40
 msgid ""
 "Do not forget to disable this option later on if it does not help, or if you "
 "experience unexpected issues. This includes your entire site, not just "
@@ -9982,11 +10002,11 @@ msgstr ""
 "ou si vous rencontrez des problèmes inattendus. Ceci inclut tout votre site, "
 "pas seulement LayerSlider."
 
-#: wp/scripts_l10n.php:40
+#: wp/scripts_l10n.php:42
 msgid "Importing, please wait..."
 msgstr "Importation, veuillez patienter..."
 
-#: wp/scripts_l10n.php:41
+#: wp/scripts_l10n.php:43
 #, php-format
 msgid ""
 "Importing is taking longer than usual. This might be completely normal, but "
@@ -9994,7 +10014,7 @@ msgid ""
 "%s to check for potential causes if this screen is stuck."
 msgstr ""
 
-#: wp/scripts_l10n.php:42
+#: wp/scripts_l10n.php:44
 #, fuzzy
 #| msgid ""
 #| "It seems there is a server issue that prevented LayerSlider from "
@@ -10018,7 +10038,7 @@ msgstr ""
 "du serveur. Dans de nombreux cas, la tentative d'importation du même slider "
 "peut aider."
 
-#: wp/scripts_l10n.php:43
+#: wp/scripts_l10n.php:45
 #, fuzzy, php-format
 #| msgid ""
 #| "It seems there is a server issue that prevented LayerSlider from "
@@ -10045,7 +10065,7 @@ msgstr ""
 "du serveur. Dans de nombreux cas, la tentative d'importation du même slider "
 "peut aider. Votre serveur HTTP a jeté l'erreur suivante: \\n\\n%s"
 
-#: wp/scripts_l10n.php:44
+#: wp/scripts_l10n.php:46
 #, fuzzy, php-format
 #| msgid ""
 #| "It seems there is a server issue that prevented LayerSlider from saving "
@@ -10070,11 +10090,11 @@ msgstr ""
 "fournisseur d'hébergement pour résoudre les problèmes de configuration du "
 "serveur. Votre serveur HTTP a jeté l'erreur suivante: \\n\\n %s"
 
-#: wp/scripts_l10n.php:47
+#: wp/scripts_l10n.php:49
 msgid "Plugin update required"
 msgstr "Mise à jour du plugin requise"
 
-#: wp/scripts_l10n.php:48
+#: wp/scripts_l10n.php:50
 #, fuzzy, php-format
 #| msgid ""
 #| "This slider template requires a newer version of LayerSlider in order to "
@@ -10093,7 +10113,7 @@ msgstr ""
 "des instructions de mise à jour, veuillez consulter notre %sdocumentation en "
 "ligne%s."
 
-#: wp/scripts_l10n.php:52
+#: wp/scripts_l10n.php:54
 msgid ""
 "You need to have at least one character set added. Please select another "
 "item before removing this one."
@@ -10101,205 +10121,205 @@ msgstr ""
 "Vous devez avoir ajouté au moins un ensemble de caractères. Veuillez "
 "sélectionner un autre élément avant de retirer celui-ci."
 
-#: wp/scripts_l10n.php:54
+#: wp/scripts_l10n.php:56
 #, php-format
 msgid "Select %s font variants"
 msgstr "Sélectionnez %s variantes de police"
 
-#: wp/scripts_l10n.php:58
+#: wp/scripts_l10n.php:60
 #, php-format
 msgid "Slide #%d copy"
 msgstr "Slide #%d copie"
 
-#: wp/scripts_l10n.php:60
+#: wp/scripts_l10n.php:62
 #, php-format
 msgid "Layer #%d copy"
 msgstr "Layer #%d copie"
 
-#: wp/scripts_l10n.php:61
+#: wp/scripts_l10n.php:63
 msgid "Layer settings"
 msgstr "Paramètres Layer"
 
-#: wp/scripts_l10n.php:62
+#: wp/scripts_l10n.php:64
 #, fuzzy
 #| msgid "Layer type"
 msgid "Layer styles"
 msgstr "Type de layer"
 
-#: wp/scripts_l10n.php:63
+#: wp/scripts_l10n.php:65
 msgid "Slide settings"
 msgstr "Paramètres Slide"
 
-#: wp/scripts_l10n.php:64
+#: wp/scripts_l10n.php:66
 msgid "New layer"
 msgstr "Nouveau layer"
 
-#: wp/scripts_l10n.php:65
+#: wp/scripts_l10n.php:67
 msgid "New layers"
 msgstr "Nouveaux layers"
 
-#: wp/scripts_l10n.php:66
+#: wp/scripts_l10n.php:68
 msgid "Video poster"
 msgstr "Affiche vidéo"
 
-#: wp/scripts_l10n.php:67
+#: wp/scripts_l10n.php:69
 msgid "Remove video poster"
 msgstr "Supprimer l'affiche vidéo"
 
-#: wp/scripts_l10n.php:68
+#: wp/scripts_l10n.php:70
 msgid "Layer position"
 msgstr "Layer position"
 
-#: wp/scripts_l10n.php:69
+#: wp/scripts_l10n.php:71
 msgid "Remove layer(s)"
 msgstr "Supprimer layer(s)"
 
-#: wp/scripts_l10n.php:70
+#: wp/scripts_l10n.php:72
 msgid "Hide layer"
 msgstr "Cacher layer"
 
-#: wp/scripts_l10n.php:71
+#: wp/scripts_l10n.php:73
 msgid "Lock layer"
 msgstr "Bloquer layer"
 
-#: wp/scripts_l10n.php:72
+#: wp/scripts_l10n.php:74
 msgid "Paste layer settings"
 msgstr "Copier paramètres layer"
 
-#: wp/scripts_l10n.php:73
+#: wp/scripts_l10n.php:75
 msgid "Slide image"
 msgstr "Image slide"
 
-#: wp/scripts_l10n.php:74
+#: wp/scripts_l10n.php:76
 msgid "Layer image"
 msgstr "Image layer"
 
-#: wp/scripts_l10n.php:75
+#: wp/scripts_l10n.php:77
 msgid "Sort layers"
 msgstr "Trier layers"
 
-#: wp/scripts_l10n.php:76
+#: wp/scripts_l10n.php:78
 msgid "Layer type"
 msgstr "Type de layer"
 
-#: wp/scripts_l10n.php:77
+#: wp/scripts_l10n.php:79
 msgid "Layer media"
 msgstr "Média layer"
 
-#: wp/scripts_l10n.php:78
+#: wp/scripts_l10n.php:80
 msgid "Layer resize"
 msgstr "Redimensionne layer"
 
-#: wp/scripts_l10n.php:79
+#: wp/scripts_l10n.php:81
 msgid "Align layer(s)"
 msgstr "Aligner layer(s)"
 
-#: wp/scripts_l10n.php:80
+#: wp/scripts_l10n.php:82
 msgid "Remove slide image"
 msgstr "Supprimer image slide"
 
-#: wp/scripts_l10n.php:81
+#: wp/scripts_l10n.php:83
 msgid "Remove layer image"
 msgstr "Supprimer image layer"
 
-#: wp/scripts_l10n.php:82
+#: wp/scripts_l10n.php:84
 msgid "Drag me :)"
 msgstr "Tire moi :)"
 
-#: wp/scripts_l10n.php:83
+#: wp/scripts_l10n.php:85
 msgid "Double click to<br> set image"
 msgstr ""
 
-#: wp/scripts_l10n.php:84
+#: wp/scripts_l10n.php:86
 msgid "Double click to<br> add media"
 msgstr ""
 
-#: wp/scripts_l10n.php:85
+#: wp/scripts_l10n.php:87
 msgid "Double click to<br> add icon"
 msgstr ""
 
-#: wp/scripts_l10n.php:86
+#: wp/scripts_l10n.php:88
 #, fuzzy
 #| msgid "Layer"
 msgid "Text Layer"
 msgstr "Layer"
 
-#: wp/scripts_l10n.php:87
+#: wp/scripts_l10n.php:89
 #, fuzzy
 #| msgid "Layer"
 msgid "HTML Layer"
 msgstr "Layer"
 
-#: wp/scripts_l10n.php:88
+#: wp/scripts_l10n.php:90
 msgid "Button Label"
 msgstr ""
 
-#: wp/scripts_l10n.php:89
+#: wp/scripts_l10n.php:91
 msgid "Howdy, [author]"
 msgstr ""
 
-#: wp/scripts_l10n.php:91
+#: wp/scripts_l10n.php:93
 msgid ""
 "Layer Preview is not available in Multiple Selection Mode. Select only one "
 "layer to use this feature. "
 msgstr ""
 
-#: wp/scripts_l10n.php:92
+#: wp/scripts_l10n.php:94
 #, php-format
 msgid ""
 "Auto-generated URLs are not available in Preview. This layer will link to "
 "“%s” on your front-end pages."
 msgstr ""
 
-#: wp/scripts_l10n.php:93
+#: wp/scripts_l10n.php:95
 #, php-format
 msgid "Until the end of Slide #%d"
 msgstr "Jusqu'à la fin de Slide #%d"
 
-#: wp/scripts_l10n.php:94
+#: wp/scripts_l10n.php:96
 msgid "There’s nothing to paste. Copy a layer first!"
 msgstr "Il n'y a rien à coller. Copiez d'abord un layer!"
 
-#: wp/scripts_l10n.php:95
+#: wp/scripts_l10n.php:97
 msgid "There is nothing to paste!"
 msgstr "Il n'y a rien à coller!"
 
-#: wp/scripts_l10n.php:96
+#: wp/scripts_l10n.php:98
 msgid "Are you sure you want to remove this slide?"
 msgstr "Êtes-vous sûr de vouloir supprimer ce slide?"
 
-#: wp/scripts_l10n.php:97
+#: wp/scripts_l10n.php:99
 msgid "Are you sure you want to remove this layer?"
 msgstr "Êtes-vous sûr de vouloir supprimer ce layer?"
 
-#: wp/scripts_l10n.php:98
+#: wp/scripts_l10n.php:100
 msgid "Pick an image to use it in LayerSlider WP"
 msgstr "Choisissez une image pour l'utiliser dans LayerSlider WP"
 
-#: wp/scripts_l10n.php:99
+#: wp/scripts_l10n.php:101
 #, fuzzy
 #| msgid "Choose a file to import sliders."
 msgid "Choose video or audio files"
 msgstr "Choisissez un fichier pour importer des Sliders."
 
-#: wp/scripts_l10n.php:100
+#: wp/scripts_l10n.php:102
 msgid "Upload error"
 msgstr "Erreur de téléchargement"
 
-#: wp/scripts_l10n.php:101
+#: wp/scripts_l10n.php:103
 #, php-format
 msgid "Upload error: %s"
 msgstr "Erreur de téléchargement: %s"
 
-#: wp/scripts_l10n.php:102
+#: wp/scripts_l10n.php:104
 msgid "Invalid format"
 msgstr "Format invalide"
 
-#: wp/scripts_l10n.php:103
+#: wp/scripts_l10n.php:105
 msgid "Enter an image URL"
 msgstr "Entrez une URL d'image"
 
-#: wp/scripts_l10n.php:104
+#: wp/scripts_l10n.php:106
 msgid ""
 "Are you sure you want to apply the currently selected transitions and "
 "effects on the other slides?"
@@ -10307,11 +10327,11 @@ msgstr ""
 "Êtes-vous sûr de vouloir appliquer les transitions et les effets "
 "actuellement sélectionnés sur les autres slides?"
 
-#: wp/scripts_l10n.php:105
+#: wp/scripts_l10n.php:107
 msgid "No posts were found with the current filters."
 msgstr "Aucun posts n'a été trouvé avec les filtres actuels."
 
-#: wp/scripts_l10n.php:106
+#: wp/scripts_l10n.php:108
 #, fuzzy, php-format
 #| msgid ""
 #| "It seems there is a server issue that prevented LayerSlider from saving "
@@ -10336,7 +10356,7 @@ msgstr ""
 "fournisseur d'hébergement pour résoudre les problèmes de configuration du "
 "serveur. Votre serveur HTTP a jeté l'erreur suivante: \\n\\n %s"
 
-#: wp/scripts_l10n.php:107
+#: wp/scripts_l10n.php:109
 msgid ""
 "You have unsaved changes on this page. Do you want to leave and discard the "
 "changes made since your last save?"
@@ -10345,65 +10365,58 @@ msgstr ""
 "quitter et ignorer les modifications apportées depuis votre dernière "
 "sauvegarde?"
 
-#: wp/scripts_l10n.php:108
+#: wp/scripts_l10n.php:110
 #, php-format
 msgid "Linked to WP Page: %s"
 msgstr ""
 
-#: wp/scripts_l10n.php:109
+#: wp/scripts_l10n.php:111
 #, php-format
 msgid "Linked to WP Post: %s"
 msgstr ""
 
-#: wp/scripts_l10n.php:110
+#: wp/scripts_l10n.php:112
 #, php-format
 msgid "Linked to WP Attachment: %s"
 msgstr ""
 
-#: wp/scripts_l10n.php:111
+#: wp/scripts_l10n.php:113
 msgid "Linked to: Post URL from Dynamic content"
 msgstr ""
 
-#: wp/scripts_l10n.php:112
+#: wp/scripts_l10n.php:114
 #, fuzzy, php-format
 #| msgid "LayerSlider version:"
 msgid "LayerSlider Action: %s"
 msgstr "LayerSlider version:"
 
-#: wp/scripts_l10n.php:113
+#: wp/scripts_l10n.php:115
 #, fuzzy
 #| msgid "No sliders were found to export."
 msgid "No sliders found."
 msgstr "Aucun Slider n'a été trouvé pour exporter."
 
-#: wp/scripts_l10n.php:114
+#: wp/scripts_l10n.php:116
 #, fuzzy
 #| msgid "No sliders were found to export."
 msgid "No slides found."
 msgstr "Aucun Slider n'a été trouvé pour exporter."
 
-#: wp/scripts_l10n.php:115
+#: wp/scripts_l10n.php:117
 #, fuzzy
 #| msgid "Not found"
 msgid "No layers found."
 msgstr "Pas trouvé"
 
-#: wp/scripts_l10n.php:123
+#: wp/scripts_l10n.php:125
 msgid "Audio / Video"
 msgstr ""
 
-#: wp/scripts_l10n.php:125
+#: wp/scripts_l10n.php:127
 msgid "Dynamic"
 msgstr ""
 
-#: wp/scripts_l10n.php:127
-msgid ""
-"Image Editor is disabled as per your privacy settings. If you would like to "
-"re-enabled it, please navigate to LayerSlider -> Options -> Privacy from "
-"your WordPress admin sidebar and enable the appropriate option there."
-msgstr ""
-
-#: wp/scripts_l10n.php:133
+#: wp/scripts_l10n.php:134
 msgid "Are you sure you want to remove this transition?"
 msgstr "Êtes-vous sûr de vouloir supprimer cette transition?"
 

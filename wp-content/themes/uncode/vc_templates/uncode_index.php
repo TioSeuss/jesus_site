@@ -1103,6 +1103,11 @@ $main_container_classes[] = trim($this->getExtraClass( $el_class ));
 					}
 
 					$block_data['taxonomy_type'] = $post->taxonomy_type;
+					foreach ( $block_data['taxonomy_type'] as $key_tax => $value_tax ) {
+						if ( $value_tax === 'product_type' || $value_tax === 'product_visibility' || $value_tax === 'product_tag' ) {
+							unset( $block_data['taxonomy_type'][$key_tax] );
+						}
+					}
 					$block_data['single_categories_id'] = $post->categories_id;
 
 					if (isset($typeLayout['media'][1]) && $typeLayout['media'][1] === 'lightbox') {

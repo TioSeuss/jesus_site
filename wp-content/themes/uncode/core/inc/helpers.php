@@ -867,7 +867,7 @@ function uncode_get_oembed($id, $url, $mime, $with_poster = false, $excerpt = nu
 					if ($poster_url !== '') {
 						$poster_url = ' poster="' . $poster_url . '"';
 					}
-					$media_oembed = do_shortcode('[video' . $video_src . $poster_url . $add_loop . ']');
+					$media_oembed = do_shortcode('[video' . $video_src . $poster_url . $add_loop . $add_autoplay . ']');
 				}
 			} else {
 				$media_oembed = $media_type === 'email' || ! $url ? '' : wp_oembed_get($url);

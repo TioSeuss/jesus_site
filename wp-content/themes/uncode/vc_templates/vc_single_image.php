@@ -289,6 +289,9 @@ if ( $media_overlay_color_blend !== '' ) {
 }
 
 switch ($media_padding) {
+	case 0:
+		$block_data['text_padding'] = 'no-block-padding';
+	break;
 	case 1:
 		$block_data['text_padding'] = 'half-block-padding';
 	break;

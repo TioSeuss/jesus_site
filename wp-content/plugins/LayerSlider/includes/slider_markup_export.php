@@ -5,7 +5,7 @@ if( ! class_exists('ZipArchive') ) {
 	wp_die( __('The PHP ZipArchive extension is required to export sliders.', 'LayerSlider') );
 }
 
-if( ! get_option('layerslider-authorized-site', false) ) {
+if( ! LS_Config::isActivatedSite() ) {
 	wp_die( __('Product activation is required in order to use this feature.', 'LayerSlider') );
 }
 

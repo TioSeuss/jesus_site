@@ -34,9 +34,8 @@ class LS_Revisions {
 
 
 	public static function init() {
-		if( get_option('layerslider-authorized-site', false) &&
-			get_option('ls-revisions-enabled', true) ) {
-				self::$active = true;
+		if( LS_Config::isActivatedSite() && get_option('ls-revisions-enabled', true) ) {
+			self::$active = true;
 		}
 
 		$option 		= get_option('ls-revisions-enabled', true);

@@ -9,7 +9,7 @@ function layerslider_check_notices() {
 		add_action('admin_notices', 'layerslider_update_notice');
 		add_action('admin_notices', 'layerslider_dependency_notice');
 
-		if( LS_Config::get('notices') && ! get_option('layerslider-authorized-site', null) ) {
+		if( LS_Config::get('notices') && ! LS_Config::isActivatedSite() ) {
 
 			// Make sure to set an initial timestamp for the notice.
 			if( ! $lastCheck = get_user_meta( get_current_user_id(), 'ls-show-support-notice-timestamp', true ) ) {
@@ -37,7 +37,7 @@ function layerslider_check_notices() {
 	}
 
 	// License notification under the plugin row on the Plugins screen
-	if(!get_option('layerslider-authorized-site', null)) {
+	if( ! LS_Config::isActivatedSite() ) {
 		add_action('after_plugin_row_'.LS_PLUGIN_BASE, 'layerslider_plugins_purchase_notice', 10, 3 );
 	}
 }
@@ -82,7 +82,7 @@ function layerslider_important_notice() {
 
 			// Check audience
 			if( ! empty( $notice['unactivated'] ) ) {
-				if( get_option('layerslider-authorized-site', false) ) {
+				if( LS_Config::isActivatedSite() ) {
 					return;
 				}
 			}
@@ -152,7 +152,7 @@ function layerslider_important_notice() {
 
 function layerslider_update_notice() {
 
-	$activated 	= get_option( 'layerslider-authorized-site', false );
+	$activated 	= LS_Config::isActivatedSite();
 	$updates 	= get_plugin_updates();
 	$latest 	= get_option( 'ls-latest-version', false );
 

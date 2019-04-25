@@ -102,7 +102,7 @@ function ls_get_image($id = null, $url = null) {
 function ls_parse_defaults($defaults = array(), $raw = array()) {
 
 
-	$activated 	= get_option('layerslider-authorized-site', false);
+	$activated 	= LS_Config::isActivatedSite();
 	$capability = get_option('layerslider_custom_capability', 'manage_options');
 	$permission = current_user_can( $capability );
 	$ret = array();

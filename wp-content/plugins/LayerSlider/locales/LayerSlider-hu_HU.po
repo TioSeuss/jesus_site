@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: LayerSlider WP 6.8.0\n"
-"POT-Creation-Date: 2019-02-22 21:19+0100\n"
-"PO-Revision-Date: 2019-02-22 21:19+0100\n"
+"Project-Id-Version: LayerSlider WP 6.8.2\n"
+"POT-Creation-Date: 2019-03-06 16:13+0100\n"
+"PO-Revision-Date: 2019-03-06 16:13+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: hu_HU\n"
@@ -4333,7 +4333,7 @@ msgstr "Betöltés ..."
 msgid "Select a slider first."
 msgstr "Válassz egy slidert először."
 
-#: templates/tmpl-import-layer.php:28 wp/scripts_l10n.php:117
+#: templates/tmpl-import-layer.php:28 wp/scripts_l10n.php:119
 msgid "Select a slide first."
 msgstr "Válassz egy diát először."
 
@@ -4614,7 +4614,7 @@ msgid "Prevent layer dragging in the editor."
 msgstr "Rétegmozgatás megakadályozása a szerkesztőben."
 
 #: templates/tmpl-layer-item.php:10 templates/tmpl-static-layer-item.php:6
-#: wp/scripts_l10n.php:59
+#: wp/scripts_l10n.php:61
 #, php-format
 msgid "Layer #%d"
 msgstr "Réteg #%d"
@@ -4628,7 +4628,7 @@ msgid "Remove this layer"
 msgstr "Réteg törlése"
 
 #: templates/tmpl-layer.php:10 templates/tmpl-preview-context-menu.php:12
-#: templates/tmpl-slide.php:449 wp/scripts_l10n.php:119
+#: templates/tmpl-slide.php:449 wp/scripts_l10n.php:121
 msgid "Image"
 msgstr "Kép"
 
@@ -4637,7 +4637,7 @@ msgid "Press the Add Icon button to insert an icon"
 msgstr "Nyomja meg az ikon hozzáadása gombot, hogy beszúrjon egy ikont"
 
 #: templates/tmpl-layer.php:11 templates/tmpl-preview-context-menu.php:16
-#: templates/tmpl-slide.php:453 wp/scripts_l10n.php:120
+#: templates/tmpl-slide.php:453 wp/scripts_l10n.php:122
 msgid "Icon"
 msgstr "Ikon"
 
@@ -4647,7 +4647,7 @@ msgstr "Csak szöveges tartalmat írj ide"
 
 #: templates/tmpl-layer.php:12 templates/tmpl-layer.php:1815
 #: templates/tmpl-preview-context-menu.php:20 templates/tmpl-slide.php:457
-#: wp/scripts_l10n.php:121
+#: wp/scripts_l10n.php:123
 msgid "Text"
 msgstr "Szöveg"
 
@@ -4656,7 +4656,7 @@ msgid "Enter the label of your button"
 msgstr "Add meg a gomb feliratát"
 
 #: templates/tmpl-layer.php:13 templates/tmpl-preview-context-menu.php:24
-#: templates/tmpl-slide.php:461 wp/scripts_l10n.php:122
+#: templates/tmpl-slide.php:461 wp/scripts_l10n.php:124
 msgid "Button"
 msgstr "Gomb"
 
@@ -4678,7 +4678,7 @@ msgstr ""
 "a külső oldalakon fog megjelenni"
 
 #: templates/tmpl-layer.php:17 templates/tmpl-preview-context-menu.php:32
-#: templates/tmpl-slide.php:469 wp/scripts_l10n.php:124
+#: templates/tmpl-slide.php:469 wp/scripts_l10n.php:126
 msgid "HTML"
 msgstr "HTML"
 
@@ -5377,8 +5377,8 @@ msgstr ""
 msgid "Preview for Selected Revision"
 msgstr "Előnézet a kiválasztott változathoz"
 
-#: templates/tmpl-revisions-history.php:221 views/slider_edit.php:440
-#: wp/scripts_l10n.php:57
+#: templates/tmpl-revisions-history.php:221 views/slider_edit.php:444
+#: wp/scripts_l10n.php:59
 #, php-format
 msgid "Slide #%d"
 msgstr "Dia #%d"
@@ -5387,7 +5387,7 @@ msgstr "Dia #%d"
 msgid "Auto-Fit"
 msgstr "Auto-méret"
 
-#: templates/tmpl-revisions-history.php:261 wp/scripts_l10n.php:90
+#: templates/tmpl-revisions-history.php:261 wp/scripts_l10n.php:92
 msgid "Preview Slide"
 msgstr "Dia előnézete"
 
@@ -5459,29 +5459,29 @@ msgstr "Megosztás"
 msgid "Tweet"
 msgstr "Tweet"
 
-#: templates/tmpl-slide-tab.php:8 views/slider_edit.php:458
+#: templates/tmpl-slide-tab.php:8 views/slider_edit.php:462
 #: views/slider_list.php:444 wp/tinymce_l10n.php:12
 msgid "No Preview"
 msgstr "Nincs előnézet"
 
-#: templates/tmpl-slide-tab.php:11 views/slider_edit.php:461
+#: templates/tmpl-slide-tab.php:11 views/slider_edit.php:465
 msgid "Type slide name here"
 msgstr "Dia elnevezése "
 
-#: templates/tmpl-slide-tab.php:17 views/slider_edit.php:467
+#: templates/tmpl-slide-tab.php:17 views/slider_edit.php:471
 #: views/slider_list.php:375 views/slider_list.php:474
 msgid "Duplicate"
 msgstr "Duplikálás"
 
-#: templates/tmpl-slide-tab.php:23 views/slider_edit.php:473
+#: templates/tmpl-slide-tab.php:23 views/slider_edit.php:477
 msgid "Hide"
 msgstr "Elrejtés"
 
-#: templates/tmpl-slide-tab.php:27 views/slider_edit.php:477
+#: templates/tmpl-slide-tab.php:27 views/slider_edit.php:481
 msgid "Unhide"
 msgstr "Mutatás"
 
-#: templates/tmpl-slide-tab.php:33 views/slider_edit.php:483
+#: templates/tmpl-slide-tab.php:33 views/slider_edit.php:487
 #: views/slider_list.php:387 views/slider_list.php:486
 msgid "Remove"
 msgstr "Eltávolítás"
@@ -5663,7 +5663,7 @@ msgstr "Réteg"
 msgid "Layers"
 msgstr "Rétegek"
 
-#: templates/tmpl-slide.php:440 views/slider_edit.php:493
+#: templates/tmpl-slide.php:440 views/slider_edit.php:497
 #: views/transition_builder.php:102 views/transition_builder.php:127
 msgid "Add New"
 msgstr "Új hozzáadása"
@@ -5699,27 +5699,37 @@ msgstr "Statikus rétegek más diákról"
 msgid "Layers on this slide"
 msgstr "Rétegek ezen a dián"
 
-#: templates/tmpl-slide.php:510
+#: templates/tmpl-slide.php:515
+msgid "Nothing to see here. <br> We popped out. ;)"
+msgstr ""
+
+#: templates/tmpl-slide.php:520
+#, fuzzy
+#| msgid "Layer editor"
+msgid "Restore editor"
+msgstr "Réteg szerkesztő"
+
+#: templates/tmpl-slide.php:529
 msgid "You can grab me here and drag where you need."
 msgstr "Ezt az ablakot megfoghatod és szabadon mozgathatod."
 
-#: templates/tmpl-slide.php:515
+#: templates/tmpl-slide.php:534
 msgid "Layer editor"
 msgstr "Réteg szerkesztő"
 
-#: templates/tmpl-slide.php:518
+#: templates/tmpl-slide.php:537
 msgid "Put back"
 msgstr "Visszahelyezés"
 
-#: templates/tmpl-slide.php:525
+#: templates/tmpl-slide.php:544
 msgid "Multiple Selection Mode"
 msgstr "Többszörös kijelölési mód"
 
-#: templates/tmpl-slide.php:526
+#: templates/tmpl-slide.php:545
 msgid "BETA"
 msgstr ""
 
-#: templates/tmpl-slide.php:528
+#: templates/tmpl-slide.php:547
 msgid ""
 "In Multiple Selection Mode you can override specific options on all selected "
 "layers. Each option field has been reset, only the options you change will "
@@ -5727,28 +5737,30 @@ msgid ""
 "use it cautiously."
 msgstr ""
 
-#: templates/tmpl-slide.php:529
+#: templates/tmpl-slide.php:548
 msgid "Changes will be applied on all selected layers."
 msgstr ""
 
-#: templates/tmpl-slide.php:533
+#: templates/tmpl-slide.php:552
 msgid "Content"
 msgstr "Tartalom"
 
-#: templates/tmpl-slide.php:534
+#: templates/tmpl-slide.php:553
 msgid "Transitions"
 msgstr "Animációk"
 
-#: templates/tmpl-slide.php:535
+#: templates/tmpl-slide.php:554
 msgid "Link & Attributes"
 msgstr "Link és Attribútumok"
 
-#: templates/tmpl-slide.php:536
+#: templates/tmpl-slide.php:555
 msgid "Styles"
 msgstr "Stílusok"
 
-#: templates/tmpl-slide.php:539
-msgid "Pop out editor"
+#: templates/tmpl-slide.php:558
+#, fuzzy
+#| msgid "Pop out editor"
+msgid "Popout editor"
 msgstr "Leválasztás"
 
 #: templates/tmpl-slider-settings.php:12
@@ -5770,7 +5782,7 @@ msgid ""
 "setting is optional."
 msgstr ""
 
-#: templates/tmpl-slider-settings.php:21 views/slider_edit.php:397
+#: templates/tmpl-slider-settings.php:21 views/slider_edit.php:401
 msgid "Slider Settings"
 msgstr "Slider beállítások"
 
@@ -6568,7 +6580,7 @@ msgid ""
 msgstr ""
 
 #: views/css_editor.php:78 views/settings.php:129 views/settings.php:188
-#: views/settings.php:352 views/skin_editor.php:88 views/slider_edit.php:837
+#: views/settings.php:352 views/skin_editor.php:88 views/slider_edit.php:841
 #: views/transition_builder.php:600 wp/scripts_l10n.php:6
 msgid "Save changes"
 msgstr "Változások mentése"
@@ -6629,7 +6641,7 @@ msgstr "A beállításaid frissültek."
 msgid "LayerSlider Settings"
 msgstr "Slider beállítások"
 
-#: views/settings.php:65 views/slider_edit.php:382
+#: views/settings.php:65 views/slider_edit.php:386
 msgid "&larr; Sliders"
 msgstr "&larr;  Sliderek"
 
@@ -6742,7 +6754,7 @@ msgstr ""
 msgid "Load only on admin interface"
 msgstr "Használat kizárólag az adminisztrációs felületen"
 
-#: views/settings.php:161 wp/scripts_l10n.php:51
+#: views/settings.php:161 wp/scripts_l10n.php:53
 msgid "You haven’t added any Google Font to your collection yet."
 msgstr ""
 "Még egyetlen betűtípust sem adtál hozzá a Google Fonts gyűjteményedhez."
@@ -6755,7 +6767,7 @@ msgstr "Add meg a betűtípus nevét a gyűjteményhez adáshoz"
 msgid "Search"
 msgstr "Keresés"
 
-#: views/settings.php:172 wp/scripts_l10n.php:53
+#: views/settings.php:172 wp/scripts_l10n.php:55
 msgid "Choose a font family"
 msgstr "Válassz egy betűtípust"
 
@@ -6967,7 +6979,7 @@ msgstr ""
 
 #: views/settings.php:319
 msgid ""
-"Enable this option to ignore LayerSlider files by CloudFront’s Rocket "
+"Enable this option to ignore LayerSlider files by CloudFlare’s Rocket "
 "Loader, which can help overcoming potential issues."
 msgstr ""
 
@@ -7116,214 +7128,214 @@ msgstr ""
 msgid "Expand Sidebar On Hover"
 msgstr ""
 
-#: views/slider_edit.php:379
+#: views/slider_edit.php:383
 msgid "Editing slider:"
 msgstr "Slider szerkesztése:"
 
-#: views/slider_edit.php:401 views/slider_list.php:300
+#: views/slider_edit.php:405 views/slider_list.php:300
 msgid "Slides"
 msgstr "Diák"
 
-#: views/slider_edit.php:405
+#: views/slider_edit.php:409
 msgid "Event Callbacks"
 msgstr ""
 
-#: views/slider_edit.php:409
+#: views/slider_edit.php:413
 msgid "FAQ"
 msgstr "GYIK"
 
-#: views/slider_edit.php:413
+#: views/slider_edit.php:417
 msgid "Documentation"
 msgstr "Dokumentáció"
 
-#: views/slider_edit.php:415
+#: views/slider_edit.php:419
 msgid "Need help? Try these:"
 msgstr "Segítségre van szükséged? Próbáld ki ezeket:"
 
-#: views/slider_edit.php:499 views/transition_builder.php:98
+#: views/slider_edit.php:503 views/transition_builder.php:98
 #: views/transition_builder.php:123
 msgid "Import"
 msgstr "Importálás"
 
-#: views/slider_edit.php:515
+#: views/slider_edit.php:519
 #, php-format
 msgid ""
 "Please read our %sonline documentation%s for more information about the API."
 msgstr ""
 
-#: views/slider_edit.php:519
+#: views/slider_edit.php:523
 #, fuzzy
 #| msgid "Event"
 msgid "Init Events"
 msgstr "Esemény"
 
-#: views/slider_edit.php:524
+#: views/slider_edit.php:528
 msgid "Fires before parsing user data and rendering the UI."
 msgstr "Mielőtt a slider betöltődne."
 
-#: views/slider_edit.php:536
+#: views/slider_edit.php:540
 msgid ""
 "Fires when the slider is fully initialized and its DOM nodes become "
 "accessible."
 msgstr ""
 
-#: views/slider_edit.php:545
+#: views/slider_edit.php:549
 msgid "Resize Events"
 msgstr ""
 
-#: views/slider_edit.php:551
+#: views/slider_edit.php:555
 msgid "Fires before the slider renders resize events."
 msgstr "Mielőtt a slider átméreteződne."
 
-#: views/slider_edit.php:563
+#: views/slider_edit.php:567
 msgid "Fires after the slider has rendered resize events."
 msgstr "Miután a slider átméreteződne."
 
-#: views/slider_edit.php:572
+#: views/slider_edit.php:576
 #, fuzzy
 #| msgid "Slideshow timers"
 msgid "Slideshow Events"
 msgstr "Diavetítés időzítők"
 
-#: views/slider_edit.php:578
+#: views/slider_edit.php:582
 msgid ""
 "Fires upon every slideshow state change, which may not influence the playing "
 "status."
 msgstr ""
 
-#: views/slider_edit.php:590
+#: views/slider_edit.php:594
 msgid "Fires when the slideshow pauses from playing status."
 msgstr ""
 
-#: views/slider_edit.php:602
+#: views/slider_edit.php:606
 msgid "Fires when the slideshow resumes from paused status."
 msgstr ""
 
-#: views/slider_edit.php:612
+#: views/slider_edit.php:616
 msgid "Slide Change Events"
 msgstr ""
 
-#: views/slider_edit.php:618
+#: views/slider_edit.php:622
 msgid ""
 "Signals when the slider wants to change slides, and is your last chance to "
 "divert it or intervene in any way."
 msgstr ""
 
-#: views/slider_edit.php:630
+#: views/slider_edit.php:634
 msgid "Fires when the slider has started a slide change."
 msgstr ""
 
-#: views/slider_edit.php:642
+#: views/slider_edit.php:646
 msgid "Fires before completing a slide change."
 msgstr ""
 
-#: views/slider_edit.php:654
+#: views/slider_edit.php:658
 msgid ""
 "Fires after a slide change has completed and the slide indexes have been "
 "updated. "
 msgstr ""
 
-#: views/slider_edit.php:664
+#: views/slider_edit.php:668
 #, fuzzy
 #| msgid "Slide Timing"
 msgid "Slide Timeline Events"
 msgstr "Dia időzítése"
 
-#: views/slider_edit.php:669
+#: views/slider_edit.php:673
 msgid ""
 "Fires when the current slide’s animation timeline (e.g. your layers) becomes "
 "accessible for interfacing."
 msgstr ""
 
-#: views/slider_edit.php:682
+#: views/slider_edit.php:686
 msgid ""
 "Fires rapidly (at each frame) throughout the entire slide while playing, "
 "including reverse playback."
 msgstr ""
 
-#: views/slider_edit.php:695
+#: views/slider_edit.php:699
 msgid ""
 "Fires when the current slide’s animation timeline (e.g. your layers) has "
 "started playing."
 msgstr ""
 
-#: views/slider_edit.php:707
+#: views/slider_edit.php:711
 msgid ""
 "Fires when the current slide’s animation timeline (e.g. layer transitions) "
 "has completed."
 msgstr ""
 
-#: views/slider_edit.php:719
+#: views/slider_edit.php:723
 msgid ""
 "Fires when all reversed animations have reached the beginning of the current "
 "slide."
 msgstr ""
 
-#: views/slider_edit.php:728
+#: views/slider_edit.php:732
 #, fuzzy
 #| msgid "Event"
 msgid "Media Events"
 msgstr "Esemény"
 
-#: views/slider_edit.php:733
+#: views/slider_edit.php:737
 msgid "A media element on the current slide has started playback."
 msgstr ""
 
-#: views/slider_edit.php:745
+#: views/slider_edit.php:749
 msgid "A media element on the current slide has stopped playback."
 msgstr ""
 
-#: views/slider_edit.php:755
+#: views/slider_edit.php:759
 msgid "Popup Events"
 msgstr ""
 
-#: views/slider_edit.php:760
+#: views/slider_edit.php:764
 msgid "Fires when the Popup starts its opening transition and becomes visible."
 msgstr ""
 
-#: views/slider_edit.php:772
+#: views/slider_edit.php:776
 msgid "Fires when the Popup completed its opening transition."
 msgstr ""
 
-#: views/slider_edit.php:784
+#: views/slider_edit.php:788
 msgid "Fires when the Popup stars its closing transition."
 msgstr ""
 
-#: views/slider_edit.php:796
+#: views/slider_edit.php:800
 msgid ""
 "Fires when the Popup completed its closing transition and became hidden."
 msgstr ""
 
-#: views/slider_edit.php:806
+#: views/slider_edit.php:810
 msgid "Destroy Events"
 msgstr ""
 
-#: views/slider_edit.php:812
+#: views/slider_edit.php:816
 msgid ""
 "Fires when the slider destructor has finished and it is safe to remove the "
 "slider from the DOM."
 msgstr ""
 
-#: views/slider_edit.php:824
+#: views/slider_edit.php:828
 msgid ""
 "Fires when the slider has been removed from the DOM when using the "
 "<i>destroy</i> API method."
 msgstr ""
 
-#: views/slider_edit.php:843
+#: views/slider_edit.php:847
 msgid "Revisions Available:"
 msgstr "Változatok:"
 
-#: views/slider_edit.php:843
+#: views/slider_edit.php:847
 #, php-format
 msgid "Browse %d Revisions"
 msgstr "%d változat böngészése"
 
-#: views/slider_edit.php:846
+#: views/slider_edit.php:850
 msgid "Use shortcode:"
 msgstr "Shortkód használata:"
 
-#: views/slider_edit.php:847
+#: views/slider_edit.php:851
 msgid "Use PHP function:"
 msgstr "PHP függvény használata:"
 
@@ -8220,12 +8232,12 @@ msgid "2D Transitions"
 msgstr "2D animáció"
 
 #: views/transition_builder.php:112 views/transition_builder.php:137
-#: wp/scripts_l10n.php:131
+#: wp/scripts_l10n.php:132
 msgid "Type transition name"
 msgstr ""
 
 #: views/transition_builder.php:113 views/transition_builder.php:138
-#: wp/scripts_l10n.php:132
+#: wp/scripts_l10n.php:133
 msgid "Remove transition"
 msgstr ""
 
@@ -8486,27 +8498,35 @@ msgstr "A slidert sikeresen elmentetted"
 msgid "Capturing slide. This might take a moment ..."
 msgstr ""
 
-#: wp/scripts_l10n.php:26
-msgid "Product activation is required to access premium templates."
+#: wp/scripts_l10n.php:24
+msgid "Saving image. This might take a moment ..."
 msgstr ""
 
 #: wp/scripts_l10n.php:27
+msgid "Something went wrong ..."
+msgstr ""
+
+#: wp/scripts_l10n.php:28
+msgid "Product activation is required to access premium templates."
+msgstr ""
+
+#: wp/scripts_l10n.php:29
 #, fuzzy
 #| msgid "LayerSlider product activation was canceled on this site"
 msgid "Product activation is required to access this feature."
 msgstr "A LayerSlider aktiváció vissza lett vonva ezen az oldalon."
 
-#: wp/scripts_l10n.php:28
+#: wp/scripts_l10n.php:30
 #, fuzzy
 #| msgid "LayerSlider product activation was canceled on this site"
 msgid "Product activation is required to receive automatic updates."
 msgstr "A LayerSlider aktiváció vissza lett vonva ezen az oldalon."
 
-#: wp/scripts_l10n.php:31
+#: wp/scripts_l10n.php:33
 msgid "Are you sure you want to remove this slider?"
 msgstr ""
 
-#: wp/scripts_l10n.php:32
+#: wp/scripts_l10n.php:34
 msgid ""
 "You’re about to export this slider as HTML. This option is for the jQuery "
 "version of LayerSlider and you will *NOT* be able to use the downloaded "
@@ -8518,21 +8538,21 @@ msgid ""
 "potential harm and data loss."
 msgstr ""
 
-#: wp/scripts_l10n.php:33
+#: wp/scripts_l10n.php:35
 msgid "Uploading, please wait ..."
 msgstr ""
 
-#: wp/scripts_l10n.php:34
+#: wp/scripts_l10n.php:36
 msgid ""
 "Please enter a valid Item Purchase Code. For more information, please click "
 "on the “Where’s my purchase code?” button."
 msgstr ""
 
-#: wp/scripts_l10n.php:35
+#: wp/scripts_l10n.php:37
 msgid "Are you sure you want to deactivate this site?"
 msgstr "Biztos deaktiválni akarod ezt az oldalt?"
 
-#: wp/scripts_l10n.php:36
+#: wp/scripts_l10n.php:38
 msgid ""
 "WARNING: This option controls who can access to this plugin, you can easily "
 "lock out yourself by accident. Please, make sure that you have entered a "
@@ -8540,25 +8560,25 @@ msgid ""
 "want to proceed?"
 msgstr ""
 
-#: wp/scripts_l10n.php:37
+#: wp/scripts_l10n.php:39
 msgid ""
 "Do not enable this option unless you’re  experiencing issues with jQuery on "
 "your site. This option can easily cause unexpected issues when used "
 "incorrectly. Do you want to proceed?"
 msgstr ""
 
-#: wp/scripts_l10n.php:38
+#: wp/scripts_l10n.php:40
 msgid ""
 "Do not forget to disable this option later on if it does not help, or if you "
 "experience unexpected issues. This includes your entire site, not just "
 "LayerSlider."
 msgstr ""
 
-#: wp/scripts_l10n.php:40
+#: wp/scripts_l10n.php:42
 msgid "Importing, please wait..."
 msgstr ""
 
-#: wp/scripts_l10n.php:41
+#: wp/scripts_l10n.php:43
 #, php-format
 msgid ""
 "Importing is taking longer than usual. This might be completely normal, but "
@@ -8566,7 +8586,7 @@ msgid ""
 "%s to check for potential causes if this screen is stuck."
 msgstr ""
 
-#: wp/scripts_l10n.php:42
+#: wp/scripts_l10n.php:44
 msgid ""
 "It seems there is a server issue that prevented LayerSlider from importing "
 "your selected slider. Please check LayerSlider -> Options -> System Status "
@@ -8575,7 +8595,7 @@ msgid ""
 "configuration problems. Retrying the import might also help."
 msgstr ""
 
-#: wp/scripts_l10n.php:43
+#: wp/scripts_l10n.php:45
 #, php-format
 msgid ""
 "It seems there is a server issue that prevented LayerSlider from importing "
@@ -8588,7 +8608,7 @@ msgid ""
 " %s"
 msgstr ""
 
-#: wp/scripts_l10n.php:44
+#: wp/scripts_l10n.php:46
 #, php-format
 msgid ""
 "It seems there is a server issue that prevented LayerSlider from performing "
@@ -8600,11 +8620,11 @@ msgid ""
 " %s"
 msgstr ""
 
-#: wp/scripts_l10n.php:47
+#: wp/scripts_l10n.php:49
 msgid "Plugin update required"
 msgstr "Plugin frissítés szükséges"
 
-#: wp/scripts_l10n.php:48
+#: wp/scripts_l10n.php:50
 #, php-format
 msgid ""
 "This slider template requires a newer version of LayerSlider in order to "
@@ -8613,205 +8633,205 @@ msgid ""
 "%sonline documentation%s."
 msgstr ""
 
-#: wp/scripts_l10n.php:52
+#: wp/scripts_l10n.php:54
 msgid ""
 "You need to have at least one character set added. Please select another "
 "item before removing this one."
 msgstr ""
 
-#: wp/scripts_l10n.php:54
+#: wp/scripts_l10n.php:56
 #, php-format
 msgid "Select %s font variants"
 msgstr ""
 
-#: wp/scripts_l10n.php:58
+#: wp/scripts_l10n.php:60
 #, php-format
 msgid "Slide #%d copy"
 msgstr "Dia #%d másolat"
 
-#: wp/scripts_l10n.php:60
+#: wp/scripts_l10n.php:62
 #, php-format
 msgid "Layer #%d copy"
 msgstr "Réteg #%d másolat"
 
-#: wp/scripts_l10n.php:61
+#: wp/scripts_l10n.php:63
 msgid "Layer settings"
 msgstr "Réteg beállítások"
 
-#: wp/scripts_l10n.php:62
+#: wp/scripts_l10n.php:64
 msgid "Layer styles"
 msgstr "Rétegstílusok"
 
-#: wp/scripts_l10n.php:63
+#: wp/scripts_l10n.php:65
 msgid "Slide settings"
 msgstr "Dia beállítások"
 
-#: wp/scripts_l10n.php:64
+#: wp/scripts_l10n.php:66
 msgid "New layer"
 msgstr "Új réteg"
 
-#: wp/scripts_l10n.php:65
+#: wp/scripts_l10n.php:67
 msgid "New layers"
 msgstr "Új rétegek"
 
-#: wp/scripts_l10n.php:66
+#: wp/scripts_l10n.php:68
 msgid "Video poster"
 msgstr "Videó poszter"
 
-#: wp/scripts_l10n.php:67
+#: wp/scripts_l10n.php:69
 msgid "Remove video poster"
 msgstr ""
 
-#: wp/scripts_l10n.php:68
+#: wp/scripts_l10n.php:70
 msgid "Layer position"
 msgstr ""
 
-#: wp/scripts_l10n.php:69
+#: wp/scripts_l10n.php:71
 msgid "Remove layer(s)"
 msgstr ""
 
-#: wp/scripts_l10n.php:70
+#: wp/scripts_l10n.php:72
 msgid "Hide layer"
 msgstr "Réteg elrejtése a szerkesztőben"
 
-#: wp/scripts_l10n.php:71
+#: wp/scripts_l10n.php:73
 msgid "Lock layer"
 msgstr "Réteg zárolása"
 
-#: wp/scripts_l10n.php:72
+#: wp/scripts_l10n.php:74
 msgid "Paste layer settings"
 msgstr "Rétegbeállítások beillesztése"
 
-#: wp/scripts_l10n.php:73
+#: wp/scripts_l10n.php:75
 msgid "Slide image"
 msgstr ""
 
-#: wp/scripts_l10n.php:74
+#: wp/scripts_l10n.php:76
 msgid "Layer image"
 msgstr ""
 
-#: wp/scripts_l10n.php:75
+#: wp/scripts_l10n.php:77
 msgid "Sort layers"
 msgstr ""
 
-#: wp/scripts_l10n.php:76
+#: wp/scripts_l10n.php:78
 msgid "Layer type"
 msgstr ""
 
-#: wp/scripts_l10n.php:77
+#: wp/scripts_l10n.php:79
 msgid "Layer media"
 msgstr ""
 
-#: wp/scripts_l10n.php:78
+#: wp/scripts_l10n.php:80
 msgid "Layer resize"
 msgstr ""
 
-#: wp/scripts_l10n.php:79
+#: wp/scripts_l10n.php:81
 msgid "Align layer(s)"
 msgstr ""
 
-#: wp/scripts_l10n.php:80
+#: wp/scripts_l10n.php:82
 msgid "Remove slide image"
 msgstr ""
 
-#: wp/scripts_l10n.php:81
+#: wp/scripts_l10n.php:83
 msgid "Remove layer image"
 msgstr ""
 
-#: wp/scripts_l10n.php:82
+#: wp/scripts_l10n.php:84
 msgid "Drag me :)"
 msgstr "Fogj meg! :)"
 
-#: wp/scripts_l10n.php:83
+#: wp/scripts_l10n.php:85
 msgid "Double click to<br> set image"
 msgstr "Dupla katt a kép <br> kiválasztásához"
 
-#: wp/scripts_l10n.php:84
+#: wp/scripts_l10n.php:86
 msgid "Double click to<br> add media"
 msgstr "Dupla katt a média <br> kiválasztásához"
 
-#: wp/scripts_l10n.php:85
+#: wp/scripts_l10n.php:87
 msgid "Double click to<br> add icon"
 msgstr "Dupla katt az ikon <br> kiválasztásához"
 
-#: wp/scripts_l10n.php:86
+#: wp/scripts_l10n.php:88
 msgid "Text Layer"
 msgstr "Szövegréteg"
 
-#: wp/scripts_l10n.php:87
+#: wp/scripts_l10n.php:89
 msgid "HTML Layer"
 msgstr "HTML réteg"
 
-#: wp/scripts_l10n.php:88
+#: wp/scripts_l10n.php:90
 msgid "Button Label"
 msgstr ""
 
-#: wp/scripts_l10n.php:89
+#: wp/scripts_l10n.php:91
 msgid "Howdy, [author]"
 msgstr ""
 
-#: wp/scripts_l10n.php:91
+#: wp/scripts_l10n.php:93
 msgid ""
 "Layer Preview is not available in Multiple Selection Mode. Select only one "
 "layer to use this feature. "
 msgstr ""
 
-#: wp/scripts_l10n.php:92
+#: wp/scripts_l10n.php:94
 #, php-format
 msgid ""
 "Auto-generated URLs are not available in Preview. This layer will link to "
 "“%s” on your front-end pages."
 msgstr ""
 
-#: wp/scripts_l10n.php:93
+#: wp/scripts_l10n.php:95
 #, php-format
 msgid "Until the end of Slide #%d"
 msgstr ""
 
-#: wp/scripts_l10n.php:94
+#: wp/scripts_l10n.php:96
 msgid "There’s nothing to paste. Copy a layer first!"
 msgstr "Nincs mit beilleszteni. Másolj egy réteget először!"
 
-#: wp/scripts_l10n.php:95
+#: wp/scripts_l10n.php:97
 msgid "There is nothing to paste!"
 msgstr "Nincs mit beilleszteni!"
 
-#: wp/scripts_l10n.php:96
+#: wp/scripts_l10n.php:98
 msgid "Are you sure you want to remove this slide?"
 msgstr "Biztos törölni szeretnéd ezt a diát?"
 
-#: wp/scripts_l10n.php:97
+#: wp/scripts_l10n.php:99
 msgid "Are you sure you want to remove this layer?"
 msgstr "Biztos törölni szeretnéd ezt a réteget?"
 
-#: wp/scripts_l10n.php:98
+#: wp/scripts_l10n.php:100
 msgid "Pick an image to use it in LayerSlider WP"
 msgstr "Válassz egy képet a LayerSliderben való használathoz"
 
-#: wp/scripts_l10n.php:99
+#: wp/scripts_l10n.php:101
 #, fuzzy
 #| msgid "Choose a file to import sliders."
 msgid "Choose video or audio files"
 msgstr "Válassz ki egy fájlt az importáláshoz."
 
-#: wp/scripts_l10n.php:100
+#: wp/scripts_l10n.php:102
 msgid "Upload error"
 msgstr "Hiba a feltöltés során"
 
-#: wp/scripts_l10n.php:101
+#: wp/scripts_l10n.php:103
 #, php-format
 msgid "Upload error: %s"
 msgstr "Hiba a feltöltés során %s"
 
-#: wp/scripts_l10n.php:102
+#: wp/scripts_l10n.php:104
 msgid "Invalid format"
 msgstr "Érvénytelen formátum"
 
-#: wp/scripts_l10n.php:103
+#: wp/scripts_l10n.php:105
 msgid "Enter an image URL"
 msgstr "Kép URL megadása"
 
-#: wp/scripts_l10n.php:104
+#: wp/scripts_l10n.php:106
 msgid ""
 "Are you sure you want to apply the currently selected transitions and "
 "effects on the other slides?"
@@ -8819,11 +8839,11 @@ msgstr ""
 "Biztos szeretnéd értelmezni a jelenleg kiválasztott animációkat az összes "
 "többi diára?"
 
-#: wp/scripts_l10n.php:105
+#: wp/scripts_l10n.php:107
 msgid "No posts were found with the current filters."
 msgstr "Nem találhatóak bejegyzések jelen szűrők mellett."
 
-#: wp/scripts_l10n.php:106
+#: wp/scripts_l10n.php:108
 #, php-format
 msgid ""
 "It seems there is a server issue that prevented LayerSlider from saving your "
@@ -8835,7 +8855,7 @@ msgid ""
 " %s"
 msgstr ""
 
-#: wp/scripts_l10n.php:107
+#: wp/scripts_l10n.php:109
 msgid ""
 "You have unsaved changes on this page. Do you want to leave and discard the "
 "changes made since your last save?"
@@ -8843,58 +8863,51 @@ msgstr ""
 "Az oldalon nem mentett változások találhatóak, melyek elnavigálás esetén "
 "elvesznének. Biztos folytatod?"
 
-#: wp/scripts_l10n.php:108
+#: wp/scripts_l10n.php:110
 #, php-format
 msgid "Linked to WP Page: %s"
 msgstr ""
 
-#: wp/scripts_l10n.php:109
+#: wp/scripts_l10n.php:111
 #, php-format
 msgid "Linked to WP Post: %s"
 msgstr ""
 
-#: wp/scripts_l10n.php:110
+#: wp/scripts_l10n.php:112
 #, php-format
 msgid "Linked to WP Attachment: %s"
 msgstr ""
 
-#: wp/scripts_l10n.php:111
+#: wp/scripts_l10n.php:113
 msgid "Linked to: Post URL from Dynamic content"
 msgstr ""
 
-#: wp/scripts_l10n.php:112
+#: wp/scripts_l10n.php:114
 #, php-format
 msgid "LayerSlider Action: %s"
 msgstr "LayerSlider akció: %s"
 
-#: wp/scripts_l10n.php:113
+#: wp/scripts_l10n.php:115
 msgid "No sliders found."
 msgstr "Nem található slider."
 
-#: wp/scripts_l10n.php:114
+#: wp/scripts_l10n.php:116
 msgid "No slides found."
 msgstr "Nem található dia."
 
-#: wp/scripts_l10n.php:115
+#: wp/scripts_l10n.php:117
 msgid "No layers found."
 msgstr "Nem találhatóak rétegek."
 
-#: wp/scripts_l10n.php:123
+#: wp/scripts_l10n.php:125
 msgid "Audio / Video"
 msgstr ""
 
-#: wp/scripts_l10n.php:125
+#: wp/scripts_l10n.php:127
 msgid "Dynamic"
 msgstr ""
 
-#: wp/scripts_l10n.php:127
-msgid ""
-"Image Editor is disabled as per your privacy settings. If you would like to "
-"re-enabled it, please navigate to LayerSlider -> Options -> Privacy from "
-"your WordPress admin sidebar and enable the appropriate option there."
-msgstr ""
-
-#: wp/scripts_l10n.php:133
+#: wp/scripts_l10n.php:134
 msgid "Are you sure you want to remove this transition?"
 msgstr ""
 
@@ -9049,10 +9062,8 @@ msgid "LayerSlider WP"
 msgstr "LayerSlider WP"
 
 #. Plugin URI of the plugin/theme
-msgid ""
-"https://codecanyon.net/item/layerslider-responsive-wordpress-slider-"
-"plugin-/1362246"
-msgstr ""
+msgid "https://layerslider.kreaturamedia.com"
+msgstr "https://layerslider.kreaturamedia.com"
 
 #. Description of the plugin/theme
 msgid ""
@@ -9068,7 +9079,9 @@ msgid "Kreatura Media"
 msgstr "Kreatura Media"
 
 #. Author URI of the plugin/theme
-msgid "https://layerslider.kreaturamedia.com"
+#, fuzzy
+#| msgid "https://layerslider.kreaturamedia.com"
+msgid "https://kreaturamedia.com"
 msgstr "https://layerslider.kreaturamedia.com"
 
 #, fuzzy

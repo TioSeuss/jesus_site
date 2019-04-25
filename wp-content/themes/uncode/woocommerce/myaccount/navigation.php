@@ -42,6 +42,9 @@ global $woo_title;
 				case 'customer-logout':
 					$icon = 'sign-out';
 					break;
+				case 'payment-methods':
+					$icon = 'credit-card';
+					break;
 				default:
 					$icon = $endpoint;
 					break;

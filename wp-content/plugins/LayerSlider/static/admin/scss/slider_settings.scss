@@ -1,6 +1,14 @@
 //  SLIDER NAME TEXT FIELD
 //----------------------------------------------------------------
 
+pixie-editor.mode-overlay {
+	z-index: 999999 !important;
+
+	.overlay {
+		background-color: rgba( 0, 0, 0, 0.6 ) !important;
+	}
+}
+
 .ls-slide-preview-tooltip {
 
 	padding: 5px !important;

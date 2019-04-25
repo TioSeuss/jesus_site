@@ -131,8 +131,8 @@
 		}
 
 		if( ! empty( $slider['callbacks'] ) ) {
-			foreach( $slider['callbacks'] as $key => $callback ) {
-				$slider['callbacks'][$key] = stripslashes($callback);
+			foreach( $slider['callbacks'] as $CBkey => $callback ) {
+				$slider['callbacks'][$CBkey] = stripslashes($callback);
 			}
 		}
 

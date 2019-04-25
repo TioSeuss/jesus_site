@@ -747,20 +747,34 @@
   padding: 0 5px;
 }
 .woocommerce-account .woocommerce form.woocommerce-form-login,
-.woocommerce-checkout .woocommerce form.woocommerce-form-login {
+.woocommerce-checkout .woocommerce form.woocommerce-form-login,
+.woocommerce-account .woocommerce form.woocommerce-form-register,
+.woocommerce-checkout .woocommerce form.woocommerce-form-register {
   margin-top: 18px;
 }
 .woocommerce-account .woocommerce form.woocommerce-form-login button[type="submit"],
-.woocommerce-checkout .woocommerce form.woocommerce-form-login button[type="submit"] {
+.woocommerce-checkout .woocommerce form.woocommerce-form-login button[type="submit"],
+.woocommerce-account .woocommerce form.woocommerce-form-register button[type="submit"],
+.woocommerce-checkout .woocommerce form.woocommerce-form-register button[type="submit"] {
   margin: 18px 18px 18px 0px;
 }
 .rtl.woocommerce-account .woocommerce form.woocommerce-form-login button[type="submit"],
-.rtl.woocommerce-checkout .woocommerce form.woocommerce-form-login button[type="submit"] {
+.rtl.woocommerce-checkout .woocommerce form.woocommerce-form-login button[type="submit"],
+.rtl.woocommerce-account .woocommerce form.woocommerce-form-register button[type="submit"],
+.rtl.woocommerce-checkout .woocommerce form.woocommerce-form-register button[type="submit"] {
   margin: 18px 0px 18px 18px;
 }
 .woocommerce-account .woocommerce form.woocommerce-form-login .lost_password,
-.woocommerce-checkout .woocommerce form.woocommerce-form-login .lost_password {
+.woocommerce-checkout .woocommerce form.woocommerce-form-login .lost_password,
+.woocommerce-account .woocommerce form.woocommerce-form-register .lost_password,
+.woocommerce-checkout .woocommerce form.woocommerce-form-register .lost_password {
   margin-top: 0;
+}
+.woocommerce-account .woocommerce form.woocommerce-form-login label.inline,
+.woocommerce-checkout .woocommerce form.woocommerce-form-login label.inline,
+.woocommerce-account .woocommerce form.woocommerce-form-register label.inline,
+.woocommerce-checkout .woocommerce form.woocommerce-form-register label.inline {
+  margin: 0 !important;
 }
 .woocommerce #payment .form-row select {
   width: auto;
@@ -772,6 +786,10 @@
 .woocommerce-billing-fields > *:first-child,
 .woocommerce-shipping-fields > *:first-child {
   margin-top: 0px !important;
+}
+.woocommerce-form-register .woocommerce-privacy-policy-text {
+  float: left;
+  width: 100%;
 }
 /*
 ----------------------------------------------------------
@@ -1150,6 +1168,10 @@ p.demo_store {
   height: 1.28571429em;
   display: inline-block;
   text-align: center;
+}
+.woocommerce .woocommerce-info + a {
+  display: block;
+  margin-top: 18px;
 }
 .woocommerce .woocommerce-error-list {
   margin: 0px;
@@ -1794,6 +1816,12 @@ p.demo_store {
   float: none;
 }
 @media (max-width: 959px) {
+  .woocommerce .cart .button[name="apply_coupon"],
+  .woocommerce .cart input.button[name="apply_coupon"] {
+    margin-top: 9px;
+  }
+}
+@media (max-width: 959px) {
   .woocommerce .cart input.button {
     width: 100%;
   }
@@ -2183,6 +2211,15 @@ p.demo_store {
   display: table-cell;
 }
 @media (max-width: 959px) {
+  .woocommerce td.product-quantity .quantity {
+    display: inline-block;
+  }
+  .woocommerce td.product-quantity .quantity input {
+    margin: 0;
+    padding: 9px !important;
+  }
+}
+@media (max-width: 959px) {
   .woocommerce td.product-price,
   .woocommerce th.product-quantity,
   .woocommerce th.product-price {
@@ -2219,6 +2256,12 @@ p.demo_store {
   left: 50%;
   position: relative;
   font-size: 16px;
+}
+@media (max-width: 959px) {
+  .woocommerce table.cart a.remove,
+  .woocommerce #content table.cart a.remove {
+    transform: translateX(-50%);
+  }
 }
 .woocommerce table.cart td.actions .coupon .input-text,
 .woocommerce #content table.cart td.actions .coupon .input-text {
@@ -3441,6 +3484,12 @@ body[class*=vmenu-] .uncode-cart .badge {
 .btn.checkout,
 .btn.checkout-button {
   transform-origin: right !important;
+}
+@media (max-width: 959px) {
+  .btn.checkout,
+  .btn.checkout-button {
+    width: 100%;
+  }
 }
 .row-message + .row-message .row-parent {
   padding-top: 18px;

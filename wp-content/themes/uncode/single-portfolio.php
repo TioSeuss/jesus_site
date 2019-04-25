@@ -480,7 +480,7 @@ while (have_posts()):
 			$the_content = $media_content . $the_content;
 		} else {
 			if ($the_content !== '' && !empty($the_content)) {
-				$the_content = uncode_get_row_template($the_content, '', '', $style, ' limit-width', ($media_content !== '' ? true : 'double') , false, 'double');
+				$the_content = uncode_get_row_template($the_content, '', '', $style, ' limit-width', ($media_content !== '' ? true : '') , false, 'double');
 				$the_content = '<div class="post-content">' . $the_content . '</div>';
 				if ($media_content !== '') {
 					$the_content = uncode_get_row_template($media_content, '', $limit_content_width, $style, '', false, false, false) . $the_content;

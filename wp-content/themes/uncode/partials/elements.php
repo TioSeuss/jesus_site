@@ -1214,7 +1214,7 @@ if (!function_exists('uncode_create_single_block')) {
 									continue;
 								}
 							} else {
-								if (isset($block_data['single_tags']) && $key === 'category' && ( isset($block_data['taxonomy_type']) && isset($block_data['taxonomy_type'][$t_key]) && $block_data['taxonomy_type'][$t_key] !== 'category' && $block_data['taxonomy_type'][$t_key] !== 'portfolio_category' ) ) {
+								if (isset($block_data['single_tags']) && $key === 'category' && ( isset($block_data['taxonomy_type']) && isset($block_data['taxonomy_type'][$t_key]) && $block_data['taxonomy_type'][$t_key] !== 'category' && $block_data['taxonomy_type'][$t_key] !== 'portfolio_category' && $block_data['taxonomy_type'][$t_key] !== 'product_cat' ) ) {
 									continue;
 								}
 								if (isset($block_data['single_tags']) && $key === 'post_tag' && ( isset($block_data['taxonomy_type']) && isset($block_data['taxonomy_type'][$t_key]) && $block_data['taxonomy_type'][$t_key] !== 'post_tag' ) ) {
@@ -1275,7 +1275,7 @@ if (!function_exists('uncode_create_single_block')) {
 								}
 							} else {
 								$cat_link = '<span class="t-entry-cat-single"><span>' . $block_data['single_categories'][$t_key] . '</span></span>';
-								if (isset($block_data['single_tags']) && $key === 'category' && ( isset($block_data['taxonomy_type']) && isset($block_data['taxonomy_type'][$t_key]) && $block_data['taxonomy_type'][$t_key] !== 'category' && $block_data['taxonomy_type'][$t_key] !== 'portfolio_category' ) ) {
+								if (isset($block_data['single_tags']) && $key === 'category' && ( isset($block_data['taxonomy_type']) && isset($block_data['taxonomy_type'][$t_key]) && $block_data['taxonomy_type'][$t_key] !== 'category' && $block_data['taxonomy_type'][$t_key] !== 'portfolio_category' && $block_data['taxonomy_type'][$t_key] !== 'product_cat' ) ) {
 									continue;
 								}
 								if (isset($block_data['single_tags']) && $key === 'post_tag' && ( isset($block_data['taxonomy_type']) && isset($block_data['taxonomy_type'][$t_key]) && $block_data['taxonomy_type'][$t_key] !== 'post_tag' ) ) {
@@ -1429,7 +1429,7 @@ if (!function_exists('uncode_create_single_block')) {
 					$btn_shape = ' btn-default';
 
 					if (isset($value[1]) && $value[1] === 'small_size') {
-						$btn_shape = ' btn-sm';
+						$btn_shape .= ' btn-sm';
 					}
 
 					if (isset($value[0]) && $value[0] !== 'default') {
@@ -1529,12 +1529,10 @@ if (!function_exists('uncode_create_single_block')) {
 				case 'caption':
 					if ( isset($block_data['album_id']) && $block_data['album_id']!='' ) { //is Grouped Album
 						$inner_entry.= '<p class="t-entry-meta"><span>' . get_the_excerpt( $block_data['album_id'] ) . '</span></p>';
-					} elseif (isset($media_attributes->post_excerpt) && $media_attributes->post_excerpt !== '') {
-						if ( isset($block_data['media_caption_custom']) && $block_data['media_caption_custom'] ) {
-							$inner_entry .= '<p class="t-entry-meta"><span>' . esc_attr( $block_data['media_caption_custom'] ) . '</span></p>';
-						} else {
-							$inner_entry.= '<p class="t-entry-meta"><span>' . $media_attributes->post_excerpt . '</span></p>';
-						}
+					} elseif (isset($media_attributes->post_excerpt) && $media_attributes->post_excerpt !== '' && !( isset($block_data['media_caption_custom']) && $block_data['media_caption_custom'] ) ) {
+						$inner_entry.= '<p class="t-entry-meta"><span>' . $media_attributes->post_excerpt . '</span></p>';
+					} elseif ( isset($block_data['media_caption_custom']) && $block_data['media_caption_custom'] ) {
+						$inner_entry .= '<p class="t-entry-meta"><span>' . esc_attr( $block_data['media_caption_custom'] ) . '</span></p>';
 					}
 				break;
 
@@ -2086,7 +2084,7 @@ if (!function_exists('uncode_create_single_block')) {
 				global $product;
 				$product = wc_get_product($block_data['id']);
 				if (!empty($product)) {
-					if (get_option('woocommerce_hide_out_of_stock_items') == 'yes' && ! $product->is_in_stock()) {
+					if ( ( get_option('woocommerce_hide_out_of_stock_items') == 'yes' && ! $product->is_in_stock() ) || ! $product->is_visible() ) {
 						return;
 					}
 					$product_add_to_cart = sprintf( '<a href="%s" rel="nofollow" data-product_id="%s" data-product_sku="%s" class="%s %s product_type_%s product_button_loop"><span>%s</span></a>',
@@ -2324,7 +2322,7 @@ if (!function_exists('uncode_breadcrumbs')) {
 		/* === END OF OPTIONS === */
 
 		global $post;
-		$home_link = esc_url( home_url( '/' ) );
+		$home_link = esc_url( apply_filters( 'uncode_breadcrumbs_home_url', home_url( '/' ) ) );
 		$link_before = '<li>';
 		$link_after = '</li>';
 		$link_attr = '';

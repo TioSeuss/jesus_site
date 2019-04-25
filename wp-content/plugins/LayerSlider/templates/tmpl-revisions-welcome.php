@@ -9,7 +9,7 @@
 		</div>
 		<?php endif ?>
 
-		<?php if( ! get_option('layerslider-authorized-site', false) ) : ?>
+		<?php if( ! LS_Config::isActivatedSite() ) : ?>
 		<div class="ls-notification-info">
 			<i class="dashicons dashicons-info"></i>
 			<?php echo sprintf(__('Slider Revisions is a premium feature. Activate your copy of LayerSlider in order to enjoy our premium benefits. %sPurchase a license%s or %sread the documentation%s to learn more. %sGot LayerSlider in a theme?%s', 'LayerSlider'), '<a href="'.LS_Config::get('purchase_url').'" target="_blank">', '</a>', '<a href="https://layerslider.kreaturamedia.com/documentation/#activation" target="_blank">', '</a>', '<a href="https://layerslider.kreaturamedia.com/documentation/#activation-bundles" target="_blank">', '</a>') ?>
@@ -24,8 +24,8 @@
 			<a target="_blank" href="https://layerslider.kreaturamedia.com/documentation/#builder-revisions" class="ls-revisions-more-info"><?php _e('More Information', 'LayerSlider') ?></a>
 		</p>
 		<div class="center">
-			<video autoplay loop muted>
-				<source src="<?php echo LS_ROOT_URL ?>/static/admin/media/revisions.mp4" type="video/mp4">
+			<video autoplay loop muted poster="<?php echo LS_ROOT_URL ?>/static/admin/img/revisions.jpg">
+				<source src="https://cdn1.kreaturamedia.com/media/revisions.mp4" type="video/mp4">
 			</video>
 		</div>
 	</div>

@@ -164,7 +164,7 @@ class KM_UpdatesV3 {
 			( isset( $skin->plugin_info ) && $skin->plugin_info['Name'] === $this->config['name'] ) ) {
 
 				// Check validity
-				if( LS_Config::get('autoupdate') && ! get_option( $this->config['authKey'], false ) ) {
+				if( LS_Config::get('autoupdate') && ! LS_Config::isActivatedSite() ) {
 					return new WP_Error('ls_update_error', sprintf(
 						__('License activation is required to receive updates. Please read our %sonline documentation%s to learn more.', 'LayerSlider'),
 						'<a href="https://layerslider.kreaturamedia.com/documentation/#activation" target="_blank">',
@@ -188,7 +188,7 @@ class KM_UpdatesV3 {
 	public function update_message() {
 
 		// Provide license activation warning on non-activated sites
-		if( ! get_option( $this->config['authKey'], false ) ) {
+		if( ! LS_Config::isActivatedSite() ) {
 			printf(__('License activation is required in order to receive updates for LayerSlider. %sPurchase a license%s or %sread the documentation%s to learn more. %sGot LayerSlider in a theme?%s', 'installer'),
 							'<a href="'.LS_Config::get('purchase_url').'" target="_blank">', '</a>', '<a href="https://layerslider.kreaturamedia.com/documentation/#activation" target="_blank">', '</a>', '<a href="https://layerslider.kreaturamedia.com/documentation/#activation-bundles" target="_blank">', '</a>');
 		}
@@ -211,7 +211,7 @@ class KM_UpdatesV3 {
 	 */
 	public function check_activation_state() {
 
-		if( get_option( $this->config['authKey'], false ) ) {
+		if( LS_Config::isActivatedSite() ) {
 
 			delete_option( $this->config['codeKey'] );
 			delete_option( $this->config['authKey'] );
@@ -384,7 +384,7 @@ class KM_UpdatesV3 {
 		update_option($this->config['channelKey'], $_POST['channel']);
 
 		// Only update release channel?
-		if(get_option($this->config['authKey'], false)) {
+		if( LS_Config::isActivatedSite() ) {
 			if( strpos($_POST['purchase_code'], '●') === 0 || $this->config['license'] == $_POST['purchase_code']) {
 				die(json_encode(array('message' => __('Your settings were successfully saved.', 'LayerSlider'))));
 			}

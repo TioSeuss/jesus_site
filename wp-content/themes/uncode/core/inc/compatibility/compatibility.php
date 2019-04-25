@@ -22,3 +22,8 @@ require_once get_template_directory() . '/core/inc/compatibility/gutenberg/guten
  * Visual Composer plugin.
  */
 require_once get_template_directory() . '/core/inc/compatibility/vc/class-uncode-vc.php';
+
+/**
+ * UpdraftPlus plugin.
+ */
+require_once get_template_directory() . '/core/inc/compatibility/updraftplus/class-uncode-updraftplus.php';

@@ -213,25 +213,35 @@ if ($title !== '') {
 	$output_text .= '<div class="icon-box-heading' . esc_attr( $icon_box_size ) . '"><' . esc_attr( $heading_semantic ) . ' class="' . esc_attr(trim(implode(' ', $title_class))) . '">' . $title . '</' . esc_attr( $heading_semantic ) . '></div>';
 }
 
-if (trim($content) !== '') {
-	$content = trim(nl2br($content));
-	if ($add_margin === 'yes') {
-		$add_margin = ' add-margin';
-	} else {
-		$add_margin = '';
-	}
+$content_stripped = strip_tags($content, '<p>');
 
-	$text_classes = ($text_reduced === 'yes') ? 'text-top-reduced ' : '';
-	$text_classes .= ($text_lead === 'yes') ? 'text-lead ' : '';
-
-	if (strpos($content,'<p') !== false) {
-		if ($text_classes !== '') {
-			$content = preg_replace('/<p/', '<p class="' . esc_attr( trim($text_classes) ) . '"', $content, 1);
+if ( $content_stripped === $content ) {
+	if ( trim( $content ) !== '' && $content_stripped === $content ) {
+		$content = trim( nl2br( $content ) );
+		if ($add_margin === 'yes') {
+			$add_margin = ' add-margin';
+		} else {
+			$add_margin = '';
 		}
-		$output_text .= $content;
-	} else {
-		$output_text .= '<p class="' . esc_attr( trim($text_classes) ) . '">' . $content . '</p>' ;
+
+		$text_classes = ( $text_reduced === 'yes' ) ? 'text-top-reduced ' : '';
+		$text_classes .= ( $text_lead === 'yes' ) ? 'text-lead ' : '';
+
+		if (strpos($content,'<p') !== false) {
+			if ($text_classes !== '') {
+				$content = preg_replace('/<p/', '<p class="' . esc_attr( trim($text_classes) ) . '"', $content, 1);
+			}
+			$output_text .= $content;
+		} else {
+			if ($text_classes !== '') {
+				$output_text .= '<p class="' . esc_attr( trim($text_classes) ) . '">' . $content . '</p>' ;
+			} else {
+				$output_text .= '<p>' . $content . '</p>' ;
+			}
+		}
 	}
+} else {
+	$output_text .= uncode_remove_p_tag($content, true);
 }
 
 if ($link_text !== '' && $a_href !== '') {

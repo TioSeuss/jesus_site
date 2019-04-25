@@ -1288,6 +1288,52 @@ div.ls-bulk-actions {
 	}
 }
 
+#tmpl-activation-error-modal-window {
+
+	p {
+		text-align: justify;
+
+		&:last-child {
+			margin-bottom: 0 !important;
+		}
+
+		&.center {
+			text-align: center;
+
+			button,
+			.button {
+				position: static !important;
+			}
+		}
+
+		&.bottom {
+			position: absolute;
+			width: 100%;
+			bottom: 3px;
+		}
+	}
+
+	button,
+	.button {
+		margin: 0 !important;
+	}
+
+	button:first-child,
+	.button:first-child {
+		position: absolute;
+		bottom: 3px;
+		left: 0;
+		right: auto !important;
+	}
+
+	button:last-child,
+	.button:last-child {
+		position: absolute;
+		bottom: 3px;
+		right: 0;
+	}
+}
+
 .ls-product-banner {
 
 	height: 270px;

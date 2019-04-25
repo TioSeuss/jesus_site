@@ -15,6 +15,7 @@ jQuery( function( $ ){
 				spinner: false,
 				icon: 'dashicons-yes',
 				iconColor: 'inherit',
+				iconSize: null,
 				text: '',
 				timeout: 0
 			},
@@ -43,6 +44,10 @@ jQuery( function( $ ){
 				}
 
 				$text.html( settings.text );
+
+				if( settings.iconSize ) {
+					$icon.find('.dashicons').css('font-size', settings.iconSize );
+				}
 
 				$notification
 					.css('max-width', settings.maxWidth)

@@ -25,9 +25,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 global $woocommerce;
 
 ?>
-<li itemprop="review" itemscope itemtype="http://schema.org/Review" <?php comment_class(); ?> id="li-comment-<?php comment_ID() ?>">
+<li <?php comment_class(); ?> id="li-comment-<?php comment_ID() ?>">
 
-	<div id="comment-<?php comment_ID(); ?>" class="comment_container comment-content post-content" itemprop="text">
+	<div id="comment-<?php comment_ID(); ?>" class="comment_container comment-content post-content">
 
 		<?php
 		/**
@@ -40,7 +40,7 @@ global $woocommerce;
 
 		<figure class="gravatar"><?php echo get_avatar( $comment, apply_filters( 'woocommerce_review_gravatar_size', '256' ), '', get_comment_author_email( $comment->comment_ID ) ); ?></figure>
 
-		<div class="comment-text comment-meta post-meta" role="complementary">
+		<div class="comment-text comment-meta post-meta">
 
 			<?php do_action( 'woocommerce_review_before_comment_meta', $comment ); ?>
 
@@ -61,7 +61,7 @@ global $woocommerce;
 			<?php else : ?>
 
 				<div class="comment-author h5 text-bold">
-					<span class="comment-author-link" itemprop="author"><?php comment_author(); ?></span>
+					<span class="comment-author-link"><?php comment_author(); ?></span>
 				</div>
 				<?php
 
@@ -72,7 +72,7 @@ global $woocommerce;
 						}
 
 					?>
-				<time class="comment-meta-item" datetime="<?php comment_date('Y-m-d') ?>T<?php comment_time('H:iP') ?>" itemprop="datePublished"><span><?php comment_date() ?></span>, <a href="#comment-<?php comment_ID() ?>" itemprop="url"><span><?php comment_time() ?></span></a></time>
+				<time class="comment-meta-item" datetime="<?php comment_date('Y-m-d') ?>T<?php comment_time('H:iP') ?>"><span><?php comment_date() ?></span>, <a href="#comment-<?php comment_ID() ?>"><span><?php comment_time() ?></span></a></time>
 
 			<?php endif; ?>
 
@@ -87,7 +87,7 @@ global $woocommerce;
 			do_action( 'woocommerce_review_comment_text', $comment );
 			?>
 
-			<div itemprop="description" class="description"><?php comment_text(); ?></div>
+			<div class="description"><?php comment_text(); ?></div>
 
 			<?php do_action( 'woocommerce_review_after_comment_text', $comment ); ?>
 

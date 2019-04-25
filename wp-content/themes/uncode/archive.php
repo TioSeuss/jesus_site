@@ -139,6 +139,13 @@ $posts_counter = $wp_query->post_count;
 if ($page_header_type !== '' && $page_header_type !== 'none') {
 	$get_title = uncode_archive_title();
 	$get_subtitle = isset(get_queried_object()->description) ? get_queried_object()->description : '';
+
+	if ( ot_get_option('_uncode_' . $post_type . '_custom_title_activate') === 'on' && !is_category() && !is_tax() ) {
+		$get_title = ot_get_option('_uncode_' . $post_type . '_custom_title_text');
+		$get_subtitle = ot_get_option('_uncode_' . $post_type . '_custom_subtitle_text');
+	}
+
+	$get_title = apply_filters( 'uncode_archive_title', $get_title );
 	$get_subtitle = apply_filters( 'uncode_archive_subtitle', $get_subtitle );
 	$page_header = new unheader($metabox_data, $get_title, $get_subtitle);
 
@@ -228,7 +235,7 @@ if (have_posts()):
 			}
 			$archive_query .= '"';
 		} else {
-			if (in_array( $post->post_type, $post_types ) ) {
+			if ( property_exists( get_queried_object(), 'taxonomy' ) && in_array( $post->post_type, $post_types ) ) {
 				switch (get_queried_object()->taxonomy) {
 					case 'category':
 						$tax_query = 'categories';
@@ -393,7 +400,8 @@ if (have_posts()):
 	}
 
 	/** Build and display navigation html **/
-	if (!$index_has_navigation) {
+	$remove_pagination = ot_get_option('_uncode_' . $post_type . '_remove_pagination');
+	if ( !$index_has_navigation && $remove_pagination !== 'on' ) {
 		$navigation_option = ot_get_option('_uncode_' . $post_type . '_navigation_activate');
 		if ($navigation_option !== 'off') {
 			$navigation = uncode_posts_navigation();

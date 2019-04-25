@@ -21,8 +21,10 @@ $l10n_ls = array(
 	// Notify OSD
 	'notifySliderSaved' 	=> __('Slider saved successfully', 'LayerSlider'),
 	'notifyCaptureSlide' 	=> __('Capturing slide. This might take a moment ...', 'LayerSlider'),
+	'notifyPixieSave'		=> __('Saving image. This might take a moment ...'),
 
 	// Activation
+	'activationErrorTitle' 	=> __('Something went wrong ...', 'LayerSlider'),
 	'activationTemplate' 	=> __('Product activation is required to access premium templates.', 'LayerSlider'),
 	'activationFeature' 	=> __('Product activation is required to access this feature.', 'LayerSlider'),
 	'activationUpdate' 		=> __('Product activation is required to receive automatic updates.', 'LayerSlider'),
@@ -124,7 +126,6 @@ $l10n_ls = array(
 	'SBLayerTypeHTML' 			=> __('HTML', 'LayerSlider'),
 	'SBLayerTypePost' 			=> __('Dynamic', 'LayerSlider'),
 
-	'SBImageEditorDisabled' 	=> __('Image Editor is disabled as per your privacy settings. If you would like to re-enabled it, please navigate to LayerSlider -> Options -> Privacy from your WordPress admin sidebar and enable the appropriate option there.', 'LayerSlider'),
 
 
 	// Transition Builder

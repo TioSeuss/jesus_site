@@ -83,7 +83,7 @@
 						importButtons.off();
 
 						importButtons.on('click', function() {
-							showModalForPremiumProducts(false, 'import');
+							showModalForPremiumProducts(false, 'import', 'import');
 
 							return false;
 						});
@@ -205,7 +205,8 @@
 			}
 		}
 
-		function showModalForPremiumProducts(product, type, action = 'update') {
+		function showModalForPremiumProducts(product, type, action) {
+			var action = typeof action  === 'undefined' ? 'update' : action;
 			var html = '';
 
 			if ('theme' === type) {

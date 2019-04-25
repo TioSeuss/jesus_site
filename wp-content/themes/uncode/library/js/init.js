@@ -749,6 +749,7 @@ function whichAnimationEvent() {
 		menuOpened = false,
 		overlayOpened = false,
 		menuMobileTriggerEvent = new CustomEvent('menuMobileTrigged'),
+		resizeTimer_,
 		resizeTimer,
 		hidingTimer,
 		isSplitMenu = false,
@@ -1546,26 +1547,26 @@ function whichAnimationEvent() {
 
 				if ( font_to_check === null ) {
 					word_for_lines(false, el);
-				}
+				} else {
+					var font_weight = $h_markup[i].getAttribute("data-weight");
+					var font_style = $h_markup[i].getAttribute("data-style");
 
-				var font_weight = $h_markup[i].getAttribute("data-weight");
-				var font_style = $h_markup[i].getAttribute("data-style");
+					if ( font_weight === null ) {
+						font_weight = 'normal';
+					}
 
-				if ( font_weight === null ) {
-					font_weight = 'normal';
-				}
+					if ( font_style === null ) {
+						font_style = 'normal';
+					}
 
-				if ( font_style === null ) {
-					font_style = 'normal';
-				}
+					font_to_check = font_to_check.split(',');
 
-				font_to_check = font_to_check.split(',');
+					var font_val = font_to_check[0].replace(/['"]+/g, ''),
+						font_key = '\''+font_val+'_'+font_weight+'_'+font_style+'\'';
 
-				var font_val = font_to_check[0].replace(/['"]+/g, ''),
-					font_key = '\''+font_val+'_'+font_weight+'_'+font_style+'\'';
-
-				if ( fontArr.indexOf( font_val+'_'+font_weight ) === -1  ) {
-					fontArr[font_key] = {'family':font_val,'weight':font_weight,'style':font_style };
+					if ( fontArr.indexOf( font_val+'_'+font_weight ) === -1  ) {
+						fontArr[font_key] = {'family':font_val,'weight':font_weight,'style':font_style };
+					}
 				}
 			}
 
@@ -1809,7 +1810,6 @@ function whichAnimationEvent() {
 								$colChild.removeAttribute("style");
 								var newHeight = (percentHeight != null) ? Math.ceil((currentTallest) * (percentHeight / 100)) : parseInt(minHeight);
 								var computedStyleCol = getComputedStyle($colParent);
-								parseFloat(computedStyleCol.marginTop);
 								getMargin = parseFloat(computedStyleCol.marginTop);
 								newHeight -= (getMargin);
 								$colPercDiff -= (percentHeight != null) ? percentHeight : 0;
@@ -1927,8 +1927,8 @@ function whichAnimationEvent() {
 								if (wwidth > mediaQueryMobile) {
 									var getStyle = (window.getComputedStyle((obj.parentNode), null)),
 									getInnerHeight = (parseInt(obj.parentNode.clientHeight) - parseInt(getStyle.paddingTop) - parseInt(getStyle.paddingBottom));
-									obj.style.height = getInnerHeight + 1 + 'px';
-									obj.style.marginBottom = '-1px';
+									obj.style.height = getInnerHeight + 'px';
+									//obj.style.marginBottom = '-1px';
 								}
 							}
 						});
@@ -1938,8 +1938,8 @@ function whichAnimationEvent() {
 								getInnerHeight = (parseInt(obj.parentNode.clientHeight) - parseInt(getStyle.paddingTop) - parseInt(getStyle.paddingBottom)),
 								getTempHeight = parseInt(obj.style.height);
 								if (getInnerHeight > getTempHeight) {
-									obj.style.height = getInnerHeight + 1 + 'px';
-									obj.style.marginBottom = '-1px';
+									obj.style.height = getInnerHeight + 'px';
+									//obj.style.marginBottom = '-1px';
 								}
 							}
 						});
@@ -2811,7 +2811,6 @@ function whichAnimationEvent() {
 		var oldWidth = wwidth;
 		UNCODE.wwidth = wwidth = window.innerWidth || document.documentElement.clientWidth;
 		UNCODE.wheight = wheight = (window.innerHeight || document.documentElement.clientHeight) - (bodyBorder * 2);
-		if (isSplitMenu) centerSplitMenu();
 		if (isMobile && (oldWidth == wwidth)) return false;
 		calculateMenuHeight(false);
 		initBox();
@@ -2820,6 +2819,10 @@ function whichAnimationEvent() {
 		scrollFunction();
 		shapeDivider();
 		showHideScrollup(bodyTop);
+		clearTimeout(resizeTimer_);
+		resizeTimer_ = setTimeout(function() {
+			if (isSplitMenu) centerSplitMenu();
+		}, 10);
 		clearTimeout(resizeTimer);
 		resizeTimer = setTimeout(function() {
 			UNCODE.wheight = wheight = (window.innerHeight || document.documentElement.clientHeight) - (bodyBorder * 2);

@@ -378,7 +378,7 @@
 							</div>
 
 							<div id="ls-popup-notifications">
-								<?php if( ! get_option('layerslider-authorized-site', false) ) : ?>
+								<?php if( ! LS_Config::isActivatedSite() ) : ?>
 								<div class="ls-notification">
 									<i class="dashicons dashicons-warning"></i>
 									<?php echo sprintf(__('Popup is a premium feature. You can preview all the options here with the Live Preview button, but you need to activate your copy of LayerSlider in order to use it on your front end pages. %sPurchase a license%s or %sread the documentation%s to learn more. %sGot LayerSlider in a theme?%s', 'LayerSlider'), '<a href="'.LS_Config::get('purchase_url').'" target="_blank">', '</a>', '<a href="https://layerslider.kreaturamedia.com/documentation/#activation" target="_blank">', '</a>', '<a href="https://layerslider.kreaturamedia.com/documentation/#activation-bundles" target="_blank">', '</a>') ?>

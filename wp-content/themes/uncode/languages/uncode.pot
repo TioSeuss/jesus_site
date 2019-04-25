@@ -1,24 +1,264 @@
-#, fuzzy
 msgid ""
 msgstr ""
-"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 "Project-Id-Version: Uncode\n"
-"POT-Creation-Date: 2019-02-27 15:28+0100\n"
-"PO-Revision-Date: 2015-11-10 22:17+0100\n"
-"Last-Translator: Undsgn Team <info@undsgn.com>\n"
+"Report-Msgid-Bugs-To: info@undsgn.com\n"
+"POT-Creation-Date: 2019-04-18 09:20+0200\n"
+"PO-Revision-Date: 2019-04-18 09:20+0200\n"
+"Last-Translator: Undsgn <info@undsgn.com>\n"
 "Language-Team: Undsgn <info@undsgn.com>\n"
+"Language: en_US\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.2.1\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-WPHeader: style.css\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
 "esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
 "_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
-"X-Poedit-SearchPath-0: .\n"
-"X-Poedit-SearchPathExcluded-0: *.js\n"
+
+#: functions.php:17
+msgid "PHP version obsolete"
+msgstr ""
+
+#: functions.php:18
+msgid "Ooops, obsolete PHP version"
+msgstr ""
+
+#: woocommerce/order/order-details.php:38
+msgid "Order details"
+msgstr ""
+
+#: woocommerce/order/order-details.php:42
+#: woocommerce/single-product-reviews.php:23
+msgid "Product"
+msgstr ""
+
+#: woocommerce/order/order-details.php:43
+msgid "Total"
+msgstr ""
+
+#: woocommerce/order/order-details.php:77
+#: woocommerce/order/order-details-customer.php:29
+msgid "Note:"
+msgstr ""
+
+#: woocommerce/order/order-details-customer.php:24
+msgid "Customer details"
+msgstr ""
+
+#: woocommerce/order/order-details-customer.php:36
+msgid "Email:"
+msgstr ""
+
+#: woocommerce/order/order-details-customer.php:43
+msgid "Telephone:"
+msgstr ""
+
+#: woocommerce/order/order-details-customer.php:59
+msgid "Billing address"
+msgstr ""
+
+#: woocommerce/order/order-details-customer.php:62
+#: woocommerce/order/order-details-customer.php:79
+#: woocommerce/single-product/meta.php:24
+msgid "N/A"
+msgstr ""
+
+#: woocommerce/order/order-details-customer.php:76
+msgid "Shipping address"
+msgstr ""
+
+#: woocommerce/single-product-reviews.php:23
+#, php-format
+msgid "%s review"
+msgid_plural "%s reviews"
+msgstr[0] ""
+msgstr[1] ""
+
+#: woocommerce/single-product-reviews.php:25
+msgid "Reviews"
+msgstr ""
+
+#: woocommerce/single-product-reviews.php:47
+msgid "There are no reviews yet."
+msgstr ""
+
+#: woocommerce/single-product-reviews.php:60
+msgid "Add a review"
+msgstr ""
+
+#: woocommerce/single-product-reviews.php:60
+#, php-format
+msgid "Be the first to review &ldquo;%s&rdquo;"
+msgstr ""
+
+#: woocommerce/single-product-reviews.php:61
+#, php-format
+msgid "Leave a Reply to %s"
+msgstr ""
+
+#: woocommerce/single-product-reviews.php:67
+msgid "Name"
+msgstr ""
+
+#: woocommerce/single-product-reviews.php:69
+msgid "Email"
+msgstr ""
+
+#: woocommerce/single-product-reviews.php:72
+msgid "Submit"
+msgstr ""
+
+#: woocommerce/single-product-reviews.php:78
+#, php-format
+msgid "You must be <a href=\"%s\">logged in</a> to post a review."
+msgstr ""
+
+#: woocommerce/single-product-reviews.php:82
+msgid "Your rating"
+msgstr ""
+
+#: woocommerce/single-product-reviews.php:83
+msgid "Rate&hellip;"
+msgstr ""
+
+#: woocommerce/single-product-reviews.php:84
+msgid "Perfect"
+msgstr ""
+
+#: woocommerce/single-product-reviews.php:85
+msgid "Good"
+msgstr ""
+
+#: woocommerce/single-product-reviews.php:86
+msgid "Average"
+msgstr ""
+
+#: woocommerce/single-product-reviews.php:87
+msgid "Not that bad"
+msgstr ""
+
+#: woocommerce/single-product-reviews.php:88
+msgid "Very Poor"
+msgstr ""
+
+#: woocommerce/single-product-reviews.php:92
+msgid "Your review"
+msgstr ""
+
+#: woocommerce/single-product-reviews.php:101
+msgid ""
+"Only logged in customers who have purchased this product may leave a review."
+msgstr ""
+
+#: woocommerce/cart/mini-cart.php:50 woocommerce/cart/mini-cart.php:51
+#: core/inc/customizer-woocommerce.php:114
+msgid "Remove this item"
+msgstr ""
+
+#: woocommerce/cart/mini-cart.php:75
+msgid "No products in the cart."
+msgstr ""
+
+#: woocommerce/cart/mini-cart.php:85
+msgid "Subtotal"
+msgstr ""
+
+#: woocommerce/cart/mini-cart.php:90
+msgid "View Cart"
+msgstr ""
+
+#: woocommerce/cart/mini-cart.php:91 core/inc/customizer-woocommerce.php:136
+msgid "Checkout"
+msgstr ""
+
+#: woocommerce/single-product/tabs/description.php:16
+#: core/inc/edit_custom_walker.php:190 core/inc/media-enhanced.php:348
+msgid "Description"
+msgstr ""
+
+#: woocommerce/single-product/tabs/additional-information.php:16
+msgid "Additional information"
+msgstr ""
+
+#: woocommerce/single-product/review.php:59
+msgid "Your comment is awaiting approval"
+msgstr ""
+
+#: woocommerce/single-product/review.php:70
+msgid "verified owner"
+msgstr ""
+
+#: woocommerce/single-product/meta.php:24
+msgid "SKU"
+msgstr ""
+
+#: woocommerce/single-product/meta.php:29
+msgid "Category"
+msgstr ""
+
+#: woocommerce/single-product/meta.php:29
+msgid "Categories"
+msgstr ""
+
+#: woocommerce/single-product/meta.php:29
+#: woocommerce/single-product/meta.php:34
+msgid "<span class=\"detail-label\">"
+msgid_plural "<span class=\"detail-label\">"
+msgstr[0] ""
+msgstr[1] ""
+
+#: woocommerce/single-product/meta.php:34
+msgid "Tag"
+msgstr ""
+
+#: woocommerce/single-product/meta.php:34
+msgid "Tags"
+msgstr ""
+
+#: woocommerce/single-product/product-image.php:106
+msgid "Awaiting product image"
+msgstr ""
+
+#: woocommerce/single-product/up-sells.php:51
+msgid "You may also like&hellip;"
+msgstr ""
+
+#: woocommerce/single-product/add-to-cart/variable.php:33
+msgid "This product is currently out of stock and unavailable."
+msgstr ""
+
+#: woocommerce/single-product/add-to-cart/variable.php:42
+msgid "Clear"
+msgstr ""
+
+#: woocommerce/single-product/add-to-cart/simple.php:62
+#: partials/elements.php:1447
+msgid "Read More"
+msgstr ""
+
+#: woocommerce/single-product/related.php:18
+msgid "Related products"
+msgstr ""
+
+#: woocommerce/single-product/share.php:35 single-portfolio.php:454
+msgid "Share"
+msgstr ""
+
+#: woocommerce/product-searchform.php:27 searchform.php:11
+msgid "Search for:"
+msgstr ""
+
+#: woocommerce/product-searchform.php:28
+msgid "Search products&hellip;"
+msgstr ""
+
+#: woocommerce/product-searchform.php:28
+msgctxt "submit button"
+msgid "Search"
+msgstr ""
 
 #: 404.php:71
 msgid "Opps! Something went wrong…"
@@ -32,67 +272,990 @@ msgstr ""
 msgid "home page"
 msgstr ""
 
-#: comments.php:28
+#: core/inc/colors.php:12
+msgid "Accent"
+msgstr ""
+
+#: core/inc/main.php:78
+msgid "Primary Menu"
+msgstr ""
+
+#: core/inc/main.php:79
+msgid "Secondary Menu"
+msgstr ""
+
+#: core/inc/main.php:80
+msgid "Call To Action Menu"
+msgstr ""
+
+#: core/inc/main.php:146 core/inc/main.php:159
+msgid "Add widgets here to appear in your sidebar."
+msgstr ""
+
+#: core/inc/main.php:157
+msgid "Sidebar"
+msgstr ""
+
+#: core/inc/main.php:314 vc_templates/uncode_countdown.php:54
+msgid "days"
+msgstr ""
+
+#: core/inc/main.php:315 vc_templates/uncode_countdown.php:54
+msgid "hours"
+msgstr ""
+
+#: core/inc/main.php:316 vc_templates/uncode_countdown.php:54
+msgid "minutes"
+msgstr ""
+
+#: core/inc/main.php:317 vc_templates/uncode_countdown.php:54
+msgid "seconds"
+msgstr ""
+
+#: core/inc/main.php:321 vc_templates/uncode_index.php:1183
+msgid "Loading…"
+msgstr ""
+
+#: core/inc/main.php:322
+msgid "slide"
+msgstr ""
+
+#: core/inc/main.php:323
+msgid "footer"
+msgstr ""
+
+#: core/inc/main.php:841 core/inc/admin.php:89
+msgid "Read more"
+msgstr ""
+
+#: core/inc/edit_custom_walker.php:85
 #, php-format
-msgctxt "comments"
-msgid "%1$s Comment"
-msgid_plural "%1$s Comments"
+msgid "%s (Invalid)"
+msgstr ""
+
+#: core/inc/edit_custom_walker.php:89
+#, php-format
+msgid "%s (Pending)"
+msgstr ""
+
+#: core/inc/edit_custom_walker.php:98
+msgid "MEGAMENU TITLE"
+msgstr ""
+
+#: core/inc/edit_custom_walker.php:100
+msgid "MEGAMENU"
+msgstr ""
+
+#: core/inc/edit_custom_walker.php:100
+msgid "sub item"
+msgstr ""
+
+#: core/inc/edit_custom_walker.php:127
+msgid "Move up"
+msgstr ""
+
+#: core/inc/edit_custom_walker.php:140
+msgid "Move down"
+msgstr ""
+
+#: core/inc/edit_custom_walker.php:142 core/inc/edit_custom_walker.php:144
+msgid "Edit Menu Item"
+msgstr ""
+
+#: core/inc/edit_custom_walker.php:153
+msgid "URL"
+msgstr ""
+
+#: core/inc/edit_custom_walker.php:160
+msgid "Navigation Label"
+msgstr ""
+
+#: core/inc/edit_custom_walker.php:166
+msgid "Title Attribute"
+msgstr ""
+
+#: core/inc/edit_custom_walker.php:173
+msgid "Open link in a new window/tab"
+msgstr ""
+
+#: core/inc/edit_custom_walker.php:178
+msgid "CSS Classes (optional)"
+msgstr ""
+
+#: core/inc/edit_custom_walker.php:184
+msgid "Link Relationship (XFN)"
+msgstr ""
+
+#: core/inc/edit_custom_walker.php:192
+msgid ""
+"The description will be displayed in the menu if the current theme supports "
+"it."
+msgstr ""
+
+#: core/inc/edit_custom_walker.php:202
+msgid "Icon"
+msgstr ""
+
+#: core/inc/edit_custom_walker.php:211
+msgid "Megamenu"
+msgstr ""
+
+#: core/inc/edit_custom_walker.php:220
+msgid "Button style"
+msgstr ""
+
+#: core/inc/edit_custom_walker.php:226
+msgid "Move"
+msgstr ""
+
+#: core/inc/edit_custom_walker.php:227
+msgid "Up one"
+msgstr ""
+
+#: core/inc/edit_custom_walker.php:228
+msgid "Down one"
+msgstr ""
+
+#: core/inc/edit_custom_walker.php:231
+msgid "To the top"
+msgstr ""
+
+#: core/inc/edit_custom_walker.php:238
+#, php-format
+msgid "Original: %s"
+msgstr ""
+
+#: core/inc/edit_custom_walker.php:251
+msgid "Remove"
+msgstr ""
+
+#: core/inc/edit_custom_walker.php:252
+msgid "Cancel"
+msgstr ""
+
+#: core/inc/media-enhanced.php:4 core/inc/media-enhanced.php:304
+msgid "Add oEmbed, external IMG, SVG code, HTML or Shortcode"
+msgstr ""
+
+#: core/inc/media-enhanced.php:4
+msgid "Add Multimedia"
+msgstr ""
+
+#: core/inc/media-enhanced.php:304
+msgid "Add New"
+msgstr ""
+
+#: core/inc/media-enhanced.php:308
+msgid "Item added to library."
+msgstr ""
+
+#: core/inc/media-enhanced.php:312
+msgid "Item updated."
+msgstr ""
+
+#: core/inc/media-enhanced.php:314
+msgid "Fill all the required fields."
+msgstr ""
+
+#: core/inc/media-enhanced.php:322
+msgid "Enter title here*"
+msgstr ""
+
+#: core/inc/media-enhanced.php:330
+msgid "Permalink:"
+msgstr ""
+
+#: core/inc/media-enhanced.php:332
+msgid "View Post"
+msgstr ""
+
+#: core/inc/media-enhanced.php:338
+msgid "Insert from URL*"
+msgstr ""
+
+#: core/inc/media-enhanced.php:344
+msgid "Caption"
+msgstr ""
+
+#: core/inc/media-enhanced.php:373 core/inc/media-enhanced.php:379
+msgid "Publish"
+msgstr ""
+
+#: core/inc/media-enhanced.php:382
+msgid "Save"
+msgstr ""
+
+#: core/inc/media-enhanced.php:386
+#: core/plugins_activation/class-tgm-plugin-activation.php:2878
+msgid "Update"
+msgstr ""
+
+#: core/inc/related-posts/class-hook-settings-page.php:20
+msgid "Related Posts for WordPress"
+msgstr ""
+
+#: core/inc/customizer-woocommerce.php:132
+msgid "Subtotal:"
+msgstr ""
+
+#: core/inc/customizer-woocommerce.php:135
+msgid "View cart"
+msgstr ""
+
+#: core/inc/customizer-woocommerce.php:140
+#: core/inc/customizer-woocommerce.php:185
+msgid "Your cart is currently empty."
+msgstr ""
+
+#: core/inc/customizer-woocommerce.php:190
+#: core/inc/customizer-woocommerce.php:192
+msgid "Cart"
+msgstr ""
+
+#: core/inc/customizer-woocommerce.php:244
+msgid "Proceed to checkout"
+msgstr ""
+
+#: core/inc/api/api-functions.php:196
+#, php-format
+msgid ""
+"<span class=\"uncode-premium-plugin-activation-error\">You need to register "
+"Uncode before to download this plugin. <a href=\"%s\">Register Uncode</a></"
+"span>"
+msgstr ""
+
+#: core/inc/api/api-functions.php:207
+msgid ""
+"<span class=\"uncode-premium-plugin-activation-error\">The Envato Purchase "
+"Code seems to be invalid. Please try to unregister and register the product "
+"again. If the issue persists <a href=\"https://support.undsgn.com/hc/en-us/"
+"articles/360000836318\" target=\"_blank\">contact the theme author.</a> "
+"(Error 23)</span>"
+msgstr ""
+
+#: core/inc/api/api-functions.php:210
+#, php-format
+msgid ""
+"<span class=\"uncode-premium-plugin-activation-error\">Purchase code "
+"verification failed. <a href=\"https://support.undsgn.com/hc/en-us/"
+"articles/360000836318\" target=\"_blank\">Please contact the theme author.</"
+"a> (Error %s)</span>"
+msgstr ""
+
+#: core/inc/api/class-theme-registration.php:64
+msgid "Purchase Code saved."
+msgstr ""
+
+#: core/inc/api/class-theme-registration.php:83
+msgid "Invalid nonce or empty data."
+msgstr ""
+
+#: core/inc/api/class-theme-registration.php:124
+msgid ""
+"Your Envato Purchase Code doesn't seem to be valid. Please double-check it, "
+"and try again."
+msgstr ""
+
+#: core/inc/api/class-theme-registration.php:128
+msgid ""
+"According to the Envato License Terms, you have exceeded the maximum number "
+"of activations permitted for a single Purchase Code. Please purchase an "
+"additional license. <a href=\"https://support.undsgn.com/hc/en-us/"
+"articles/360000849998\" target=\"_blank\">More info</a>"
+msgstr ""
+
+#: core/inc/api/class-theme-registration.php:132
+msgid ""
+"There was a problem contacting the Envato API server for Purchase Code "
+"verification. Please try again later, or contact the theme author."
+msgstr ""
+
+#: core/inc/api/class-theme-registration.php:136
+msgid ""
+"There is a problem contacting the Undsgn server for the Purchase Code "
+"verification. Please disable any firewall service, deactivate any possible "
+"server authentication, verify you have an updated cURL module, verify if "
+"your host is blocking connections to external domains and make sure to "
+"whitelist 'api.undsgn.com'. Please consult <a href=\"https://support.undsgn."
+"com/hc/en-us/articles/115004287985\" target=\"_blank\">this page</a> and if "
+"the problem persists, <a href=\"https://support.undsgn.com/hc/en-us/"
+"articles/360000836318\" target=\"_blank\"> contact the theme author.</a>"
+msgstr ""
+
+#: core/inc/api/class-theme-registration.php:153
+#, php-format
+msgid ""
+"There was an unexpected problem with your Purchase Code verification. <a "
+"href=\"https://support.undsgn.com/hc/en-us/articles/360000836318\" target="
+"\"_blank\">Please contact the theme author.</a> (Error %s)"
+msgstr ""
+
+#: core/inc/api/class-theme-registration.php:157
+msgid ""
+"The Envato Purchase Code doesn't seem to be properly formatted. Please "
+"double check it and try again."
+msgstr ""
+
+#: core/inc/api/class-theme-registration.php:161
+msgid ""
+"The Envato Purchase Code doesn't seem to be associated with an Uncode Theme "
+"purchase. Please double check it and try again."
+msgstr ""
+
+#: core/inc/uncode-comment-walker.php:69
+msgid "Edit this comment"
+msgstr ""
+
+#: core/inc/uncode-comment-walker.php:74
+msgid "Reply"
+msgstr ""
+
+#: core/inc/export/uncode_export.php:6
+msgid ""
+"You do not have sufficient permissions to export the content of this site."
+msgstr ""
+
+#: core/inc/export/uncode_export.php:12
+msgid "Export"
+msgstr ""
+
+#: core/inc/export/uncode_export.php:40
+msgid "Overview"
+msgstr ""
+
+#: core/inc/export/uncode_export.php:41
+msgid ""
+"You can export a file of your site&#8217;s content in order to import it "
+"into another installation or platform. The export file will be an XML file "
+"format called WXR. Posts, pages, comments, custom fields, categories, and "
+"tags can be included. You can choose for the WXR file to include only "
+"certain posts or pages by setting the dropdown filters to limit the export "
+"by category, author, date range by month, or publishing status."
+msgstr ""
+
+#: core/inc/export/uncode_export.php:42
+msgid ""
+"Once generated, your WXR file can be imported by another WordPress site or "
+"by another blogging platform able to access this format."
+msgstr ""
+
+#: core/inc/export/uncode_export.php:46
+msgid "For more information:"
+msgstr ""
+
+#: core/inc/export/uncode_export.php:47
+msgid "Documentation on Export"
+msgstr ""
+
+#: core/inc/export/uncode_export.php:48
+msgid "Support Forums"
+msgstr ""
+
+#: core/inc/export/uncode_export.php:86
+msgid ""
+"When you click the button below WordPress will create an XML file for you to "
+"save to your computer."
+msgstr ""
+
+#: core/inc/export/uncode_export.php:87
+msgid ""
+"This format, which we call WordPress eXtended RSS or WXR, will contain your "
+"posts, pages, comments, custom fields, categories, and tags."
+msgstr ""
+
+#: core/inc/export/uncode_export.php:88
+msgid ""
+"Once you&#8217;ve saved the download file, you can use the Import function "
+"in another WordPress installation to import the content from this site."
+msgstr ""
+
+#: core/inc/export/uncode_export.php:90
+msgid "Choose what to export"
+msgstr ""
+
+#: core/inc/export/uncode_export.php:94
+msgid "All content"
+msgstr ""
+
+#: core/inc/export/uncode_export.php:95
+msgid ""
+"This will contain all of your posts, pages, comments, custom fields, terms, "
+"navigation menus and custom posts."
+msgstr ""
+
+#: core/inc/export/uncode_export.php:97
+msgid "Posts"
+msgstr ""
+
+#: core/inc/export/uncode_export.php:100
+msgid "Categories:"
+msgstr ""
+
+#: core/inc/export/uncode_export.php:101 core/inc/export/uncode_export.php:107
+#: core/inc/export/uncode_export.php:124 core/inc/export/uncode_export.php:139
+#: core/inc/export/uncode_export.php:156
+msgid "All"
+msgstr ""
+
+#: core/inc/export/uncode_export.php:104 core/inc/export/uncode_export.php:136
+msgid "Authors:"
+msgstr ""
+
+#: core/inc/export/uncode_export.php:111 core/inc/export/uncode_export.php:143
+msgid "Date range:"
+msgstr ""
+
+#: core/inc/export/uncode_export.php:113 core/inc/export/uncode_export.php:145
+msgid "Start Date"
+msgstr ""
+
+#: core/inc/export/uncode_export.php:117 core/inc/export/uncode_export.php:149
+msgid "End Date"
+msgstr ""
+
+#: core/inc/export/uncode_export.php:122 core/inc/export/uncode_export.php:154
+msgid "Status:"
+msgstr ""
+
+#: core/inc/export/uncode_export.php:133
+msgid "Pages"
+msgstr ""
+
+#: core/inc/export/uncode_export.php:177
+msgid "Download Export File"
+msgstr ""
+
+#: core/inc/helpers.php:178
+msgid "Minutes"
+msgstr ""
+
+#: core/inc/helpers.php:180
+msgid "Minute"
+msgstr ""
+
+#: core/inc/helpers.php:1159 vc_templates/uncode_consent_notice.php:31
+msgid ""
+"This content is blocked. Please review your [uncode_privacy_box]Privacy "
+"Settings[/uncode_privacy_box]."
+msgstr ""
+
+#: core/inc/admin.php:21 core/inc/admin-pages/welcome.php:95
+msgid "System Status"
+msgstr ""
+
+#: core/inc/admin.php:70
+msgid "Theme Options saved!"
+msgstr ""
+
+#: core/inc/admin.php:71
+msgid "Theme Options not saved."
+msgstr ""
+
+#: core/inc/admin.php:74
+msgid " Error: 400 - Request content was invalid."
+msgstr ""
+
+#: core/inc/admin.php:75
+msgid " Error: 401 - Unauthorized access."
+msgstr ""
+
+#: core/inc/admin.php:76
+msgid " Error: 403 - Forbidden resource can't be accessed."
+msgstr ""
+
+#: core/inc/admin.php:77
+msgid " Error: 404 - Requested page not found."
+msgstr ""
+
+#: core/inc/admin.php:78
+msgid " Error: 408 - Request time out."
+msgstr ""
+
+#: core/inc/admin.php:79
+msgid " Error: 500 - Internal server error."
+msgstr ""
+
+#: core/inc/admin.php:80
+msgid " Error: 503 - Service unavailable."
+msgstr ""
+
+#: core/inc/admin.php:81
+msgid " Your session has expired."
+msgstr ""
+
+#: core/inc/admin.php:82
+msgid " Unknown error."
+msgstr ""
+
+#: core/inc/admin.php:85
+msgid "All Media Categories"
+msgstr ""
+
+#: core/inc/admin.php:95
+msgid "Please enter a valid Envato Purchase Code"
+msgstr ""
+
+#: core/inc/admin.php:96
+msgid "You must accept the Terms of Service in order to perform this action"
+msgstr ""
+
+#: core/inc/admin.php:106
+msgid "Save Anyway"
+msgstr ""
+
+#: core/inc/admin.php:107
+msgid "Don't show this message again"
+msgstr ""
+
+#: core/inc/admin.php:108
+msgid "Confirmation Required"
+msgstr ""
+
+#: core/inc/admin.php:110
+msgid "<strong>Important warning!</strong>"
+msgstr ""
+
+#: core/inc/admin.php:111
+#, php-format
+msgid ""
+"Before saving Theme Options you need to increase the "
+"<em><strong>max_input_vars</strong></em> value of your PHP configuration. "
+"Your current allowed value is too low and you risk to loose your settings if "
+"you choose to continue, please set it to at least <strong class=\"vars-"
+"placeholder\">dddd</strong>: <a href=\"%s\" target=\"_blank\">more info</a>."
+msgstr ""
+
+#: core/inc/admin.php:112
+#, php-format
+msgid ""
+"If you decide to continue, we strongly suggest you to perform a backup "
+"first, <a href=\"%s\" target=\"_blank\">more info</a>."
+msgstr ""
+
+#: core/inc/admin.php:123
+msgid "Please read this article before updating the theme"
+msgstr ""
+
+#: core/inc/admin.php:125
+msgid "Read the Change Log"
+msgstr ""
+
+#: core/inc/admin.php:131
+msgid "Uncode Registration Required"
+msgstr ""
+
+#: core/inc/admin.php:132
+msgid "Register Uncode"
+msgstr ""
+
+#: core/inc/admin.php:133
+msgid "Please register your copy of Uncode Theme to update the theme."
+msgstr ""
+
+#: core/inc/admin.php:134
+msgid "Please register your copy of Uncode Theme to import premium contents."
+msgstr ""
+
+#: core/inc/admin.php:135
+#, php-format
+msgid "Please register your copy of Uncode Theme to %s the following plugin:"
+msgstr ""
+
+#: core/inc/admin.php:136
+#, php-format
+msgid "Please register your copy of Uncode Theme to %s the following plugins:"
+msgstr ""
+
+#: core/inc/admin.php:199
+msgid "Add Media"
+msgstr ""
+
+#: core/inc/admin.php:200
+msgid "Add Medias"
+msgstr ""
+
+#: core/inc/admin.php:201
+msgid "Media selection"
+msgstr ""
+
+#: core/inc/admin.php:202
+msgid "Medias selection"
+msgstr ""
+
+#: core/inc/admin.php:203
+msgid "All medias"
+msgstr ""
+
+#: core/inc/admin.php:215
+msgid "Vimeo"
+msgstr ""
+
+#: core/inc/admin.php:215
+msgid "Manage Vimeos"
+msgstr ""
+
+#: core/inc/admin.php:215
+#, php-format
+msgid "Vimeo <span class=\"count\">(%s)</span>"
+msgid_plural "Vimeos <span class=\"count\">(%s)</span>"
 msgstr[0] ""
 msgstr[1] ""
 
-#: comments.php:35 comments.php:55
-msgid "Comment navigation"
+#: core/inc/admin.php:216
+msgid "Youtube"
 msgstr ""
 
-#: comments.php:37 comments.php:57
-msgid "Older Comments"
+#: core/inc/admin.php:216
+msgid "Manage Youtubes"
 msgstr ""
 
-#: comments.php:38 comments.php:58
-msgid "Newer Comments"
+#: core/inc/admin.php:216
+#, php-format
+msgid "Youtube <span class=\"count\">(%s)</span>"
+msgid_plural "Youtubes <span class=\"count\">(%s)</span>"
+msgstr[0] ""
+msgstr[1] ""
+
+#: core/inc/admin.php:217
+msgid "Soundcloud"
 msgstr ""
 
-#: comments.php:69
-msgid "Comments are closed."
+#: core/inc/admin.php:217
+msgid "Manage Soundclouds"
 msgstr ""
 
-#: comments.php:75
-msgid "Log out"
+#: core/inc/admin.php:217
+#, php-format
+msgid "Soundcloud <span class=\"count\">(%s)</span>"
+msgid_plural "Soundclouds <span class=\"count\">(%s)</span>"
+msgstr[0] ""
+msgstr[1] ""
+
+#: core/inc/admin.php:218
+msgid "Spotify"
 msgstr ""
 
-#: comments.php:77
-msgctxt "noun"
-msgid "Comment"
+#: core/inc/admin.php:218
+msgid "Manage Spotifys"
 msgstr ""
 
-#: comments.php:84
-msgid "Add comment"
+#: core/inc/admin.php:218
+#, php-format
+msgid "Spotify <span class=\"count\">(%s)</span>"
+msgid_plural "Spotifys <span class=\"count\">(%s)</span>"
+msgstr[0] ""
+msgstr[1] ""
+
+#: core/inc/admin.php:219
+msgid "Facebook"
 msgstr ""
 
-#: content-none.php:15
-msgid "Nothing Found"
+#: core/inc/admin.php:219
+msgid "Manage Facebooks"
 msgstr ""
 
-#: content-none.php:21
+#: core/inc/admin.php:219
+#, php-format
+msgid "Facebook <span class=\"count\">(%s)</span>"
+msgid_plural "Facebooks <span class=\"count\">(%s)</span>"
+msgstr[0] ""
+msgstr[1] ""
+
+#: core/inc/admin.php:220
+msgid "Twitter"
+msgstr ""
+
+#: core/inc/admin.php:220
+msgid "Manage Tweets"
+msgstr ""
+
+#: core/inc/admin.php:220
+#, php-format
+msgid "Twitter <span class=\"count\">(%s)</span>"
+msgid_plural "Tweets <span class=\"count\">(%s)</span>"
+msgstr[0] ""
+msgstr[1] ""
+
+#: core/inc/admin.php:221
+msgid "Flickr"
+msgstr ""
+
+#: core/inc/admin.php:221
+msgid "Manage Flickrs"
+msgstr ""
+
+#: core/inc/admin.php:221
+#, php-format
+msgid "Flickr <span class=\"count\">(%s)</span>"
+msgid_plural "Flickrs <span class=\"count\">(%s)</span>"
+msgstr[0] ""
+msgstr[1] ""
+
+#: core/inc/admin.php:222
+msgid "Instagram"
+msgstr ""
+
+#: core/inc/admin.php:222
+msgid "Manage Instagrams"
+msgstr ""
+
+#: core/inc/admin.php:222
+#, php-format
+msgid "Instagram <span class=\"count\">(%s)</span>"
+msgid_plural "Instagrams <span class=\"count\">(%s)</span>"
+msgstr[0] ""
+msgstr[1] ""
+
+#: core/inc/admin.php:223
+msgid "SVG"
+msgstr ""
+
+#: core/inc/admin.php:223
+msgid "Manage SVGs"
+msgstr ""
+
+#: core/inc/admin.php:223
+#, php-format
+msgid "SVG <span class=\"count\">(%s)</span>"
+msgid_plural "SVGs <span class=\"count\">(%s)</span>"
+msgstr[0] ""
+msgstr[1] ""
+
+#: core/inc/admin.php:224
+msgid "HTML"
+msgstr ""
+
+#: core/inc/admin.php:224
+msgid "Manage HTMLs"
+msgstr ""
+
+#: core/inc/admin.php:224
+#, php-format
+msgid "HTML <span class=\"count\">(%s)</span>"
+msgid_plural "HTMLs <span class=\"count\">(%s)</span>"
+msgstr[0] ""
+msgstr[1] ""
+
+#: core/inc/admin.php:225
+msgid "iFrame"
+msgstr ""
+
+#: core/inc/admin.php:225
+msgid "Manage iFrames"
+msgstr ""
+
+#: core/inc/admin.php:225
+#, php-format
+msgid "iFrame <span class=\"count\">(%s)</span>"
+msgid_plural "iFrames <span class=\"count\">(%s)</span>"
+msgstr[0] ""
+msgstr[1] ""
+
+#: core/inc/admin.php:269
+msgid "Alt Text"
+msgstr ""
+
+#: core/inc/admin.php:285
+msgid "Width"
+msgstr ""
+
+#: core/inc/admin.php:289
+msgid "Height"
+msgstr ""
+
+#: core/inc/admin.php:293
+msgid "Media Poster (Image ID)"
+msgstr ""
+
+#: core/inc/admin.php:300
+msgid "Loop?"
+msgstr ""
+
+#: core/inc/admin.php:306
+msgid "Autoplay?"
+msgstr ""
+
+#: core/inc/admin.php:312
+msgid "Mobile video background?"
+msgstr ""
+
+#: core/inc/admin.php:318
+msgid "Alternative video source 1"
+msgstr ""
+
+#: core/inc/admin.php:322
+msgid "Alternative video source 2"
+msgstr ""
+
+#: core/inc/admin.php:329
+msgid "Animated?"
+msgstr ""
+
+#: core/inc/admin.php:338
+msgid "Animation time (default 100)"
+msgstr ""
+
+#: core/inc/admin.php:346
+msgid "ID"
+msgstr ""
+
+#: core/inc/admin.php:354
+msgid "Twitter original"
+msgstr ""
+
+#: core/inc/admin.php:362
+msgid "Team member?"
+msgstr ""
+
+#: core/inc/admin.php:370
+msgid "Socials"
+msgstr ""
+
+#: core/inc/admin.php:610 core/inc/admin.php:665 core/inc/admin.php:1460
+msgid "Send to OptionTree"
+msgstr ""
+
+#: core/inc/admin.php:611 core/inc/admin.php:666 core/inc/admin.php:709
+#: core/inc/admin.php:1461 core/inc/admin.php:1500
+msgid "Remove Media"
+msgstr ""
+
+#: core/inc/admin.php:617 core/inc/admin.php:672
+msgid "Select…"
+msgstr ""
+
+#: core/inc/admin.php:620 core/inc/admin.php:680 core/inc/admin.php:1471
+msgid "Featured media"
+msgstr ""
+
+#: core/inc/admin.php:624 core/inc/admin.php:685 core/inc/admin.php:1477
+msgid "Add media"
+msgstr ""
+
+#: core/inc/admin.php:627 core/inc/admin.php:713
+msgid "Select a media assigned to the category."
+msgstr ""
+
+#: core/inc/admin.php:630 core/inc/admin.php:717
+msgid "Color"
+msgstr ""
+
+#: core/inc/admin.php:638 core/inc/admin.php:727
+msgid "Select a color assigned to the category."
+msgstr ""
+
+#: core/inc/admin.php:1060
+#, php-format
+msgid "The Adaptive Images system is using %1$s of the %2$s space left."
+msgstr ""
+
+#: core/inc/admin.php:1236
+msgid ""
+"In order to run Uncode you need first to deactivate WPBakery Page Builder "
+"and install the Uncode WPBakery Page Builder."
+msgstr ""
+
+#: core/inc/admin.php:1237
+msgid "Deactivate WPBakery Page Builder"
+msgstr ""
+
+#: core/inc/admin.php:1253
+msgid "Warning: PHP max_input_vars."
+msgstr ""
+
+#: core/inc/admin.php:1256
 #, php-format
 msgid ""
-"Ready to publish your first post? <a href=\"%1$s\">Get started here</a>."
+"Before saving the theme options you need to address an issue marked on the "
+"<strong><a href=\"%s\">Welcome Screen</a></strong>."
 msgstr ""
 
-#: content-none.php:25
+#: core/inc/admin.php:1299
+#, php-format
 msgid ""
-"Sorry, but nothing matched your search terms. Please try again with some "
-"different keywords."
+"The menu transparency will not be visible without a declared header <a class="
+"\"page-options-header-section\" href=\"%s\">here</a>."
 msgstr ""
 
-#: content-none.php:30
+#: core/inc/admin.php:1382
+msgid "Facebook profile URL"
+msgstr ""
+
+#: core/inc/admin.php:1384
+msgid "Twitter username or profile URL"
+msgstr ""
+
+#: core/inc/admin.php:1386
+msgid "Google+"
+msgstr ""
+
+#: core/inc/admin.php:1388
+msgid "Dribbble profile URL"
+msgstr ""
+
+#: core/inc/admin.php:1390
+msgid "Instagram profile URL"
+msgstr ""
+
+#: core/inc/admin.php:1392
+msgid "Pinterest page URL"
+msgstr ""
+
+#: core/inc/admin.php:1394
+msgid "Xing profile URL"
+msgstr ""
+
+#: core/inc/admin.php:1396
+msgid "YouTube page URL"
+msgstr ""
+
+#: core/inc/admin.php:1398
+msgid "Vimeo page URL"
+msgstr ""
+
+#: core/inc/admin.php:1400
+msgid "Tumblr page URL"
+msgstr ""
+
+#: core/inc/admin.php:1418
+msgid "Qualification"
+msgstr ""
+
+#: core/inc/admin.php:1422
+msgid "Enter a descriptive sentence."
+msgstr ""
+
+#: core/inc/admin.php:1504
+msgid "Select a media assigned to the author page."
+msgstr ""
+
+#: core/inc/admin.php:1646
+msgid "Related Posts"
+msgstr ""
+
+#: core/inc/admin.php:1720
+#, php-format
 msgid ""
-"It seems we can&rsquo;t find what you&rsquo;re looking for. Perhaps "
-"searching can help."
+"Please activate Content Block in WPBakery Page Builder > <a href=\"%1s"
+"\">Role Manager</a>. More info on the documentation, <a href=\"%2s\" target="
+"\"_blank\">click here</a>"
 msgstr ""
 
-#: content.php:50
-msgid "Please activate Uncode Core plugin"
+#: core/inc/admin.php:1793
+#, php-format
+msgid ""
+"Envato WordPress Toolkit has been deprecated. Please deactivate it and <a "
+"href=\"%1$s\">register your theme here</a>."
+msgstr ""
+
+#: core/inc/admin.php:1837
+msgid ""
+"The following plugin needs to be updated to its latest version to ensure "
+"maximum compatibility with this theme: <em>Uncode Core</em>."
+msgstr ""
+
+#: core/inc/admin.php:1845 core/inc/admin.php:1853
+msgid "This theme requires the following plugin: <em>Uncode Core</em>."
 msgstr ""
 
 #: core/inc/admin-pages/support.php:30
@@ -348,12 +1511,12 @@ msgid "Please insert your Envato Purchase Code. %s."
 msgstr ""
 
 #: core/inc/admin-pages/welcome.php:43 core/inc/admin-pages/welcome.php:70
-#: core/inc/admin-pages/welcome.php:251 core/inc/admin-pages/welcome.php:278
-#: core/inc/admin-pages/welcome.php:283
+#: core/inc/admin-pages/welcome.php:251 core/inc/admin-pages/welcome.php:281
+#: core/inc/admin-pages/welcome.php:290
 msgid "More info"
 msgstr ""
 
-#: core/inc/admin-pages/welcome.php:51 core/inc/admin-pages/welcome.php:392
+#: core/inc/admin-pages/welcome.php:51 core/inc/admin-pages/welcome.php:457
 msgid "Where can I find my Envato Purchase Code?"
 msgstr ""
 
@@ -400,10 +1563,6 @@ msgstr ""
 
 #: core/inc/admin-pages/welcome.php:85
 msgid "Deregister your product"
-msgstr ""
-
-#: core/inc/admin-pages/welcome.php:95 core/inc/admin.php:21
-msgid "System Status"
 msgstr ""
 
 #: core/inc/admin-pages/welcome.php:99
@@ -543,7 +1702,7 @@ msgstr ""
 #: core/inc/admin-pages/welcome.php:264
 #, php-format
 msgid ""
-"%s - We recommend setting PHP max_input_vars to at least 3000. See: <a href="
+"%s - We recommend setting PHP max_input_vars to at least %s. See: <a href="
 "\"%s\" target=\"_blank\">Increasing the PHP max vars limit</a>"
 msgstr ""
 
@@ -563,986 +1722,17 @@ msgstr ""
 msgid "If you modified the server settings refresh the option to test."
 msgstr ""
 
-#: core/inc/admin-pages/welcome.php:276 core/inc/admin-pages/welcome.php:281
+#: core/inc/admin-pages/welcome.php:277 core/inc/admin-pages/welcome.php:286
 msgid "Calculating…"
 msgstr ""
 
-#: core/inc/admin-pages/welcome.php:278 core/inc/admin-pages/welcome.php:283
+#: core/inc/admin-pages/welcome.php:281 core/inc/admin-pages/welcome.php:290
 #, php-format
-msgid " - We recommend setting PHP max_input_vars to at least 3000. %s"
+msgid " - We recommend setting PHP max_input_vars to at least %s. %s"
 msgstr ""
 
-#: core/inc/admin-pages/welcome.php:284
+#: core/inc/admin-pages/welcome.php:283 core/inc/admin-pages/welcome.php:292
 msgid "No available data"
-msgstr ""
-
-#: core/inc/admin.php:70
-msgid "Theme Options saved!"
-msgstr ""
-
-#: core/inc/admin.php:71
-msgid "Theme Options not saved."
-msgstr ""
-
-#: core/inc/admin.php:74
-msgid " Error: 400 - Request content was invalid."
-msgstr ""
-
-#: core/inc/admin.php:75
-msgid " Error: 401 - Unauthorized access."
-msgstr ""
-
-#: core/inc/admin.php:76
-msgid " Error: 403 - Forbidden resource can't be accessed."
-msgstr ""
-
-#: core/inc/admin.php:77
-msgid " Error: 404 - Requested page not found."
-msgstr ""
-
-#: core/inc/admin.php:78
-msgid " Error: 408 - Request time out."
-msgstr ""
-
-#: core/inc/admin.php:79
-msgid " Error: 500 - Internal server error."
-msgstr ""
-
-#: core/inc/admin.php:80
-msgid " Error: 503 - Service unavailable."
-msgstr ""
-
-#: core/inc/admin.php:81
-msgid " Your session has expired."
-msgstr ""
-
-#: core/inc/admin.php:82
-msgid " Unknown error."
-msgstr ""
-
-#: core/inc/admin.php:85
-msgid "All Media Categories"
-msgstr ""
-
-#: core/inc/admin.php:89 core/inc/main.php:764
-msgid "Read more"
-msgstr ""
-
-#: core/inc/admin.php:95
-msgid "Please enter a valid Envato Purchase Code"
-msgstr ""
-
-#: core/inc/admin.php:96
-msgid "You must accept the Terms of Service in order to perform this action"
-msgstr ""
-
-#: core/inc/admin.php:107
-msgid "Please read this article before updating the theme"
-msgstr ""
-
-#: core/inc/admin.php:109
-msgid "Read the Change Log"
-msgstr ""
-
-#: core/inc/admin.php:115
-msgid "Uncode Registration Required"
-msgstr ""
-
-#: core/inc/admin.php:116
-msgid "Register Uncode"
-msgstr ""
-
-#: core/inc/admin.php:117
-msgid "Please register your copy of Uncode Theme to update the theme."
-msgstr ""
-
-#: core/inc/admin.php:118
-msgid "Please register your copy of Uncode Theme to import premium contents."
-msgstr ""
-
-#: core/inc/admin.php:119
-#, php-format
-msgid "Please register your copy of Uncode Theme to %s the following plugin:"
-msgstr ""
-
-#: core/inc/admin.php:120
-#, php-format
-msgid "Please register your copy of Uncode Theme to %s the following plugins:"
-msgstr ""
-
-#: core/inc/admin.php:183
-msgid "Add Media"
-msgstr ""
-
-#: core/inc/admin.php:184
-msgid "Add Medias"
-msgstr ""
-
-#: core/inc/admin.php:185
-msgid "Media selection"
-msgstr ""
-
-#: core/inc/admin.php:186
-msgid "Medias selection"
-msgstr ""
-
-#: core/inc/admin.php:187
-msgid "All medias"
-msgstr ""
-
-#: core/inc/admin.php:199
-msgid "Vimeo"
-msgstr ""
-
-#: core/inc/admin.php:199
-msgid "Manage Vimeos"
-msgstr ""
-
-#: core/inc/admin.php:199
-#, php-format
-msgid "Vimeo <span class=\"count\">(%s)</span>"
-msgid_plural "Vimeos <span class=\"count\">(%s)</span>"
-msgstr[0] ""
-msgstr[1] ""
-
-#: core/inc/admin.php:200
-msgid "Youtube"
-msgstr ""
-
-#: core/inc/admin.php:200
-msgid "Manage Youtubes"
-msgstr ""
-
-#: core/inc/admin.php:200
-#, php-format
-msgid "Youtube <span class=\"count\">(%s)</span>"
-msgid_plural "Youtubes <span class=\"count\">(%s)</span>"
-msgstr[0] ""
-msgstr[1] ""
-
-#: core/inc/admin.php:201
-msgid "Soundcloud"
-msgstr ""
-
-#: core/inc/admin.php:201
-msgid "Manage Soundclouds"
-msgstr ""
-
-#: core/inc/admin.php:201
-#, php-format
-msgid "Soundcloud <span class=\"count\">(%s)</span>"
-msgid_plural "Soundclouds <span class=\"count\">(%s)</span>"
-msgstr[0] ""
-msgstr[1] ""
-
-#: core/inc/admin.php:202
-msgid "Spotify"
-msgstr ""
-
-#: core/inc/admin.php:202
-msgid "Manage Spotifys"
-msgstr ""
-
-#: core/inc/admin.php:202
-#, php-format
-msgid "Spotify <span class=\"count\">(%s)</span>"
-msgid_plural "Spotifys <span class=\"count\">(%s)</span>"
-msgstr[0] ""
-msgstr[1] ""
-
-#: core/inc/admin.php:203
-msgid "Facebook"
-msgstr ""
-
-#: core/inc/admin.php:203
-msgid "Manage Facebooks"
-msgstr ""
-
-#: core/inc/admin.php:203
-#, php-format
-msgid "Facebook <span class=\"count\">(%s)</span>"
-msgid_plural "Facebooks <span class=\"count\">(%s)</span>"
-msgstr[0] ""
-msgstr[1] ""
-
-#: core/inc/admin.php:204
-msgid "Twitter"
-msgstr ""
-
-#: core/inc/admin.php:204
-msgid "Manage Tweets"
-msgstr ""
-
-#: core/inc/admin.php:204
-#, php-format
-msgid "Twitter <span class=\"count\">(%s)</span>"
-msgid_plural "Tweets <span class=\"count\">(%s)</span>"
-msgstr[0] ""
-msgstr[1] ""
-
-#: core/inc/admin.php:205
-msgid "Flickr"
-msgstr ""
-
-#: core/inc/admin.php:205
-msgid "Manage Flickrs"
-msgstr ""
-
-#: core/inc/admin.php:205
-#, php-format
-msgid "Flickr <span class=\"count\">(%s)</span>"
-msgid_plural "Flickrs <span class=\"count\">(%s)</span>"
-msgstr[0] ""
-msgstr[1] ""
-
-#: core/inc/admin.php:206
-msgid "Instagram"
-msgstr ""
-
-#: core/inc/admin.php:206
-msgid "Manage Instagrams"
-msgstr ""
-
-#: core/inc/admin.php:206
-#, php-format
-msgid "Instagram <span class=\"count\">(%s)</span>"
-msgid_plural "Instagrams <span class=\"count\">(%s)</span>"
-msgstr[0] ""
-msgstr[1] ""
-
-#: core/inc/admin.php:207
-msgid "SVG"
-msgstr ""
-
-#: core/inc/admin.php:207
-msgid "Manage SVGs"
-msgstr ""
-
-#: core/inc/admin.php:207
-#, php-format
-msgid "SVG <span class=\"count\">(%s)</span>"
-msgid_plural "SVGs <span class=\"count\">(%s)</span>"
-msgstr[0] ""
-msgstr[1] ""
-
-#: core/inc/admin.php:208
-msgid "HTML"
-msgstr ""
-
-#: core/inc/admin.php:208
-msgid "Manage HTMLs"
-msgstr ""
-
-#: core/inc/admin.php:208
-#, php-format
-msgid "HTML <span class=\"count\">(%s)</span>"
-msgid_plural "HTMLs <span class=\"count\">(%s)</span>"
-msgstr[0] ""
-msgstr[1] ""
-
-#: core/inc/admin.php:209
-msgid "iFrame"
-msgstr ""
-
-#: core/inc/admin.php:209
-msgid "Manage iFrames"
-msgstr ""
-
-#: core/inc/admin.php:209
-#, php-format
-msgid "iFrame <span class=\"count\">(%s)</span>"
-msgid_plural "iFrames <span class=\"count\">(%s)</span>"
-msgstr[0] ""
-msgstr[1] ""
-
-#: core/inc/admin.php:253
-msgid "Alt Text"
-msgstr ""
-
-#: core/inc/admin.php:269
-msgid "Width"
-msgstr ""
-
-#: core/inc/admin.php:273
-msgid "Height"
-msgstr ""
-
-#: core/inc/admin.php:277
-msgid "Media Poster (Image ID)"
-msgstr ""
-
-#: core/inc/admin.php:284
-msgid "Loop?"
-msgstr ""
-
-#: core/inc/admin.php:290
-msgid "Autoplay?"
-msgstr ""
-
-#: core/inc/admin.php:296
-msgid "Mobile video background?"
-msgstr ""
-
-#: core/inc/admin.php:302
-msgid "Alternative video source 1"
-msgstr ""
-
-#: core/inc/admin.php:306
-msgid "Alternative video source 2"
-msgstr ""
-
-#: core/inc/admin.php:313
-msgid "Animated?"
-msgstr ""
-
-#: core/inc/admin.php:322
-msgid "Animation time (default 100)"
-msgstr ""
-
-#: core/inc/admin.php:330
-msgid "ID"
-msgstr ""
-
-#: core/inc/admin.php:338
-msgid "Twitter original"
-msgstr ""
-
-#: core/inc/admin.php:346
-msgid "Team member?"
-msgstr ""
-
-#: core/inc/admin.php:354
-msgid "Socials"
-msgstr ""
-
-#: core/inc/admin.php:594 core/inc/admin.php:649 core/inc/admin.php:1444
-msgid "Send to OptionTree"
-msgstr ""
-
-#: core/inc/admin.php:595 core/inc/admin.php:650 core/inc/admin.php:693
-#: core/inc/admin.php:1445 core/inc/admin.php:1484
-msgid "Remove Media"
-msgstr ""
-
-#: core/inc/admin.php:601 core/inc/admin.php:656
-msgid "Select…"
-msgstr ""
-
-#: core/inc/admin.php:604 core/inc/admin.php:664 core/inc/admin.php:1455
-msgid "Featured media"
-msgstr ""
-
-#: core/inc/admin.php:608 core/inc/admin.php:669 core/inc/admin.php:1461
-msgid "Add media"
-msgstr ""
-
-#: core/inc/admin.php:611 core/inc/admin.php:697
-msgid "Select a media assigned to the category."
-msgstr ""
-
-#: core/inc/admin.php:614 core/inc/admin.php:701
-msgid "Color"
-msgstr ""
-
-#: core/inc/admin.php:622 core/inc/admin.php:711
-msgid "Select a color assigned to the category."
-msgstr ""
-
-#: core/inc/admin.php:1044
-#, php-format
-msgid "The Adaptive Images system is using %1$s of the %2$s space left."
-msgstr ""
-
-#: core/inc/admin.php:1220
-msgid ""
-"In order to run Uncode you need first to deactivate WPBakery Page Builder "
-"and install the Uncode WPBakery Page Builder."
-msgstr ""
-
-#: core/inc/admin.php:1221
-msgid "Deactivate WPBakery Page Builder"
-msgstr ""
-
-#: core/inc/admin.php:1237
-msgid "Warning: PHP max_input_vars."
-msgstr ""
-
-#: core/inc/admin.php:1240
-#, php-format
-msgid ""
-"Before saving the theme options you need to address an issue marked on the "
-"<strong><a href=\"%s\">Welcome Screen</a></strong>."
-msgstr ""
-
-#: core/inc/admin.php:1283
-#, php-format
-msgid ""
-"The menu transparency will not be visible without a declared header <a class="
-"\"page-options-header-section\" href=\"%s\">here</a>."
-msgstr ""
-
-#: core/inc/admin.php:1366
-msgid "Facebook profile URL"
-msgstr ""
-
-#: core/inc/admin.php:1368
-msgid "Twitter username or profile URL"
-msgstr ""
-
-#: core/inc/admin.php:1370
-msgid "Google+"
-msgstr ""
-
-#: core/inc/admin.php:1372
-msgid "Dribbble profile URL"
-msgstr ""
-
-#: core/inc/admin.php:1374
-msgid "Instagram profile URL"
-msgstr ""
-
-#: core/inc/admin.php:1376
-msgid "Pinterest page URL"
-msgstr ""
-
-#: core/inc/admin.php:1378
-msgid "Xing profile URL"
-msgstr ""
-
-#: core/inc/admin.php:1380
-msgid "YouTube page URL"
-msgstr ""
-
-#: core/inc/admin.php:1382
-msgid "Vimeo page URL"
-msgstr ""
-
-#: core/inc/admin.php:1384
-msgid "Tumblr page URL"
-msgstr ""
-
-#: core/inc/admin.php:1402
-msgid "Qualification"
-msgstr ""
-
-#: core/inc/admin.php:1406
-msgid "Enter a descriptive sentence."
-msgstr ""
-
-#: core/inc/admin.php:1488
-msgid "Select a media assigned to the author page."
-msgstr ""
-
-#: core/inc/admin.php:1630
-msgid "Related Posts"
-msgstr ""
-
-#: core/inc/admin.php:1704
-#, php-format
-msgid ""
-"Please activate Content Block in WPBakery Page Builder > <a href=\"%1s"
-"\">Role Manager</a>. More info on the documentation, <a href=\"%2s\" target="
-"\"_blank\">click here</a>"
-msgstr ""
-
-#: core/inc/admin.php:1741
-#, php-format
-msgid ""
-"Envato WordPress Toolkit has been deprecated. Please deactivate it and <a "
-"href=\"%1$s\">register your theme here</a>."
-msgstr ""
-
-#: core/inc/admin.php:1785
-msgid ""
-"The following plugin needs to be updated to its latest version to ensure "
-"maximum compatibility with this theme: <em>Uncode Core</em>."
-msgstr ""
-
-#: core/inc/admin.php:1793 core/inc/admin.php:1801
-msgid "This theme requires the following plugin: <em>Uncode Core</em>."
-msgstr ""
-
-#: core/inc/api/api-functions.php:196
-#, php-format
-msgid ""
-"<span class=\"uncode-premium-plugin-activation-error\">You need to register "
-"Uncode before to download this plugin. <a href=\"%s\">Register Uncode</a></"
-"span>"
-msgstr ""
-
-#: core/inc/api/api-functions.php:207
-msgid ""
-"<span class=\"uncode-premium-plugin-activation-error\">The Envato Purchase "
-"Code seems to be invalid. Please try to unregister and register the product "
-"again. If the issue persists <a href=\"https://support.undsgn.com/hc/en-us/"
-"articles/360000836318\" target=\"_blank\">contact the theme author.</a> "
-"(Error 23)</span>"
-msgstr ""
-
-#: core/inc/api/api-functions.php:210
-#, php-format
-msgid ""
-"<span class=\"uncode-premium-plugin-activation-error\">Purchase code "
-"verification failed. <a href=\"https://support.undsgn.com/hc/en-us/"
-"articles/360000836318\" target=\"_blank\">Please contact the theme author.</"
-"a> (Error %s)</span>"
-msgstr ""
-
-#: core/inc/api/class-theme-registration.php:64
-msgid "Purchase Code saved."
-msgstr ""
-
-#: core/inc/api/class-theme-registration.php:83
-msgid "Invalid nonce or empty data."
-msgstr ""
-
-#: core/inc/api/class-theme-registration.php:124
-msgid ""
-"Your Envato Purchase Code doesn't seem to be valid. Please double-check it, "
-"and try again."
-msgstr ""
-
-#: core/inc/api/class-theme-registration.php:128
-msgid ""
-"According to the Envato License Terms, you have exceeded the maximum number "
-"of activations permitted for a single Purchase Code. Please purchase an "
-"additional license. <a href=\"https://support.undsgn.com/hc/en-us/"
-"articles/360000849998\" target=\"_blank\">More info</a>"
-msgstr ""
-
-#: core/inc/api/class-theme-registration.php:132
-msgid ""
-"There was a problem contacting the Envato API server for Purchase Code "
-"verification. Please try again later, or contact the theme author."
-msgstr ""
-
-#: core/inc/api/class-theme-registration.php:136
-msgid ""
-"There is a problem contacting the Undsgn server for the Purchase Code "
-"verification. Please disable any firewall service, deactivate any possible "
-"server authentication, verify you have an updated cURL module, verify if "
-"your host is blocking connections to external domains and make sure to "
-"whitelist 'api.undsgn.com'. Please consult <a href=\"https://support.undsgn."
-"com/hc/en-us/articles/115004287985\" target=\"_blank\">this page</a> and if "
-"the problem persists, <a href=\"https://support.undsgn.com/hc/en-us/"
-"articles/360000836318\" target=\"_blank\"> contact the theme author.</a>"
-msgstr ""
-
-#: core/inc/api/class-theme-registration.php:153
-#, php-format
-msgid ""
-"There was an unexpected problem with your Purchase Code verification. <a "
-"href=\"https://support.undsgn.com/hc/en-us/articles/360000836318\" target="
-"\"_blank\">Please contact the theme author.</a> (Error %s)"
-msgstr ""
-
-#: core/inc/api/class-theme-registration.php:157
-msgid ""
-"The Envato Purchase Code doesn't seem to be properly formatted. Please "
-"double check it and try again."
-msgstr ""
-
-#: core/inc/api/class-theme-registration.php:161
-msgid ""
-"The Envato Purchase Code doesn't seem to be associated with an Uncode Theme "
-"purchase. Please double check it and try again."
-msgstr ""
-
-#: core/inc/colors.php:12
-msgid "Accent"
-msgstr ""
-
-#: core/inc/customizer-woocommerce.php:114 woocommerce/cart/mini-cart.php:50
-#: woocommerce/cart/mini-cart.php:51
-msgid "Remove this item"
-msgstr ""
-
-#: core/inc/customizer-woocommerce.php:132
-msgid "Subtotal:"
-msgstr ""
-
-#: core/inc/customizer-woocommerce.php:135
-msgid "View cart"
-msgstr ""
-
-#: core/inc/customizer-woocommerce.php:136 woocommerce/cart/mini-cart.php:91
-msgid "Checkout"
-msgstr ""
-
-#: core/inc/customizer-woocommerce.php:140
-#: core/inc/customizer-woocommerce.php:185
-msgid "Your cart is currently empty."
-msgstr ""
-
-#: core/inc/customizer-woocommerce.php:190
-#: core/inc/customizer-woocommerce.php:192
-msgid "Cart"
-msgstr ""
-
-#: core/inc/customizer-woocommerce.php:244
-msgid "Proceed to checkout"
-msgstr ""
-
-#: core/inc/deprecated-functions.php:21
-#, php-format
-msgid ""
-"<strong>Make sure all your plugins are up to date:</strong> %1$s is "
-"<strong>deprecated</strong> since version %2$s! Use %3$s instead."
-msgstr ""
-
-#: core/inc/deprecated-functions.php:23
-#, php-format
-msgid ""
-"<strong>Make sure all your plugins are up to date:</strong> %1$s is "
-"<strong>deprecated</strong> since version %2$s with no alternative available."
-msgstr ""
-
-#: core/inc/edit_custom_walker.php:85
-#, php-format
-msgid "%s (Invalid)"
-msgstr ""
-
-#: core/inc/edit_custom_walker.php:89
-#, php-format
-msgid "%s (Pending)"
-msgstr ""
-
-#: core/inc/edit_custom_walker.php:98
-msgid "MEGAMENU TITLE"
-msgstr ""
-
-#: core/inc/edit_custom_walker.php:100
-msgid "MEGAMENU"
-msgstr ""
-
-#: core/inc/edit_custom_walker.php:100
-msgid "sub item"
-msgstr ""
-
-#: core/inc/edit_custom_walker.php:127
-msgid "Move up"
-msgstr ""
-
-#: core/inc/edit_custom_walker.php:140
-msgid "Move down"
-msgstr ""
-
-#: core/inc/edit_custom_walker.php:142 core/inc/edit_custom_walker.php:144
-msgid "Edit Menu Item"
-msgstr ""
-
-#: core/inc/edit_custom_walker.php:153
-msgid "URL"
-msgstr ""
-
-#: core/inc/edit_custom_walker.php:160
-msgid "Navigation Label"
-msgstr ""
-
-#: core/inc/edit_custom_walker.php:166
-msgid "Title Attribute"
-msgstr ""
-
-#: core/inc/edit_custom_walker.php:173
-msgid "Open link in a new window/tab"
-msgstr ""
-
-#: core/inc/edit_custom_walker.php:178
-msgid "CSS Classes (optional)"
-msgstr ""
-
-#: core/inc/edit_custom_walker.php:184
-msgid "Link Relationship (XFN)"
-msgstr ""
-
-#: core/inc/edit_custom_walker.php:190 core/inc/media-enhanced.php:348
-#: woocommerce/single-product/tabs/description.php:16
-msgid "Description"
-msgstr ""
-
-#: core/inc/edit_custom_walker.php:192
-msgid ""
-"The description will be displayed in the menu if the current theme supports "
-"it."
-msgstr ""
-
-#: core/inc/edit_custom_walker.php:202
-msgid "Icon"
-msgstr ""
-
-#: core/inc/edit_custom_walker.php:211
-msgid "Megamenu"
-msgstr ""
-
-#: core/inc/edit_custom_walker.php:220
-msgid "Button style"
-msgstr ""
-
-#: core/inc/edit_custom_walker.php:226
-msgid "Move"
-msgstr ""
-
-#: core/inc/edit_custom_walker.php:227
-msgid "Up one"
-msgstr ""
-
-#: core/inc/edit_custom_walker.php:228
-msgid "Down one"
-msgstr ""
-
-#: core/inc/edit_custom_walker.php:231
-msgid "To the top"
-msgstr ""
-
-#: core/inc/edit_custom_walker.php:238
-#, php-format
-msgid "Original: %s"
-msgstr ""
-
-#: core/inc/edit_custom_walker.php:251
-msgid "Remove"
-msgstr ""
-
-#: core/inc/edit_custom_walker.php:252
-msgid "Cancel"
-msgstr ""
-
-#: core/inc/export/uncode_export.php:6
-msgid ""
-"You do not have sufficient permissions to export the content of this site."
-msgstr ""
-
-#: core/inc/export/uncode_export.php:12
-msgid "Export"
-msgstr ""
-
-#: core/inc/export/uncode_export.php:40
-msgid "Overview"
-msgstr ""
-
-#: core/inc/export/uncode_export.php:41
-msgid ""
-"You can export a file of your site&#8217;s content in order to import it "
-"into another installation or platform. The export file will be an XML file "
-"format called WXR. Posts, pages, comments, custom fields, categories, and "
-"tags can be included. You can choose for the WXR file to include only "
-"certain posts or pages by setting the dropdown filters to limit the export "
-"by category, author, date range by month, or publishing status."
-msgstr ""
-
-#: core/inc/export/uncode_export.php:42
-msgid ""
-"Once generated, your WXR file can be imported by another WordPress site or "
-"by another blogging platform able to access this format."
-msgstr ""
-
-#: core/inc/export/uncode_export.php:46
-msgid "For more information:"
-msgstr ""
-
-#: core/inc/export/uncode_export.php:47
-msgid "Documentation on Export"
-msgstr ""
-
-#: core/inc/export/uncode_export.php:48
-msgid "Support Forums"
-msgstr ""
-
-#: core/inc/export/uncode_export.php:86
-msgid ""
-"When you click the button below WordPress will create an XML file for you to "
-"save to your computer."
-msgstr ""
-
-#: core/inc/export/uncode_export.php:87
-msgid ""
-"This format, which we call WordPress eXtended RSS or WXR, will contain your "
-"posts, pages, comments, custom fields, categories, and tags."
-msgstr ""
-
-#: core/inc/export/uncode_export.php:88
-msgid ""
-"Once you&#8217;ve saved the download file, you can use the Import function "
-"in another WordPress installation to import the content from this site."
-msgstr ""
-
-#: core/inc/export/uncode_export.php:90
-msgid "Choose what to export"
-msgstr ""
-
-#: core/inc/export/uncode_export.php:94
-msgid "All content"
-msgstr ""
-
-#: core/inc/export/uncode_export.php:95
-msgid ""
-"This will contain all of your posts, pages, comments, custom fields, terms, "
-"navigation menus and custom posts."
-msgstr ""
-
-#: core/inc/export/uncode_export.php:97
-msgid "Posts"
-msgstr ""
-
-#: core/inc/export/uncode_export.php:100
-msgid "Categories:"
-msgstr ""
-
-#: core/inc/export/uncode_export.php:101 core/inc/export/uncode_export.php:107
-#: core/inc/export/uncode_export.php:124 core/inc/export/uncode_export.php:139
-#: core/inc/export/uncode_export.php:156
-msgid "All"
-msgstr ""
-
-#: core/inc/export/uncode_export.php:104 core/inc/export/uncode_export.php:136
-msgid "Authors:"
-msgstr ""
-
-#: core/inc/export/uncode_export.php:111 core/inc/export/uncode_export.php:143
-msgid "Date range:"
-msgstr ""
-
-#: core/inc/export/uncode_export.php:113 core/inc/export/uncode_export.php:145
-msgid "Start Date"
-msgstr ""
-
-#: core/inc/export/uncode_export.php:117 core/inc/export/uncode_export.php:149
-msgid "End Date"
-msgstr ""
-
-#: core/inc/export/uncode_export.php:122 core/inc/export/uncode_export.php:154
-msgid "Status:"
-msgstr ""
-
-#: core/inc/export/uncode_export.php:133
-msgid "Pages"
-msgstr ""
-
-#: core/inc/export/uncode_export.php:177
-msgid "Download Export File"
-msgstr ""
-
-#: core/inc/helpers.php:178
-msgid "Minutes"
-msgstr ""
-
-#: core/inc/helpers.php:180
-msgid "Minute"
-msgstr ""
-
-#: core/inc/helpers.php:1159 vc_templates/uncode_consent_notice.php:31
-msgid ""
-"This content is blocked. Please review your [uncode_privacy_box]Privacy "
-"Settings[/uncode_privacy_box]."
-msgstr ""
-
-#: core/inc/main.php:78
-msgid "Primary Menu"
-msgstr ""
-
-#: core/inc/main.php:79
-msgid "Secondary Menu"
-msgstr ""
-
-#: core/inc/main.php:80
-msgid "Call To Action Menu"
-msgstr ""
-
-#: core/inc/main.php:146 core/inc/main.php:159
-msgid "Add widgets here to appear in your sidebar."
-msgstr ""
-
-#: core/inc/main.php:157
-msgid "Sidebar"
-msgstr ""
-
-#: core/inc/main.php:302 vc_templates/uncode_countdown.php:54
-msgid "days"
-msgstr ""
-
-#: core/inc/main.php:303 vc_templates/uncode_countdown.php:54
-msgid "hours"
-msgstr ""
-
-#: core/inc/main.php:304 vc_templates/uncode_countdown.php:54
-msgid "minutes"
-msgstr ""
-
-#: core/inc/main.php:305 vc_templates/uncode_countdown.php:54
-msgid "seconds"
-msgstr ""
-
-#: core/inc/main.php:309 vc_templates/uncode_index.php:1178
-msgid "Loading…"
-msgstr ""
-
-#: core/inc/main.php:310
-msgid "slide"
-msgstr ""
-
-#: core/inc/main.php:311
-msgid "footer"
-msgstr ""
-
-#: core/inc/media-enhanced.php:4 core/inc/media-enhanced.php:304
-msgid "Add oEmbed, external IMG, SVG code, HTML or Shortcode"
-msgstr ""
-
-#: core/inc/media-enhanced.php:4
-msgid "Add Multimedia"
-msgstr ""
-
-#: core/inc/media-enhanced.php:304
-msgid "Add New"
-msgstr ""
-
-#: core/inc/media-enhanced.php:308
-msgid "Item added to library."
-msgstr ""
-
-#: core/inc/media-enhanced.php:312
-msgid "Item updated."
-msgstr ""
-
-#: core/inc/media-enhanced.php:314
-msgid "Fill all the required fields."
-msgstr ""
-
-#: core/inc/media-enhanced.php:322
-msgid "Enter title here*"
-msgstr ""
-
-#: core/inc/media-enhanced.php:330
-msgid "Permalink:"
-msgstr ""
-
-#: core/inc/media-enhanced.php:332
-msgid "View Post"
-msgstr ""
-
-#: core/inc/media-enhanced.php:338
-msgid "Insert from URL*"
-msgstr ""
-
-#: core/inc/media-enhanced.php:344
-msgid "Caption"
-msgstr ""
-
-#: core/inc/media-enhanced.php:373 core/inc/media-enhanced.php:379
-msgid "Publish"
-msgstr ""
-
-#: core/inc/media-enhanced.php:382
-msgid "Save"
-msgstr ""
-
-#: core/inc/media-enhanced.php:386
-#: core/plugins_activation/class-tgm-plugin-activation.php:2878
-msgid "Update"
-msgstr ""
-
-#: core/inc/related-posts/class-hook-settings-page.php:20
-msgid "Related Posts for WordPress"
 msgstr ""
 
 #: core/inc/template-tags.php:77
@@ -1679,12 +1869,18 @@ msgstr ""
 msgid "Archives"
 msgstr ""
 
-#: core/inc/uncode-comment-walker.php:69
-msgid "Edit this comment"
+#: core/inc/deprecated-functions.php:21
+#, php-format
+msgid ""
+"<strong>Make sure all your plugins are up to date:</strong> %1$s is "
+"<strong>deprecated</strong> since version %2$s! Use %3$s instead."
 msgstr ""
 
-#: core/inc/uncode-comment-walker.php:74
-msgid "Reply"
+#: core/inc/deprecated-functions.php:23
+#, php-format
+msgid ""
+"<strong>Make sure all your plugins are up to date:</strong> %1$s is "
+"<strong>deprecated</strong> since version %2$s with no alternative available."
 msgstr ""
 
 #: core/plugins_activation/class-tgm-plugin-activation.php:336
@@ -2081,116 +2277,95 @@ msgstr ""
 msgid "Installing Plugin %1$s (%2$d/%3$d)"
 msgstr ""
 
-#: footer.php:121 partials/menus.php:948 vc_templates/uncode_copyright.php:30
-msgid "All rights reserved"
+#: content-none.php:15
+msgid "Nothing Found"
 msgstr ""
 
-#: functions.php:17
-msgid "PHP version obsolete"
+#: content-none.php:21
+#, php-format
+msgid ""
+"Ready to publish your first post? <a href=\"%1$s\">Get started here</a>."
 msgstr ""
 
-#: functions.php:18
-msgid "Ooops, obsolete PHP version"
+#: content-none.php:25
+msgid ""
+"Sorry, but nothing matched your search terms. Please try again with some "
+"different keywords."
 msgstr ""
 
-#: page.php:350 partials/elements.php:1384 single.php:342
-msgid "Pages:"
+#: content-none.php:30
+msgid ""
+"It seems we can&rsquo;t find what you&rsquo;re looking for. Perhaps "
+"searching can help."
 msgstr ""
 
-#: partials/elements.php:1166
-msgid "Sticky"
-msgstr ""
-
-#: partials/elements.php:1447
-#: woocommerce/single-product/add-to-cart/simple.php:62
-msgid "Read More"
-msgstr ""
-
-#: partials/elements.php:1489 partials/elements.php:1491
-msgid "by"
-msgstr ""
-
-#: partials/elements.php:1513 partials/elements.php:2222
+#: comments.php:28
+#, php-format
 msgctxt "comments"
-msgid "Comment"
-msgid_plural "Comments"
+msgid "%1$s Comment"
+msgid_plural "%1$s Comments"
 msgstr[0] ""
 msgstr[1] ""
 
-#: partials/elements.php:1976
-msgid "Sale!"
+#: comments.php:35 comments.php:55
+msgid "Comment navigation"
 msgstr ""
 
-#: partials/elements.php:1978
-msgid "Out of stock"
+#: comments.php:37 comments.php:57
+msgid "Older Comments"
 msgstr ""
 
-#: partials/elements.php:2155 partials/elements.php:2179
-#: partials/elements.php:2245
-#, php-format
-msgid "View all posts in %s"
+#: comments.php:38 comments.php:58
+msgid "Newer Comments"
 msgstr ""
 
-#: partials/elements.php:2157 partials/elements.php:2181
-#: partials/elements.php:2250
-msgid "In"
+#: comments.php:69
+msgid "Comments are closed."
 msgstr ""
 
-#: partials/elements.php:2160 partials/elements.php:2206
-msgid "By"
+#: comments.php:75
+msgid "Log out"
 msgstr ""
 
-#: partials/elements.php:2274
-msgctxt "breadcrumb"
-msgid "Home"
+#: comments.php:77
+msgctxt "noun"
+msgid "Comment"
 msgstr ""
 
-#: partials/elements.php:2284
-msgid "Home"
+#: comments.php:84
+msgid "Add comment"
 msgstr ""
 
-#: partials/elements.php:2287
-msgid "Archive by Category"
-msgstr ""
-
-#: partials/elements.php:2290
-msgid "Search Results for"
-msgstr ""
-
-#: partials/elements.php:2293
-msgid "Posts Tagged"
-msgstr ""
-
-#: partials/elements.php:2296
-msgid "Articles Posted by"
-msgstr ""
-
-#: partials/elements.php:2299
-msgid "Error 404"
-msgstr ""
-
-#: partials/elements.php:2498
-msgid "Page"
-msgstr ""
-
-#: partials/menus.php:430
-msgid "Search"
-msgstr ""
-
-#: partials/menus.php:439 searchform.php:11
-msgid "Search…"
+#: content.php:50
+msgid "Please activate Uncode Core plugin"
 msgstr ""
 
 #: search.php:86
 msgid "Results for:"
 msgstr ""
 
-#: searchform.php:11 woocommerce/product-searchform.php:27
-msgid "Search for:"
+#: footer.php:121 vc_templates/uncode_copyright.php:30 partials/menus.php:1097
+msgid "All rights reserved"
 msgstr ""
 
-#: single-portfolio.php:454 woocommerce/single-product/share.php:35
-msgid "Share"
+#: single.php:342 page.php:350 partials/elements.php:1384
+msgid "Pages:"
+msgstr ""
+
+#: vc_templates/uncode_index.php:526 vc_templates/vc_gallery.php:493
+msgid "Show all"
+msgstr ""
+
+#: vc_templates/uncode_index.php:1165
+msgid "Nothing found."
+msgstr ""
+
+#: vc_templates/uncode_index.php:1183
+msgid "Load more"
+msgstr ""
+
+#: vc_templates/vc_tab.php:25
+msgid "Empty tab. Edit page to add content here."
 msgstr ""
 
 #: vc_templates/uncode_author_profile.php:34
@@ -2202,18 +2377,6 @@ msgstr ""
 msgid "%1$s post page"
 msgstr ""
 
-#: vc_templates/uncode_index.php:526 vc_templates/vc_gallery.php:493
-msgid "Show all"
-msgstr ""
-
-#: vc_templates/uncode_index.php:1160
-msgid "Nothing found."
-msgstr ""
-
-#: vc_templates/uncode_index.php:1178
-msgid "Load more"
-msgstr ""
-
 #: vc_templates/vc_accordion_tab.php:6
 msgid "Section"
 msgstr ""
@@ -2222,235 +2385,85 @@ msgstr ""
 msgid "Empty section. Edit page to add content here."
 msgstr ""
 
-#: vc_templates/vc_tab.php:25
-msgid "Empty tab. Edit page to add content here."
+#: partials/menus.php:92 partials/menus.php:203
+msgid "logo"
 msgstr ""
 
-#: woocommerce/cart/mini-cart.php:75
-msgid "No products in the cart."
-msgstr ""
-
-#: woocommerce/cart/mini-cart.php:85
-msgid "Subtotal"
-msgstr ""
-
-#: woocommerce/cart/mini-cart.php:90
-msgid "View Cart"
-msgstr ""
-
-#: woocommerce/order/order-details-customer.php:24
-msgid "Customer details"
-msgstr ""
-
-#: woocommerce/order/order-details-customer.php:29
-#: woocommerce/order/order-details.php:77
-msgid "Note:"
-msgstr ""
-
-#: woocommerce/order/order-details-customer.php:36
-msgid "Email:"
-msgstr ""
-
-#: woocommerce/order/order-details-customer.php:43
-msgid "Telephone:"
-msgstr ""
-
-#: woocommerce/order/order-details-customer.php:59
-msgid "Billing address"
-msgstr ""
-
-#: woocommerce/order/order-details-customer.php:62
-#: woocommerce/order/order-details-customer.php:79
-#: woocommerce/single-product/meta.php:24
-msgid "N/A"
-msgstr ""
-
-#: woocommerce/order/order-details-customer.php:76
-msgid "Shipping address"
-msgstr ""
-
-#: woocommerce/order/order-details.php:38
-msgid "Order details"
-msgstr ""
-
-#: woocommerce/order/order-details.php:42
-#: woocommerce/single-product-reviews.php:23
-msgid "Product"
-msgstr ""
-
-#: woocommerce/order/order-details.php:43
-msgid "Total"
-msgstr ""
-
-#: woocommerce/product-searchform.php:28
-msgid "Search products&hellip;"
-msgstr ""
-
-#: woocommerce/product-searchform.php:28
-msgctxt "submit button"
+#: partials/menus.php:550
 msgid "Search"
 msgstr ""
 
-#: woocommerce/single-product-reviews.php:23
-#, php-format
-msgid "%s review"
-msgid_plural "%s reviews"
+#: partials/menus.php:559 searchform.php:11
+msgid "Search…"
+msgstr ""
+
+#: partials/elements.php:1166
+msgid "Sticky"
+msgstr ""
+
+#: partials/elements.php:1489 partials/elements.php:1491
+msgid "by"
+msgstr ""
+
+#: partials/elements.php:1513 partials/elements.php:2220
+msgctxt "comments"
+msgid "Comment"
+msgid_plural "Comments"
 msgstr[0] ""
 msgstr[1] ""
 
-#: woocommerce/single-product-reviews.php:25
-msgid "Reviews"
+#: partials/elements.php:1974
+msgid "Sale!"
 msgstr ""
 
-#: woocommerce/single-product-reviews.php:47
-msgid "There are no reviews yet."
+#: partials/elements.php:1976
+msgid "Out of stock"
 msgstr ""
 
-#: woocommerce/single-product-reviews.php:60
-msgid "Add a review"
-msgstr ""
-
-#: woocommerce/single-product-reviews.php:60
+#: partials/elements.php:2153 partials/elements.php:2177
+#: partials/elements.php:2243
 #, php-format
-msgid "Be the first to review &ldquo;%s&rdquo;"
+msgid "View all posts in %s"
 msgstr ""
 
-#: woocommerce/single-product-reviews.php:61
-#, php-format
-msgid "Leave a Reply to %s"
+#: partials/elements.php:2155 partials/elements.php:2179
+#: partials/elements.php:2248
+msgid "In"
 msgstr ""
 
-#: woocommerce/single-product-reviews.php:67
-msgid "Name"
+#: partials/elements.php:2158 partials/elements.php:2204
+msgid "By"
 msgstr ""
 
-#: woocommerce/single-product-reviews.php:69
-msgid "Email"
+#: partials/elements.php:2272
+msgctxt "breadcrumb"
+msgid "Home"
 msgstr ""
 
-#: woocommerce/single-product-reviews.php:72
-msgid "Submit"
+#: partials/elements.php:2282
+msgid "Home"
 msgstr ""
 
-#: woocommerce/single-product-reviews.php:78
-#, php-format
-msgid "You must be <a href=\"%s\">logged in</a> to post a review."
+#: partials/elements.php:2285
+msgid "Archive by Category"
 msgstr ""
 
-#: woocommerce/single-product-reviews.php:82
-msgid "Your rating"
+#: partials/elements.php:2288
+msgid "Search Results for"
 msgstr ""
 
-#: woocommerce/single-product-reviews.php:83
-msgid "Rate&hellip;"
+#: partials/elements.php:2291
+msgid "Posts Tagged"
 msgstr ""
 
-#: woocommerce/single-product-reviews.php:84
-msgid "Perfect"
+#: partials/elements.php:2294
+msgid "Articles Posted by"
 msgstr ""
 
-#: woocommerce/single-product-reviews.php:85
-msgid "Good"
+#: partials/elements.php:2297
+msgid "Error 404"
 msgstr ""
 
-#: woocommerce/single-product-reviews.php:86
-msgid "Average"
-msgstr ""
-
-#: woocommerce/single-product-reviews.php:87
-msgid "Not that bad"
-msgstr ""
-
-#: woocommerce/single-product-reviews.php:88
-msgid "Very Poor"
-msgstr ""
-
-#: woocommerce/single-product-reviews.php:92
-msgid "Your review"
-msgstr ""
-
-#: woocommerce/single-product-reviews.php:101
-msgid ""
-"Only logged in customers who have purchased this product may leave a review."
-msgstr ""
-
-#: woocommerce/single-product/add-to-cart/variable.php:33
-msgid "This product is currently out of stock and unavailable."
-msgstr ""
-
-#: woocommerce/single-product/add-to-cart/variable.php:42
-msgid "Clear"
-msgstr ""
-
-#: woocommerce/single-product/meta.php:24
-msgid "SKU"
-msgstr ""
-
-#: woocommerce/single-product/meta.php:29
-msgid "Category"
-msgstr ""
-
-#: woocommerce/single-product/meta.php:29
-msgid "Categories"
-msgstr ""
-
-#: woocommerce/single-product/meta.php:29
-#: woocommerce/single-product/meta.php:34
-msgid "<span class=\"detail-label\">"
-msgid_plural "<span class=\"detail-label\">"
-msgstr[0] ""
-msgstr[1] ""
-
-#: woocommerce/single-product/meta.php:34
-msgid "Tag"
-msgstr ""
-
-#: woocommerce/single-product/meta.php:34
-msgid "Tags"
-msgstr ""
-
-#: woocommerce/single-product/product-image.php:106
-msgid "Awaiting product image"
-msgstr ""
-
-#: woocommerce/single-product/related.php:18
-msgid "Related products"
-msgstr ""
-
-#: woocommerce/single-product/review.php:59
-msgid "Your comment is awaiting approval"
-msgstr ""
-
-#: woocommerce/single-product/review.php:70
-msgid "verified owner"
-msgstr ""
-
-#: woocommerce/single-product/tabs/additional-information.php:16
-msgid "Additional information"
-msgstr ""
-
-#: woocommerce/single-product/up-sells.php:51
-msgid "You may also like&hellip;"
-msgstr ""
-
-#. Theme Name of the plugin/theme
-msgid "Uncode"
-msgstr ""
-
-#. Theme URI of the plugin/theme
-msgid "http://www.undsgn.com/uncode"
-msgstr ""
-
-#. Description of the plugin/theme
-msgid ""
-"Uncode is a pixel perfect WordPress Theme designed with terrific attention "
-"to details."
-msgstr ""
-
-#. Author of the plugin/theme
-msgid "Undsgn"
-msgstr ""
-
-#. Author URI of the plugin/theme
-msgid "http://www.undsgn.com"
+#: partials/elements.php:2496
+msgid "Page"
 msgstr ""

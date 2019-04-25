@@ -337,7 +337,7 @@ class LS_Shortcode {
 	public static function generateSliderMarkup( $slider = null, $embed = array() ) {
 
 		// Bail out early if no params received or using Popup on unactivated sites
-		if( ! $slider || ( (int)$slider['flag_popup'] && ! get_option('layerslider-authorized-site', false) ) ) {
+		if( ! $slider || ( (int)$slider['flag_popup'] && ! LS_Config::isActivatedSite() ) ) {
 			return array('init' => '', 'container' => '', 'markup' => '');
 		}
 

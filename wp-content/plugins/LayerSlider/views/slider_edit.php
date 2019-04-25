@@ -16,7 +16,7 @@
 	$slider = $sliderItem['data'];
 
 	// Product activation
-	$lsActivated = get_option( 'layerslider-authorized-site', false );
+	$lsActivated = LS_Config::isActivatedSite();
 
 	// Get screen options
 	$lsScreenOptions = get_option('ls-screen-options', '0');
@@ -362,6 +362,10 @@ include LS_ROOT_PATH . '/templates/tmpl-activation.php';
 
 	// Screen options
 	var lsScreenOptions = <?php echo json_encode($lsScreenOptions) ?>;
+
+	var pixieJSFile = '<?php echo LS_ROOT_URL.'/static/pixie/scripts.min.js?ver='.LS_PLUGIN_VERSION ?>';
+	var pixieCSSFile = '<?php echo LS_ROOT_URL.'/static/pixie/styles.min.css?ver='.LS_PLUGIN_VERSION ?>';
+
 </script>
 
 

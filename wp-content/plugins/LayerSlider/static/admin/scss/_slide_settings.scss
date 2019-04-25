@@ -732,16 +732,26 @@ div.ls-image {
 		border-radius: 50%;
 	}
 
-	&.hover a.aviary {
-		display: none !important;
+	&.hover a.pixie {
 		top: -6px;
-		left: -10px;
-		width: 27px;
+		left: -8px;
+		width: 20px;
 		height: 20px;
-		background: url('../img/cclogo.png') 50% 50% no-repeat;
-	    background-size: contain;
-		border-radius: 0;
+	    background: transparent;
+	    color: #555;
+	    text-align: center;
+	    line-height: 20px;
 		cursor: pointer;
+		text-shadow: 0px 0px 5px white;
+
+
+		&:after {
+			content: "\f100";
+			font-family: dashicons;
+			font-size: 26px;
+			-webkit-font-smoothing: antialiased;
+			-moz-osx-font-smoothing: grayscale;
+		}
 	}
 }
 
@@ -1978,6 +1988,7 @@ $ruler-size: 16px;
 
 .ls-preview-context-menu {
 	position: absolute;
+	z-index: 99999;
 
 	ul {
 		position: relative;
@@ -1987,7 +1998,6 @@ $ruler-size: 16px;
 		background: rgba(0, 0, 0, 0.9);
 		border-radius: 10px;
 		box-shadow: 2px 2px 20px rgba(0, 0, 0, 0.6);
-		z-index: 99999;
 
 		.divider {
 			height: 1px;

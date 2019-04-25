@@ -149,14 +149,17 @@ if (is_admin_bar_showing()) {
 		<div class="box-container<?php echo esc_attr($boxed_width); ?>">
 		<script type="text/javascript">UNCODE.initBox();</script>
 		<?php
-			if ($is_redirect !== true) {
-				if ($menutype === 'vmenu-offcanvas' || $menutype === 'menu-overlay' || $menutype === 'menu-overlay-center') {
-					$mainmenu = new unmenu('offcanvas_head', $menutype);
-					echo uncode_remove_p_tag( $mainmenu->html );
-				}
-				if ( !($menutype === 'vmenu' && $vmenu_position === 'right') || (wp_is_mobile() && ($menutype === 'vmenu' && $vmenu_position === 'right') ) ) {
-					$mainmenu = new unmenu($menutype, $menutype);
-					echo uncode_remove_p_tag( $mainmenu->html );
+			$remove_menu = (isset($metabox_data['_uncode_specific_menu_remove'][0]) && $metabox_data['_uncode_specific_menu_remove'][0] === 'on') ? true : false;
+			if ( ! $remove_menu ) {
+				if ($is_redirect !== true) {
+					if ($menutype === 'vmenu-offcanvas' || $menutype === 'menu-overlay' || $menutype === 'menu-overlay-center') {
+						$mainmenu = new unmenu('offcanvas_head', $menutype);
+						echo uncode_remove_p_tag( $mainmenu->html );
+					}
+					if ( !($menutype === 'vmenu' && $vmenu_position === 'right') || (wp_is_mobile() && ($menutype === 'vmenu' && $vmenu_position === 'right') ) ) {
+						$mainmenu = new unmenu($menutype, $menutype);
+						echo uncode_remove_p_tag( $mainmenu->html );
+					}
 				}
 			}
 			?>

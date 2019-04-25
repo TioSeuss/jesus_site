@@ -55,7 +55,7 @@
 				<input type="hidden" name="image">
 				<div class="ls-image ls-upload ls-bulk-upload ls-layer-image not-set" data-l10n-set="<?php _e('Click to set', 'LayerSlider') ?>" data-l10n-change="<?php _e('Click to change', 'LayerSlider') ?>">
 					<div><img src="<?php echo LS_ROOT_URL.'/static/admin/img/blank.gif' ?>" alt=""></div>
-					<a href="#" class="aviary"></a>
+					<a href="#" class="pixie"></a>
 					<a href="#" class="dashicons dashicons-dismiss"></a>
 				</div>
 				<p>
@@ -95,7 +95,7 @@
 									<input type="hidden" name="poster">
 									<div class="ls-image ls-upload ls-bulk-upload ls-media-image not-set" data-l10n-set="<?php _e('Click to set', 'LayerSlider') ?>" data-l10n-change="<?php _e('Click to change', 'LayerSlider') ?>">
 										<div><img src="<?php echo LS_ROOT_URL.'/static/admin/img/blank.gif' ?>" alt=""></div>
-										<a href="#" class="aviary"></a>
+										<a href="#" class="pixie"></a>
 										<a href="#" class="dashicons dashicons-dismiss"></a>
 									</div>
 								</td>

@@ -42,7 +42,7 @@ function lsOptionRow( $type, $default, $current, $attrs = array(), $trClasses = 
 		$wrapperEnd = '</div>';
 
 	} else if( ! empty($default['premium']) ) {
-		if( ! get_option( 'layerslider-authorized-site', false ) ) {
+		if( ! LS_Config::isActivatedSite() ) {
 			$trClasses .= ' ls-premium';
 			$wrapperStart = '<div><a class="ls-activation-lock dashicons dashicons-lock" target="_blank" href="'.admin_url('admin.php?page=layerslider-addons' ).'" data-help="'.__('This feature requires product activation. Click on the padlock icon to learn more.', 'LayerSlider').'"></a>';
 			$wrapperEnd = '</div>';
@@ -110,7 +110,7 @@ function lsGetInput($default, $current, $attrs = array(), $return = false) {
 
 	// Product activation check
 	if( ! empty( $default['premium'] ) ) {
-		if( ! get_option( 'layerslider-authorized-site', false ) ) {
+		if( ! LS_Config::isActivatedSite() ) {
 			$el->addClass('locked');
 			$el->attr('disabled', 'disabled');
 		}
@@ -158,7 +158,7 @@ function lsGetCheckbox($default, $current, $attrs = array(), $return = false) {
 
 	// Product activation check
 	if( ! empty( $default['premium'] ) ) {
-		if( ! get_option( 'layerslider-authorized-site', false ) ) {
+		if( ! LS_Config::isActivatedSite() ) {
 			$el->addClass('locked');
 			$el->attr('disabled', 'disabled');
 		}
@@ -222,7 +222,7 @@ function lsGetSelect($default, $current, $attrs = array(), $forceOptionVal = fal
 
 	// Product activation check
 	if( ! empty( $default['premium'] ) ) {
-		if( ! get_option( 'layerslider-authorized-site', false ) ) {
+		if( ! LS_Config::isActivatedSite() ) {
 			$el->addClass('locked');
 			$el->attr('disabled', 'disabled');
 		}

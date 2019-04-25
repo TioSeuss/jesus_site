@@ -27,7 +27,7 @@ class LS_Popups {
 
 		// Popup is an exclusive feature, don't try to initialize it
 		// in case of unactivated sites.
-		if( ! get_option('layerslider-authorized-site', false) ) {
+		if( ! LS_Config::isActivatedSite() ) {
 			return false;
 		}
 

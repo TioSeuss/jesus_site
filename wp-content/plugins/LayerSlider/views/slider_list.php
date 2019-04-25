@@ -78,7 +78,7 @@
 
 	// Site activation
 	$code 		= get_option('layerslider-purchase-code', '');
-	$validity 	= get_option('layerslider-authorized-site', false);
+	$validity 	= LS_Config::isActivatedSite();
 	$channel 	= get_option('layerslider-release-channel', 'stable');
 
 	// GDPR

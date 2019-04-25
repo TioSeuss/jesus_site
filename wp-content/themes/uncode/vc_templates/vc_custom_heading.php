@@ -163,98 +163,103 @@ if ( strpos( $content, '[uncode_hl_text') !== false ) {
 	$classes[] = 'font-obs';
 }
 
+preg_match_all("/(?:<h[0-6]>).*?(?:<\/h[0-6]>)/", $content, $tag_matches);
+$content_tags = count($tag_matches[0]);
+
 if ($content !== '') {
 
 	$div_data_attributes = array_map(function ($v, $k) { return $k . '="' . $v . '"'; }, $data_size, array_keys($data_size));
 
-	$output .= '<' . $heading_semantic . ' class="' . esc_attr(trim(implode( ' ', $classes ))) . '" '.implode(' ', $div_data_attributes) .'>';
-	if ($text_italic === 'yes') {
-		$output .= '<i>';
-	}
-	if ( strpos($content, '[uncode_hl_text') !== false|| ( $css_animation === 'curtain' || $css_animation === 'curtain-words' || $css_animation === 'single-slide' ||  $css_animation === 'single-slide-opposite' || $css_animation === 'typewriter' || $css_animation === 'single-curtain' ) ) {
-		$content = strip_tags($content, '<br>');
-		$span_classes = ' class="heading-text-inner"';
-		$split_in_words = preg_split('/(\s+)|(<[^>]*[^\/]>)|(\[|\]+)/i', $content, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
-		if ( isset($split_in_words) ) {
-			$content = '';
-			$skip_split = false;
-			$skip_tag = false;
-			$empty_space = $empty_space_2 = '';
-			$counter_word = 0;
-			foreach ($split_in_words as $key => $word) {
-				if ( $word === '[' || substr( $word, 0, 1 ) === '[' ) {
-					$skip_split = true;
-				}
-				if ( $word === '<' || substr( $word, 0, 1 ) === '<' ) {
-					$skip_tag = true;
-				}
-				if ( $skip_split || $skip_tag ) {
-					$content .= $empty_space_2 . $word;
-					$empty_space = $empty_space_2 = '';
-				} elseif ( strpos($word, "\n") !== false ) {
-					$content .= "\n";
-				} elseif ( strlen(trim($word)) == 0 && $word !== "\n" ) {
-					$empty_space = '<span class="split-word-empty">&nbsp;</span>';
-					$empty_space_2 = '<span class="split-word split-word-empty">&nbsp;</span>';
-				} else {
-					$counter_word++;
-					$content .= '<span class="split-word word' . $counter_word . '"><span class="split-word-flow"><span class="split-word-inner">' . $empty_space . $word . '</span></span></span>';
-					$empty_space = $empty_space_2 = '';
-				}
-				if ( $word === ']' || substr($word, -1) === ']' ) {
-					$skip_split = false;
-				}
-				if ( $word === '>' || substr($word, -1) === '>' ) {
-					$skip_tag = false;
+	if ( !$content_tags ) {
+		$output .= '<' . $heading_semantic . ' class="' . esc_attr(trim(implode( ' ', $classes ))) . '" '.implode(' ', $div_data_attributes) .'>';
+		if ($text_italic === 'yes') {
+			$output .= '<i>';
+		}
+		if ( strpos($content, '[uncode_hl_text') !== false|| ( $css_animation === 'curtain' || $css_animation === 'curtain-words' || $css_animation === 'single-slide' ||  $css_animation === 'single-slide-opposite' || $css_animation === 'typewriter' || $css_animation === 'single-curtain' ) ) {
+			$content = strip_tags($content, '<br>');
+			$span_classes = ' class="heading-text-inner"';
+			$split_in_words = preg_split('/(\s+)|(<[^>]*[^\/]>)|(\[|\]+)/i', $content, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
+			if ( isset($split_in_words) ) {
+				$content = '';
+				$skip_split = false;
+				$skip_tag = false;
+				$empty_space = $empty_space_2 = '';
+				$counter_word = 0;
+				foreach ($split_in_words as $key => $word) {
+					if ( $word === '[' || substr( $word, 0, 1 ) === '[' ) {
+						$skip_split = true;
+					}
+					if ( $word === '<' || substr( $word, 0, 1 ) === '<' ) {
+						$skip_tag = true;
+					}
+					if ( $skip_split || $skip_tag ) {
+						$content .= $empty_space_2 . $word;
+						$empty_space = $empty_space_2 = '';
+					} elseif ( strpos($word, "\n") !== false ) {
+						$content .= "\n";
+					} elseif ( strlen(trim($word)) == 0 && $word !== "\n" ) {
+						$empty_space = '<span class="split-word-empty">&nbsp;</span>';
+						$empty_space_2 = '<span class="split-word split-word-empty">&nbsp;</span>';
+					} else {
+						$counter_word++;
+						$content .= '<span class="split-word word' . $counter_word . '"><span class="split-word-flow"><span class="split-word-inner">' . $empty_space . $word . '</span></span></span>';
+						$empty_space = $empty_space_2 = '';
+					}
+					if ( $word === ']' || substr($word, -1) === ']' ) {
+						$skip_split = false;
+					}
+					if ( $word === '>' || substr($word, -1) === '>' ) {
+						$skip_tag = false;
+					}
 				}
 			}
-		}
-		if ( $css_animation === 'single-curtain' || $css_animation === 'typewriter' ) {
-			$split_content = preg_split('/(?<!^)(?!$)(?!&(?!(amp|gt|lt|quot))[^\s]*)/u', $content );
-		}
-		if ( isset($split_content) ) {
-			$content = '';
-			$skip_split = false;
-			$skip_tag = false;
-			$skip_ent = false;
-			foreach ($split_content as $key => $char) {
-				if ( $char === '[' || substr( $char, 0, 1 ) === '[' ) {
-					$skip_split = true;
-				}
-				if ( $char === '<' || substr( $char, 0, 1 ) === '<' ) {
-					$skip_tag = true;
-				}
-				if ( $char === '&' || substr( $char, 0, 1 ) === '&' ) {
-					$skip_ent = true;
-				}
-				if ( $skip_split || $skip_tag || $skip_ent === 'continue' || ctype_space($char) ) {
-					$content .= $char;
-				} elseif ( $skip_ent  ) {
-					$content .= '<span class="split-char char' . $key . '">' . $char;
-					$skip_ent = 'continue';
-				} else {
-					$content .= '<span class="split-char char' . $key . '">' . $char . '</span>';
-				}
-				if ( $char === ']' || substr($char, -1) === ']' ) {
-					$skip_split = false;
-				}
-				if ( $char === '>' || substr($char, -1) === '>' ) {
-					$skip_tag = false;
-				}
-				if ( $skip_ent == 'continue' && ( $char === ';' || substr($char, -1) === ';' ) ) {
-					$skip_ent = false;
-					$content .= '</span>';
+			if ( $css_animation === 'single-curtain' || $css_animation === 'typewriter' ) {
+				$split_content = preg_split('/(?<!^)(?!$)(?!&(?!(amp|gt|lt|quot))[^\s]*)/u', $content );
+			}
+			if ( isset($split_content) ) {
+				$content = '';
+				$skip_split = false;
+				$skip_tag = false;
+				$skip_ent = false;
+				foreach ($split_content as $key => $char) {
+					if ( $char === '[' || substr( $char, 0, 1 ) === '[' ) {
+						$skip_split = true;
+					}
+					if ( $char === '<' || substr( $char, 0, 1 ) === '<' ) {
+						$skip_tag = true;
+					}
+					if ( $char === '&' || substr( $char, 0, 1 ) === '&' ) {
+						$skip_ent = true;
+					}
+					if ( $skip_split || $skip_tag || $skip_ent === 'continue' || ctype_space($char) ) {
+						$content .= $char;
+					} elseif ( $skip_ent  ) {
+						$content .= '<span class="split-char char' . $key . '">' . $char;
+						$skip_ent = 'continue';
+					} else {
+						$content .= '<span class="split-char char' . $key . '">' . $char . '</span>';
+					}
+					if ( $char === ']' || substr($char, -1) === ']' ) {
+						$skip_split = false;
+					}
+					if ( $char === '>' || substr($char, -1) === '>' ) {
+						$skip_tag = false;
+					}
+					if ( $skip_ent == 'continue' && ( $char === ';' || substr($char, -1) === ';' ) ) {
+						$skip_ent = false;
+						$content .= '</span>';
+					}
 				}
 			}
+		} else {
+			$span_classes = '';
 		}
-	} else {
-		$span_classes = '';
+		$output .= '<span' . $span_classes . '>';
 	}
-	$output .= '<span' . $span_classes . '>';
 	$content = trim($content);
 	$title_lines = explode("\n", $content);
 	$lines_counter = count($title_lines);
-	if ($lines_counter > 1) {
+	if ($lines_counter > 1 && !$content_tags) {
 		foreach ($title_lines as $key => $value) {
 			preg_match_all("%\[uncode_hl_text(.*?)\]%i", $value, $match_span_starts);
 			preg_match_all("%\[\/uncode_hl_text\]%i", $value, $match_span_ends);
@@ -272,13 +277,18 @@ if ($content !== '') {
 			}
 		}
 	} else {
+		if ( $content_tags ) {
+			$content = wpautop($content);
+		}
 		$output .= $content;
 	}
-	$output .= '</span>';
-	if ($text_italic === 'yes') {
-		$output .= '</i>';
+	if ( !$content_tags ) {
+		$output .= '</span>';
+		if ($text_italic === 'yes') {
+			$output .= '</i>';
+		}
+		$output .= '</' . $heading_semantic . '>';
 	}
-	$output .= '</' . $heading_semantic . '>';
 }
 if ($separator === 'yes') {
 	$output .= '<hr class="' . esc_attr(trim(implode( ' ', $separator_classes ))) . '" />';

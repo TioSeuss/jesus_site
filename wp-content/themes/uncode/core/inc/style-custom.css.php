@@ -42,6 +42,7 @@ $cs_bg_color_dark = $uncode_option['_uncode_background_color_dark'];
 $cs_accent_color = $uncode_option['_uncode_accent_color'];
 
 $cs_body_font_family = $uncode_option['_uncode_body_font_family'];
+$cs_body_font_weight = isset( $uncode_option['_uncode_body_font_weight'] ) ? $uncode_option['_uncode_body_font_weight'] : 400;
 $cs_ui_font_family = $uncode_option['_uncode_ui_font_family'];
 $cs_menu_font_family = $uncode_option['_uncode_menu_font_family'];
 $cs_heading_font_family = $uncode_option['_uncode_heading_font_family'];
@@ -334,6 +335,7 @@ echo "\n\n" . '/*----------------------------------------------------------';
 echo "\n" . '#Standard font size';
 echo "\n" . '----------------------------------------------------------*/';
 $default_font_size = isset($uncode_option['_uncode_font_size']) ? $uncode_option['_uncode_font_size'] : '';
+$large_text_font_size = isset($uncode_option['_uncode_large_text_size']) ? $uncode_option['_uncode_large_text_size'] : '';
 $h1 = isset($uncode_option['_uncode_heading_h1']) ? $uncode_option['_uncode_heading_h1'] : '';
 $h2 = isset($uncode_option['_uncode_heading_h2']) ? $uncode_option['_uncode_heading_h2'] : '';
 $h3 = isset($uncode_option['_uncode_heading_h3']) ? $uncode_option['_uncode_heading_h3'] : '';
@@ -342,6 +344,11 @@ $h5 = isset($uncode_option['_uncode_heading_h5']) ? $uncode_option['_uncode_head
 $h6 = isset($uncode_option['_uncode_heading_h6']) ? $uncode_option['_uncode_heading_h6'] : '';
 if ($default_font_size !== '') {
 	echo "\n" . 'p,li,dt,dd,dl,address,label,small,pre,code { font-size: ' . $default_font_size . 'px; }';
+}
+if ($large_text_font_size !== '') {
+	echo "\n.text-lead, .text-lead > * { font-size: " . intval($large_text_font_size) . "px; }".
+	"\n@media (max-width: 1499px) { .uncode-slider .text-lead > * { font-size: " . ( ( intval($large_text_font_size) / 9 ) * 8 ) . "px; } }".
+	"\n@media (max-width: 959px) { .uncode-slider .text-lead > * { font-size: " . ( ( intval($large_text_font_size) / 18 ) * 13 ) . "px; } }";
 }
 if ($h1 !== '') {
 	echo "\n" . 'h1:not([class*="fontsize-"]),.h1:not([class*="fontsize-"]) { font-size: ' . $h1 . 'px; }';

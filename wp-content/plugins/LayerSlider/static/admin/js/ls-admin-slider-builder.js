@@ -6,7 +6,7 @@ var LS_sliderID = 0,
 // Store the indexes of currently
 // selected items on the interface.
 LS_activeSlideIndex = 0,
-LS_activeLayerIndexSet = [0],
+LS_activeLayerIndexSet = [],
 LS_activeLayerPageIndex = 0,
 LS_activeLayerTransitionTab = 0,
 LS_activeScreenType = 'desktop',
@@ -596,6 +596,7 @@ var LS_UndoManager = {
 
 			case 'slide.general':
 				this.updateOptions(LS_activeSlideData.properties, itemIndex, updateInfo, 'slide');
+				LayerSlider.updateSlidePreviews();
 				LayerSlider.updateSlideInterfaceItems();
 				LayerSlider.generatePreview();
 				break;
@@ -1076,7 +1077,7 @@ var LayerSlider = {
 		LS_activeSlideData.properties = jQuery.extend( true, defaults, LS_activeSlideData.properties );
 
 		// Set active layer index set
-		LS_activeLayerIndexSet = LS_activeSlideData.meta.activeLayers || [0];
+		LS_activeLayerIndexSet = LS_activeSlideData.meta.activeLayers || [];
 		LS_lastSelectedLayerIndex = LS_activeLayerIndexSet[0];
 
 		// Add static layers
@@ -1893,6 +1894,8 @@ var LayerSlider = {
 			jQuery('.ls-multi-select-notice').hide();
 			jQuery('.ls-sublayer-pages').empty();
 			jQuery('.ls-empty-layer-notification').show();
+
+			LS_activeLayerIndexSet = [];
 
 		// Update UI otherwise
 		// Select new layer. The .click() event will
@@ -3659,6 +3662,222 @@ var LayerSlider = {
 	},
 
 
+	loadImageEditor: function() {
+
+
+	},
+
+	openImageEditor: function( imageURL ) {
+
+		// Editor is ready, just open the image
+		if( window.pixieEditor ) {
+			pixieEditor.resetAndOpenEditor('image',  imageURL );
+
+		// Editor needs to be loaded first
+		} else {
+
+			jQuery('<pixie-editor></pixie-editor>').prependTo('body');
+
+			jQuery('<link>').appendTo('head').attr({
+				type: 'text/css',
+				rel: 'stylesheet',
+				href: pixieCSSFile
+			});
+
+			jQuery.getScript( pixieJSFile ).done( function() {
+
+				window.pixieEditor = new Pixie({
+					crossOrigin: true,
+					urls: {
+						assets: pluginPath+'pixie/'
+					},
+
+					tools: {
+						stickers: {
+							replaceDefault: true,
+							items: []
+						}
+					},
+
+					ui: {
+						mode: 'overlay',
+						theme: 'dark',
+						openImageDialog: false,
+						toolbar: {
+							hideOpenButton: true
+						},
+
+						nav: {
+							position: 'top',
+							replaceDefault: true,
+							items: [
+								{name: 'filter', icon: 'filter-custom', action: 'filter'},
+								{type: 'separator'},
+								{name: 'resize', icon: 'resize-custom', action: 'resize'},
+								{name: 'crop', icon: 'crop-custom', action: 'crop'},
+								{name: 'transform', icon: 'transform-custom', action: 'rotate'},
+								{type: 'separator'},
+								{name: 'draw', icon: 'pencil-custom', action: 'draw'},
+								{name: 'text', icon: 'text-box-custom', action: 'text'},
+								{name: 'shapes', icon: 'polygon-custom', action: 'shapes'},
+								{name: 'frame', icon: 'frame-custom', action: 'frame'},
+								{type: 'separator'},
+								{name: 'corners', icon: 'rounded-corner-custom', action: 'round'},
+								{name: 'background', icon: 'background-custom', action: 'background'},
+								{name: 'merge', icon: 'merge-custom', action: 'merge'},
+							]
+						},
+					},
+
+					onLoad: function() {
+						pixieEditor.resetAndOpenEditor('image',  imageURL );
+					},
+
+					onOpen: function() {
+
+						// Hide any open tooltips
+						kmUI.popover.close();
+						setTimeout( function() {
+							kmUI.popover.close();
+						}, 300 );
+					},
+
+					onClose: function( ) {
+						jQuery('#pixie-current-image').removeAttr('id');
+					},
+
+					onSave: function( imgData, dirtyName ) {
+
+						// Display saving notification
+						kmUI.notify.show({
+							icon: 'dashicons-admin-appearance',
+							iconColor: '#f9a241',
+							iconSize: 36,
+							text: LS_l10n.notifyPixieSave
+						});
+
+						// Introduce a little delay, so the
+						// saving notification can render properly
+						// before we try to do any thread-heavy thing.
+						setTimeout( function() {
+
+							// Begin image upload
+							LayerSlider.uploadImageEditorPic( imgData, function() {
+
+								// Success, hide the notification and
+								// close the image editor
+								kmUI.notify.hide();
+								window.pixieEditor.close();
+							});
+						}, 1000 );
+					}
+				});
+			});
+		}
+	},
+
+
+	uploadImageEditorPic: function( imgData, callback ) {
+
+		var $image 	= jQuery('#pixie-current-image').removeAttr('id');
+			$parent = $image.closest('.ls-image'),
+
+			imgName = 'pixie_'+Date.now()+'.png',
+			imgBlob = LS_Utils.dataURItoBlob( imgData );
+
+			imgBlob.lastModifiedDate = new Date();
+			imgBlob.name = imgName;
+			imgBlob.filename = imgName;
+
+		LayerSlider.uploadImageToMediaLibrary(imgBlob, function(data) {
+			$image.attr('src', data.url);
+
+			if( $parent.hasClass('ls-slide-image') ) {
+
+				// Add action to UndoManager
+				LS_UndoManager.add('slide.general', LS_l10n.SBUndoSlideImage, {
+					itemIndex: LS_activeSlideIndex,
+					undo: {
+						background: LS_activeSlideData.properties.background,
+						backgroundId: LS_activeSlideData.properties.backgroundId,
+						backgroundThumb: LS_activeSlideData.properties.backgroundThumb
+					},
+					redo: {
+						background: data.url,
+						backgroundId: data.id,
+						backgroundThumb: data.url
+					}
+				});
+
+				LS_activeSlideData.properties.background = data.url;
+				LS_activeSlideData.properties.backgroundId = data.id;
+				LS_activeSlideData.properties.backgroundThumb = data.url;
+
+				LayerSlider.updateSlidePreviews();
+				LayerSlider.generatePreview();
+
+			} else if( $parent.hasClass('ls-slide-thumbnail') ) {
+
+				LS_activeSlideData.properties.thumbnail = data.url;
+				LS_activeSlideData.properties.thumbnailId = data.id;
+				LS_activeSlideData.properties.thumbnailThumb = data.url;
+
+				LayerSlider.updateSlidePreviews();
+
+
+			} else if( $parent.hasClass('ls-layer-image') ) {
+
+				// Add action to UndoManager
+				LS_UndoManager.add('layer.general', LS_l10n.SBUndoLayerImage, {
+					itemIndex: LS_activeLayerIndexSet[0],
+					undo: {
+						image: LS_activeLayerDataSet[0].image,
+						imageId: LS_activeLayerDataSet[0].imageId,
+						imageThumb: LS_activeLayerDataSet[0].imageThumb
+					},
+					redo: {
+						image: data.url,
+						imageId: data.id,
+						imageThumb: data.url
+					}
+				});
+
+				LS_activeLayerDataSet[0].image = data.url;
+				LS_activeLayerDataSet[0].imageId = data.id;
+				LS_activeLayerDataSet[0].imageThumb = data.url;
+
+				LayerSlider.generatePreviewItem( LS_activeLayerIndexSet[0] );
+
+
+			} else if( $parent.hasClass('ls-media-image') ) {
+
+				// Add action to UndoManager
+				LS_UndoManager.add('layer.general', LS_l10n.SBUndoVideoPoster, {
+					itemIndex: LS_activeLayerIndexSet[0],
+					undo: {
+						poster: LS_activeLayerDataSet[0].poster,
+						posterId: LS_activeLayerDataSet[0].posterId,
+						posterThumb: LS_activeLayerDataSet[0].posterThumb
+					},
+					redo: {
+						poster: data.url,
+						posterId: data.id,
+						posterThumb: data.url
+					}
+				});
+
+				LS_activeLayerDataSet[0].poster = data.url;
+				LS_activeLayerDataSet[0].posterId = data.id;
+				LS_activeLayerDataSet[0].posterThumb = data.url;
+			}
+
+			if( callback ) {
+				callback();
+			}
+		});
+	},
+
+
 	handleDroppedImages: function(event) {
 
 		var oe 	= event.originalEvent,
@@ -4042,42 +4261,80 @@ var LayerSlider = {
 		});
 
 
-		// Remove previous list (if any)
-		jQuery('.ls-preview-context-menu').remove();
+		// Attempt to find the contextmenu instance.
+		var $contextMenu = jQuery('.ls-preview-context-menu');
 
-		// Create list
-		var $list = jQuery( jQuery('#tmpl-ls-preview-context-menu').text() ).prependTo('body');
-			$list.hide().css({ top: mt, left: ml }).fadeIn(100);
+		// Create new contextmenu instance if it wasn't
+		// added to the document previously.
+		if( ! $contextMenu.length ) {
+			$contextMenu = jQuery( jQuery('#tmpl-ls-preview-context-menu').text() ).hide().prependTo('body');
+		}
+
+		// Reset the contextmenu and position it to its new location
+		$contextMenu.find('.ls-context-overlapping-layers ul').empty();
+		$contextMenu.find('li').show();
+		$contextMenu
+			.stop( true, true )
+			.css({ top: mt, left: ml })
+			.fadeIn( 100 );
+
 
 		// Close event
-		jQuery('body').on('click.ls-context-menu', function() {
-			jQuery('body').unbind('click.ls-context-menu');
-			jQuery('.ls-preview-context-menu').animate({ opacity: 0 }, 200, function() {
-				jQuery(this).remove();
-			});
+		jQuery('body').on('mousedown.ls-context-menu', function(e) {
+
+			var $target = jQuery( e.target );
+
+			// Prevent closing the context menu by default if
+			// the event target was within it and the action
+			// should depend on the clicked item.
+			if( $target.closest('.ls-preview-context-menu').length ) {
+
+				// Clicked item is not a group list and has an action
+				// to be executed. Close the context menu with a bit of
+				// delay, so the event handler can be triggered before the
+				// item becomes hidden, which can cause issues to browsers.
+				if( ! $target.is('li.group') ) {
+					setTimeout(function() {
+						LayerSlider.closeContextMenu();
+					}, 150 );
+
+
+				}
+
+			// The event target has nothing to do with the context
+			// menu, so it can be closed right away.
+			} else {
+				LayerSlider.closeContextMenu();
+			}
 		});
 
 		// Loop through intersecting elements (if any)
-		if(items.length > 1) {
-			jQuery.each(items, function(idx, data) {
+		if( items.length > 1 ) {
+			jQuery.each( items, function( idx, data ) {
 
 				var layerIndex = data.index,
 					layerData = data.data,
 
-					$li = jQuery('<li><p></p><span>'+layerData.subtitle+'</span></li>').appendTo( $list.find('.ls-context-overlapping-layers ul') );
+					$li = jQuery('<li><p></p><span>'+layerData.subtitle+'</span></li>').appendTo( $contextMenu.find('.ls-context-overlapping-layers ul') );
 					$li.data('layerIndex', layerIndex);
 
 				LayerSlider.setLayerMedia( layerData.media,  jQuery('p', $li), layerData );
 			});
 		} else {
-			$list.find('.ls-context-overlapping-layers').hide();
+			$contextMenu.find('.ls-context-overlapping-layers').hide();
 		}
 
 		// Empty slide, no layers
 		if( ! LS_activeSlideData.sublayers.length ) {
-			jQuery('.ls-preview-context-menu > ul > li').not(':first-child, .ls-context-menu-paste-layer').hide();
+			$contextMenu.find(' > ul > li').not(':first-child, .ls-context-menu-paste-layer').hide();
 		}
 
+	},
+
+	closeContextMenu: function() {
+
+		jQuery('body').off('mousedown.ls-context-menu');
+		jQuery('.ls-preview-context-menu').fadeOut( 100 );
 	},
 
 
@@ -6990,22 +7247,14 @@ var initSliderBuilder = function() {
 	}, '.ls-image');
 
 
-	jQuery(document).on('click', '.ls-image a.aviary', function(e) {
+	jQuery(document).on('click', '.ls-image a.pixie', function(e) {
 
 		e.preventDefault();
 		e.stopPropagation();
 
-		// Check if the image editor is enabled as
-		// per the new privacy settings introduced
-		// in version 6.7.6
-		if( ! featherEditor ) {
-			alert( LS_l10n.SBImageEditorDisabled );
-			return false;
-		}
-
 		// Set ID on the currently editing image
 		var $parent = jQuery(this).parent(),
-			$image 	= $parent.find('img').attr('id', 'cc-current-image'),
+			$image 	= $parent.find('img').attr('id', 'pixie-current-image'),
 			imageURL;
 
 		// Prevent popover to become visible after opening the editor
@@ -7022,11 +7271,8 @@ var initSliderBuilder = function() {
 			imageURL = LS_activeLayerDataSet[0].poster;
 		}
 
-		// Load editor
-		featherEditor.launch({
-			image: 'cc-current-image',
-			url: LS_Utils.toAbsoluteURL( imageURL )
-		});
+		// Open image editor
+		LayerSlider.openImageEditor( LS_Utils.toAbsoluteURL( imageURL ) );
 	});
 
 	// Clear uploads
@@ -7397,12 +7643,18 @@ var initSliderBuilder = function() {
 		LayerSlider.setCustomSlideProperties(event, this);
 	});
 
-	// Initialize floating layout
-	jQuery( document ).on( 'click', '#menu-set-float', function( e ){
+	// Open popout editor
+	jQuery( document ).on( 'click', '#ls-open-popout-editor', function( e ){
 
 		e.preventDefault();
 
-		jQuery( '#ls-layers-settings-popout' ).removeClass( 'ls-layers-settings-normal' ).addClass( 'ls-layers-settings-floating' ).draggable({
+		jQuery('body').addClass('ls-popout-editor-open');
+
+		var $popoutEditor 	= jQuery( '#ls-layers-settings-popout' ),
+			$parent 		= jQuery( '.ls-sublayer-wrapper' );
+
+
+		$popoutEditor.removeClass( 'ls-layers-settings-normal' ).addClass( 'ls-layers-settings-floating' ).draggable({
 			handle: '#ls-layers-settings-popout-handler',
 			containment: '#ls-slider-form',
 			scroll: false
@@ -7418,14 +7670,42 @@ var initSliderBuilder = function() {
 			}
 		});
 
+		// Position Popout editor to the center of the screen
+		// if the "remember last location" flag is not present.
+		if( ! $popoutEditor.data( 'km-remember-position' ) ) {
+
+			var editorWidth 	= $popoutEditor.width(),
+				editorHeight 	= $popoutEditor.height(),
+				parentWidth 	= $parent.width(),
+				windowScrollTop = jQuery( window ).scrollTop(),
+				windowHeight 	= jQuery( window ).height(),
+				offsetTop 		= $parent.offset().top;
+
+			$popoutEditor.data( 'km-remember-position', true ).css({
+				top: (windowScrollTop - offsetTop) + ( ( windowHeight - editorHeight ) / 2 ),
+				left: ( parentWidth / 2 ) - ( editorWidth / 2)
+			});
+		}
+
 		jQuery( '#ls-layers-settings-popout-handler' ).trigger( 'mouseenter' );
 		jQuery( '.ls-preview-wrapper' ).addClass( 'ls-forceto-left' );
 
-	}).on( 'click', '#menu-set-putback', function( e ){
+	// Close popout editor
+	}).on( 'click', '#ls-close-popout-editor,#ls-popout-desc button', function( e ){
 
 		e.preventDefault();
 
-		jQuery( '#ls-layers-settings-popout' )
+		jQuery('body').removeClass('ls-popout-editor-open');
+
+		var $popoutEditor = jQuery( '#ls-layers-settings-popout' );
+
+		// User clicked on the "Restore Editor" button,
+		// so we should reset position and other data.
+		if( jQuery( e.target ).is('#ls-popout-desc button') ) {
+			$popoutEditor.removeData( 'km-remember-position' );
+		}
+
+		$popoutEditor
 			.addClass( 'ls-layers-settings-normal' )
 			.removeClass( 'ls-layers-settings-floating' )
 			.draggable( 'destroy' )
@@ -8006,119 +8286,6 @@ var initSliderBuilder = function() {
 	});
 
 
-
-	if( typeof Aviary !== 'undefined' ){
-		var featherEditor = new Aviary.Feather({
-			apiKey: '5cf23f4b299d4953bd257b881c8f37d7',
-			maxSize: 3000,
-			tools: ['enhance', 'effects', 'frames', 'overlays', 'orientation', 'crop', 'resize', 'lighting', 'color', 'sharpness', 'focus', 'vignette', 'blemish', 'whiten', 'redeye', 'draw', 'colorsplash', 'text'],
-			fileFormat: 'png',
-
-			onClose: function( isDirty ) {
-				jQuery('#cc-current-image').removeAttr('id');
-			},
-
-			onSaveButtonClicked: function( imageID ) {
-				featherEditor.showWaitIndicator();
-
-				var $image 	= jQuery('#'+imageID).removeAttr('id');
-					$parent = $image.closest('.ls-image'),
-
-					imgName = 'aviary_'+Date.now()+'.png',
-					imgData = jQuery('#avpw_canvas_element')[0].toDataURL(),
-					imgBlob = LS_Utils.dataURItoBlob(imgData);
-					imgBlob.lastModifiedDate = new Date();
-					imgBlob.name = imgName;
-					imgBlob.filename = imgName;
-
-				LayerSlider.uploadImageToMediaLibrary(imgBlob, function(data) {
-					$image.attr('src', data.url);
-
-					if( $parent.hasClass('ls-slide-image') ) {
-
-						// Add action to UndoManager
-						LS_UndoManager.add('slide.general', LS_l10n.SBUndoSlideImage, {
-							itemIndex: LS_activeSlideIndex,
-							undo: {
-								background: LS_activeSlideData.properties.background,
-								backgroundId: LS_activeSlideData.properties.backgroundId,
-								backgroundThumb: LS_activeSlideData.properties.backgroundThumb
-							},
-							redo: {
-								background: data.url,
-								backgroundId: data.id,
-								backgroundThumb: data.url
-							}
-						});
-
-						LS_activeSlideData.properties.background = data.url;
-						LS_activeSlideData.properties.backgroundId = data.id;
-						LS_activeSlideData.properties.backgroundThumb = data.url;
-
-						LayerSlider.generatePreview();
-
-					} else if( $parent.hasClass('ls-slide-thumbnail') ) {
-
-						LS_activeSlideData.properties.thumbnail = data.url;
-						LS_activeSlideData.properties.thumbnailId = data.id;
-						LS_activeSlideData.properties.thumbnailThumb = data.url;
-
-
-					} else if( $parent.hasClass('ls-layer-image') ) {
-
-						// Add action to UndoManager
-						LS_UndoManager.add('layer.general', LS_l10n.SBUndoLayerImage, {
-							itemIndex: LS_activeLayerIndexSet[0],
-							undo: {
-								image: LS_activeLayerDataSet[0].image,
-								imageId: LS_activeLayerDataSet[0].imageId,
-								imageThumb: LS_activeLayerDataSet[0].imageThumb
-							},
-							redo: {
-								image: data.url,
-								imageId: data.id,
-								imageThumb: data.url
-							}
-						});
-
-						LS_activeLayerDataSet[0].image = data.url;
-						LS_activeLayerDataSet[0].imageId = data.id;
-						LS_activeLayerDataSet[0].imageThumb = data.url;
-
-						LayerSlider.generatePreviewItem( LS_activeLayerIndexSet[0] );
-
-
-					} else if( $parent.hasClass('ls-media-image') ) {
-
-						// Add action to UndoManager
-						LS_UndoManager.add('layer.general', LS_l10n.SBUndoVideoPoster, {
-							itemIndex: LS_activeLayerIndexSet[0],
-							undo: {
-								poster: LS_activeLayerDataSet[0].poster,
-								posterId: LS_activeLayerDataSet[0].posterId,
-								posterThumb: LS_activeLayerDataSet[0].posterThumb
-							},
-							redo: {
-								poster: data.url,
-								posterId: data.id,
-								posterThumb: data.url
-							}
-						});
-
-						LS_activeLayerDataSet[0].poster = data.url;
-						LS_activeLayerDataSet[0].posterId = data.id;
-						LS_activeLayerDataSet[0].posterThumb = data.url;
-					}
-
-					featherEditor.hideWaitIndicator();
-					featherEditor.close();
-				});
-
-				return false;
-			}
-		});
-	}
-
 	// Sublayer: sortables, draggable, etc
 	LayerSlider.addSlideSortables();
 	LayerSlider.addLayerSortables();
@@ -8332,6 +8499,12 @@ var initSliderBuilder = function() {
 			return true;
 		}
 
+		// Disable keyboard shortcuts while editing
+		// images in the Pixie Image Editor
+		if( jQuery('#pixie-current-image').length ) {
+			return true;
+		}
+
 		var $target = jQuery(e.target);
 
 		if(e.which == 13) {
@@ -8352,7 +8525,7 @@ var initSliderBuilder = function() {
 
 		// Disable keyboard shortcuts while editing
 		// a layer with the 'contenteditable' attribute.
-		if(jQuery('.ls-editing').length) {
+		if( jQuery('.ls-editing').length ) {
 			return;
 		}
 
@@ -8463,6 +8636,7 @@ var initSliderBuilder = function() {
 					var layerData 	= LS_activeSlideData.sublayers[layerIndex],
 						previewItem = LS_previewItems[layerIndex];
 
+					if( ! layerData ) { return true; }
 					if(layerData.locked ) { return true; }
 
 					var x = Math.round( parseInt(layerData.styles.left) ),

@@ -85,16 +85,32 @@ function uncode_load_admin_script($hook) {
 			'all_label' => esc_html__( 'All Media Categories', 'uncode' ),
 			'terms'     => $terms,
 		),
-		'loc_strings'        => array(
+		'loc_strings'       => array(
 			'read_more' => esc_html__( 'Read more', 'uncode' ),
 		),
-		'enable_debug'      => apply_filters( 'uncode_enable_debug_on_js_scripts', false ),
-		'theme_registration' => array(
-			'nonce'  => wp_create_nonce( 'uncode-theme-registration-form-nonce' ),
-			'locale' => array(
+		'enable_debug'                => apply_filters( 'uncode_enable_debug_on_js_scripts', false ),
+		'theme_registration'          => array(
+			'nonce'                       => wp_create_nonce( 'uncode-theme-registration-form-nonce' ),
+			'locale'                      => array(
 				'empty_purchase_code' => esc_html__( 'Please enter a valid Envato Purchase Code', 'uncode' ),
 				'empty_terms'         => esc_html__( 'You must accept the Terms of Service in order to perform this action', 'uncode' ),
 			),
+		),
+		'theme_options_input_vars' => array(
+			'enable_max_input_vars_popup' => apply_filters( 'uncode_enable_max_input_vars_popup', true ),
+			'max_input_vars'              => uncode_get_minimum_max_input_vars(),
+			'recommended_max_input_vars'  => 3000,
+			'max_vars_nonce'              => wp_create_nonce( 'uncode-theme-options-test-input-vars-nonce' ),
+			'number_of_inputs_nonce'      => wp_create_nonce( 'uncode-theme-options-number-of-inputs-nonce' ),
+			'locale'                      => array(
+				'button_confirm'  => esc_html__( 'Save Anyway', 'uncode' ),
+				'button_cancel'   => esc_html__( "Don't show this message again", "uncode" ),
+				'title'           => esc_html__( 'Confirmation Required', 'uncode' ),
+				'content'         =>
+					'<div class="uncode-modal-max-vars-content"><p>' . __( '<strong>Important warning!</strong>', 'uncode' ) . '</p>'
+					. '<p>' . sprintf( __( 'Before saving Theme Options you need to increase the <em><strong>max_input_vars</strong></em> value of your PHP configuration. Your current allowed value is too low and you risk to loose your settings if you choose to continue, please set it to at least <strong class="vars-placeholder">dddd</strong>: <a href="%s" target="_blank">more info</a>.', 'uncode' ), 'https://support.undsgn.com/hc/en-us/articles/213459869' ) . '</p>'
+					. '<p>' . sprintf( __( 'If you decide to continue, we strongly suggest you to perform a backup first, <a href="%s" target="_blank">more info</a>.', 'uncode' ), 'https://undsgn.zendesk.com/hc/en-us/articles/360001216518' ) . '</p></div>',
+			)
 		),
 	);
 	wp_localize_script( 'admin_uncode_js', 'SiteParameters', $site_parameters );
@@ -1227,7 +1243,7 @@ if ( uncode_check_for_dependency( 'js_composer/js_composer.php' ) ) {
 }
 
 $max_input_vars = ini_get('max_input_vars');
-if ( $max_input_vars < 3000 ) {
+if ( $max_input_vars < uncode_get_recommended_max_input_vars() ) {
 	global $pagenow;
 	if (is_admin() && $pagenow === 'admin.php' && $_GET['page'] === 'uncode-options') {
 		function uncode_php_max_vars_nag() {
@@ -1714,9 +1730,19 @@ if ( ! function_exists( 'uncode_test_vars' ) ) :
 /**
  * @since Uncode 1.6.4
  */
-function uncode_test_vars(){
-	echo count($_POST['content']);
-	die();
+function uncode_test_vars() {
+	if ( ( isset( $_POST[ 'test_input_vars_from_theme_options_nonce' ] ) && wp_verify_nonce( $_POST[ 'test_input_vars_from_theme_options_nonce' ], 'uncode-theme-options-test-input-vars-nonce' ) ) || ( isset( $_POST[ 'test_input_vars_from_system_status_nonce' ] ) && wp_verify_nonce( $_POST[ 'test_input_vars_from_system_status_nonce' ], 'uncode-system-status-test-input-vars-nonce' ) ) ) {
+		$count = count( $_POST[ 'content' ] ) + 1;
+
+		wp_send_json_success(
+			array(
+				'count' => $count
+			)
+		);
+	}
+
+	// Invalid nonce or data
+	wp_send_json_error();
 }
 endif; //uncode_test_vars
 
@@ -1726,10 +1752,36 @@ if ( !function_exists( 'uncode_update_max_input_vars' ) ) :
  * @since Uncode 1.7.0
  */
 function uncode_update_max_input_vars() {
-    update_option( 'uncode_test_max_input_vars', $_POST['content'] );
-    die();
+	if ( ( isset( $_POST[ 'update_input_vars_from_theme_options_nonce' ] ) && wp_verify_nonce( $_POST[ 'update_input_vars_from_theme_options_nonce' ], 'uncode-theme-options-test-input-vars-nonce' ) ) || ( isset( $_POST[ 'update_input_vars_from_system_status_nonce' ] ) && wp_verify_nonce( $_POST[ 'update_input_vars_from_system_status_nonce' ], 'uncode-system-status-test-input-vars-nonce' ) ) ) {
+
+		// Save also the number of inputs in theme options
+		if ( isset( $_POST[ 'theme_options_number_of_inputs' ] ) ) {
+			update_option( 'uncode_theme_options_number_of_inputs', intval( $_POST[ 'theme_options_number_of_inputs' ] ) );
+		}
+
+		update_option( 'uncode_test_max_input_vars', intval( $_POST[ 'calculated_vars' ] ) );
+		wp_send_json_success();
+	}
+
+	// Invalid nonce or data
+	wp_send_json_error();
 }
 endif; //uncode_update_max_input_vars
+
+if ( ! function_exists( 'uncode_update_theme_options_number_of_inputs' ) ) :
+	function uncode_update_theme_options_number_of_inputs() {
+		if ( isset( $_POST[ 'update_theme_options_number_of_inputs_nonce' ] ) && wp_verify_nonce( $_POST[ 'update_theme_options_number_of_inputs_nonce' ], 'uncode-theme-options-number-of-inputs-nonce' ) && ( isset( $_POST[ 'theme_options_number_of_inputs' ] ) ) ) {
+
+			update_option( 'uncode_theme_options_number_of_inputs', intval( $_POST[ 'theme_options_number_of_inputs' ] ) );
+
+			wp_send_json_success();
+		}
+
+		// Invalid nonce or data
+		wp_send_json_error();
+	}
+endif;
+add_action( 'wp_ajax_uncode_update_theme_options_number_of_inputs', 'uncode_update_theme_options_number_of_inputs' );
 
 if ( ! function_exists( 'uncode_envato_toolkit_deprecated_message' ) ) :
 

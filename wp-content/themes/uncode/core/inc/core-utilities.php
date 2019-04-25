@@ -502,3 +502,47 @@ if ( ! function_exists( 'uncode_append_custom_styles_to_head' ) ) {
 		return $append_inline;
 	}
 }
+
+/**
+ * Get max input vars
+ */
+if ( ! function_exists( 'uncode_get_minimum_max_input_vars' ) ) {
+	function uncode_get_minimum_max_input_vars() {
+		$saved_max_input_vars = intval( get_option( 'uncode_test_max_input_vars' ) );
+		$conf_max_input_vars  = ini_get( 'max_input_vars' );
+		$conf_max_input_vars  = $conf_max_input_vars ? intval( $conf_max_input_vars ) : 1;
+
+		// Return conf max vars if we don't have a saved value
+		if ( ! $saved_max_input_vars ) {
+			$saved_max_input_vars = 1; // Set to at least 1
+
+			return $conf_max_input_vars;
+		}
+
+		// Return conf max vars if it is smaller than the saved value
+		// This handles the possibility of downgrades (ie. for some reason
+		// now the server has a smaller max_input_vars value in php.ini)
+		if ( $conf_max_input_vars < $saved_max_input_vars ) {
+			return $conf_max_input_vars;
+		}
+
+		return $saved_max_input_vars;
+	}
+}
+
+/**
+ * Get recommended max input vars
+ */
+if ( ! function_exists( 'uncode_get_recommended_max_input_vars' ) ) {
+	function uncode_get_recommended_max_input_vars() {
+		$max_vars = 3000;
+		$theme_options_number_of_inputs = intval( get_option( 'uncode_theme_options_number_of_inputs', false ) );
+
+		// Round to nearest (up) thousand if > 3000
+		if ( $theme_options_number_of_inputs && $theme_options_number_of_inputs > 0 && $theme_options_number_of_inputs > 3000) {
+			$max_vars = (int) ceil( $theme_options_number_of_inputs / 1000 ) * 1000;
+		}
+
+		return apply_filters( 'uncode_get_recommended_max_input_vars', $max_vars );
+	}
+}

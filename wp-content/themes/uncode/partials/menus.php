@@ -70,24 +70,32 @@ if (!class_exists('unmenu')) {
 
 			$logoDiv = '<a href="' . esc_url( home_url( '/' ) ) . '" class="navbar-brand"' . $data_padding_shrink . ' data-minheight="'.(($LOGO->logo_min == "") ? "20" : esc_attr($LOGO->logo_min)).'">';
 			$logoDivInner = '';
+			$logoMobileInner = '';
 
 			$logo_height = (isset($LOGO->logo_height)) ? $LOGO->logo_height: '20';
 			$logo_height = preg_replace('/[^0-9.]+/', '', $logo_height);
-			$logo_hide = '';
+			$logo_height_mobile = ot_get_option('_uncode_logo_height_mobile');
+			if ($logo_height_mobile !== '') {
+				$logo_height_mobile = preg_replace('/[^0-9.]+/', '', $logo_height_mobile);
+			} else {
+				$logo_height_mobile = $logo_height;
+			}
+			$logo_hide = $logo_mobile_hide = '';
 
-			if (isset($LOGO->logo_id)) {
-				if (!is_array($LOGO->logo_id)) {
-					$LOGO->logo_id = array($LOGO->logo_id);
+			if ( isset($LOGO->logo_mobile_id) && $LOGO->logo_mobile_id !== '' ) {
+				if (!is_array($LOGO->logo_mobile_id)) {
+					$LOGO->logo_mobile_id = array($LOGO->logo_mobile_id);
 				}
-				foreach ($LOGO->logo_id as $key => $value) {
+				foreach ($LOGO->logo_mobile_id as $key => $value) {
 					$logo_alt = get_post_meta($value, '_wp_attachment_image_alt', true);
 					if ( empty($logo_alt) ) {
-						$logo_alt = 'logo';
+						$logo_alt = esc_html__('logo','uncode');
 					}
 					$logo_info = uncode_get_media_info($value);
 					$media_metavalues = (isset($logo_info->metadata)) ? unserialize($logo_info->metadata) : '';
+					$logoSkinClass = 'mobile-logo ';
 					if (!empty($logo_info)) {
-						if (count($LOGO->logo_id) === 2) {
+						if (count($LOGO->logo_mobile_id) === 2) {
 							if ($key === 0 && $stylemain === 'light') {
 								$logo_hide = '';
 							} elseif ($key === 1 && $stylemain === 'dark') {
@@ -95,9 +103,9 @@ if (!class_exists('unmenu')) {
 							} else {
 								$logo_hide = 'display:none;';
 							}
-							$logoSkinClass = $key === 0 ? ' logo-light' : ' logo-dark';
+							$logoSkinClass .= $key === 0 ? 'logo-light' : 'logo-dark';
 						} else {
-							$logoSkinClass = ' logo-skinnable';
+							$logoSkinClass .= 'logo-skinnable';
 						}
 						if ($logo_info->post_mime_type === 'oembed/svg') {
 							$media_code = $logo_info->post_content;
@@ -107,7 +115,7 @@ if (!class_exists('unmenu')) {
 							$media_code = preg_replace('#\s(xmlns:svg)="([^"]+)"#', '', $media_code);
 							$media_code = preg_replace('#\s(xmlns:xlink)="([^"]+)"#', '', $media_code);
 							if ($logo_info->animated_svg) {
-								$logoSkinClass = '';
+								$logoSkinClass = 'main-logo ';
 								preg_match('/(id)=("[^"]*")/i', $media_code, $id_attr);
 								if (isset($id_attr[2])) {
 									$id_icon = str_replace('"', '', $id_attr[2]);
@@ -139,18 +147,129 @@ if (!class_exists('unmenu')) {
 									$media_code = str_replace('<svg ', '<svg preserveAspectRatio="xMinYMin" ', $media_code);
 								}
 							}
-							$logoDivInner .= '<div class="html-code'.$logoSkinClass.'" data-maxheight="'.$logo_height.'" style="height: '.$logo_height.'px;'.$logo_hide.'">';
-							$logoDivInner .= '<canvas class="logo-canvas" height="'.round($logo_height).'" width="'.round($logo_ratio * $logo_height) .'"></canvas>';
-							$logoDivInner .= $media_code . '</div>' ;
+							$logoMobileInner .= '<div class="html-code '.$logoSkinClass.'" data-maxheight="'.$logo_height.'" style="height: '.$logo_height.'px;'.$logo_hide.'">';
+							$logoMobileInner .= '<canvas class="logo-canvas" height="'.round($logo_height).'" width="'.round($logo_ratio * $logo_height) .'"></canvas>';
+							$logoMobileInner .= $media_code . '</div>' ;
 						} elseif ($logo_info->post_mime_type === 'oembed/html') {
-							$logoDivInner .= '<h2 class="text-logo h3'.$logoSkinClass.'" data-maxheight="'.$logo_height.'" style="font-size:'.$logo_height.'px;'.$logo_hide.'">' . esc_html($logo_info->post_content) . '</h2>' ;
+							$logoMobileInner .= '<h2 class="text-logo h3 '.$logoSkinClass.'" data-maxheight="'.$logo_height.'" style="font-size:'.$logo_height.'px;'.$logo_hide.'">' . esc_html($logo_info->post_content) . '</h2>' ;
 						} else {
 							$logo_metavalues = unserialize($logo_info->metadata);
 							if (empty($logo_metavalues)) {
 								$logo_metavalues['width'] = $logo_metavalues['height'] = 1;
 							}
 
-							$logoDivInner .= '<div class="logo-image'.$logoSkinClass.'" data-maxheight="'.$logo_height.'" style="height: '.$logo_height.'px;'.$logo_hide.'">';
+							$logoMobileInner .= '<div class="logo-image '.$logoSkinClass.'" data-maxheight="'.$logo_height.'" style="height: '.$logo_height.'px;'.$logo_hide.'">';
+							if ($logo_info->post_mime_type === 'image/svg+xml') {
+								if ($logo_info->animated_svg) {
+									if (isset($logo_metavalues['width']) && $logo_metavalues['width'] !== '1') {
+										$icon_width = ' style="width:'.$logo_metavalues['width'].'px"';
+									} else {
+										$icon_width = '';
+									}
+									$id_icon = 'icon-' . uncode_big_rand();
+									$icon_time = (isset($logo_info->animated_svg_time) && $logo_info->animated_svg_time !== '') ? $logo_info->animated_svg_time : 100;
+									$logoMobileInner .= '<div id="'.$id_icon.'"'.$icon_width.' class="icon-media"></div>';
+									$logoMobileInner .= "<script>new Vivus('".$id_icon."', {type: 'delayed', pathTimingFunction: Vivus.EASE_OUT, animTimingFunction: Vivus.LINEAR, duration: ".$icon_time.", file: '".$logo_info->guid."'});</script>";
+								} else {
+									$logoMobileInner .= '<img src="'.$logo_info->guid.'" alt="logo" width="'.round($logo_metavalues['width']).'" height="'.round($logo_metavalues['height']).'" class="img-responsive" />';
+								}
+							} else {
+								$logo_resized = uncode_resize_image($logo_info->id, $logo_info->guid, $logo_info->path, $logo_metavalues['width'], $logo_metavalues['height'], 'null', $logo_height, false, 'height');
+								$single_width = $logo_resized['single_width'];
+								$logo_class = ' class="img-responsive"';
+								$logo_data = '';
+								if ($adaptive_images === 'on' && $adaptive_images_async === 'on') {
+									$logo_ratio_w = (isset($media_metavalues['width'])) ? $media_metavalues['width'] : '';
+									$logo_ratio_h = (isset($media_metavalues['height'])) ? $media_metavalues['height'] : '';
+									$logo_ratio = $logo_ratio_w !== '' && $logo_ratio_h !== '' ? $logo_ratio_w / $logo_ratio_h : 1;
+									$logo_width = round($logo_ratio * $logo_height);
+									$logo_class = ' class="img-responsive adaptive-async"';
+									$logo_data = ' data-uniqueid="'.$value.'-'.uncode_big_rand().'" data-guid="'.$logo_info->guid.'" data-path="'.$logo_info->path.'" data-width="'.$logo_width.'" data-height="'.$logo_height.'" data-singlew="'.$single_width.'" data-singleh="null" data-crop="" data-fixed="height"';
+								}
+								$logoMobileInner .= '<img src="'.$logo_resized['url'].'" alt="'.$logo_alt.'" width="'.round($logo_resized['width']).'" height="'.round($logo_resized['height']).'"'.$logo_class.$logo_data.' />';
+							}
+							$logoMobileInner .= '</div>';
+						}
+					}
+				}
+			}
+			if (isset($LOGO->logo_id)) {
+				if (!is_array($LOGO->logo_id)) {
+					$LOGO->logo_id = array($LOGO->logo_id);
+				}
+				foreach ($LOGO->logo_id as $key => $value) {
+					$logo_alt = get_post_meta($value, '_wp_attachment_image_alt', true);
+					if ( empty($logo_alt) ) {
+						$logo_alt = esc_html__('logo','uncode');
+					}
+					$logo_info = uncode_get_media_info($value);
+					$media_metavalues = (isset($logo_info->metadata)) ? unserialize($logo_info->metadata) : '';
+					$logoSkinClass = 'main-logo ';
+					if (!empty($logo_info)) {
+						if (count($LOGO->logo_id) === 2) {
+							if ($key === 0 && $stylemain === 'light') {
+								$logo_hide = '';
+							} elseif ($key === 1 && $stylemain === 'dark') {
+								$logo_hide = '';
+							} else {
+								$logo_hide = 'display:none;';
+							}
+							$logoSkinClass .= $key === 0 ? ' logo-light' : ' logo-dark';
+						} else {
+							$logoSkinClass .= 'logo-skinnable';
+						}
+						if ($logo_info->post_mime_type === 'oembed/svg') {
+							$media_code = $logo_info->post_content;
+							$logo_ratio = (isset($media_metavalues['width']) && isset($media_metavalues['height'])) ? $media_metavalues['width'] / $media_metavalues['height'] : 1;
+							$media_code = preg_replace('#\s(id)="([^"]+)"#', ' $1="$2-' .rand() .'"', $media_code);
+							$media_code = preg_replace('#\s(xmlns)="([^"]+)"#', '', $media_code);
+							$media_code = preg_replace('#\s(xmlns:svg)="([^"]+)"#', '', $media_code);
+							$media_code = preg_replace('#\s(xmlns:xlink)="([^"]+)"#', '', $media_code);
+							if ($logo_info->animated_svg) {
+								$logoSkinClass = 'main-logo ';
+								preg_match('/(id)=("[^"]*")/i', $media_code, $id_attr);
+								if (isset($id_attr[2])) {
+									$id_icon = str_replace('"', '', $id_attr[2]);
+								} else {
+									$id_icon = 'icon-' . uncode_big_rand();
+									$media_code = preg_replace('/<svg/', '<svg id="' . $id_icon . '"', $media_code);
+								}
+								$icon_time = (isset($logo_info->animated_svg_time) && $logo_info->animated_svg_time !== '') ? $logo_info->animated_svg_time : 100;
+								$media_code .= "<script>new Vivus('".$id_icon."', {type: 'delayed', pathTimingFunction: Vivus.EASE_OUT, animTimingFunction: Vivus.LINEAR, duration: ".$icon_time."});</script>";
+							}
+							if ($menutype === 'menu-overlay' || $menutype === 'menu-overlay-center' || $type === 'offcanvas_head') {
+								$vmenu_position = ot_get_option('_uncode_vmenu_position');
+								if ($vmenu_position === 'left') {
+									$media_code = str_replace('<svg ', '<svg preserveAspectRatio="xMaxYMin" ', $media_code);
+								} else {
+									$media_code = str_replace('<svg ', '<svg preserveAspectRatio="xMinYMin" ', $media_code);
+								}
+							} elseif ($vertical) {
+								$vmenu_position = ot_get_option('_uncode_vmenu_position');
+								if ($vmenu_position === 'right') {
+									$media_code = str_replace('<svg ', '<svg preserveAspectRatio="xMaxYMin" ', $media_code);
+								} else {
+									$media_code = str_replace('<svg ', '<svg preserveAspectRatio="xMinYMin" ', $media_code);
+								}
+							} else {
+								if ($menutype === 'hmenu-center-split') {
+									$media_code = str_replace('<svg ', '<svg preserveAspectRatio="xMidYMid" ', $media_code);
+								} else {
+									$media_code = str_replace('<svg ', '<svg preserveAspectRatio="xMinYMin" ', $media_code);
+								}
+							}
+							$logoDivInner .= '<div class="html-code '.$logoSkinClass.'" data-maxheight="'.$logo_height.'" style="height: '.$logo_height.'px;'.$logo_hide.'">';
+							$logoDivInner .= '<canvas class="logo-canvas" height="'.round($logo_height).'" width="'.round($logo_ratio * $logo_height) .'"></canvas>';
+							$logoDivInner .= $media_code . '</div>' ;
+						} elseif ($logo_info->post_mime_type === 'oembed/html') {
+							$logoDivInner .= '<h2 class="text-logo h3 '.$logoSkinClass.'" data-maxheight="'.$logo_height.'" style="font-size:'.$logo_height.'px;'.$logo_hide.'">' . esc_html($logo_info->post_content) . '</h2>' ;
+						} else {
+							$logo_metavalues = unserialize($logo_info->metadata);
+							if (empty($logo_metavalues)) {
+								$logo_metavalues['width'] = $logo_metavalues['height'] = 1;
+							}
+
+							$logoDivInner .= '<div class="logo-image '.$logoSkinClass.'" data-maxheight="'.$logo_height.'" style="height: '.$logo_height.'px;'.$logo_hide.'">';
 							if ($logo_info->post_mime_type === 'image/svg+xml') {
 								if ($logo_info->animated_svg) {
 									if (isset($logo_metavalues['width']) && $logo_metavalues['width'] !== '1') {
@@ -186,9 +305,10 @@ if (!class_exists('unmenu')) {
 				}
 			}
 			if ($logoDivInner === '') {
-				$logoDivInner .= '<h2 class="text-logo h3 logo-skinnable" data-maxheight="'.$logo_height.'" style="font-size:'.$logo_height.'px;">' . esc_html(get_bloginfo( 'name','display' )) . '</h2>';
+				$logoDivInner .= '<h2 class="text-logo h3 logo-skinnable main-logo" data-maxheight="'.$logo_height.'" style="font-size:'.$logo_height.'px;">' . esc_html(get_bloginfo( 'name','display' )) . '</h2>';
 			}
 			$logoDiv .= $logoDivInner;
+			$logoDiv .= $logoMobileInner;
 			$logoDiv .= '</a>';
 
 			// If a logo is set on the customizer, use that one
@@ -547,7 +667,7 @@ if (!class_exists('unmenu')) {
 																		<div id="main-logo" class="navbar-header style-'.$stylemain.'">
 																			'.$logoDiv.'
 																		</div>
-																		<div class="mmb-container">'.$woo_icon_mobile.'<div class="mobile-menu-button '.$buttonstyle_primary.' lines-button x2"><span class="lines"></span></div></div>
+																		<div class="mmb-container">'.$woo_icon_mobile.'<div class="mobile-menu-button 1 '.$buttonstyle_primary.' lines-button x2"><span class="lines"></span></div></div>
 																	</div>
 																	<div class="col-lg-12 main-menu-container middle">
 																		<div class="menu-horizontal' . $sub_shadows . '">
@@ -617,7 +737,7 @@ if (!class_exists('unmenu')) {
 																		</div>
 																	</div>
 																</div>
-																<div class="mmb-container">'.$woo_icon_mobile.'<div class="mobile-menu-button '.$buttonstyle_primary.' lines-button x2"><span class="lines"></span></div></div>
+																<div class="mmb-container">'.$woo_icon_mobile.'<div class="mobile-menu-button 2 '.$buttonstyle_primary.' lines-button x2"><span class="lines"></span></div></div>
 															</div>
 														</div>
 													</div>
@@ -683,7 +803,7 @@ if (!class_exists('unmenu')) {
 													<div id="main-logo" class="navbar-header style-'.$stylemain.'">
 														'.$logoDiv.'
 													</div>
-													<div class="mmb-container"><div class="mobile-menu-button '.$buttonstyle_primary.' lines-button x2"><span class="lines"></span></div></div>
+													<div class="mmb-container"><div class="mobile-menu-button 3 '.$buttonstyle_primary.' lines-button x2"><span class="lines"></span></div></div>
 												</div>';
 					add_filter('wp_nav_menu_objects', 'uncode_center_nav_menu_items', 10, 2);
 					$this->html = '<div class="menu-wrapper'.$menu_shrink.$menu_sticky.$menu_no_arrow.$menu_sub_animation.'">
@@ -696,7 +816,7 @@ if (!class_exists('unmenu')) {
 																		<div class="navbar-header style-'.$stylemain.'">
 																			'.$logoDiv.'
 																		</div>
-																		<div class="mmb-container">'.$woo_icon_mobile.'<div class="mobile-menu-button '.$buttonstyle_primary.' lines-button x2"><span class="lines"></span></div></div>
+																		<div class="mmb-container">'.$woo_icon_mobile.'<div class="mobile-menu-button 4 '.$buttonstyle_primary.' lines-button x2"><span class="lines"></span></div></div>
 																	</div>
 																	<div class="col-lg-12 main-menu-container middle">
 																		<div class="menu-horizontal' . $sub_shadows . '">
@@ -762,6 +882,28 @@ if (!class_exists('unmenu')) {
 					break;
 
 				case 'offcanvas_head':
+					$primary_menu_out = wp_nav_menu( array(
+						"menu"              => $primary_menu,
+						"theme_location"    => "primary",
+						"container"         => "div",
+						"container_class"   => "menu-accordion",
+						"menu_class"        => "menu-primary-inner menu-smart".(is_rtl() ? ' sm-rtl' : '')." sm sm-vertical",
+						"fallback_cb"       => false,
+						"walker"            => new wp_bootstrap_navwalker(),
+						"echo"            => 0)
+					);
+					$secondary_menu_out = wp_nav_menu( array(
+						"menu"              => $secondary_menu,
+						"theme_location"    => "secondary",
+						"container"         => "div",
+						"items_wrap"      => '<ul id="%1$s" class="%2$s">%3$s</ul>',
+						"container_class"   => "menu-accordion",
+						"menu_class"        => "menu-smart".(is_rtl() ? ' sm-rtl' : '')." sm sm-vertical",
+						'fallback_cb'    => false,
+						"walker"            => new wp_bootstrap_navwalker(),
+						"echo"            => 0)
+					);
+
 					$this->html = '<div class="menu-wrapper'.$menu_shrink.$menu_sticky.'">
 													<div id="masthead" class="navbar'.$stylemaincombo.$main_absolute.' menu-with-logo">
 														<div class="menu-container'.$effects.$stylemainbackfull.'">
@@ -778,7 +920,7 @@ if (!class_exists('unmenu')) {
 																			'.$logoDiv.'
 																		</div>
 																	</div>
-																	<div class="mmb-container">'.$woo_icon_mobile.'<div class="'.(($param == 'menu-overlay' || $param == 'menu-overlay-center') ? 'mobile-menu-button menu-button-overlay no-toggle' : 'mobile-menu-button menu-button-offcanvas').' '.$buttonstyle_primary.' lines-button x2 trigger-overlay" '.(($param == 'menu-overlay' || $param == 'menu-overlay-center') ? 'data-area="menu" data-container="main-container"' : '').'><span class="lines"></span></div></div>';
+																	<div class="mmb-container">'.$woo_icon_mobile.'<div class="'.(($param == 'menu-overlay' || $param == 'menu-overlay-center') ? 'mobile-menu-button 5 menu-button-overlay no-toggle' : 'mobile-menu-button menu-button-offcanvas').' '.$buttonstyle_primary.' lines-button x2 trigger-overlay" '.(($param == 'menu-overlay' || $param == 'menu-overlay-center') ? 'data-area="menu" data-container="main-container"' : '').'><span class="lines"></span></div></div>';
 
 
 																if ( $cta_menu ) {
@@ -816,51 +958,58 @@ if (!class_exists('unmenu')) {
 					if ($overlay_animation === '' || $overlay_animation === '3d') {
 						$overlay_animation = 'contentscale';
 					}
-					$this->html =	'<div class="overlay overlay-'.$overlay_animation.' style-'.$styleoverlay.'-bg overlay-menu" data-area="menu" data-container="main-container">
-													<div class="main-header">
-														<div class="vmenu-container menu-container style-'.$styleoverlay.$menu_no_arrow.$stylemaincombo.'">
-															<div class="row row-parent">
-																<div class="row-inner">
-																	<div class="menu-sidebar main-menu-container">
-																		<div class="navbar-main">
-																			<div class="menu-sidebar-inner">
-																				'.wp_nav_menu( array(
-														 							"menu"              => $primary_menu,
-														 							"theme_location"    => "primary",
-														 							"container"         => "div",
-																					"container_class"   => "menu-accordion",
-														 							"menu_class"        => "menu-primary-inner menu-smart".(is_rtl() ? ' sm-rtl' : '')." sm sm-vertical",
-														 							"fallback_cb"       => false,
-														 							"walker"            => new wp_bootstrap_navwalker(),
-														 							"echo"            => 0)
-														 						);
-					if ($search !== '' && ($type === 'menu-overlay' || $type === 'menu-overlay-center')) {
-						$this->html .= $search;
-					}
+					$primary_menu_out = wp_nav_menu( array(
+						"menu"              => $primary_menu,
+						"theme_location"    => "primary",
+						"container"         => "div",
+						"container_class"   => "menu-accordion",
+						"menu_class"        => "menu-primary-inner menu-smart".(is_rtl() ? ' sm-rtl' : '')." sm sm-vertical",
+						"fallback_cb"       => false,
+						"walker"            => new wp_bootstrap_navwalker(),
+						"echo"            => 0)
+					);
+					$secondary_menu_out = wp_nav_menu( array(
+						"menu"              => $secondary_menu,
+						"theme_location"    => "secondary",
+						"container"         => "div",
+						"items_wrap"      => '<ul id="%1$s" class="%2$s">%3$s</ul>',
+						"container_class"   => "menu-accordion",
+						"menu_class"        => "menu-smart".(is_rtl() ? ' sm-rtl' : '')." sm sm-vertical",
+						'fallback_cb'    => false,
+						"walker"            => new wp_bootstrap_navwalker(),
+						"echo"            => 0)
+					);
 
-					if ($no_secondary !== 'on') {
-							$this->html .= 						wp_nav_menu( array(
-														 							"menu"              => $secondary_menu,
-														 							"theme_location"    => "secondary",
-														 							"container"         => "div",
-														 							"items_wrap"      => '<ul id="%1$s" class="%2$s">%3$s</ul>',
-																					"container_class"   => "menu-accordion",
-														 							"menu_class"        => "menu-smart".(is_rtl() ? ' sm-rtl' : '')." sm sm-vertical",
-														 							'fallback_cb'    => false,
-														 							"walker"            => new wp_bootstrap_navwalker(),
-														 							"echo"            => 0)
-														 						);
-					}
-						$this->html .= 						'</div>
-																		</div>
-												 					</div>
+					if ( $primary_menu_out != '' || $search !== '' || ( $no_secondary !== 'on' && $secondary_menu_out != '' ) ) {
+						$this->html =	'<div class="overlay overlay-'.$overlay_animation.' style-'.$styleoverlay.'-bg overlay-menu" data-area="menu" data-container="main-container">
+														<div class="main-header">
+															<div class="vmenu-container menu-container style-'.$styleoverlay.$menu_no_arrow.$stylemaincombo.'">
+																<div class="row row-parent">
+																	<div class="row-inner">
+																		<div class="menu-sidebar main-menu-container">
+																			<div class="navbar-main">
+																				<div class="menu-sidebar-inner">
+																					'.$primary_menu_out;
+						if ($search !== '') {
+							$this->html .= $search;
+						}
+
+						if ($no_secondary !== 'on') {
+								$this->html .= $secondary_menu_out;
+						}
+							$this->html .= 						'</div>
+																			</div>
+													 					</div>
+																	</div>
 																</div>
 															</div>
 														</div>
 													</div>
-												</div>
-												<div class="mmb-container mmb-container-overlay mobile-hidden tablet-hidden"><div class="mobile-menu-button menu-button-overlay '.$buttonstyle_primary.' lines-button x2 overlay-close" data-area="menu" data-container="main-container"><span class="lines"></span></div></div>';
-					break;
+													<div class="mmb-container mmb-container-overlay mobile-hidden tablet-hidden"><div class="mobile-menu-button 6 menu-button-overlay '.$buttonstyle_primary.' lines-button x2 overlay-close" data-area="menu" data-container="main-container"><span class="lines"></span></div></div>';
+						break;
+					} else {
+						break;
+					}
 
 				/**
 				 * Overlay menu
@@ -893,7 +1042,7 @@ if (!class_exists('unmenu')) {
 																		<div id="main-logo" class="navbar-header style-'.$stylemain.'">
 																			'.$logoDiv.'
 																		</div>
-																		<div class="mmb-container">'.$woo_icon_mobile.'<div class="mobile-menu-button '.$buttonstyle_primary.' lines-button x2"><span class="lines"></span></div></div>
+																		<div class="mmb-container">'.$woo_icon_mobile.'<div class="mobile-menu-button 7 '.$buttonstyle_primary.' lines-button x2"><span class="lines"></span></div></div>
 																	</div>
 																	<div class="col-lg-5 main-menu-container middle">
 																		<div class="menu-horizontal' . $sub_shadows . '">
@@ -962,7 +1111,7 @@ if (!class_exists('unmenu')) {
 																		<div class="style-'.$stylemain.'">
 																			'.$logoDiv.'
 																		</div>
-																		<div class="mmb-container">'.$woo_icon_mobile.'<div class="mobile-menu-button '.$buttonstyle_primary.' lines-button x2"><span class="lines"></span></div></div>
+																		<div class="mmb-container">'.$woo_icon_mobile.'<div class="mobile-menu-button 8 '.$buttonstyle_primary.' lines-button x2"><span class="lines"></span></div></div>
 																	</div>
 																</div>';
 					}

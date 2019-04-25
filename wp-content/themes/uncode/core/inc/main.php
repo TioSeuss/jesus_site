@@ -242,15 +242,27 @@ add_filter('oembed_result','uncode_oembed_result', 10, 3);
 function uncode_equeue()
 {
 
-	global $LOGO, $adaptive_images, $adaptive_images_async, $adaptive_images_async_blur, $ai_bpoints, $general_style, $menutype;
+	global $LOGO, $adaptive_images, $adaptive_images_async, $adaptive_images_async_blur, $ai_bpoints, $general_style, $menutype, $post;
 
 	$LOGO = new stdClass;
 	$logo_switchable = ot_get_option('_uncode_logo_switch');
+	$logo_mobile_switch = ot_get_option('_uncode_logo_mobile_switch');
 	if ($logo_switchable === 'on') {
 		$logo_light = ot_get_option('_uncode_logo_light');
 		$logo_dark = ot_get_option('_uncode_logo_dark');
 		$LOGO->logo_id = array($logo_light,$logo_dark);
-	} else $LOGO->logo_id = ot_get_option('_uncode_logo');
+
+		if ( $logo_mobile_switch === 'on' ) {
+			$logo_mobile_light = ot_get_option('_uncode_logo_mobile_light');
+			$logo_mobile_dark = ot_get_option('_uncode_logo_mobile_dark');
+			$LOGO->logo_mobile_id = array($logo_mobile_light,$logo_mobile_dark);
+		}
+	} else {
+		$LOGO->logo_id = ot_get_option('_uncode_logo');
+		if ( $logo_mobile_switch === 'on' ) {
+			$LOGO->logo_mobile_id = ot_get_option('_uncode_logo_mobile');
+		}
+	}
 	$LOGO->logo_min = ot_get_option('_uncode_min_logo');
 	$LOGO->logo_height = ot_get_option('_uncode_logo_height');
 
@@ -511,7 +523,7 @@ add_action( 'init', 'uncode_add_excerpts_to_pages' );
  * @return array
  */
 function uncode_body_classes($classes){
-	global $menutype, $metabox_data, $adaptive_images, $adaptive_images_async;
+	global $LOGO, $post, $menutype, $metabox_data, $adaptive_images, $adaptive_images_async;
 
 	// Adds a class of group-blog to blogs with more than 1 published author.
 	if (is_multi_author())
@@ -721,6 +733,69 @@ function uncode_body_classes($classes){
 		$classes[] = 'adaptive-images-async';
 	}
 
+	if ( isset( $LOGO->logo_mobile_id ) && $LOGO->logo_mobile_id !== '' ) {
+		$classes[] = 'uncode-logo-mobile';
+	}
+
+	$search_active = apply_filters( 'uncode_search_active', ot_get_option( '_uncode_menu_search') );
+	$socials_active = apply_filters( 'uncode_socials_active', ot_get_option( '_uncode_menu_socials') );
+	$socials = ot_get_option( '_uncode_social_list');
+
+	$post_type = isset( $post->post_type ) ? $post->post_type : 'post';
+	if (isset($metabox_data['_uncode_specific_menu'][0]) && $metabox_data['_uncode_specific_menu'][0] !== '') {
+		$primary_menu = $metabox_data['_uncode_specific_menu'][0];
+	} else {
+		$menu_generic = ot_get_option( '_uncode_'.$post_type.'_menu');
+		if ($menu_generic !== '') {
+			$primary_menu = $menu_generic;
+		} else {
+			$primary_menu = '';
+			if (isset($theme_locations['primary'])) {
+				$menu_obj = get_term( $theme_locations['primary'], 'nav_menu' );
+				if (isset($menu_obj->name)) {
+					$primary_menu = $menu_obj->name;
+				}
+			}
+		}
+	}
+	$menu_count = wp_get_nav_menu_items($primary_menu);
+
+	$no_cta = apply_filters( 'uncode_cta_menu_hide', ot_get_option('_uncode_menu_no_cta') );
+	if ($no_cta === 'off' && isset($theme_locations['cta'])) {
+		$cta_obj = get_term( $theme_locations['cta'], 'nav_menu' );
+		$cta_menu = $cta_obj->name;
+	} else {
+		$cta_menu = false;
+	}
+
+	$footer_copyright = ot_get_option('_uncode_footer_copyright');
+	$footer_copyright_hide = ot_get_option('_uncode_copy_hide');
+	$footer_text = ot_get_option('_uncode_footer_text');
+
+	$empty_menu = false;
+
+	switch( $menutype ) {
+		case 'vmenu-offcanvas':
+			if ( ( $footer_copyright === 'off' || $footer_copyright_hide === 'on' ) && $footer_text === '' && $search_active !== 'on' && ( $socials_active !== 'on' || empty( $socials ) ) && !$primary_menu && !$cta_menu ) {
+				$empty_menu = true;
+			}
+			break;
+
+		case 'menu-overlay':
+		case 'menu-overlay-center':
+			if ( $search_active !== 'on' && ( $socials_active !== 'on' || empty( $socials ) ) && !$menu_count && !$cta_menu ) {
+				$empty_menu = true;
+			}
+			break;
+	}
+
+	if ( $empty_menu === true ) {
+		$classes[] = 'uncode-empty-menu';
+	}
+	if ( $search_active !== 'on' && ( $socials_active !== 'on' || empty( $socials ) ) && !$menu_count && !$cta_menu ) {
+		$classes[] = 'uncode-empty-menu-mobile';
+	}
+
 	return $classes;
 }
 add_filter('body_class', 'uncode_body_classes');
@@ -743,7 +818,9 @@ function uncode_inline_tracking() {
 add_action( 'wp_footer', 'uncode_inline_tracking' );
 
 function uncode_redirect_page($original_template) {
-	if (! is_user_logged_in()) {
+	global $post;
+	$privacy_page = get_option( 'uncode_privacy_privacy_policy_page', 0 );
+	if (! is_user_logged_in() && ! ( $post && $post->ID == $privacy_page ) ) {
 		global $is_redirect,$redirect_page;
 		$is_redirect_active = ot_get_option('_uncode_redirect');
 		if ($is_redirect_active === 'on') {

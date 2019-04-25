@@ -340,7 +340,7 @@ if ( ! function_exists( 'uncode_get_premium_plugins' ) ) :
 				'remote_url'         => 'https://api.undsgn.com/downloads/uncode/plugins/layerslider/api.json',
 				'zip_url'            => 'https://api.undsgn.com/downloads/uncode/plugins/layerslider/layersliderwp.zip',
 				'required'           => false,
-				'version'            => '6.8.1',
+				'version'            => '6.8.2',
 				'force_activation'   => false,
 				'force_deactivation' => false,
 			),

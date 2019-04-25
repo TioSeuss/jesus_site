@@ -125,7 +125,17 @@ $posts_counter = $wp_query->post_count;
 /** Build header **/
 if ($page_header_type !== '' && $page_header_type !== 'none') {
 	$page_title = (is_home()) ? get_bloginfo('description') : ot_get_option('_uncode_'.$post_type.'_header_title_text');
-	$page_header = new unheader($metabox_data, $page_title);
+	$get_subtitle = '';
+
+	if ( ot_get_option('_uncode_' . $post_type . '_custom_title_activate') === 'on' ) {
+		$page_title = ot_get_option('_uncode_' . $post_type . '_custom_title_text');
+		$get_subtitle = ot_get_option('_uncode_' . $post_type . '_custom_subtitle_text');
+	}
+
+	$page_title = apply_filters( 'uncode_archive_title', $page_title );
+	$get_subtitle = apply_filters( 'uncode_archive_subtitle', $get_subtitle );
+
+	$page_header = new unheader($metabox_data, $page_title, $get_subtitle);
 
 	$header_html = $page_header->html;
 	if ($header_html !== '') {
@@ -321,7 +331,8 @@ if (have_posts()):
 	}
 
 	/** Build and display navigation html **/
-	if (!$index_has_navigation) {
+	$remove_pagination = ot_get_option('_uncode_' . $post_type . '_remove_pagination');
+	if ( !$index_has_navigation && $remove_pagination !== 'on' ) {
 		$navigation_option = ot_get_option('_uncode_' . $post_type . '_navigation_activate');
 		if ($navigation_option !== 'off') {
 			$navigation = uncode_posts_navigation();

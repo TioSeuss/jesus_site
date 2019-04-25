@@ -14,7 +14,7 @@ if( !empty( $_GET['user'] ) ) {
 	$deleteLink = wp_nonce_url('users.php?action=delete&amp;user='.(int)$_GET['user'], 'bulk-users' );
 }
 
-$authorized = get_option('layerslider-authorized-site', false);
+$authorized = LS_Config::isActivatedSite();
 $isAdmin 	= current_user_can('manage_options');
 
 $notifications = array(

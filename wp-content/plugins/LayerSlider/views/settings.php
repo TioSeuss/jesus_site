@@ -316,7 +316,7 @@ $notifications = array(
 						<td>
 							<?php echo lsGetOptionField('checkbox', 'rocketscript_ignore', false) ?>
 						</td>
-						<td class="desc"><?php _e('Enable this option to ignore LayerSlider files by CloudFront’s Rocket Loader, which can help overcoming potential issues.', 'LayerSlider') ?></td>
+						<td class="desc"><?php _e('Enable this option to ignore LayerSlider files by CloudFlare’s Rocket Loader, which can help overcoming potential issues.', 'LayerSlider') ?></td>
 
 					</tr>
 					<tr>

@@ -260,8 +260,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 								<?php echo '<span class="toggle-description"></span><small class="description">' . esc_attr__( 'Max Input Vars not satisfied may result in loss of Theme Options.', 'uncode' ) . '</small>'; ?></td>
 								<td><?php
 									$max_input = ini_get('max_input_vars');
-									if ( $max_input < 3000 ) {
-										echo '<mark class="error">' . sprintf( wp_kses(__( '%s - We recommend setting PHP max_input_vars to at least 3000. See: <a href="%s" target="_blank">Increasing the PHP max vars limit</a>', 'uncode' ), array( 'a' => array( 'href' => array(),'target' => array() ) ) ), $max_input, '//support.undsgn.com/hc/en-us/articles/213459869' ) . '</mark>';
+									if ( $max_input < uncode_get_recommended_max_input_vars() ) {
+										echo '<mark class="error">' . sprintf( wp_kses(__( '%s - We recommend setting PHP max_input_vars to at least %s. See: <a href="%s" target="_blank">Increasing the PHP max vars limit</a>', 'uncode' ), array( 'a' => array( 'href' => array(),'target' => array() ) ) ), $max_input, uncode_get_recommended_max_input_vars(), '//support.undsgn.com/hc/en-us/articles/213459869' ) . '</mark>';
 									} else {
 										echo '<mark class="yes">' . $max_input . '</mark>';
 									}
@@ -271,16 +271,24 @@ if ( ! defined( 'ABSPATH' ) ) {
 								<td data-export-label="PHP Max Input Vars Allowed"><?php esc_html_e( 'PHP Max Input Vars (allowed)', 'uncode' ); ?>
 								<?php echo '<span class="toggle-description"></span><small class="description">' . esc_attr__( 'The effective maximum number of variables your server can use for a single function to avoid overloads. If this value is lower than max_input_vars your server is applying restrictions on the actual number of vars that can be used.', 'uncode' ) . '<br>' . esc_attr__( 'If you modified the server settings refresh the option to test.', 'uncode' ) . '</small>'; ?></td>
 								<td class="get-max-input-vars">
+									<?php wp_nonce_field( 'uncode-system-status-test-input-vars-nonce', 'test_input_vars_from_system_status_nonce' ); ?>
 									<?php $uncode_test_max_input_vars = intval(get_option('uncode_test_max_input_vars'));
 										if ( $uncode_test_max_input_vars != '' ) : ?>
 										<span class="calculating" style="display: none"><?php esc_html_e( 'Calculating…', 'uncode' ); ?></span>
-										<mark class="yes" <?php if ( $uncode_test_max_input_vars < 3000 ) { echo 'style="display: none;"'; } ?>><?php echo esc_html( $uncode_test_max_input_vars ); ?></mark>
-										<mark class="error get_data" <?php if ( $uncode_test_max_input_vars >= 3000 ) { echo 'style="display: none;"'; } ?>><?php echo esc_html( $uncode_test_max_input_vars ); printf(esc_html__(' - We recommend setting PHP max_input_vars to at least 3000. %s','uncode'), '<a href="' . esc_url('//support.undsgn.com/hc/en-us/articles/213459869') . '" target="_blank">'.esc_html__('More info','uncode').'</a>'); ?></mark>
+										<mark class="yes" <?php if ( $uncode_test_max_input_vars < uncode_get_recommended_max_input_vars() ) { echo 'style="display: none;"'; } ?>><?php echo esc_html( $uncode_test_max_input_vars ); ?></mark>
+										<mark class="error get_data" <?php if ( $uncode_test_max_input_vars >= uncode_get_recommended_max_input_vars() ) { echo 'style="display: none;"'; } ?>>
+											<mark class="calculated-max-vars"><?php echo esc_html( $uncode_test_max_input_vars ); ?></mark>
+											<?php printf(esc_html__(' - We recommend setting PHP max_input_vars to at least %s. %s','uncode'), uncode_get_recommended_max_input_vars(), '<a href="' . esc_url('//support.undsgn.com/hc/en-us/articles/213459869') . '" target="_blank">'.esc_html__('More info','uncode').'</a>'); ?>
+										</mark>
+										<mark class="error no_data" style="display: none;"><?php esc_html_e('No available data','uncode'); ?></mark>
 										<a href="#" id="max_vars_checker"><i class="fa fa-refresh"></i></a>
 									<?php else : ?>
 										<span class="calculating"><?php esc_html_e( 'Calculating…', 'uncode' ); ?></span>
 										<mark class="yes" style="display: none;"></mark>
-										<mark class="error get_data" style="display: none;">%d%<?php printf(esc_html__(' - We recommend setting PHP max_input_vars to at least 3000. %s','uncode'), '<a href="' . esc_url('//support.undsgn.com/hc/en-us/articles/213459869') . '" target="_blank">'.esc_html__('More info','uncode').'</a>'); ?></mark>
+										<mark class="error get_data" style="display: none;">
+											<mark class="calculated-max-vars"></mark>
+											<?php printf(esc_html__(' - We recommend setting PHP max_input_vars to at least %s. %s','uncode'), uncode_get_recommended_max_input_vars(), '<a href="' . esc_url('//support.undsgn.com/hc/en-us/articles/213459869') . '" target="_blank">'.esc_html__('More info','uncode').'</a>'); ?>
+										</mark>
 										<mark class="error no_data" style="display: none;"><?php esc_html_e('No available data','uncode'); ?></mark>
 										<a href="#" id="max_vars_checker"><i class="fa fa-refresh"></i></a>
 									<?php endif; ?>
@@ -306,6 +314,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 		$( 'a.help_tip' ).click( function() {
 			return false;
 		});
+
+		var max_vars_nonce = $('#test_input_vars_from_system_status_nonce').val();
+		var enable_debug = <?php echo apply_filters( 'uncode_enable_debug_on_js_scripts', false ) ? 'true' : 'false'; ?>;
 
 		var max_vars_checker = function(){
 			var $wrap = $('.get-max-input-vars'),
@@ -342,40 +353,94 @@ if ( ! defined( 'ABSPATH' ) ) {
 				url: ajaxurl,
 				data: {
 					action: 'uncode_test_vars',
+					test_input_vars_from_system_status_nonce: max_vars_nonce,
 					content: param,
 				},
 				type: 'post',
-				error: function(){
+				error: function() {
 					$('.get-max-input-vars .calculating').hide();
 					$('.get-max-input-vars .error.no_data').fadeIn();
-				},
-				success: function(data){
-					intData = parseInt(data);
-					if ( intData < ($vars-1) ) {
-						if ( intData < 2990 ) {
-							var_string = $('.get-max-input-vars .error.get_data');
-							var_string.html(var_string.html().replace("%d%", intData));
-						} else {
-							var_string = $('.get-max-input-vars .yes');
-							var_string.html(intData);
-						}
-						$('.get-max-input-vars .calculating').hide();
-						var_string.add('#max_vars_checker').fadeIn();
 
-					} else {
-						uncode_test_max_input_vars($vars+10000);
+					if (SiteParameters.enable_debug == true) {
+						// This console log is disabled by default
+						// So nothing is printed in a typical installation
+						//
+						// It can be enabled for debugging purposes setting
+						// the 'uncode_enable_debug_on_js_scripts' filter to true
+						console.log('Max vars test failed');
 					}
-					$.ajax({
-						url: ajaxurl,
-						data: {
-							action: 'uncode_update_max_input_vars',
-							content: intData,
-						},
-						type: 'post'
-					});
+				},
+				success: function(response) {
+					if (response && response.success === false) {
+						$('.get-max-input-vars .calculating').hide();
+						$('.get-max-input-vars .error.no_data').fadeIn();
+
+						if (SiteParameters.enable_debug == true) {
+							// This console log is disabled by default
+							// So nothing is printed in a typical installation
+							//
+							// It can be enabled for debugging purposes setting
+							// the 'uncode_enable_debug_on_js_scripts' filter to true
+							console.log('Max vars test failed');
+						}
+					} else if (response && response.success === true) {
+						intData = parseInt(response.data.count);
+
+						if ( intData < ($vars-1) ) {
+							if ( intData < <?php echo uncode_get_recommended_max_input_vars(); ?> ) {
+								var_string = $('.get-max-input-vars .error.get_data');
+								$('.calculated-max-vars').addClass('error').html(intData);
+							} else {
+								var_string = $('.get-max-input-vars .yes');
+								var_string.html(intData);
+							}
+							$('.get-max-input-vars .calculating').hide();
+							var_string.add('#max_vars_checker').fadeIn();
+
+						} else {
+							uncode_test_max_input_vars($vars+10000);
+						}
+
+						$.ajax({
+							url: ajaxurl,
+							data: {
+								action: 'uncode_update_max_input_vars',
+								calculated_vars: intData,
+								update_input_vars_from_system_status_nonce: max_vars_nonce
+							},
+							type: 'post'
+						}).done(function(response) {
+							if (enable_debug == true && response && response.success === false) {
+								// This console log is disabled by default
+								// So nothing is printed in a typical installation
+								//
+								// It can be enabled for debugging purposes setting
+								// the 'uncode_enable_debug_on_js_scripts' filter to true
+								console.log('Max vars update failed');
+							}
+						}).fail(function() {
+							if (enable_debug == true) {
+								// This console log is disabled by default
+								// So nothing is printed in a typical installation
+								//
+								// It can be enabled for debugging purposes setting
+								// the 'uncode_enable_debug_on_js_scripts' filter to true
+								console.log('Max vars update failed');
+							}
+						});
+					} else {
+						// Unknow error, show the modal
+						if (SiteParameters.enable_debug == true) {
+							// This console log is disabled by default
+							// So nothing is printed in a typical installation
+							//
+							// It can be enabled for debugging purposes setting
+							// the 'uncode_enable_debug_on_js_scripts' filter to true
+							console.log('Unknown error during max vars text');
+						}
+					}
 				}
 			});
-
 		};
 
 		<?php } ?>
@@ -403,6 +468,28 @@ if ( ! defined( 'ABSPATH' ) ) {
 					}
 				});
 			});
+
+			//////////////////////////////////////////////////////
+			/// Theme registration
+			//////////////////////////////////////////////////////
+
+			var themeRegistrationTermsCheckbox = document.getElementById('uncode-registration-accept-terms');
+			var themeRegistrationButton = document.getElementById('envato_update_info');
+
+			if (themeRegistrationTermsCheckbox !== null && themeRegistrationTermsCheckbox.checked) {
+				themeRegistrationButton.disabled = false;
+			}
+
+			if ( themeRegistrationTermsCheckbox !== null ) {
+				themeRegistrationTermsCheckbox.addEventListener('change', function() {
+					if (themeRegistrationTermsCheckbox.checked) {
+						themeRegistrationButton.disabled = false;
+					} else {
+						themeRegistrationButton.disabled = true;
+					}
+				});
+			}
+
 		});
 		<?php if ( current_user_can( 'switch_themes' ) && $uncode_test_max_input_vars == '' ) { ?>
 		uncode_test_max_input_vars(10000);

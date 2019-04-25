@@ -81,11 +81,23 @@ $posts_counter = $wp_query->post_count;
 
 /** Build header **/
 if ($page_header_type !== '' && $page_header_type !== 'none') {
-	$custom_title = ot_get_option('_uncode_'.$post_type.'_header_title_text');
-	if ($custom_title === '') {
-		$custom_title = esc_html__('Results for:','uncode') . ' ' . ucfirst(esc_html( get_search_query( false )));
+	$get_title = ot_get_option('_uncode_'.$post_type.'_header_title_text');
+	if ($get_title === '') {
+		$get_title = esc_html__('Results for:','uncode') . ' ' . ucfirst(esc_html( get_search_query( false )));
 	}
-	$page_header = new unheader($metabox_data, $custom_title);
+	$get_subtitle = '';
+
+	if ( ot_get_option('_uncode_' . $post_type . '_custom_title_activate') === 'on' && !is_category() && !is_tax() ) {
+		$get_title = ot_get_option('_uncode_' . $post_type . '_custom_title_text');
+		$get_subtitle = ot_get_option('_uncode_' . $post_type . '_custom_subtitle_text');
+	}
+
+	$get_title = apply_filters( 'uncode_archive_title', $get_title );
+	if ( $get_title !== '' ) {
+		 $get_title = $get_title . ' ' . ucfirst(esc_html( get_search_query( false )));
+	}
+	$get_subtitle = apply_filters( 'uncode_archive_subtitle', $get_subtitle );
+	$page_header = new unheader($metabox_data, $get_title, $get_subtitle);
 
 	$header_html = $page_header->html;
 	if ($header_html !== '') {
@@ -294,8 +306,8 @@ if (have_posts()):
 	}
 
 	/** Build and display navigation html **/
-	$navigation_option = ot_get_option('_uncode_' . $post_type . '_navigation_activate');
-	if ($navigation_option !== 'off') {
+	$remove_pagination = ot_get_option('_uncode_' . $post_type . '_remove_pagination');
+	if ($remove_pagination !== 'on') {
 		$navigation = uncode_posts_navigation();
 		if (!empty($navigation) && $navigation !== '') {
 			$navigation_content = uncode_get_row_template($navigation, '', $limit_content_width, $style, ' row-navigation row-navigation-' . $style, true, true, true);

@@ -441,7 +441,7 @@ jQuery(function($) {
 				data = $.parseJSON(data);
 
 				// Success
-				if(data && ! data.errCode ) {
+				if( data && ! data.errCode ) {
 
 					// Apply activated state to GUI
 					$form.closest('.ls-box').addClass('active');
@@ -453,8 +453,20 @@ jQuery(function($) {
 					// work without refreshing the page.
 					window.lsSiteActivation = true;
 
+				// HTML-based error message (if any)
+				} else if( typeof data.messageHTML !== "undefined" ) {
+
+					kmUI.modal.open({
+						title: data.titleHTML ? data.titleHTML : LS_l10n.activationErrorTitle,
+						content: '<div id="tmpl-activation-error-modal-window">'+data.messageHTML+'</div>',
+						width: 600,
+						height: 360,
+						clip: false,
+						overlayAnimate: 'fade'
+					});
+
 				// Alert message (if any)
-				} else if(typeof data.message !== "undefined") {
+				} else if( typeof data.message !== "undefined" ) {
 					alert(data.message);
 				}
 

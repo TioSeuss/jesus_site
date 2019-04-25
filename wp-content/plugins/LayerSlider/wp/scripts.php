@@ -338,7 +338,6 @@ function ls_require_builder_assets() {
 	wp_enqueue_script('minicolor', LS_ROOT_URL.'/static/minicolors/jquery.minicolors.js', array('jquery'), LS_PLUGIN_VERSION );
 	wp_enqueue_style('minicolor', LS_ROOT_URL.'/static/minicolors/jquery.minicolors.css', false, LS_PLUGIN_VERSION );
 
-
 	// 3rd-party: Air Datepicker
 	wp_enqueue_style('air-datepicker', LS_ROOT_URL.'/static/air-datepicker/datepicker.min.css', false, '2.1.0' );
 	wp_enqueue_script('air-datepicker', LS_ROOT_URL.'/static/air-datepicker/datepicker.min.js', array('jquery'), '2.1.0' );

@@ -35,7 +35,7 @@ $general_style = ot_get_option('_uncode_general_style');
 $overlay_style = $stylesArray[!array_search($general_style, $stylesArray) ];
 $overlay_back_color = 'style-' . $overlay_style . '-bg';
 
-$item_thumb_id = get_woocommerce_term_meta( $category->term_id, 'thumbnail_id', true  );
+$item_thumb_id = get_term_meta( $category->term_id, 'thumbnail_id', true  );
 if ($item_thumb_id == false) {
 	$item_thumb_id = '';
 }

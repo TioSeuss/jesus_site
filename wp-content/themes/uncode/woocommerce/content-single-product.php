@@ -6,7 +6,7 @@
  *
  * @author 		WooThemes
  * @package 	WooCommerce/Templates
- * @version     3.4.0
+ * @version     3.6.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <?php
 
-	global $limit_content_width, $page_custom_width, $show_body_title;
+	global $limit_content_width, $page_custom_width, $show_body_title, $product;
 
 	/**
 	 * woocommerce_before_single_product hook
@@ -46,7 +46,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 ?>
 
-<div <?php function_exists('wc_product_class') ? wc_product_class() : post_class(); ?>>
+<div <?php function_exists('wc_product_class') ? wc_product_class( '', $product ) : post_class(); ?>>
 	<div class="row-container">
 		<div class="row row-parent col-std-gutter double-top-padding double-bottom-padding <?php echo esc_attr($limit_content_width); ?>" <?php echo wp_kses_post( $page_custom_width ); ?>>
 			<div class="row-inner">
